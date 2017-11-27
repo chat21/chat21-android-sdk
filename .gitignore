@@ -34,6 +34,7 @@ captures/
 
 # Intellij
 *.iml
+.idea
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/gradle.xml
@@ -53,3 +54,10 @@ google-services.json
 freeline.py
 freeline/
 freeline_project_description.json
+
+#gradlew
+gradlew
+gradlew.bat
+
+#gradle wrapper
+gradle/wrapper
