@@ -22,9 +22,9 @@ With Chat21 Android SDK you can:
 
 See the sample app [source code](https://github.com/chat21/chat21-android-demo) 
 
-<img src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/screen1.png" width="250"> | <img src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/screen2.png" width="250"> | <img src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/screen3.png" width="250">
+<img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen1.png" width="250"> | <img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen2.png" width="250"> | <img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen3.png" width="250">
 
-<img src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/screen4.png" width="250"> | <img src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/screen5.png" width="250">
+<img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen4.png" width="250"> | <img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen5.png" width="250">
 
 
 ## Pre requisites
@@ -77,7 +77,7 @@ allprojects {
 <div style="text-align:right;">
     <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/build.gradle">build.gradle
         <span>
-            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
         </span>
     </a>
 </div>
