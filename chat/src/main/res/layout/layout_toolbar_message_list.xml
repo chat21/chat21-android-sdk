@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize"
+    android:background="?attr/selectableItemBackgroundBorderless">
+    <!-- android:background="?attr/selectableItemBackgroundBorderless" will cause this Custom View to make ripple effect -->
+
+    <LinearLayout
+        android:id="@+id/conversation_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/abc_action_bar_up_description"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/profile_picture"
+            android:layout_width="@dimen/chat_profile_picture_toolbar_size"
+            android:layout_height="@dimen/chat_profile_picture_toolbar_size"
+            android:scaleType="centerCrop"
+            android:transitionName="@string/transition_user_profile_details" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/conversation_image"
+        android:orientation="vertical"
+        android:paddingBottom="2.0dip"
+        android:paddingLeft="4.0dip"
+        android:paddingRight="0.0dip"
+        android:paddingTop="0.0dip">
+
+
+        <!--<TextView-->
+        <!--android:id="@+id/toolbar_title"-->
+        <!--android:text="Stefano De Pascalis"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:layout_marginLeft="6dp"-->
+        <!--android:layout_weight="0.6"-->
+        <!--android:ellipsize="end"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:maxLines="1"-->
+        <!--android:textSize="18sp"-->
+        <!--android:textStyle="bold" />-->
+
+        <!--<TextView-->
+        <!--android:text="ultimo accesso alle 19:56"-->
+        <!--android:id="@+id/toolbar_subtitle"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_marginLeft="6dp"-->
+        <!--android:layout_weight="0.4"-->
+        <!--android:ellipsize="end"-->
+        <!--android:maxLines="1"-->
+        <!--android:textSize="12sp" />-->
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/chat_margin_x_small"
+            android:layout_weight="0.6"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title"
+            android:textColor="@color/white"
+            android:textSize="19sp" />
+
+        <TextView
+            android:id="@+id/toolbar_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/chat_margin_x_small"
+            android:layout_weight="0.4"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
+            android:textColor="@color/grey_50"
+            android:textSize="14sp" />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/blue_500</color>
+    <color name="colorPrimaryDark">@color/blue_700</color>
+    <color name="colorAccent">@color/pink_a_400</color>
+    <color name="navigationBarColor">@color/colorPrimary</color>
+    <color name="colorWindowBackground">@color/grey_100</color>
+
+    <color name="chat_background_color">@color/grey_300</color>
+    <color name="clickable_link_color">@color/white</color>
+    <color name="contextual_menu_text_color">@color/grey_700</color>
+    <color name="contextual_menu_icon_color">@color/grey_700</color>
+
+    <color name="error_view_text">@color/grey_400</color>
+    <color name="error_view_text_light">@color/grey_600</color>
+    <color name="error_view_image_color">@color/grey_400</color>
+
+    <color name="background_message_list">@color/grey_200</color>
+    <color name="background_conversation_list">@color/grey_200</color>
+
+    <color name="layout_message_input_wrapper_color">@color/background_message_list</color>
+    <color name="layout_message_input_color">@color/white</color>
+    <color name="layout_message_input_text_color">@color/grey_700</color>
+
+    <color name="activity_message_list_error_view_text">@color/white</color>
+    <color name="activity_message_list_error_view_text_light">@color/white</color>
+    <color name="activity_message_list_error_view_background">#45000000</color>
+
+    <!--message list-->
+    <color name="color_profile_picture_placeholder_toolbar">@color/white</color>
+    <color name="chat_input_background">@color/grey_100</color>
+
+    <!--sender-->
+    <color name="background_bubble_sender">#99E1FFC7</color>
+    <color name="background_bubble_text_sender">@color/black</color>
+    <color name="background_bubble_text_secondary_sender">@color/grey_700</color>
+    <color name="background_bubble_timestamp_sender">@color/blue_grey_800</color>
+    <color name="color_clickable_link_sender">@color/black</color>
+    <color name="color_placeholder_file_sender">@color/white</color>
+
+    <!--recipient-->
+    <color name="background_bubble_recipient">@color/white</color>
+    <color name="background_bubble_text_recipient">@color/black</color>
+    <color name="background_bubble_text_secondary_recipient">@color/grey_700</color>
+    <color name="background_bubble_timestamp_recipient">@color/blue_grey_800</color>
+    <color name="color_clickable_link_recipient">@color/black</color>
+    <color name="color_placeholder_file_recipient">#CCCCCC</color>
+
+</resources>

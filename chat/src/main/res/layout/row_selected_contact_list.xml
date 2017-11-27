@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/chat_row_selected_contact_list_box_size"
+    android:layout_height="@dimen/chat_row_selected_contact_list_box_size"
+    android:layout_marginTop="@dimen/chat_margin_x_small"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/chat_padding_small"
+    android:paddingLeft="@dimen/chat_padding_x_small"
+    android:paddingRight="@dimen/chat_padding_x_small"
+    android:paddingTop="@dimen/chat_padding_small">
+
+    <!--profile picture -->
+    <ImageView
+        android:id="@+id/profile_picture"
+        android:layout_width="@dimen/chat_profile_picture_size"
+        android:layout_height="@dimen/chat_profile_picture_size"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <!--username-->
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:ellipsize="end"
+        android:gravity="center_horizontal"
+        android:maxLines="1" />
+
+    <LinearLayout
+        android:layout_width="@dimen/chat_row_selected_contact_list_remove_size"
+        android:layout_height="@dimen/chat_row_selected_contact_list_remove_size"
+        android:layout_above="@+id/username"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/circle_shape"
+        android:orientation="vertical">
+
+        <!--btn remove-->
+        <ImageView
+            android:id="@+id/remove"
+            android:layout_width="@dimen/chat_row_selected_contact_list_remove_size"
+            android:layout_height="@dimen/chat_row_selected_contact_list_remove_size"
+            app:srcCompat="@drawable/ic_remove_selected_contact_24dp" />
+    </LinearLayout>
+</RelativeLayout>

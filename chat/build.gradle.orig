@@ -1,0 +1,56 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 22
+
+        versionCode 2
+        versionName "0.0.2"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // android framework
+    compile 'com.android.support:appcompat-v7:25.+'
+    compile 'com.android.support:design:25.+'
+    compile 'com.android.support:cardview-v7:25.+'
+
+    // firebase sdk
+    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-database:10.0.1'
+    compile 'com.google.firebase:firebase-storage:10.0.1'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
+   // compile 'com.google.firebase:firebase-auth:10.0.1'
+    compile 'com.firebaseui:firebase-ui:0.6.2'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.+'
+
+    // image loading and caching
+    compile 'com.github.bumptech.glide:glide:3.6.1'
+
+    // annotations
+    compile 'com.jakewharton:butterknife:7.0.1'
+
+    // notification
+    compile 'com.parse:parse-android:1.+'
+    compile 'com.parse.bolts:bolts-android:1.+'
+
+    compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+    compile 'org.apache.httpcomponents:httpcore:4.3'
+
+    compile project(':emoji')
+}
+apply plugin: 'com.google.gms.google-services'

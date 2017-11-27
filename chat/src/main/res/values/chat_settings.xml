@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--root of firebase database-->
+    <string name="root" translatable="false"></string>
+    <string name="firebase_storage_reference" translatable="false"></string>
+
+    <!--tenant in which it is messaging-->
+    <string name="tenant" translatable="false">default</string>
+
+    <!--abilita o disabilita l'email di supporto per la chat-->
+    <!--se l'opzione è abilitata, il pulsante per una nuova chat funzionerà come segue:-->
+    <!--* se si è connessi come "support" allora il pulsante "nuova conversazione" mostrerà l'elenco dei contatti-->
+    <!--* se si è connessi come "altro utente" il pulsante "nuova conversazione" aprirà direttamente la conversazione con il supporto-->
+    <!--valori ammessi:-->
+    <!--YES per abilitare il support-->
+    <!--NO per disabilitare il supporto-->
+    <string name="enable_chat_support_account" translatable="false">no</string>
+    <string name="chat_support_account_id" translatable="false">support</string>
+
+
+    <!--abilita o disabilita il pulsante per la creazione dei gruppi-->
+    <!--valori ammessi:-->
+    <!--YES per abilitare la creazione dei gruppi -->
+    <!--NO per disabilitare la creazione dei gruppi-->
+    <string name="enable_groups" translatable="false">yes</string>
+
+    <!--abilita o disabilita il pulsante per il caricamento dell'icona del gruppo-->
+    <!--valori ammessi:-->
+    <!--YES per abilitare l'icona  -->
+    <!--NO per disabilitare l'icona-->
+    <string name="enable_group_icon" translatable="false">no</string>
+
+    <!--contact profile activity class.-->
+    <!--it must be the  fully-qualified class name-->
+    <string name="target_contact_profile_activity_class" translatable="false">chat21.android.user.activities.PublicProfileActivity</string>
+
+    <!--contact list activity class.-->
+    <!--it must be the  fully-qualified class name-->
+    <string name="target_contact_list_activity_class" translatable="false">chat21.android.contacts.activites.ContactListActivity</string>
+
+    <!--add members to group activity class.-->
+    <!--it must be the  fully-qualified class name-->
+    <string name="target_add_members_activity_class" translatable="false">chat21.android.groups.activities.AddMembersActivity</string>
+
+    <string name="custom_auth_verify_token_url" translatable="false">https://chat21-custom-firebase-auth.appspot.com/verifyToken?username=</string>
+
+    <!--bugfix Issue #4-->
+    <!--target_chat_firebase_messaging_service-->
+    <string name="target_notification_parent_activity" translatable="false">chat21.android.conversations.activities.ConversationListActivity</string>
+</resources>

@@ -1,0 +1,84 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion '27.0.1'
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 22
+
+        versionCode 24
+        versionName "0.10"
+
+        vectorDrawables.useSupportLibrary = true
+        resConfigs "auto"
+
+        // Enabling multidex support.
+        multiDexEnabled true
+
+        dexOptions {
+            javaMaxHeapSize "4g"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            //minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+
+    // source:
+    // https://developer.android.com/studio/build/multidex.html
+    // https://stackoverflow.com/questions/37312103/unable-to-get-provider-com-google-firebase-provider-firebaseinitprovider
+    compile 'com.android.support:multidex:1.0.1'
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // android framework
+    compile 'com.android.support:appcompat-v7:27.+'
+    compile 'com.android.support:design:27.+'
+    compile 'com.android.support:cardview-v7:27.+'
+
+    // firebase sdk
+    compile 'com.google.firebase:firebase-core:11.6.0'
+    compile 'com.google.firebase:firebase-database:11.6.0'
+    compile 'com.google.firebase:firebase-storage:11.6.0'
+    compile 'com.google.firebase:firebase-crash:11.6.0'
+    compile 'com.google.firebase:firebase-messaging:11.6.0'
+    compile 'com.google.firebase:firebase-auth:11.6.0'
+    compile 'com.firebaseui:firebase-ui:2.3.0'
+
+    // image loading and caching
+    compile 'com.github.bumptech.glide:glide:3.6.1'
+
+    compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+    compile 'org.apache.httpcomponents:httpcore:4.3'
+
+    // send message panel
+    compile 'com.vanniktech:emoji-ios:0.5.1'
+
+//    // file picker
+//    // source: https://github.com/Angads25/android-filepicker
+//    compile 'com.github.angads25:filepicker:1.1.1'
+}
+
+// source:
+// https://stackoverflow.com/questions/43280871/android-getting-manifest-merger-failed-error-after-update-to-new-version-of-grad
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '25.3.0'
+            }
+        }
+    }
+}
+
+apply plugin: 'com.google.gms.google-services'

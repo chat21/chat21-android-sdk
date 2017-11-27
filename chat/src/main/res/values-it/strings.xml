@@ -1,0 +1,121 @@
+<resources>
+
+    <!--dates-->
+    <string name="today">oggi</string>
+
+    <string name="string_contact_list_activity_title">Contatti</string>
+    <string name="string_conversation_list_activity_title">Conversazioni</string>
+
+    <string name="string_create_group_activity_title">Nuovo gruppo</string>
+    <string name="string_add_members_activity_title">Aggiungi membri</string>
+
+    <string name="user_connectivity_status">Al lavoro</string>
+    <string name="cannot_send_empty_message">Impossibile inviare un messaggio vuoto</string>
+
+    <string name="hint_message_input">Scrivi un messaggio..</string>
+
+    <string name="label_no_conversation_error_title">Nessuna conversazione!</string>
+    <string name="label_no_conversation_error_subtitle">Premi il pulsante in basso per avviare una nuova chat!</string>
+
+    <string name="action_create_group">Nuovo gruppo</string>
+
+    <!--create_group_activity-->
+    <string name="create_group_activity_add_group_icon_label">Aggiungi\nfoto</string>
+    <string name="create_group_activity_add_group_message_with_image_label">Imposta il nome del gruppo e la sua icona (opzionale</string>
+    <string name="create_group_activity_add_group_message_label">Imposta il nome del gruppo</string>
+    <string name="create_group_activity_add_group_group_name_hint_label">Dai un nome al gruppo</string>
+    <string name="menu_create_group_action_next">Avanti</string>
+
+    <!--add_members_activity-->
+    <string name="add_members_activity_searchview_query_hint">Cerca il contatto</string>
+    <string name="add_members_activity_remove_btn_label">Rimuovi</string>
+    <string name="add_members_activity_contact_already_added_label">Già aggiunto al gruppo</string>
+    <string name="add_members_activity_contact_not_added_label">Contatto non presente nella lista</string>
+    <string name="add_members_activity_contact_cannot_remove_contact_label">Impossibile rimuovere il contatto</string>
+    <string name="add_members_activity_selected_contacts_title">Contatti selezionati</string>
+    <string name="add_members_activity_contacts_title">Lista di contatti</string>
+    <string name="menu_add_members_action_create">Crea</string>
+    <string name="menu_add_members_action_add_member">@string/activity_group_admin_panel_add_member_title</string>
+    <string name="menu_add_members_added_to_the_group">%1$s ti ha aggiunto</string>
+    <string name="menu_add_members_created_the_group">Hai creato il gruppo \"%1$s\"</string>
+
+    <!--activity contact list -->
+    <string name="label_no_contacts_error_title">Nessun contatto trovato</string>
+    <string name="label_no_contacts_error_subtitle">Cambia i parametri di ricerca</string>
+    <string name="activity_contact_list_error_cannot_create_group_offline_label">Non puoi creare il gruppo se sei offline</string>
+
+    <!--activity_group_admin_panel-->
+    <string name="activity_group_admin_panel_members_label">Membri</string>
+    <string name="activity_group_admin_panel_group_admin_label">Amministratore gruppo</string>
+    <string name="activity_group_admin_panel_formatted_created_by_on_label">Creato da %1$s, %2$s</string>
+    <string name="activity_group_admin_panel_not_available_formatted_created_by_on_label">Le informazioni sulla data di creazione e sul proprietario non sono disponibili</string>
+    <string name="activity_group_admin_panel_not_available_members_label">Le informazioni sui membri non sono dispobiili</string>
+    <string name="activity_group_admin_panel_you_label">te</string>
+    <string name="activity_group_admin_panel_add_member_title">Aggiungi membro</string>
+    <string name="menu_activity_group_admin_panel_activity_add_member">@string/activity_group_admin_panel_add_member_title</string>
+    <string name="menu_activity_group_admin_panel_activity_cannot_add_member_offline">Non puoi aggiungere un membro se sei offline</string>
+
+    <!--fragment_bottom_sheet_group_admin_panel_member-->
+    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_btn_label">Rimuovi membro</string>
+    <string name="fragment_bottom_sheet_group_admin_panel_member_leave_group_btn_label">Abbandona il gruppo</string>
+    <string name="fragment_bottom_sheet_group_admin_panel_member_see_profile_btn_label">Visualizza profilo</string>
+    <string name="fragment_bottom_sheet_group_admin_panel_member_send_message_btn_label">Invia messaggio</string>
+    <string name="fragment_bottom_sheet_group_admin_panel_member_btn_cancel_label">Annulla</string>
+
+    <!--activity_conversation_list-->
+    <string name="activity_conversation_list_cannot_open_converation_label">Impossibile aprire la conversazione selezioanta</string>
+
+    <!--fragment_conversation_list-->
+    <string name="fragment_conversation_list_cannot_open_conversation_label">@string/activity_conversation_list_cannot_open_converation_label</string>
+    <string name="fragment_conversation_list_my_group_label">I miei gruppi</string>
+
+    <!--fragment_bottom_sheet_group_admin_panel_member-->
+    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_title">Rimuovi membro</string>
+    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_message">Vuoi davvero rimuovere <b>%1$s</b> dal gruppo?</string>
+    <string name="fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_message">Vuoi davvero abbandonare il gruppo?</string>
+    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_positive_click">Rimuovi</string>
+    <string name="fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_positive_click">Abbandona</string>
+    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_negative_click">Annulla</string>
+
+    <!--activity_message_list-->
+    <string name="activity_message_list_group_info_label">tocca qui per info sul gruppo</string>
+    <string name="activity_message_list_group_info_you_label">tu</string>
+    <string name="activity_message_list_convers_with_presence_online">Online</string>
+    <string name="activity_message_list_progress_dialog_upload">Upload in corso..</string>
+    <string name="activity_message_list_progress_dialog_upload_failed">Impossibile completare l\'upload</string>
+    <string name="activity_message_list_no_message_error_title_label">Sei stato rimosso dal gruppo</string>
+    <string name="activity_message_list_no_message_error_subtitle_label">Contatta l\'amministratore per ulteriori dettagli</string>
+    <string name="activity_message_list_confirm_dialog_upload_title_label">Invio immagine</string> <!--bugfix Issue #64-->
+    <string name="activity_message_list_confirm_dialog_upload_message_label">Vuoi mandare questa immagine?</string> <!--bugfix Issue #64-->
+
+    <!--fragment_bottom_sheet_attach-->
+    <string name="fragment_bottom_sheet_attach_images_label">Immagini</string>
+    <string name="fragment_bottom_sheet_attach_documents_label">Documenti</string>
+
+    <!--activity_public_profile-->
+    <string name="activity_public_profile_presence_online">Online</string>
+    <string name="activity_public_profile_presence_not_available">Offline</string>
+
+    <!--activity_group_list-->
+    <string name="activity_group_list_activity_title">I miei gruppi</string>
+    <string name="activity_my_groups_list_error_title">Nessun gruppo</string>
+    <string name="activity_my_groups_list_error_subtitle">Non sei membro di nessun gruppo</string>
+
+    <!--activity_choose_group-->
+    <string name="activity_choose_group_activity_title">Scegli un gruppo</string>
+    <string name="activity_choose_group_choice_group_confirm_dialog_title">Conferma invio</string>
+    <string name="activity_choose_group_choice_group_confirm_dialog_message">Vuoi inoltrare il documento a %1$s?</string>
+    <string name="activity_choose_group_choice_group_confirm_dialog_positive_button_label">inoltra documento</string>
+    <string name="activity_choose_group_choice_group_confirm_dialog_negative_button_label">annulla</string>
+
+    <!--row_group-->
+    <string name="row_group_group_info_you_label">tu</string>
+
+    <!--fragment_bottom_sheet_conversation_list-->
+    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_title">Elimina converazione</string>
+    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_message">Vuoi davvero eliminare la converazione?\nL\'operazione non può essere annullata.</string>
+    <string name="fragment_bottom_sheet_conversation_list_cannot_delete_conversation_label">Impossibile cancellare la conversazione.\nProva più tardi.</string>
+    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_button_label">Cancella conversazione</string>
+    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_label">elimina conversazione</string>
+    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_negative">annulla</string>
+</resources>
