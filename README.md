@@ -32,6 +32,17 @@ It is assumed that you are using an existing Firebase project or that you have c
 on the Firebase console.
 if it was not done, follow the [Firebase Documentation](https://firebase.google.com/docs/android/setup) to create a new app on the Firebase console
 
+Set the firebase database permissions rules to :
+
+```
+ {
+   "rules": {
+     ".read": true,
+     ".write": true
+   }
+ }
+```
+
 ## Add Chat21 SDK dependencies
 
 ### Gradle Scripts
