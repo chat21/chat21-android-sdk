@@ -293,8 +293,6 @@ Chat21 SDK Chat.Configuration.Builder) and use it as paramater for the method `C
  ChatManager.Configuration mChatConfiguration =
                 new ChatManager.Configuration.Builder(<APP_ID>).build();
 
-        
-
 // init and start the chat
  ChatManager.start(<CONTEXT>, mChatConfiguration, <LOGGED_USER>);
 ```
