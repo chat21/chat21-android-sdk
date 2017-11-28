@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "804629556948",
+    "firebase_url": "https://chat21-sdk-demo.firebaseio.com",
+    "project_id": "chat21-sdk-demo",
+    "storage_bucket": "chat21-sdk-demo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804629556948:android:a4c622d8eb4037a3",
+        "android_client_info": {
+          "package_name": "chat21.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804629556948-6e44u45r34c99ldgeo5pb1lbhl6t63e5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEIW9Fk96FGIityZLVZc5DRO4sq2xRQqc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

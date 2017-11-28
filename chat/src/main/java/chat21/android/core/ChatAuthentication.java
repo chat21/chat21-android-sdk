@@ -152,7 +152,7 @@ public final class ChatAuthentication {
             public void onCustomAuthRetrievedSuccess(String token) {
                 Log.i(DEBUG_LOGIN, "signInWithUid.onCustomAuthRetrievedSuccess : authToken == " + token);
 
-                createNodeContacts(loginActivity, userIdNormalized);
+                createContactNode(loginActivity, userIdNormalized);
                 signInWithToken(loginActivity, token, onChatLoginCallback);
             }
 
@@ -166,8 +166,8 @@ public final class ChatAuthentication {
         }).execute(generateTokenUrl);
     }
 
-    private void createNodeContacts(Context context, String userId) {
-        Log.d(DEBUG_LOGIN, "createNodeContacts: userId == " + userId);
+    private void createContactNode(Context context, String userId) {
+        Log.d(DEBUG_LOGIN, "createContactNode: userId == " + userId);
 
         NodeDAO mNodeDAO = new NodeDAOImpl(context);
 
