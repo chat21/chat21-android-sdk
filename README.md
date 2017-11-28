@@ -290,22 +290,20 @@ Chat21 SDK Chat.Configuration.Builder) and use it as paramater for the method `C
 
 ```
 // create a chat configurations object
-Chat.Configuration chatConfiguration = new Chat.Configuration
-        .Builder(context, <LOGGED_USER_ID>, <LOGGED_USER_EMAIL>, <LOGGED_USER_FULLNAME>
-        .contatcs(<CONTACT_LIST>)
-        .build();
+ ChatManager.Configuration mChatConfiguration =
+                new ChatManager.Configuration.Builder(<APP_ID>).build();
+
         
 
 // init and start the chat
-Chat.initialize(chatConfiguration);
+ ChatManager.start(<CONTEXT>, mChatConfiguration, <LOGGED_USER>);
 ```
 
 Replace:
 
-- `<LOGGED_USER_ID>` with your logged user id;
-- `<LOGGED_USER_EMAIL>` with your logged user email;
-- `<LOGGED_USER_FULLNAME>` with your logged user display name;
-- `<CONTACT_LIST>` is the list of users to chat with;
+- `<APP_ID>` with your appId;
+- `<CONTEXT>` with your Context;
+- `<LOGGED_USER>` with your current logged user, assuming it is an instance of IChatUser
 
 <div style="text-align:right">
     <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/java/it/chat21/android/demo/AppContext.java">AppContext.java
@@ -325,7 +323,7 @@ The Chat21 SDK lets you start your chat with both an activity and a inside a fra
 It starts a new activity that contains the list of conversations.
 
 ```
-Chat.showConversationsListActivity();
+ ChatManager.getInstance().showConversationsListActivity();
 
 ```
 
@@ -360,7 +358,7 @@ The chat will start inside this container where the list of conversations is sho
 Now you can show your chat with the following method:
 
 ```
- Chat.showConversationsListFragment(getChildFragmentManager(), R.id.container);
+  ChatManager.getInstance().showConversationsListFragment(getChildFragmentManager(), R.id.container);
 
 ```
 
