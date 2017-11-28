@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.vanniktech.emoji.EmojiEditText;
@@ -149,9 +150,7 @@ public class MessageListActivity extends AppCompatActivity implements
         extras = getExtras();
 
         // retrieve the conversationId
-        conversationId =
-
-                getConversationId();
+        conversationId = getConversationId();
 
         // create a conversation object
         if (isFromBackgroundNotification) {
@@ -175,7 +174,6 @@ public class MessageListActivity extends AppCompatActivity implements
         Log.d(TAG, "getConversationId");
 
         String conversationId;
-
 
         if (getIntent().getSerializableExtra(ChatManager._INTENT_BUNDLE_CONVERSATION_ID) != null) {
             // retrieve conversationId
@@ -404,9 +402,9 @@ public class MessageListActivity extends AppCompatActivity implements
                 .load("")
                 .placeholder(R.drawable.ic_person_circle_placeholder_gray_24dp)
                 .bitmapTransform(new CropCircleTransformation(this))
-                .centerCrop()
-//                .skipMemoryCache(false)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(getResources().getDrawable(R.drawable.ic_person_circle_placeholder_gray_24dp))
+                .skipMemoryCache(false)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profilePictureToolbar);
     }
 
@@ -521,6 +519,7 @@ public class MessageListActivity extends AppCompatActivity implements
                 showAttachBottomSheet(conversation);
             }
         });
+
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -539,6 +538,7 @@ public class MessageListActivity extends AppCompatActivity implements
                     return;
 
                 if (StringUtils.isValid((conversation.getGroup_id()))) {
+
                     mMessageDAO.sendGroupMessage(text, Message.TYPE_TEXT,
                             conversation);
                 } else {
@@ -643,8 +643,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
     @Override
     public void onTreeChildChanged(DatabaseReference node, DataSnapshot
-            dataSnapshot,
-                                   Message message) {
+            dataSnapshot, Message message) {
         Log.d(TAG, "onTreeChildChanged");
 
         if (StringUtils.isValid(message.getRecipientGroupId())) {
