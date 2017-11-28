@@ -167,7 +167,7 @@ public class ChatManager {
      * @param configuration
      * @param currentUser
      */
-    public static void start(Context context, ChatConfiguration configuration, IChatUser currentUser) {
+    public static void start(Context context, Configuration configuration, IChatUser currentUser) {
         Log.i(TAG, "Chat.start");
 
         // multidex support
@@ -245,4 +245,69 @@ public class ChatManager {
     public List<IChatUser> getContacts() {
         return mContacts;
     }
+
+
+
+
+
+//start configuration
+
+    public static final class Configuration {
+
+        private static final String TAG = Configuration.class.getName();
+
+        public static String appId;
+        public String firebaseUrl;
+        public String storageBucket;
+
+        public Configuration(Builder builder) {
+            Log.d(TAG, ">>>>>> Configuration <<<<<<");
+
+            this.appId = builder.mAppId;
+            this.firebaseUrl = builder.mFirebaseUrl;
+            this.storageBucket = builder.mStorageBucket;
+        }
+
+        /**
+         * Creates a configuration object
+         */
+        public static final class Builder {
+            private static final String TAG = Builder.class.getName();
+
+            private String mAppId;
+            private String mFirebaseUrl;
+            private String mStorageBucket;
+
+            public Builder(String appId) {
+                Log.d(TAG, "Configuration.Builder: appId = " + appId);
+
+                mAppId = appId;
+            }
+
+            public Builder firebaseUrl(String firebaseUrl) {
+                Log.d(TAG, "Configuration.Builder.firebaseUrl: firebaseUrl = " + firebaseUrl);
+
+                mFirebaseUrl = firebaseUrl;
+
+                return this;
+            }
+
+            public Builder storageBucket(String storageBucket) {
+                Log.d(TAG, "Configuration.Builder.storageReference: storageBucket = " + storageBucket);
+
+                mStorageBucket = storageBucket;
+
+                return this;
+            }
+
+            public Configuration build() {
+                Log.d(TAG, "Configuration.build");
+
+                return new Configuration(this);
+            }
+        }
+    }
+//end configuration
+
+
 }

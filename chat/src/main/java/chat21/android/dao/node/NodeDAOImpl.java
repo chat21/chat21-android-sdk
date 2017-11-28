@@ -24,6 +24,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
     private static FirebaseDatabase mDatabase;
 
+
     public NodeDAOImpl(Context context) {
         super(context);
     }
@@ -76,12 +77,8 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
         // TODO: 15/09/17 il tenant deve essere settato direttamente nel costruttore di questo dao
         String tenant;
-        if (StringUtils.isValid(ChatManager.getInstance().getTenant())) {
-            tenant = ChatManager.getInstance().getTenant();
-        } else if (StringUtils.isValid(ChatManager.getInstance().getTenant())) {
-            tenant = ChatManager.getInstance().getTenant();
-        } else if (getContext() != null && StringUtils.isValid(getContext().getString(R.string.tenant))) {
-            tenant = getContext().getString(R.string.tenant);
+        if (StringUtils.isValid(ChatManager.Configuration.appId)) {
+            tenant = ChatManager.Configuration.appId;
         } else {
             throw new RuntimeException("tenant is not valid");
         }

@@ -33,7 +33,7 @@ public interface NodeDAO {
      *
      * @return the app node
      */
-    DatabaseReference getNodeApp();
+    public DatabaseReference getNodeApp();
 
     /**
      * Returns the firebase app node.
