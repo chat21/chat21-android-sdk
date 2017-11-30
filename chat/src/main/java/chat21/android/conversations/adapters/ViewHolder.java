@@ -135,12 +135,12 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setGroupPicture() {
-        Glide.with(itemView.getContext())
+
+        Glide
+                .with(itemView.getContext())
                 .load("")
-                .placeholder(R.drawable.ic_group_place_holder_gray_24dp)
-                .centerCrop()
-//                .skipMemoryCache(false)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_group_avatar)
+                .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
                 .into(mProfilePicture);
     }
 
@@ -160,14 +160,11 @@ public class ViewHolder extends RecyclerView.ViewHolder {
 
     private void setProfilePicture(String url) {
 
-        // bugifx Issue #28
-        Glide.with(itemView.getContext())
-                .load(url)
-                .placeholder(R.drawable.ic_person_circle_placeholder_gray_24dp)
+        Glide
+                .with(itemView.getContext())
+                .load("")
+                .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
-                .centerCrop()
-//                .skipMemoryCache(false)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(mProfilePicture);
     }
 

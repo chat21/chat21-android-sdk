@@ -6,11 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -78,13 +76,11 @@ public class GroupMembersListAdapter extends AbstractRecyclerAdapter<IChatUser,
 
         String url = contact.getProfilePictureUrl();
 
-        // load image
-        Glide.with(getContext())
+        Glide
+                .with(getContext())
                 .load(url)
-                .placeholder(R.drawable.ic_person_circle_placeholder_gray_24dp)
+                .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
-                .skipMemoryCache(false)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.profilePicture);
     }
 

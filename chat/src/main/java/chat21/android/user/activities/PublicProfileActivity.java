@@ -94,15 +94,12 @@ public class PublicProfileActivity extends AppCompatActivity implements
 
         ImageView profilePictureToolbar = (ImageView) findViewById(R.id.image);
 
-        Glide.with(this)
+        Glide
+                .with(this)
                 .load("")
-                .placeholder(R.drawable.ic_person_placeholder_gray_24dp)
+                .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(this))
-                .centerCrop()
-//                .skipMemoryCache(false)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profilePictureToolbar);
-
     }
 
     @Override

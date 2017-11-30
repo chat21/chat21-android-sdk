@@ -132,11 +132,6 @@ android {
         targetSdkVersion 22
         
          . . .
-         
-
-        // vectors drawable support
-        vectorDrawables.useSupportLibrary = true
-        resConfigs "auto"
         
         // multidex support
         multiDexEnabled true
@@ -155,9 +150,7 @@ android {
     
         // multidex
         compile 'com.android.support:multidex:1.0.1' 
-        
-        compile 'com.android.support:support-vector-drawable:26.+'
-    
+
         // google play service
         compile 'com.google.android.gms:play-services:11.6.0'
    

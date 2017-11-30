@@ -1,4 +1,4 @@
-package  chat21.android.groups.activities;
+package chat21.android.groups.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -36,20 +36,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import  chat21.android.R;
-import  chat21.android.adapters.AbstractRecyclerAdapter;
-import  chat21.android.conversations.models.Conversation;
-import  chat21.android.conversations.utils.ConversationUtils;
+import chat21.android.R;
+import chat21.android.adapters.AbstractRecyclerAdapter;
+import chat21.android.conversations.models.Conversation;
+import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
-import  chat21.android.dao.node.NodeDAO;
-import  chat21.android.dao.node.NodeDAOImpl;
-import  chat21.android.groups.listeners.OnItemClickedListener;
-import  chat21.android.groups.listeners.OnRemoveClickListener;
-import  chat21.android.groups.models.Group;
-import  chat21.android.groups.utils.GroupUtils;
-import  chat21.android.user.models.IChatUser;
-import  chat21.android.utils.StringUtils;
-import  chat21.android.utils.glide.CropCircleTransformation;
+import chat21.android.dao.node.NodeDAO;
+import chat21.android.dao.node.NodeDAOImpl;
+import chat21.android.groups.listeners.OnItemClickedListener;
+import chat21.android.groups.listeners.OnRemoveClickListener;
+import chat21.android.groups.models.Group;
+import chat21.android.groups.utils.GroupUtils;
+import chat21.android.user.models.IChatUser;
+import chat21.android.utils.StringUtils;
+import chat21.android.utils.glide.CropCircleTransformation;
 
 /**
  * Created by stefanodp91 on 16/01/17.
@@ -367,12 +367,11 @@ public class AddMembersActivity extends AppCompatActivity implements
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.mItem = mValues.get(position);
 
-            Glide.with(mContext)
+            Glide
+                    .with(mContext)
                     .load(mValues.get(position).getProfilePictureUrl())
-                    .placeholder(R.drawable.ic_person_circle_placeholder_gray_24dp)
+                    .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(mContext))
-                    .skipMemoryCache(false)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.mImageView);
 
             holder.mFullname.setText(mValues.get(position).getFullName());
@@ -545,13 +544,10 @@ public class AddMembersActivity extends AppCompatActivity implements
 
             String url = contact.getProfilePictureUrl();
 
-            // load image
-            Glide.with(getContext())
+            Glide
+                    .with(getContext())
                     .load(url)
-                    .placeholder(R.drawable.ic_person_circle_placeholder_gray_24dp)
-                    .bitmapTransform(new CropCircleTransformation(getContext()))
-                    .skipMemoryCache(false)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_person_avatar)
                     .into(holder.profilePicture);
         }
 

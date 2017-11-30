@@ -1,5 +1,8 @@
 ﻿# CHANGELOG
 
+## 0.10.1
+- rimosso supporto vectorDrawables (crash placeholder glide pre-lollipop)
+
 ## 0.10
 - cambiato package da it.smart21.android.xxx a chat21.android.xxx
 - corretto errore conversWith

@@ -6,10 +6,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import chat21.android.R;
 import chat21.android.adapters.AbstractRecyclerAdapter;
+import chat21.android.contacts.activites.ContactListActivity;
 import chat21.android.user.models.IChatUser;
 import chat21.android.utils.glide.CropCircleTransformation;
 
@@ -42,12 +42,11 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     // load image
     private void loadContactProfileImage(IChatUser contact) {
 
-        Glide.with(itemView.getContext())
-                .load(contact.getProfilePictureUrl())
-                .placeholder(R.drawable.ic_person_circle_placeholder_gray_24dp)
+        Glide
+                .with(itemView.getContext())
+                .load("")
+                .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
-                .skipMemoryCache(false)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(mProfilePicture);
     }
 

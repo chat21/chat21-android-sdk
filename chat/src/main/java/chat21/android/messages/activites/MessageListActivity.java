@@ -31,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.vanniktech.emoji.EmojiEditText;
@@ -398,13 +397,25 @@ public class MessageListActivity extends AppCompatActivity implements
 
         ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
 
-        Glide.with(this)
+//        RequestOptions options = new RequestOptions()
+//                .centerCrop()
+//                .placeholder(getResources().getDrawable(R.drawable.ic_person_avatar))
+//                .circleCropTransform()
+//                .skipMemoryCache(false)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL);
+//
+//        if (this.getApplicationContext() != null) {
+//            Glide.with(getApplicationContext())
+//                    .load("")
+//                    .apply(options)
+//                    .into(profilePictureToolbar);
+//        }
+
+        Glide
+                .with(this)
                 .load("")
-                .placeholder(R.drawable.ic_person_circle_placeholder_gray_24dp)
+                .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(this))
-                .placeholder(getResources().getDrawable(R.drawable.ic_person_circle_placeholder_gray_24dp))
-                .skipMemoryCache(false)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profilePictureToolbar);
     }
 
@@ -413,13 +424,11 @@ public class MessageListActivity extends AppCompatActivity implements
 
         ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
 
-        Glide.with(this)
+        Glide
+                .with(this)
                 .load("")
-                .placeholder(R.drawable.ic_group_place_holder_gray_24dp)
+                .placeholder(R.drawable.ic_group_avatar)
                 .bitmapTransform(new CropCircleTransformation(this))
-                .centerCrop()
-//                .skipMemoryCache(false)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(profilePictureToolbar);
     }
 
