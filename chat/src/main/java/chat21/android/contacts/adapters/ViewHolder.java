@@ -42,8 +42,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     // load image
     private void loadContactProfileImage(IChatUser contact) {
 
-        Glide
-                .with(itemView.getContext())
+        Glide.with(itemView.getContext())
                 .load("")
                 .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(itemView.getContext()))

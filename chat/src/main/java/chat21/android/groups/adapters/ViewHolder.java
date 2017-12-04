@@ -62,16 +62,14 @@ class ViewHolder extends RecyclerView.ViewHolder {
 
         if (StringUtils.isValid(imageUrl) && !imageUrl.equals("NOIMAGE")) {
             // url is valid
-            Glide
-                    .with(itemView.getContext())
+            Glide.with(itemView.getContext())
                     .load(imageUrl)
                     .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
                     .into(mImage);
         } else {
             // url is not valid (contains NOIMAGE)
-            Glide
-                    .with(itemView.getContext())
+            Glide.with(itemView.getContext())
                     .load("")
                     .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(itemView.getContext()))

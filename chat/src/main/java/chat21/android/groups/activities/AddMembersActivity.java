@@ -345,13 +345,11 @@ public class AddMembersActivity extends AppCompatActivity implements
     public class ContactsListAdapter extends
             RecyclerView.Adapter<ContactsListAdapter.ViewHolder> implements
             Filterable {
-        private Context mContext;
         private List<IChatUser> mValues;
         private CustomFilter mFilter;
         private OnItemClickedListener<IChatUser> onItemClickedListener;
 
         public ContactsListAdapter(Context context, List<IChatUser> items) {
-            mContext = context;
             mValues = items;
             mFilter = new CustomFilter(ContactsListAdapter.this);
         }
@@ -367,11 +365,10 @@ public class AddMembersActivity extends AppCompatActivity implements
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.mItem = mValues.get(position);
 
-            Glide
-                    .with(mContext)
+            Glide.with(holder.itemView.getContext())
                     .load(mValues.get(position).getProfilePictureUrl())
                     .placeholder(R.drawable.ic_person_avatar)
-                    .bitmapTransform(new CropCircleTransformation(mContext))
+                    .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.mImageView);
 
             holder.mFullname.setText(mValues.get(position).getFullName());
@@ -545,7 +542,7 @@ public class AddMembersActivity extends AppCompatActivity implements
             String url = contact.getProfilePictureUrl();
 
             Glide
-                    .with(getContext())
+                    .with(holder.itemView.getContext())
                     .load(url)
                     .placeholder(R.drawable.ic_person_avatar)
                     .into(holder.profilePicture);

@@ -136,8 +136,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
 
     private void setGroupPicture() {
 
-        Glide
-                .with(itemView.getContext())
+        Glide.with(itemView.getContext())
                 .load("")
                 .placeholder(R.drawable.ic_group_avatar)
                 .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
@@ -160,8 +159,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
 
     private void setProfilePicture(String url) {
 
-        Glide
-                .with(itemView.getContext())
+        Glide.with(itemView.getContext())
                 .load("")
                 .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(itemView.getContext()))

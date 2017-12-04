@@ -76,8 +76,7 @@ public class GroupMembersListAdapter extends AbstractRecyclerAdapter<IChatUser,
 
         String url = contact.getProfilePictureUrl();
 
-        Glide
-                .with(getContext())
+        Glide.with(holder.itemView.getContext())
                 .load(url)
                 .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
