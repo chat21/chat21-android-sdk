@@ -3,7 +3,6 @@ package chat21.android.core;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.IdRes;
-import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -170,10 +169,10 @@ public class ChatManager {
     public static void start(Context context, Configuration configuration, IChatUser currentUser) {
         Log.i(TAG, "Chat.start");
 
-        // multidex support
-        // source :
-        // https://forums.xamarin.com/discussion/64234/multi-dex-app-with-a-custom-application-class-that-runs-on-pre-lollipop
-        MultiDex.install(context);
+//        // multidex support
+//        // source :
+//        // https://forums.xamarin.com/discussion/64234/multi-dex-app-with-a-custom-application-class-that-runs-on-pre-lollipop
+//        MultiDex.install(context);
 
         // create a new chat
         ChatManager chat = new ChatManager(); // create the instance of the chat

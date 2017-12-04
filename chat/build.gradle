@@ -8,18 +8,18 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
 
-        versionCode 25
-        versionName "0.10.1"
+        versionCode 26
+        versionName "0.10.2"
 
 //        vectorDrawables.useSupportLibrary = true
 //        resConfigs "auto"
 
-        // Enabling multidex support.
-        multiDexEnabled true
+//        // Enabling multidex support.
+//        multiDexEnabled true
 
-        dexOptions {
-            javaMaxHeapSize "4g"
-        }
+//        dexOptions {
+//            javaMaxHeapSize "4g"
+//        }
     }
 
     buildTypes {
@@ -33,10 +33,10 @@ android {
 
 dependencies {
 
-    // source:
-    // https://developer.android.com/studio/build/multidex.html
-    // https://stackoverflow.com/questions/37312103/unable-to-get-provider-com-google-firebase-provider-firebaseinitprovider
-    compile 'com.android.support:multidex:1.0.1'
+//    // source:
+//    // https://developer.android.com/studio/build/multidex.html
+//    // https://stackoverflow.com/questions/37312103/unable-to-get-provider-com-google-firebase-provider-firebaseinitprovider
+//    compile 'com.android.support:multidex:1.0.1'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -68,15 +68,23 @@ dependencies {
 //    compile 'com.github.angads25:filepicker:1.1.1'
 }
 
-// source:
-// https://stackoverflow.com/questions/43280871/android-getting-manifest-merger-failed-error-after-update-to-new-version-of-grad
+// resolve conflicts
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         def requested = details.requested
+        // android resolution
+        // source : https://stackoverflow.com/questions/43280871/android-getting-manifest-merger-failed-error-after-update-to-new-version-of-grad
         if (requested.group == 'com.android.support') {
             if (!requested.name.startsWith("multidex")) {
-                details.useVersion '25.3.0'
+                details.useVersion '26.1.0'
             }
+        }
+
+        // firebase resolution
+        // source : https://github.com/firebase/FirebaseUI-Android/issues/218
+        if (details.requested.group == 'com.google.firebase' ||
+                details.requested.group == 'com.google.android.gms') {
+            details.useVersion '11.6.0'
         }
     }
 }
