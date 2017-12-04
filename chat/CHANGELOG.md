@@ -1,5 +1,13 @@
 ﻿# CHANGELOG
 
+## 0.10.2
+- rimosso supporto MultiDex
+- fix Glide context
+- fix padding message row_recipient.xml
+- fix padding message row_sender.xml
+- fix toolbar ghost click in MessageListActivity.class
+- fix conflitto multi-dipendenze in /chat/build.gradle
+
 ## 0.10.1
 - rimosso supporto vectorDrawables (crash placeholder glide su pre-lollipop)
 
