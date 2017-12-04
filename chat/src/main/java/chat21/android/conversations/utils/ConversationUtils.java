@@ -345,6 +345,10 @@ public class ConversationUtils {
 
         Conversation conversation = new Conversation();
 
+        // conversationId
+        conversation.setConversationId(dataSnapshot.getKey());
+        Log.d(TAG, "ConversationUtils.decodeConversationSnapshop: conversationId = " + conversation.getConversationId());
+
         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
         // is_new
@@ -456,9 +460,6 @@ public class ConversationUtils {
                 conversation.setConvers_with_fullname(conversation.getRecipientFullName());
             }
         }
-
-        // conversationId
-        conversation.setConversationId(dataSnapshot.getKey());
 
         return conversation;
     }
