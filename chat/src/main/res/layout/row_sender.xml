@@ -94,6 +94,7 @@
                             android:layout_height="wrap_content"
                             android:autoLink="web|email"
                             android:gravity="right"
+                            android:padding="@dimen/chat_padding_small"
                             android:linksClickable="true"
                             android:textColor="@color/background_bubble_text_sender"
                             android:textColorLink="@color/color_clickable_link_sender"
