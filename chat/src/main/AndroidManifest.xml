@@ -17,11 +17,29 @@
             android:name="chat21.android.conversations.activities.ConversationListActivity"
             android:label="@string/string_conversation_list_activity_title" />
 
+        <!--&lt;!&ndash;display the list of all messages into a specific conversation&ndash;&gt;-->
+        <!--<activity-->
+            <!--android:name="chat21.android.messages.activites.MessageListActivity"-->
+            <!--android:parentActivityName=".conversations.activities.ConversationListActivity"-->
+            <!--android:windowSoftInputMode="adjustPan">-->
+
+            <!--&lt;!&ndash;http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification&ndash;&gt;-->
+            <!--&lt;!&ndash;from notification&ndash;&gt;-->
+            <!--&lt;!&ndash;bugfix Issue #39&ndash;&gt;-->
+            <!--<intent-filter>-->
+                <!--<action android:name="OPEN_MESSAGE_LIST_ACTIVITY" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--</intent-filter>-->
+
+            <!--<meta-data-->
+                <!--android:name="android.support.PARENT_ACTIVITY"-->
+                <!--android:value="chat21.android.conversations.activities.ConversationListActivity" />-->
+        <!--</activity>-->
+
         <!--display the list of all messages into a specific conversation-->
         <activity
             android:name="chat21.android.messages.activites.MessageListActivity"
-            android:parentActivityName=".conversations.activities.ConversationListActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:parentActivityName=".conversations.activities.ConversationListActivity">
 
             <!--http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification-->
             <!--from notification-->
