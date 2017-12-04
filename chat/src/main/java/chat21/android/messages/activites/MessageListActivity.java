@@ -143,6 +143,8 @@ public class MessageListActivity extends AppCompatActivity implements
 
         registerViews();
 
+        initToolbar(null);
+
         mMessageDAO = new MessageDAOImpl(this);
 
         // retrieve custom extras, if they exist
@@ -292,14 +294,18 @@ public class MessageListActivity extends AppCompatActivity implements
     private void initToolbar(Conversation conversation) {
         Log.d(TAG, "initToolbar");
 
-        // bugfix Issue #29
-        if (StringUtils.isValid(conversation.getGroup_id()) ||
-                StringUtils.isValid(conversation.getGroup_name())) {
-            // its a group conversation
-            initGroupToolbar(conversation);
-        } else {
-            // its a one to one conversation
-            initOneToOneToolbar(conversation);
+        // setup the toolnbar with conversations data
+        if (conversation != null) {
+
+            // bugfix Issue #29
+            if (StringUtils.isValid(conversation.getGroup_id()) ||
+                    StringUtils.isValid(conversation.getGroup_name())) {
+                // its a group conversation
+                initGroupToolbar(conversation);
+            } else {
+                // its a one to one conversation
+                initOneToOneToolbar(conversation);
+            }
         }
 
         setSupportActionBar(toolbar);
@@ -411,8 +417,7 @@ public class MessageListActivity extends AppCompatActivity implements
 //                    .into(profilePictureToolbar);
 //        }
 
-        Glide
-                .with(this)
+        Glide.with(getApplicationContext())
                 .load("")
                 .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(this))
@@ -424,8 +429,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
         ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
 
-        Glide
-                .with(this)
+        Glide.with(getApplicationContext())
                 .load("")
                 .placeholder(R.drawable.ic_group_avatar)
                 .bitmapTransform(new CropCircleTransformation(this))
