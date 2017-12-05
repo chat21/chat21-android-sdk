@@ -134,8 +134,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setFilePreview(final Message message) {
-        Glide
-                .with(itemView.getContext())
+        Glide.with(itemView.getContext())
                 .load(message.getText())
                 .placeholder(R.drawable.ic_placeholder_file_recipient_24dp)
                 .into(mPreview);

@@ -259,11 +259,10 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private void initGroupImage(String iconURL) {
         Log.d(TAG, "initGroupImage");
 
-        Glide
-                .with(this)
+        Glide.with(getApplicationContext())
                 .load(iconURL)
                 .placeholder(R.drawable.ic_group_banner_gray)
-                .bitmapTransform(new CropCircleTransformation(this))
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(mGroupImage);
     }
 

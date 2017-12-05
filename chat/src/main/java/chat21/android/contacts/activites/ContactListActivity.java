@@ -103,11 +103,10 @@ public class ContactListActivity extends AppCompatActivity
         enableGroups(new OnGroupSettingEnabledCallback() {
             @Override
             public void onGroupSettingEnabledCallback(View boxGroup) {
-                Glide
-                        .with(ContactListActivity.this)
+                Glide.with(getApplicationContext())
                         .load("")
                         .placeholder(R.drawable.ic_group_avatar)
-                        .bitmapTransform(new CropCircleTransformation(ContactListActivity.this))
+                        .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                         .into(mGroupIcon);
 
                 // box click

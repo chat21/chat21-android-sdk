@@ -125,11 +125,10 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
     private void initBoxCreateGroup() {
         Log.d(DEBUG_NODE_GROUPS, "initBoxCreateGroup");
 
-        Glide
-                .with(this)
+        Glide.with(getApplicationContext())
                 .load("")
                 .placeholder(R.drawable.ic_group_avatar)
-                .bitmapTransform(new CropCircleTransformation(this))
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(mGroupIcon);
 
         // box click

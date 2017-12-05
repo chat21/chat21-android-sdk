@@ -541,8 +541,7 @@ public class AddMembersActivity extends AppCompatActivity implements
 
             String url = contact.getProfilePictureUrl();
 
-            Glide
-                    .with(holder.itemView.getContext())
+            Glide.with(holder.itemView.getContext())
                     .load(url)
                     .placeholder(R.drawable.ic_person_avatar)
                     .into(holder.profilePicture);

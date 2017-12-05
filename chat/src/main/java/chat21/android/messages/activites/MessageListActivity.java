@@ -420,7 +420,7 @@ public class MessageListActivity extends AppCompatActivity implements
         Glide.with(getApplicationContext())
                 .load("")
                 .placeholder(R.drawable.ic_person_avatar)
-                .bitmapTransform(new CropCircleTransformation(this))
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(profilePictureToolbar);
     }
 
@@ -432,7 +432,7 @@ public class MessageListActivity extends AppCompatActivity implements
         Glide.with(getApplicationContext())
                 .load("")
                 .placeholder(R.drawable.ic_group_avatar)
-                .bitmapTransform(new CropCircleTransformation(this))
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(profilePictureToolbar);
     }
 

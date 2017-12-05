@@ -79,7 +79,7 @@ public class GroupMembersListAdapter extends AbstractRecyclerAdapter<IChatUser,
         Glide.with(holder.itemView.getContext())
                 .load(url)
                 .placeholder(R.drawable.ic_person_avatar)
-                .bitmapTransform(new CropCircleTransformation(getContext()))
+                .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                 .into(holder.profilePicture);
     }
 
