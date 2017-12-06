@@ -86,7 +86,7 @@ public class ConversationListFragment extends Fragment implements
 
         initViews(rootView);
 
-        observeNode();
+        observeConversations();
 
         // subscribe for user presence changes
         // bugfix Issue #16
@@ -167,8 +167,8 @@ public class ConversationListFragment extends Fragment implements
         }
     }
 
-    private void observeNode() {
-        Log.d(TAG, "observeNode");
+    private void observeConversations() {
+        Log.d(TAG, "observeConversations");
 
         ConversationUtils.observeMessageTree(getActivity(), mNodeDAO.getNodeConversations(), this);
     }

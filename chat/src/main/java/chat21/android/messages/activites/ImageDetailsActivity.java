@@ -15,7 +15,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.messages.models.Message;
+import chat21.android.core.messages.models.Message;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.views.TouchImageView;

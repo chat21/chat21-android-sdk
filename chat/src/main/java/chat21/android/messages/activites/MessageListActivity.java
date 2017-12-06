@@ -64,7 +64,7 @@ import chat21.android.messages.adapters.MessageListAdapter;
 import chat21.android.messages.fargments.BottomSheetAttach;
 import chat21.android.messages.listeners.OnMessageClickListener;
 import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
-import chat21.android.messages.models.Message;
+import chat21.android.core.messages.models.Message;
 import chat21.android.presence.OnPresenceChangesListener;
 import chat21.android.presence.PresenceHandler;
 import chat21.android.storage.OnUploadedCallback;

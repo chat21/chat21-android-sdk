@@ -3,7 +3,7 @@ package chat21.android.messages.listeners;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
-import chat21.android.messages.models.Message;
+import chat21.android.core.messages.models.Message;
 
 /**
  * Created by stefanodp91 on 11/01/17.

@@ -11,7 +11,7 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.Map;
 
 import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
-import chat21.android.messages.models.Message;
+import chat21.android.core.messages.models.Message;
 
 /**
  * Created by stefanodp91 on 08/09/17.

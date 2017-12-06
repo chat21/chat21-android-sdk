@@ -1,4 +1,4 @@
-package chat21.android.messages.models;
+package chat21.android.core.messages.models;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
@@ -31,6 +31,7 @@ public class Message implements Serializable {
     // Required default constructor for Firebase object mapping
     @SuppressWarnings("unused")
     public Message() {
+        this.status = STATUS_SENT;
     }
 
     public String getSender() {
@@ -73,18 +74,14 @@ public class Message implements Serializable {
         this.status = status;
     }
 
-    public java.util.Map<String, String> getTimestamp() {
-        return ServerValue.TIMESTAMP;
+    public Long getTimestamp() {
+        return this.timestamp;
     }
 
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
-    @Exclude
-    public Long getTimestampLong() {
-        return timestamp;
-    }
 
     public String getType() {
         return type;

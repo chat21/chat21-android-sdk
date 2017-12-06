@@ -15,7 +15,7 @@ import chat21.android.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
 import chat21.android.dao.node.NodeDAO;
 import chat21.android.dao.node.NodeDAOImpl;
-import chat21.android.messages.models.Message;
+import chat21.android.core.messages.models.Message;
 
 /**
  * Created by stefanodp91 on 08/09/17.

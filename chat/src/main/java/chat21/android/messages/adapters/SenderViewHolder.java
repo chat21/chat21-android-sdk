@@ -22,7 +22,7 @@ import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.messages.activites.ImageDetailsActivity;
 import chat21.android.messages.listeners.OnMessageClickListener;
-import chat21.android.messages.models.Message;
+import chat21.android.core.messages.models.Message;
 import chat21.android.messages.utils.TextViewLinkHandler;
 import chat21.android.utils.ImageUtils;
 import chat21.android.utils.TimeUtils;

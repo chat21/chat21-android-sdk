@@ -1,23 +1,20 @@
 package chat21.android.core;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.IdRes;
 import android.support.multidex.MultiDex;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
+import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import chat21.android.contacts.listeners.OnContactClickListener;
-import chat21.android.conversations.activities.ConversationListActivity;
-import chat21.android.conversations.fragments.ConversationListFragment;
-import chat21.android.conversations.utils.ConversationUtils;
-import chat21.android.messages.activites.MessageListActivity;
+import chat21.android.core.messages.handlers.ConversationMessagesHandler;
+import chat21.android.core.messages.listeners.SendMessageListener;
+import chat21.android.core.messages.models.Message;
 import chat21.android.messages.listeners.OnAttachDocumentsClickListener;
 import chat21.android.messages.listeners.OnMessageClickListener;
 import chat21.android.user.models.IChatUser;
@@ -85,6 +82,7 @@ public class ChatManager {
     private OnMessageClickListener onMessageClickListener;
     private OnAttachDocumentsClickListener onAttachDocumentsClickListener;
     private OnContactClickListener onContactClickListener;
+
 
     // private constructor
     private ChatManager() {
@@ -158,6 +156,7 @@ public class ChatManager {
     }
 
 
+
     /**
      * It initializes the SDK.
      * It serializes the current user.
@@ -192,38 +191,7 @@ public class ChatManager {
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
     }
 
-    public void showConversationsListFragment(FragmentManager fragmentManager,
-                                              @IdRes int containerId) {
-        Fragment fragment = ConversationListFragment.newInstance();
-        if (fragment != null) {
-            fragmentManager.beginTransaction()
-                    .replace(containerId, fragment)
-                    .commitAllowingStateLoss();
-        }
-    }
 
-    public void showConversationsListActivity() {
-        Intent intent = new Intent(mContext, ConversationListActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(intent);
-    }
-
-    // TODO: 24/11/17 showChatWith(user)
-    // TODO: 24/11/17 add extras here
-    public void showDirectConversationActivity(String contactId) {
-
-        // generate the conversationId
-        String conversationId = ConversationUtils.getConversationId(getLoggedUser().getId(), contactId);
-
-        // launch the chat
-        Intent intent = new Intent(mContext, MessageListActivity.class);
-        intent.putExtra(ChatManager._INTENT_BUNDLE_CONVERSATION_ID, conversationId);
-        intent.putExtra(ChatManager.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
-        // extras to be sent in messages or in the conversation
-//        intent.putExtra(Chat.INTENT_BUNDLE_EXTRAS, (Serializable) mConfiguration.getExtras());
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(intent);
-    }
 
     /**
      * Return the instance of the Chat
@@ -246,6 +214,16 @@ public class ChatManager {
         return mContacts;
     }
 
+
+    public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener){
+
+        ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(recipient_id, this.mContext);
+        messageHandler.sendMessage(Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
+    }
+
+    public void sendtFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener){
+
+    }
 
 
 

@@ -51,7 +51,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
         DatabaseReference node = getDatabase()
                 .getReferenceFromUrl(getContext().getString(R.string.root));
-        node.keepSynced(true); // enable cache
+       // node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeRoot: node == " + node.toString());
 
@@ -64,7 +64,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
         DatabaseReference node = getNodeRoot()
                 .child("apps");
-        node.keepSynced(true);
+        //node.keepSynced(true);
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeApps: node == " + node.toString());
 
@@ -87,7 +87,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
         DatabaseReference node = getNodeApps()
                 .child(tenant);
-        node.keepSynced(true);
+       // node.keepSynced(true);
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeApp: node == " + node.toString());
         return node;
@@ -99,7 +99,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
         DatabaseReference node = getNodeApp()
                 .child("contacts");
-        node.keepSynced(true);
+//        node.keepSynced(true);
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeContacts: node == " + node.toString());
         return node;
@@ -111,7 +111,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
         DatabaseReference node = getNodeApp()
                 .child("groups");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeGroups: node == " + node.toString());
 
@@ -122,9 +122,22 @@ public class NodeDAOImpl extends NodeDAOAbstract {
     public DatabaseReference getNodeMessages() {
         Log.d(TAG, "getNodeMessages");
 
-        DatabaseReference node = getNodeApp()
+        DatabaseReference node = getNodeUsers()
                 .child("messages");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
+
+        Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeMessages: node == " + node.toString());
+
+        return node;
+    }
+
+    @Override
+    public DatabaseReference getNodeMessages(String recipientId) {
+        Log.d(TAG, "getNodeMessages");
+
+        DatabaseReference node = getNodeMessages()
+                .child(recipientId);
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeMessages: node == " + node.toString());
 
@@ -138,7 +151,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
         DatabaseReference node = getNodeApp()
                 .child("presence");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodePresence: node == " + node.toString());
 
@@ -152,7 +165,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
         DatabaseReference node = getNodePresence()
                 .child(userId)
                 .child("connections");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodePresenceConnections: node == " + node.toString() +
                 ", userId == " + userId);
@@ -167,7 +180,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
         DatabaseReference node = getNodePresence()
                 .child(userId)
                 .child("lastOnline");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodePresenceLastOnline: node == " + node.toString() +
                 ", userId == " + userId);
@@ -196,7 +209,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
         DatabaseReference node = getNodeApp()
                 .child("users");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeUsers: node == " + node.toString());
 
@@ -211,12 +224,43 @@ public class NodeDAOImpl extends NodeDAOAbstract {
         DatabaseReference node = getNodeUsers()
                 .child(ChatManager.getInstance().getLoggedUser().getId())
                 .child("conversations");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeConversations: node == " + node.toString());
 
         return node;
     }
+
+
+
+    @Override
+    public DatabaseReference getNodeConversations(String userId) {
+        Log.d(TAG, "getNodeConversations: userId == " + userId);
+
+        DatabaseReference node = getNodeUsers()
+                .child(userId)
+                .child("conversations");
+//        node.keepSynced(true); // enable cache
+
+        Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeConversations: userId == " + userId
+                + ", node == " + node.toString());
+        return node;
+    }
+
+
+//    @Override
+//    public DatabaseReference getNodeConversation(String conversationId) {
+//        Log.d(TAG, "getNodeConversation: conversationId == " + conversationId);
+//
+//        DatabaseReference node = getNodeMessages()
+//                .child(conversationId);
+////        node.keepSynced(true); // enable cache
+//
+//        Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeConversation: conversationId == " + conversationId
+//                + ", node == " + node.toString());
+//
+//        return node;
+//    }
 
     // TODO: 15/09/17
     // attualmente è una sola instance nota come instanceId
@@ -228,38 +272,9 @@ public class NodeDAOImpl extends NodeDAOAbstract {
         DatabaseReference node = getNodeUsers()
                 .child(ChatManager.getInstance().getLoggedUser().getId())
                 .child("instanceId");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeInstances: node == " + node.toString());
-
-        return node;
-    }
-
-    @Override
-    public DatabaseReference getNodeConversations(String userId) {
-        Log.d(TAG, "getNodeConversations: userId == " + userId);
-
-        DatabaseReference node = getNodeUsers()
-                .child(userId)
-                .child("conversations");
-        node.keepSynced(true); // enable cache
-
-        Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeConversations: userId == " + userId
-                + ", node == " + node.toString());
-        return node;
-    }
-
-
-    @Override
-    public DatabaseReference getNodeConversation(String conversationId) {
-        Log.d(TAG, "getNodeConversation: conversationId == " + conversationId);
-
-        DatabaseReference node = getNodeMessages()
-                .child(conversationId);
-        node.keepSynced(true); // enable cache
-
-        Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getNodeConversation: conversationId == " + conversationId
-                + ", node == " + node.toString());
 
         return node;
     }
@@ -270,7 +285,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
 
         DatabaseReference node = getNodeGroups()
                 .child(groupId);
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getGroupById: groupId == " + groupId
                 + ", node == " + node.toString());
@@ -285,7 +300,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
         DatabaseReference node = getNodeGroups()
                 .child(groupId)
                 .child("members");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getGroupMembersNode: groupId == " + groupId
                 + ", node == " + node.toString());
@@ -300,7 +315,7 @@ public class NodeDAOImpl extends NodeDAOAbstract {
         DatabaseReference node = getNodeGroups()
                 .child(groupId)
                 .child("owner");
-        node.keepSynced(true); // enable cache
+//        node.keepSynced(true); // enable cache
 
         Log.d(DEBUG_NODE_REF, "NodeDAOImpl.getGroupAdmin: groupId == " + groupId
                 + ", node == " + node.toString());

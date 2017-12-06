@@ -65,6 +65,8 @@ public interface NodeDAO {
      */
     DatabaseReference getNodeMessages();
 
+    DatabaseReference getNodeMessages(String recipientId);
+
     /**
      * Returns the user presence with online/offline status and lastOnline time
      * for the app specified in Chat.Configuration.
@@ -113,16 +115,6 @@ public interface NodeDAO {
      */
     DatabaseReference getNodeConversations();
 
-    /**
-     * Returns the list of instances of the current logged user
-     * for the app specified in Chat.Configuration.
-     *
-     * @return the list of instances
-     */
-    // TODO: 15/09/17
-    // attualmente è una sola instance nota come instanceId
-    // in seguito diventerà "instances" con n istanze
-    DatabaseReference getNodeInstances();
 
 
     /**
@@ -133,13 +125,25 @@ public interface NodeDAO {
     DatabaseReference getNodeConversations(String userId);
 
 
+//    /**
+//     * Returns the conversation with the selected conversationId
+//     *
+//     * @param conversationId the conversationId
+//     * @return the conversation
+//     */
+//    DatabaseReference getNodeConversation(String conversationId);
+
+
     /**
-     * Returns the conversation with the selected conversationId
+     * Returns the list of instances of the current logged user
+     * for the app specified in Chat.Configuration.
      *
-     * @param conversationId the conversationId
-     * @return the conversation
+     * @return the list of instances
      */
-    DatabaseReference getNodeConversation(String conversationId);
+    // TODO: 15/09/17
+    // attualmente è una sola instance nota come instanceId
+    // in seguito diventerà "instances" con n istanze
+    DatabaseReference getNodeInstances();
 
 
     /**
