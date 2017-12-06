@@ -10,19 +10,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import chat21.android.R;
 import chat21.android.adapters.AbstractRecyclerAdapter;
 import chat21.android.groups.models.Group;
 import chat21.android.groups.utils.GroupUtils;
 import chat21.android.utils.StringUtils;
-import chat21.android.utils.TimeUtils;
 import chat21.android.utils.glide.CropCircleTransformation;
 
 class ViewHolder extends RecyclerView.ViewHolder {
     private final TextView mName;
-//    private final TextView mCreatedOn;
+    //    private final TextView mCreatedOn;
     private final ImageView mImage;
     private final TextView mMembers;
 
@@ -61,23 +59,20 @@ class ViewHolder extends RecyclerView.ViewHolder {
 //    }
 
     private void setImage(String imageUrl) {
+
         if (StringUtils.isValid(imageUrl) && !imageUrl.equals("NOIMAGE")) {
             // url is valid
             Glide.with(itemView.getContext())
                     .load(imageUrl)
-                    .placeholder(R.drawable.ic_group_place_holder_gray_24dp)
+                    .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
-                    .skipMemoryCache(false)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(mImage);
         } else {
             // url is not valid (contains NOIMAGE)
             Glide.with(itemView.getContext())
                     .load("")
-                    .placeholder(R.drawable.ic_group_place_holder_gray_24dp)
+                    .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
-                    .skipMemoryCache(false)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(mImage);
         }
     }

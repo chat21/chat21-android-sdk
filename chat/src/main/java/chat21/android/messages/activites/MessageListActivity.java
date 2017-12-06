@@ -143,15 +143,15 @@ public class MessageListActivity extends AppCompatActivity implements
 
         registerViews();
 
+        initToolbar(null);
+
         mMessageDAO = new MessageDAOImpl(this);
 
         // retrieve custom extras, if they exist
         extras = getExtras();
 
         // retrieve the conversationId
-        conversationId =
-
-                getConversationId();
+        conversationId = getConversationId();
 
         // create a conversation object
         if (isFromBackgroundNotification) {
@@ -175,7 +175,6 @@ public class MessageListActivity extends AppCompatActivity implements
         Log.d(TAG, "getConversationId");
 
         String conversationId;
-
 
         if (getIntent().getSerializableExtra(ChatManager._INTENT_BUNDLE_CONVERSATION_ID) != null) {
             // retrieve conversationId
@@ -295,14 +294,18 @@ public class MessageListActivity extends AppCompatActivity implements
     private void initToolbar(Conversation conversation) {
         Log.d(TAG, "initToolbar");
 
-        // bugfix Issue #29
-        if (StringUtils.isValid(conversation.getGroup_id()) ||
-                StringUtils.isValid(conversation.getGroup_name())) {
-            // its a group conversation
-            initGroupToolbar(conversation);
-        } else {
-            // its a one to one conversation
-            initOneToOneToolbar(conversation);
+        // setup the toolnbar with conversations data
+        if (conversation != null) {
+
+            // bugfix Issue #29
+            if (StringUtils.isValid(conversation.getGroup_id()) ||
+                    StringUtils.isValid(conversation.getGroup_name())) {
+                // its a group conversation
+                initGroupToolbar(conversation);
+            } else {
+                // its a one to one conversation
+                initOneToOneToolbar(conversation);
+            }
         }
 
         setSupportActionBar(toolbar);
@@ -400,13 +403,24 @@ public class MessageListActivity extends AppCompatActivity implements
 
         ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
 
-        Glide.with(this)
-                .load("")
-                .placeholder(R.drawable.ic_person_circle_placeholder_gray_24dp)
-                .bitmapTransform(new CropCircleTransformation(this))
-                .centerCrop()
+//        RequestOptions options = new RequestOptions()
+//                .centerCrop()
+//                .placeholder(getResources().getDrawable(R.drawable.ic_person_avatar))
+//                .circleCropTransform()
 //                .skipMemoryCache(false)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL);
+//
+//        if (this.getApplicationContext() != null) {
+//            Glide.with(getApplicationContext())
+//                    .load("")
+//                    .apply(options)
+//                    .into(profilePictureToolbar);
+//        }
+
+        Glide.with(getApplicationContext())
+                .load("")
+                .placeholder(R.drawable.ic_person_avatar)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(profilePictureToolbar);
     }
 
@@ -415,13 +429,10 @@ public class MessageListActivity extends AppCompatActivity implements
 
         ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
 
-        Glide.with(this)
+        Glide.with(getApplicationContext())
                 .load("")
-                .placeholder(R.drawable.ic_group_place_holder_gray_24dp)
-                .bitmapTransform(new CropCircleTransformation(this))
-                .centerCrop()
-//                .skipMemoryCache(false)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_group_avatar)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(profilePictureToolbar);
     }
 
@@ -521,6 +532,7 @@ public class MessageListActivity extends AppCompatActivity implements
                 showAttachBottomSheet(conversation);
             }
         });
+
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -539,6 +551,7 @@ public class MessageListActivity extends AppCompatActivity implements
                     return;
 
                 if (StringUtils.isValid((conversation.getGroup_id()))) {
+
                     mMessageDAO.sendGroupMessage(text, Message.TYPE_TEXT,
                             conversation);
                 } else {
@@ -643,8 +656,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
     @Override
     public void onTreeChildChanged(DatabaseReference node, DataSnapshot
-            dataSnapshot,
-                                   Message message) {
+            dataSnapshot, Message message) {
         Log.d(TAG, "onTreeChildChanged");
 
         if (StringUtils.isValid(message.getRecipientGroupId())) {

@@ -18,22 +18,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import  chat21.android.R;
-import  chat21.android.connectivity.AbstractNetworkReceiver;
+import chat21.android.R;
+import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
-import  chat21.android.groups.adapters.GroupMembersListAdapter;
-import  chat21.android.groups.fragments.BottomSheetGroupAdminPanelMemberFragment;
-import  chat21.android.groups.models.Group;
-import  chat21.android.groups.utils.GroupUtils;
-import  chat21.android.user.models.ChatUser;
-import  chat21.android.user.models.IChatUser;
-import  chat21.android.utils.TimeUtils;
+import chat21.android.groups.adapters.GroupMembersListAdapter;
+import chat21.android.groups.fragments.BottomSheetGroupAdminPanelMemberFragment;
+import chat21.android.groups.models.Group;
+import chat21.android.groups.utils.GroupUtils;
+import chat21.android.user.models.ChatUser;
+import chat21.android.user.models.IChatUser;
+import chat21.android.utils.TimeUtils;
+import chat21.android.utils.glide.CropCircleTransformation;
 
 /**
  * Created by stefanodp91 on 29/06/17.
@@ -259,18 +259,11 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private void initGroupImage(String iconURL) {
         Log.d(TAG, "initGroupImage");
 
-        try {
-            Glide.with(this)
-                    .load(iconURL)
-                    .placeholder(R.drawable.ic_group_banner_gray)
-                    .centerCrop()
-                    .skipMemoryCache(false)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(mGroupImage);
-        } catch (Exception e) {
-            Log.e(TAG, "cannot load group image with Glide. Group image will be used as image drawable.");
-            mGroupImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_group_banner_gray));
-        }
+        Glide.with(getApplicationContext())
+                .load(iconURL)
+                .placeholder(R.drawable.ic_group_banner_gray)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                .into(mGroupImage);
     }
 
     private void updateGroupMemberList(List<IChatUser> members) {

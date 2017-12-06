@@ -52,6 +52,8 @@ public class ImageUtils {
                 return writeToTempImageAndGetPathUri(context, bmp);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             } finally {
                 try {
                     is.close();

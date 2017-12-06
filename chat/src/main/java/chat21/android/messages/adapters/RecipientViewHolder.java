@@ -1,7 +1,9 @@
 package chat21.android.messages.adapters;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.style.ClickableSpan;
@@ -93,6 +95,7 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
 
         // Resolve Issue #52
         mProgressBar.setVisibility(View.VISIBLE);
+
         Glide.with(itemView.getContext())
                 .load(message.getText())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -120,6 +123,7 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
                 .into(mPreview);
 
 
+
         mPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,11 +133,10 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setFilePreview(final Message message) {
+
         Glide.with(itemView.getContext())
-                .load("")
-                .placeholder(itemView.getContext()
-                        .getResources()
-                        .getDrawable(R.drawable.ic_placeholder_file_recipient_24dp))
+                .load(message.getText())
+                .placeholder(R.drawable.ic_placeholder_file_recipient_24dp)
                 .into(mPreview);
 
 

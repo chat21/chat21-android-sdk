@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -32,6 +31,7 @@ import chat21.android.groups.activities.CreateGroupActivity;
 import chat21.android.messages.activites.MessageListActivity;
 import chat21.android.user.models.IChatUser;
 import chat21.android.utils.ChatUtils;
+import chat21.android.utils.glide.CropCircleTransformation;
 
 
 /**
@@ -103,14 +103,11 @@ public class ContactListActivity extends AppCompatActivity
         enableGroups(new OnGroupSettingEnabledCallback() {
             @Override
             public void onGroupSettingEnabledCallback(View boxGroup) {
-                // group image
-                Glide.with(ContactListActivity.this)
+                Glide.with(getApplicationContext())
                         .load("")
-                        .placeholder(R.drawable.ic_group_place_holder_gray_24dp)
-                        .skipMemoryCache(false)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.ic_group_avatar)
+                        .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                         .into(mGroupIcon);
-
 
                 // box click
                 boxGroup.setOnClickListener(new View.OnClickListener() {

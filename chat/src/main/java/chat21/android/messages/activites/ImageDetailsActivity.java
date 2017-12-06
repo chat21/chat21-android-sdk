@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+
 import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.messages.models.Message;
@@ -118,8 +119,6 @@ public class ImageDetailsActivity extends AppCompatActivity {
         if (getMessage() != null) {
             String uri = getMessage().getText();
             if (StringUtils.isValid(uri)) {
-                // load image inside the imageview
-//                ImageUtils.loadImage(getApplicationContext(), uri, mImage, false);
 
                 // https://github.com/MikeOrtiz/TouchImageView/issues/135
                 Glide.with(this)

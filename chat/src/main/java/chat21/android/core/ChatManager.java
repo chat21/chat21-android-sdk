@@ -1,7 +1,6 @@
 package chat21.android.core;
 
 import android.content.Context;
-import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.vanniktech.emoji.EmojiManager;
@@ -169,10 +168,10 @@ public class ChatManager {
     public static void start(Context context, Configuration configuration, IChatUser currentUser) {
         Log.i(TAG, "Chat.start");
 
-        // multidex support
-        // source :
-        // https://forums.xamarin.com/discussion/64234/multi-dex-app-with-a-custom-application-class-that-runs-on-pre-lollipop
-        MultiDex.install(context);
+//        // multidex support
+//        // source :
+//        // https://forums.xamarin.com/discussion/64234/multi-dex-app-with-a-custom-application-class-that-runs-on-pre-lollipop
+//        MultiDex.install(context);
 
         // create a new chat
         ChatManager chat = new ChatManager(); // create the instance of the chat

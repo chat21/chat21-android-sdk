@@ -12,10 +12,13 @@ import java.util.List;
 /**
  * Custom abstrac adapter.
  * It requires just to create the viewholder and the methods "onBindViewHolder()" and "onCreateViewHolder".
- * It has been designed to support only the recyclerview pattern.
- * TESTED SUCCESSFULLY with RecyclerView v7:26.0.2
+ * <p/>
+ * It works fine from RecyclerView v7:23.0.2 to v7:27.0.2
  * <p/>
  * Created by stefanodp91 on 26/08/2015.
+ *
+ * @param <T> Object class
+ * @param <U> ViewHolder class
  */
 public abstract class AbstractRecyclerAdapter<T extends Object, U extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<U> {

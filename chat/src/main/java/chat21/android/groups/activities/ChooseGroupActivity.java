@@ -1,4 +1,4 @@
-package  chat21.android.groups.activities;
+package chat21.android.groups.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,23 +19,23 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import  chat21.android.R;
-import  chat21.android.adapters.AbstractRecyclerAdapter;
-import  chat21.android.conversations.models.Conversation;
+import chat21.android.R;
+import chat21.android.adapters.AbstractRecyclerAdapter;
+import chat21.android.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
-import  chat21.android.dao.groups.GroupsDAO;
-import  chat21.android.dao.groups.GroupsDAOImpl;
-import  chat21.android.dao.groups.OnGroupsRetrievedCallback;
-import  chat21.android.groups.adapters.MyGroupsListAdapter;
-import  chat21.android.groups.models.Group;
-import  chat21.android.utils.StringUtils;
+import chat21.android.dao.groups.GroupsDAO;
+import chat21.android.dao.groups.GroupsDAOImpl;
+import chat21.android.dao.groups.OnGroupsRetrievedCallback;
+import chat21.android.groups.adapters.MyGroupsListAdapter;
+import chat21.android.groups.models.Group;
+import chat21.android.utils.StringUtils;
+import chat21.android.utils.glide.CropCircleTransformation;
 
-import static  chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
+import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
 
 /**
  * Created by stefanodp91 on 26/09/17.
@@ -124,12 +125,10 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
     private void initBoxCreateGroup() {
         Log.d(DEBUG_NODE_GROUPS, "initBoxCreateGroup");
 
-        // group image
-        Glide.with(ChooseGroupActivity.this)
+        Glide.with(getApplicationContext())
                 .load("")
-                .placeholder(R.drawable.ic_group_place_holder_gray_24dp)
-                .skipMemoryCache(false)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_group_avatar)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(mGroupIcon);
 
         // box click

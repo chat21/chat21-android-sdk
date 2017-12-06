@@ -2,6 +2,7 @@ package chat21.android.messages.adapters;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.style.ClickableSpan;
@@ -26,6 +27,7 @@ import chat21.android.core.messages.models.Message;
 import chat21.android.messages.utils.TextViewLinkHandler;
 import chat21.android.utils.ImageUtils;
 import chat21.android.utils.TimeUtils;
+import chat21.android.utils.glide.CropCircleTransformation;
 
 /**
  * Created by stefano on 25/11/2016.
@@ -133,10 +135,8 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
 
     private void setFilePreview(final Message message) {
         Glide.with(itemView.getContext())
-                .load("")
-                .placeholder(itemView.getContext()
-                        .getResources()
-                        .getDrawable(R.drawable.ic_placeholder_file_recipient_24dp))
+                .load(message.getText())
+                .placeholder(R.drawable.ic_placeholder_file_recipient_24dp)
                 .into(mPreview);
 
 

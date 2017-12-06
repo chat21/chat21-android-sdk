@@ -104,6 +104,7 @@
                             android:layout_height="wrap_content"
                             android:autoLink="web|email"
                             android:linksClickable="true"
+                            android:padding="@dimen/chat_padding_small"
                             android:textColor="@color/background_bubble_text_recipient"
                             android:textColorLink="@color/color_clickable_link_recipient"
                             app:emojiSize="23dip" />

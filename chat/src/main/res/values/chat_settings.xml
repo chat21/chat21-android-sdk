@@ -22,7 +22,7 @@
     <!--valori ammessi:-->
     <!--YES per abilitare la creazione dei gruppi -->
     <!--NO per disabilitare la creazione dei gruppi-->
-    <string name="enable_groups" translatable="false">yes</string>
+    <string name="enable_groups" translatable="false">no</string>
 
     <!--abilita o disabilita il pulsante per il caricamento dell'icona del gruppo-->
     <!--valori ammessi:-->
