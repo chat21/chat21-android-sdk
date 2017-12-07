@@ -8,7 +8,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import chat21.android.conversations.models.Conversation;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
 import chat21.android.dao.node.NodeDAO;
 import chat21.android.dao.node.NodeDAOImpl;

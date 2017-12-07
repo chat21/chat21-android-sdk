@@ -7,15 +7,16 @@ import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import chat21.android.contacts.listeners.OnContactClickListener;
+import chat21.android.core.messages.dao.ConversationMessagesDAO;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
+import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
-import chat21.android.messages.listeners.OnAttachDocumentsClickListener;
-import chat21.android.messages.listeners.OnMessageClickListener;
 import chat21.android.user.models.IChatUser;
 import chat21.android.utils.IOUtils;
 
@@ -33,41 +34,8 @@ public class ChatManager {
     private static final String _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER =
             "_SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER";
 
-    // contact
-    public static final String INTENT_BUNDLE_CONTACT_ID = "username"; // FIXME: 17/10/16 NOT EDIT
-    public static final String _INTENT_BUNDLE_CONTACT = "_INTENT_BUNDLE_CONTACT";
-    public static final String INTENT_BUNDLE_CONTACT_DISPLAY_NAME = "INTENT_BUNDLE_CONTACT_DISPLAY_NAME";
 
-    // target class to be called in listeners (such as OnProfileClickListener)
-    public static final String INTENT_BUNDLE_CALLING_ACTIVITY = "INTENT_BUNDLE_CALLING_ACTIVITY";
 
-    // conversation object
-    public static final String _INTENT_BUNDLE_CONVERSATION_ID = "_INTENT_BUNDLE_CONVERSATION_ID";
-
-    public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
-
-    // message object
-    public static final String _INTENT_EXTRAS_MESSAGE = "_INTENT_EXTRAS_MESSAGE";
-
-    // extras
-    public static final String INTENT_BUNDLE_EXTRAS = "INTENT_BUNDLE_EXTRAS";
-
-    // group conversation object
-    public static final String _INTENT_BUNDLE_GROUP = "_INTENT_BUNDLE_GROUP";
-    public static final String _INTENT_EXTRAS_GROUP_ID = "_INTENT_EXTRAS_GROUP_ID";
-
-    public static final String _INTENT_EXTRAS_PARENT_ACTIVITY = "_INTENT_EXTRAS_PARENT_ACTIVITY";
-
-    // request constants
-    public static final int _REQUEST_CODE_CREATE_GROUP = 100;
-    public static final int _REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY = 200;
-
-    /**** conversation status ****/
-    public static final int CONVERSATION_STATUS_FAILED = 0; // non andato a buon fine
-    //creo una conversazione (NON chiaro) - usato solo per conversazioni di gruppo
-    public static final int CONVERSATION_STATUS_JUST_CREATED = 1;
-    // la conversazione contiene l'ultimo messaggio inviato
-    public static final int CONVERSATION_STATUS_LAST_MESSAGE = 2;
 
     private static ChatManager mInstance;
 
@@ -78,13 +46,13 @@ public class ChatManager {
 
     private List<IChatUser> mContacts;
 
-    private OnMessageClickListener onMessageClickListener;
-    private OnAttachDocumentsClickListener onAttachDocumentsClickListener;
-    private OnContactClickListener onContactClickListener;
+    Map<String, List<ConversationMessagesListener>> conversationMessagesListeners;
+
 
 
     // private constructor
     private ChatManager() {
+        this.conversationMessagesListeners = new HashMap<>();
     }
 
     // bugfix Issue #16
@@ -120,35 +88,6 @@ public class ChatManager {
         return tenant;
     }
 
-    public OnMessageClickListener getOnMessageClickListener() {
-        Log.d(TAG, "getOnMessageClickListener");
-        return onMessageClickListener;
-    }
-
-    public void setOnMessageClickListener(OnMessageClickListener onMessageClickListener) {
-        Log.d(TAG, "setOnMessageClickListener");
-        this.onMessageClickListener = onMessageClickListener;
-    }
-
-    public OnAttachDocumentsClickListener getOnAttachDocumentsClickListener() {
-        Log.d(TAG, "getOnAttachDocumentsClickListener");
-        return onAttachDocumentsClickListener;
-    }
-
-    public void setOnAttachDocumentsClickListener(OnAttachDocumentsClickListener onAttachDocumentsClickListener) {
-        Log.d(TAG, "setOnAttachDocumentsClickListener");
-        this.onAttachDocumentsClickListener = onAttachDocumentsClickListener;
-    }
-
-    public OnContactClickListener getOnContactClickListener() {
-        Log.d(TAG, "getOnContactClickListener");
-        return onContactClickListener;
-    }
-
-    public void setOnContactClickListener(OnContactClickListener onContactClickListener) {
-        Log.d(TAG, "setOnContactClickListener");
-        this.onContactClickListener = onContactClickListener;
-    }
 
     private void setContext(Context context) {
         mContext = context;
@@ -213,16 +152,26 @@ public class ChatManager {
         return mContacts;
     }
 
+    public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
+        List conversationMessagesListenersArray  = conversationMessagesListeners.get(recipientId);
+        conversationMessagesListenersArray.add(conversationMessagesListener);
+
+        ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
+                recipientId, this.getTenant(), this.getLoggedUser().getId(),conversationMessagesListenersArray);
+    }
 
     public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener){
 
-        ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(recipient_id, this.mContext);
-        messageHandler.sendMessage(Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
+        ConversationMessagesDAO conversationMessagesDAO = new ConversationMessagesDAO(recipient_id, this.getTenant(), this.getLoggedUser().getId());
+        conversationMessagesDAO.sendMessage(Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 
     public void sendtFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener){
 
     }
+
+
+
 
 
 

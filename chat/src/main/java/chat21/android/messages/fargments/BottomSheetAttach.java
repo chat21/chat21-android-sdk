@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import chat21.android.R;
-import chat21.android.conversations.models.Conversation;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
 import chat21.android.messages.listeners.OnAttachDocumentsClickListener;
 

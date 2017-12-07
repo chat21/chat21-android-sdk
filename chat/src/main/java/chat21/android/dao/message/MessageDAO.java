@@ -2,7 +2,7 @@ package  chat21.android.dao.message;
 
 import java.util.Map;
 
-import  chat21.android.conversations.models.Conversation;
+import chat21.android.core.conversations.models.Conversation;
 import  chat21.android.messages.listeners.OnMessageTreeUpdateListener;
 
 /**

@@ -5,7 +5,7 @@ import com.google.firebase.database.DatabaseReference;
 
 import chat21.android.R;
 import chat21.android.adapters.AbstractRecyclerAdapter;
-import chat21.android.conversations.models.Conversation;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
 import chat21.android.utils.StringUtils;

@@ -12,7 +12,7 @@ import com.vanniktech.emoji.EmojiTextView;
 
 import chat21.android.R;
 import chat21.android.adapters.AbstractRecyclerAdapter;
-import chat21.android.conversations.models.Conversation;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
 import chat21.android.user.models.IChatUser;
 import chat21.android.utils.StringUtils;

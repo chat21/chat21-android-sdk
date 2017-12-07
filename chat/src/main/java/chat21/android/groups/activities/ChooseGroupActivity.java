@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -25,7 +24,7 @@ import java.util.List;
 
 import chat21.android.R;
 import chat21.android.adapters.AbstractRecyclerAdapter;
-import chat21.android.conversations.models.Conversation;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
 import chat21.android.dao.groups.GroupsDAO;
 import chat21.android.dao.groups.GroupsDAOImpl;

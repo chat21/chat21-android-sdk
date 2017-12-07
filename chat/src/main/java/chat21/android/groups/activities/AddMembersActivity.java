@@ -26,7 +26,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,7 +37,7 @@ import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.adapters.AbstractRecyclerAdapter;
-import chat21.android.conversations.models.Conversation;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
 import chat21.android.dao.node.NodeDAO;

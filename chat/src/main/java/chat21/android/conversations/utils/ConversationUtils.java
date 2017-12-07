@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import chat21.android.conversations.listeners.OnConversationRetrievedCallback;
 import chat21.android.conversations.listeners.OnConversationTreeChangeListener;
 import chat21.android.conversations.listeners.OnUnreadConversationCountListener;
-import chat21.android.conversations.models.Conversation;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
 import chat21.android.dao.node.NodeDAO;
 import chat21.android.dao.node.NodeDAOImpl;

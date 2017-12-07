@@ -1,4 +1,4 @@
-package  chat21.android.conversations.models;
+package chat21.android.core.conversations.models;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
@@ -10,6 +10,15 @@ import java.util.Map;
  * Created by stefano on 06/10/2015.
  */
 public class Conversation implements Serializable {
+
+    /**** conversation status ****/
+    public static final int CONVERSATION_STATUS_FAILED = 0; // non andato a buon fine
+    //creo una conversazione (NON chiaro) - usato solo per conversazioni di gruppo
+    public static final int CONVERSATION_STATUS_JUST_CREATED = 1;
+    // la conversazione contiene l'ultimo messaggio inviato
+    public static final int CONVERSATION_STATUS_LAST_MESSAGE = 2;
+
+
     @Exclude
     private String conversationId;
     @Exclude
