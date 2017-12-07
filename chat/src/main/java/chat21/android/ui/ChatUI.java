@@ -7,23 +7,55 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
-import chat21.android.contacts.listeners.OnContactClickListener;
-import chat21.android.conversations.activities.ConversationListActivity;
-import chat21.android.conversations.fragments.ConversationListFragment;
+import java.io.Serializable;
+
 import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
 import chat21.android.messages.activites.MessageListActivity;
 import chat21.android.messages.listeners.OnAttachDocumentsClickListener;
 import chat21.android.messages.listeners.OnMessageClickListener;
-import chat21.android.user.models.IChatUser;
+import chat21.android.ui.contacts.listeners.OnContactClickListener;
+import chat21.android.ui.conversations.activities.ConversationListActivity;
+import chat21.android.ui.conversations.fragments.ConversationListFragment;
+import chat21.android.core.users.models.IChatUser;
 
 /**
  * Created by andrealeo on 04/12/17.
  */
 
-public class ChatUI {
+public class ChatUI implements Serializable {
 
     private static final String TAG = ChatUI.class.getName();
+
+
+    // singleton
+    // source : https://android.jlelse.eu/how-to-make-the-perfect-singleton-de6b951dfdb0
+    private static volatile ChatUI instance;
+
+    //private constructor.
+    private ChatUI() {
+
+        // Prevent form the reflection api.
+        if (instance != null) {
+            throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
+        }
+    }
+
+    public static ChatUI getInstance() {
+        if (instance == null) { //if there is no instance available... create new one
+            synchronized (ChatUI.class) {
+                if (instance == null) instance = new ChatUI();
+            }
+        }
+
+        return instance;
+    }
+
+    // Make singleton from serialize and deserialize operation.
+    protected ChatUI readResolve() {
+        return getInstance();
+    }
+    // end singleton
 
 
     private Context mContext;
@@ -59,11 +91,9 @@ public class ChatUI {
     public static final String _INTENT_EXTRAS_PARENT_ACTIVITY = "_INTENT_EXTRAS_PARENT_ACTIVITY";
 
 
-
     // request constants
     public static final int _REQUEST_CODE_CREATE_GROUP = 100;
     public static final int _REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY = 200;
-
 
 
     public OnMessageClickListener getOnMessageClickListener() {
