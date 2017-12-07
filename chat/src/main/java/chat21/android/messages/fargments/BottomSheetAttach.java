@@ -15,6 +15,7 @@ import chat21.android.R;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
 import chat21.android.messages.listeners.OnAttachDocumentsClickListener;
+import chat21.android.ui.ChatUI;
 
 import static chat21.android.messages.activites.MessageListActivity._INTENT_ACTION_GET_PICTURE;
 
@@ -76,7 +77,7 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
 
     private void initViews() {
         // if the document click listener is null hides the document button view
-        if (ChatManager.getInstance().getOnAttachDocumentsClickListener() == null) {
+        if (ChatUI.getInstance().getOnAttachDocumentsClickListener() == null) {
             mAttachDocumentsView.setVisibility(View.GONE);
         }
     }
@@ -113,7 +114,7 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
         // call the click listener defined in Chat.Configuration
         OnAttachDocumentsClickListener onAttachDocumentsClickListener =
 
-                ChatManager.getInstance().getOnAttachDocumentsClickListener();
+                ChatUI.getInstance().getOnAttachDocumentsClickListener();
         if (onAttachDocumentsClickListener != null) {
             onAttachDocumentsClickListener.onAttachDocumentsClicked(mConversation);
         }

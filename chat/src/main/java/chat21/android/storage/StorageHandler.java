@@ -26,9 +26,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import chat21.android.dao.node.NodeDAOImpl;
+import chat21.android.core.ChatManager;
+import chat21.android.dao.node.NodeDAO;
 import chat21.android.utils.IOUtils;
-import chat21.android.utils.ImageCompressor;
+import chat21.android.utils.image.ImageCompressor;
 
 /**
  * Created by stefanodp91 on 02/08/17.
@@ -71,8 +72,8 @@ public class StorageHandler {
     private static void performUpload(Context context, Uri file, final String type,
                                       final OnUploadedCallback callback) {
         // public folder
-        StorageReference storageRef = new NodeDAOImpl(context)
-                .getPublicStorageFolder();
+        StorageReference storageRef = new NodeDAO(ChatManager.getInstance().getTenant())
+                .getPublicStorageFolder(context);
 
         // random uid.
         // this is used to generate an unique folder in which

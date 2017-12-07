@@ -50,41 +50,43 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.R;
-import chat21.android.conversations.listeners.OnConversationRetrievedCallback;
-import chat21.android.core.conversations.models.Conversation;
 import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
+import chat21.android.core.conversations.listeners.OnConversationRetrievedCallback;
+import chat21.android.core.conversations.models.Conversation;
+import chat21.android.core.groups.models.Group;
+import chat21.android.core.messages.models.Message;
 import chat21.android.dao.message.MessageDAO;
 import chat21.android.dao.message.MessageDAOImpl;
 import chat21.android.dao.message.OnDetachObserveMessageTree;
-import chat21.android.groups.activities.GroupAdminPanelActivity;
-import chat21.android.groups.models.Group;
 import chat21.android.groups.utils.GroupUtils;
 import chat21.android.messages.adapters.MessageListAdapter;
 import chat21.android.messages.fargments.BottomSheetAttach;
 import chat21.android.messages.listeners.OnMessageClickListener;
 import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
-import chat21.android.core.messages.models.Message;
-import chat21.android.presence.OnPresenceChangesListener;
-import chat21.android.presence.PresenceHandler;
+import chat21.android.core.presence.listeners.OnUserPresenceChangesListener;
+import chat21.android.core.presence.PresenceManger;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
+import chat21.android.ui.ChatUI;
+import chat21.android.ui.groups.activities.GroupAdminPanelActivity;
 import chat21.android.utils.ChatUtils;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
-import chat21.android.utils.glide.CropCircleTransformation;
+import chat21.android.utils.image.CropCircleTransformation;
 import chat21.android.utils.listeners.OnProfilePictureClickListener;
+
+import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
 /**
  * Created by stefano on 31/08/2015.
  */
 public class MessageListActivity extends AppCompatActivity implements
         OnMessageTreeUpdateListener,
-        OnPresenceChangesListener,
+        OnUserPresenceChangesListener,
         OnConversationRetrievedCallback {
     private static final String TAG = MessageListActivity.class.getName();
     private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
-    private static final String MY_PRESENCE_HANDLER = "DEBUG_MY_PRESENCE";
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
 
@@ -166,7 +168,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
         Map<String, Object> extras = (Map<String, Object>) getIntent()
                 .getExtras()
-                .getSerializable(ChatManager.INTENT_BUNDLE_EXTRAS);
+                .getSerializable(ChatUI.INTENT_BUNDLE_EXTRAS);
 
         return extras;
     }
@@ -176,14 +178,14 @@ public class MessageListActivity extends AppCompatActivity implements
 
         String conversationId;
 
-        if (getIntent().getSerializableExtra(ChatManager._INTENT_BUNDLE_CONVERSATION_ID) != null) {
+        if (getIntent().getSerializableExtra(ChatUI._INTENT_BUNDLE_CONVERSATION_ID) != null) {
             // retrieve conversationId
             isFromBackgroundNotification = false;
             isFromForegroundNotification = false;
-            conversationId = getIntent().getStringExtra(ChatManager._INTENT_BUNDLE_CONVERSATION_ID);
+            conversationId = getIntent().getStringExtra(ChatUI._INTENT_BUNDLE_CONVERSATION_ID);
             // check if the activity has been called from foreground notification
             try {
-                isFromForegroundNotification = getIntent().getExtras().getBoolean(ChatManager.INTENT_BUNDLE_IS_FROM_NOTIFICATION);
+                isFromForegroundNotification = getIntent().getExtras().getBoolean(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION);
 
             } catch (Exception e) {
                 Log.e(TAG, "MessageListActivity.getConversationId: cannot retrieve 'is from notification extra' " + e.getMessage());
@@ -212,7 +214,7 @@ public class MessageListActivity extends AppCompatActivity implements
         if (!isGroupConversation) {
             // subscribe for convers_with user presence changes
             // bugfix Issue #16
-            PresenceHandler.observeUserPresenceChanges(this, conversation.getConvers_with(), this);
+            PresenceManger.observeUserPresenceChanges(conversation.getConvers_with(), this);
         }
 
         if (!areViewsInit) {
@@ -232,7 +234,7 @@ public class MessageListActivity extends AppCompatActivity implements
         conversation = ConversationUtils.createNewConversation(conversationId);
 
         // subscribe for convers_with user presence changes
-        PresenceHandler.observeUserPresenceChanges(this, conversation.getConvers_with(), this);
+        PresenceManger.observeUserPresenceChanges(conversation.getConvers_with(), this);
 
         if (!areViewsInit) {
             initViews(conversation);
@@ -395,27 +397,13 @@ public class MessageListActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, GroupAdminPanelActivity.class);
         intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_NAME, conversation.getGroup_name());
         intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_ID, conversation.getGroup_id());
-        startActivityForResult(intent, ChatManager._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
+        startActivityForResult(intent, ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
     }
 
     private void setProfilePicture() {
         Log.d(TAG, "setProfilePicture");
 
         ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
-
-//        RequestOptions options = new RequestOptions()
-//                .centerCrop()
-//                .placeholder(getResources().getDrawable(R.drawable.ic_person_avatar))
-//                .circleCropTransform()
-//                .skipMemoryCache(false)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL);
-//
-//        if (this.getApplicationContext() != null) {
-//            Glide.with(getApplicationContext())
-//                    .load("")
-//                    .apply(options)
-//                    .into(profilePictureToolbar);
-//        }
 
         Glide.with(getApplicationContext())
                 .load("")
@@ -469,8 +457,8 @@ public class MessageListActivity extends AppCompatActivity implements
                     Log.d(TAG, "onMessageClickListener.onMessageLinkClick");
                     Log.d(TAG, "text: " + messageView.getText().toString());
 
-                    if (ChatManager.getInstance().getOnMessageClickListener() != null) {
-                        ChatManager.getInstance().getOnMessageClickListener()
+                    if (ChatUI.getInstance().getOnMessageClickListener() != null) {
+                        ChatUI.getInstance().getOnMessageClickListener()
                                 .onMessageLinkClick(messageView, clickableSpan);
                     } else {
                         Log.d(TAG, "Chat.Configuration.getMessageClickListener() == null");
@@ -764,7 +752,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
         // comes from admin panel activity
 
-        if (requestCode == ChatManager._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY) {
+        if (requestCode == ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY) {
 
             if (resultCode == RESULT_OK) {
                 toggleTelegramPanelVisibility(); // update the input panel ui
@@ -867,8 +855,8 @@ public class MessageListActivity extends AppCompatActivity implements
 
 
     @Override
-    public void onPresenceChange(boolean imConnected) {
-        Log.d(MY_PRESENCE_HANDLER, "MessageListActivity.onPresenceChange - imConnected: " + imConnected);
+    public void onUserPresenceChange(boolean imConnected) {
+        Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onUserPresenceChange - imConnected: " + imConnected);
 
         if (imConnected) {
             conversWithOnline = true;
@@ -878,7 +866,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
             if (conversWithLastOnline != 0) {
                 mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
-                Log.i(MY_PRESENCE_HANDLER, "MessageListActivity.onPresenceChange " +
+                Log.i(DEBUG_USER_PRESENCE, "MessageListActivity.onUserPresenceChange " +
                         "- conversWithLastOnline: " + conversWithLastOnline);
             } else {
                 mSubTitleTextView.setText("");
@@ -887,9 +875,9 @@ public class MessageListActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLastOnlineChange(long lastOnline) {
-        Log.d(TAG, "onLastOnlineChange - lastOnline: " + lastOnline);
-        Log.i(MY_PRESENCE_HANDLER, "MessageListActivity.onLastOnlineChange - lastOnline: " + lastOnline);
+    public void onUserLastOnlineChange(long lastOnline) {
+        Log.d(TAG, "onUserLastOnlineChange - lastOnline: " + lastOnline);
+        Log.i(DEBUG_USER_PRESENCE, "MessageListActivity.onUserLastOnlineChange - lastOnline: " + lastOnline);
 
         conversWithLastOnline = lastOnline;
 
@@ -898,9 +886,9 @@ public class MessageListActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPresenceChangeError(Exception e) {
-        Log.e(TAG, "onPresenceChangeError " + e.getMessage());
-        Log.i(MY_PRESENCE_HANDLER, "MessageListActivity.onLastOnlineChange: " + e.getMessage());
+    public void onUserPresenceChangeError(Exception e) {
+        Log.e(TAG, "onUserPresenceChangeError " + e.getMessage());
+        Log.i(DEBUG_USER_PRESENCE, "MessageListActivity.onUserPresenceChangeError: " + e.getMessage());
     }
 
     @Override

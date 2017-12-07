@@ -15,8 +15,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import chat21.android.R;
-import chat21.android.core.ChatManager;
 import chat21.android.core.messages.models.Message;
+import chat21.android.ui.ChatUI;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.views.TouchImageView;
@@ -53,7 +53,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
 
     private Message getMessage() {
         Log.i(TAG, "getMessage");
-        return (Message) getIntent().getExtras().getSerializable(ChatManager._INTENT_EXTRAS_MESSAGE);
+        return (Message) getIntent().getExtras().getSerializable(ChatUI._INTENT_EXTRAS_MESSAGE);
     }
 
     private void registerViews() {
@@ -163,7 +163,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
         Log.i(TAG, "setTimestamp");
         if (getMessage() != null) {
             try {
-                long timestamp = getMessage().getTimestampLong();
+                long timestamp = getMessage().getTimestamp();
                 String formattedTimestamp = TimeUtils.getFormattedTimestamp(timestamp);
                 mTimestamp.setText(formattedTimestamp);
             } catch (Exception e) {

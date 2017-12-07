@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.core.ChatManager;
-import chat21.android.dao.node.NodeDAOImpl;
-import chat21.android.groups.models.Group;
-import chat21.android.user.models.ChatUser;
-import chat21.android.user.models.IChatUser;
+import chat21.android.dao.node.NodeDAO;
+import chat21.android.core.groups.models.Group;
+import chat21.android.core.users.models.ChatUser;
+import chat21.android.core.users.models.IChatUser;
 
 /**
  * Created by stefanodp91 on 14/07/17.
@@ -68,7 +68,8 @@ public class GroupUtils {
             final OnGroupsChangeListener onGroupsChangeListener) {
 
         // retrieve group
-        final DatabaseReference mGroup = new NodeDAOImpl(context).getGroupById(groupId);
+        final DatabaseReference mGroup = new NodeDAO(ChatManager.getInstance().getTenant())
+                .getGroupById(groupId);
 
         Log.d(TAG, "subscribeOnGroupsChanges.node: " + mGroup.getRef());
 
@@ -96,7 +97,8 @@ public class GroupUtils {
             String groupId,
             final OnNodeMembersChangeListener onNodeMembersChangeListener) {
 
-        DatabaseReference mGroup = new NodeDAOImpl(context).getGroupById(groupId);
+        DatabaseReference mGroup = new NodeDAO(ChatManager.getInstance().getTenant())
+                .getGroupById(groupId);
 
         // subscribe for members change
         mGroup.addChildEventListener(new ChildEventListener() {

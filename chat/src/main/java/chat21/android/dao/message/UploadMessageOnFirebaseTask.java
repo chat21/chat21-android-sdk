@@ -11,11 +11,10 @@ import com.google.firebase.database.DatabaseReference;
 
 import java.util.Map;
 
-import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
-import chat21.android.dao.node.NodeDAO;
-import chat21.android.dao.node.NodeDAOImpl;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.messages.models.Message;
+import chat21.android.dao.node.NodeDAO;
 
 /**
  * Created by stefanodp91 on 08/09/17.
@@ -25,8 +24,8 @@ class UploadMessageOnFirebaseTask {
 
     private NodeDAO mNodeDAO;
 
-    UploadMessageOnFirebaseTask(Context context) {
-        mNodeDAO = new NodeDAOImpl(context);
+    UploadMessageOnFirebaseTask() {
+        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
     }
 
     void uploadMessage(String text, Message message, String conversationId, final Map<String, Object> extras) {
@@ -78,7 +77,7 @@ class UploadMessageOnFirebaseTask {
         cSender.setRecipient(message.getRecipient());
 //        cSender.setRecipientFullName(StringUtils.isValid(conversation.getConvers_with_fullname()) ? conversation.getConvers_with_fullname() : conversation.getConvers_with());
         cSender.getTimestamp();
-        cSender.setStatus(ChatManager.CONVERSATION_STATUS_LAST_MESSAGE);
+        cSender.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
         cSender.setIs_new(true); // the conversation has new messages
         cSender.setLast_message_text(text);
 
@@ -127,7 +126,7 @@ class UploadMessageOnFirebaseTask {
         cRecipient.setRecipient(conversWithId);
 //        cRecipient.setRecipientFullName(StringUtils.isValid(conversation.getConvers_with_fullname()) ? conversation.getConvers_with_fullname() : conversation.getConvers_with());
         cRecipient.getTimestamp();
-        cRecipient.setStatus(ChatManager.CONVERSATION_STATUS_LAST_MESSAGE);
+        cRecipient.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
         cRecipient.setIs_new(true);  // the conversation has new messages
         cRecipient.setLast_message_text(text);
 

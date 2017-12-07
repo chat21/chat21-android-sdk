@@ -11,7 +11,6 @@ import com.google.firebase.database.ValueEventListener;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
 import chat21.android.dao.node.NodeDAO;
-import chat21.android.dao.node.NodeDAOImpl;
 import chat21.android.core.messages.models.Message;
 
 /**
@@ -23,7 +22,7 @@ class UploadGroupMessageOnFirebaseTask {
     private NodeDAO mNodeDAO;
 
     UploadGroupMessageOnFirebaseTask(Context context) {
-        mNodeDAO = new NodeDAOImpl(context);
+        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
     }
 
     void uploadMessage(String text, Message message,
@@ -46,9 +45,8 @@ class UploadGroupMessageOnFirebaseTask {
         conversation.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
         conversation.setLast_message_text(text);
         // bugfix Issue #66
-        conversation.setStatus(ChatManager.CONVERSATION_STATUS_LAST_MESSAGE);
+        conversation.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
         conversation.setIs_new(true);
-
 
         DatabaseReference nodeMembers = mNodeDAO.getGroupMembersNode(conversation.getGroup_id());
 

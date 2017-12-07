@@ -9,7 +9,7 @@ import android.view.View;
 import com.google.firebase.crash.FirebaseCrash;
 
 import chat21.android.R;
-import chat21.android.core.ChatManager;
+import chat21.android.ui.ChatUI;
 import chat21.android.utils.StringUtils;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
@@ -40,9 +40,9 @@ public class OnRecipientClickListener implements View.OnClickListener {
             Class<?> targetClass = Class.forName(context.getString(R.string.target_contact_profile_activity_class));
             if (targetClass != null && StringUtils.isValid(contactId)) {
                 Intent intent = new Intent(context, targetClass);
-                intent.putExtra(ChatManager.INTENT_BUNDLE_CONTACT_ID, contactId);
+                intent.putExtra(ChatUI.INTENT_BUNDLE_CONTACT_ID, contactId);
                 if (callingClass != null) {
-                    intent.putExtra(ChatManager.INTENT_BUNDLE_CALLING_ACTIVITY, callingClass);
+                    intent.putExtra(ChatUI.INTENT_BUNDLE_CALLING_ACTIVITY, callingClass);
                 }
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // start activity from context
                 context.startActivity(intent);

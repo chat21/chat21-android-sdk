@@ -2,7 +2,7 @@ package  chat21.android.dao.groups;
 
 import android.content.Context;
 
-import  chat21.android.groups.models.Group;
+import  chat21.android.core.groups.models.Group;
 import  chat21.android.utils.StringUtils;
 
 /**

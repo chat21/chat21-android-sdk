@@ -8,12 +8,11 @@ import com.google.firebase.database.DatabaseReference;
 
 import java.util.Map;
 
-import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
-import chat21.android.dao.node.NodeDAO;
-import chat21.android.dao.node.NodeDAOImpl;
-import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.messages.models.Message;
+import chat21.android.dao.node.NodeDAO;
+import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
 
 /**
  * Created by stefanodp91 on 08/09/17.
@@ -29,7 +28,7 @@ public class MessageDAOImpl extends MessageDAOAbstract {
     public MessageDAOImpl(Context context) {
         super(context);
 
-        mNodeDAO = new NodeDAOImpl(context);
+        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
     }
 
 
@@ -69,7 +68,7 @@ public class MessageDAOImpl extends MessageDAOAbstract {
         message.setConversationId(conversation.getConversationId());
 
         // upload message on firebase
-        new UploadMessageOnFirebaseTask(getContext())
+        new UploadMessageOnFirebaseTask()
                 .uploadMessage(text, message, conversation.getConversationId(), extras);
     }
 

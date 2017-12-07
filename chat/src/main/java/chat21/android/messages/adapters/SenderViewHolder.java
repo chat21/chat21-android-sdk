@@ -2,7 +2,6 @@ package chat21.android.messages.adapters;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.style.ClickableSpan;
@@ -20,14 +19,13 @@ import com.vanniktech.emoji.EmojiTextView;
 import java.util.Date;
 
 import chat21.android.R;
-import chat21.android.core.ChatManager;
+import chat21.android.core.messages.models.Message;
 import chat21.android.messages.activites.ImageDetailsActivity;
 import chat21.android.messages.listeners.OnMessageClickListener;
-import chat21.android.core.messages.models.Message;
 import chat21.android.messages.utils.TextViewLinkHandler;
-import chat21.android.utils.ImageUtils;
+import chat21.android.ui.ChatUI;
+import chat21.android.utils.image.ImageUtils;
 import chat21.android.utils.TimeUtils;
-import chat21.android.utils.glide.CropCircleTransformation;
 
 /**
  * Created by stefano on 25/11/2016.
@@ -151,7 +149,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
     private void startImagePreviewActivity(Message message) {
         Intent intent = new Intent(itemView.getContext(), ImageDetailsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(ChatManager._INTENT_EXTRAS_MESSAGE, message);
+        intent.putExtra(ChatUI._INTENT_EXTRAS_MESSAGE, message);
         itemView.getContext().startActivity(intent);
     }
 
@@ -165,22 +163,22 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setTimestamp(Message message) {
-        mTimestamp.setText(TimeUtils.timestampToHour(message.getTimestampLong()));
+        mTimestamp.setText(TimeUtils.timestampToHour(message.getTimestamp()));
     }
 
     private void setDate(Message previousMessage, Message message, int position) {
         Date previousMessageDate = null;
         if (previousMessage != null) {
-            previousMessageDate = new Date(previousMessage.getTimestampLong());
+            previousMessageDate = new Date(previousMessage.getTimestamp());
         }
 
-        Date messageDate = new Date(message.getTimestampLong());
+        Date messageDate = new Date(message.getTimestamp());
         // it's today. show the label "today"
-        if (TimeUtils.isDateToday(message.getTimestampLong())) {
+        if (TimeUtils.isDateToday(message.getTimestamp())) {
             mDate.setText(itemView.getContext().getString(R.string.today));
         } else {
             // it's not today. shows the week of day label
-            mDate.setText(TimeUtils.timestampToStrDate(message.getTimestampLong()));
+            mDate.setText(TimeUtils.timestampToStrDate(message.getTimestamp()));
         }
 
         // hides or shows the date label

@@ -15,13 +15,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import chat21.android.conversations.listeners.OnConversationRetrievedCallback;
-import chat21.android.conversations.listeners.OnConversationTreeChangeListener;
-import chat21.android.conversations.listeners.OnUnreadConversationCountListener;
-import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
+import chat21.android.core.conversations.listeners.OnConversationRetrievedCallback;
+import chat21.android.core.conversations.listeners.OnConversationTreeChangeListener;
+import chat21.android.core.conversations.listeners.OnUnreadConversationCountListener;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.dao.node.NodeDAO;
-import chat21.android.dao.node.NodeDAOImpl;
 import chat21.android.utils.StringUtils;
 
 /**
@@ -159,8 +158,8 @@ public class ConversationUtils {
     public static void setConversationRead(Context context, final String conversationId) {
         Log.d(TAG, "setConversationRead");
 
-        final DatabaseReference nodeConversations = new NodeDAOImpl(context)
-                .getNodeConversations();
+        final DatabaseReference nodeConversations = new NodeDAO(ChatManager.getInstance().getTenant())
+                .getNodeConversations(ChatManager.getInstance().getTenant());
         nodeConversations.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -201,7 +200,7 @@ public class ConversationUtils {
         conversation.setConvers_with(recipientId);
         conversation.setSender(ChatManager.getInstance().getLoggedUser().getId());
         conversation.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
-        conversation.setStatus(ChatManager.CONVERSATION_STATUS_LAST_MESSAGE);
+        conversation.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
         conversation.setRecipient(recipientId);
         conversation.setConversationId(conversationId);
 
@@ -216,7 +215,7 @@ public class ConversationUtils {
         conversation.setConvers_with_fullname(pushData.getStringExtra("sender_fullname"));
         conversation.setConvers_with(pushData.getStringExtra("sender"));
         conversation.setIs_new(true);
-        conversation.setStatus(ChatManager.CONVERSATION_STATUS_LAST_MESSAGE);
+        conversation.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
         conversation.setLast_message_text(pushData.getStringExtra("text"));
         conversation.setRecipient(pushData.getStringExtra("recipient"));
         conversation.setSender(pushData.getStringExtra("sender"));
@@ -279,7 +278,7 @@ public class ConversationUtils {
             final OnConversationRetrievedCallback callback) {
         Log.d(TAG, "getConversationFromId");
 
-        NodeDAO nodeDAO = new NodeDAOImpl(context);
+        NodeDAO nodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
 
         DatabaseReference nodeConversation = nodeDAO.getNodeConversations(ChatManager.getInstance().getLoggedUser().getId()).child(conversationId);
 
@@ -303,12 +302,11 @@ public class ConversationUtils {
         });
     }
 
-    public static void getUnreadConversationsCount(
-            Context context, String userId,
-            final OnUnreadConversationCountListener callback) {
+    public static void getUnreadConversationsCount(String userId,
+                                                   final OnUnreadConversationCountListener callback) {
         Log.d(TAG, "getUnreadConversationsCount");
 
-        new NodeDAOImpl(context).getNodeConversations(userId)
+        new NodeDAO(ChatManager.getInstance().getTenant()).getNodeConversations(userId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -464,13 +462,10 @@ public class ConversationUtils {
         return conversation;
     }
 
-    public static void uploadConversationOnFirebase(Context context,
-                                                    String groupId,
-                                                    String userIdNode,
-                                                    Conversation conversation) {
+    public static void uploadConversationOnFirebase(String groupId, String userIdNode, Conversation conversation) {
         Log.d(TAG, "uploadConversationOnFirebase");
 
-        new NodeDAOImpl(context)
+        new NodeDAO(ChatManager.getInstance().getTenant())
                 .getNodeConversations(userIdNode)
                 .child(groupId)
                 .setValue(conversation);

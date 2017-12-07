@@ -1,4 +1,4 @@
-package  chat21.android.dao.groups;
+package chat21.android.dao.groups;
 
 import android.content.Context;
 import android.util.Log;
@@ -13,14 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import chat21.android.core.ChatManager;
+import chat21.android.core.groups.models.Group;
+import chat21.android.dao.node.NodeDAO;
 
-import  chat21.android.dao.node.NodeDAO;
-import  chat21.android.dao.node.NodeDAOImpl;
-import  chat21.android.groups.models.Group;
-
-import static  chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
+import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
 
 /**
  * Created by stefanodp91 on 26/09/17.
@@ -34,7 +31,7 @@ public class GroupsDAOImpl extends AbstractGroupDAO {
 
         Log.d(DEBUG_NODE_GROUPS, "GroupsDAOImpl: constructor");
 
-        mNodeDAO = new NodeDAOImpl(context);
+        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
     }
 
     @Override

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import chat21.android.R;
-import chat21.android.adapters.AbstractRecyclerAdapter;
+import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import chat21.android.core.ChatManager;
 import chat21.android.messages.listeners.OnMessageClickListener;
 import chat21.android.core.messages.models.Message;
