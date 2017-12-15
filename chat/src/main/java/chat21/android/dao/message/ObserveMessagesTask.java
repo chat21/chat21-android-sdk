@@ -20,11 +20,6 @@ import chat21.android.core.messages.models.Message;
 class ObserveMessagesTask {
     private static final String TAG = ObserveMessagesTask.class.getName();
 
-    private DatabaseReference mNode;
-
-    ObserveMessagesTask(DatabaseReference node) {
-        mNode = node;
-    }
 
 //    ChildEventListener observeMessages(final OnMessageTreeUpdateListener onTreeUpdateListener) {
 //        ChildEventListener childEventListener = mNode.addChildEventListener(new ChildEventListener() {

@@ -81,7 +81,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
 
         String members;
         if (group != null && group.getMembers() != null) {
-            members = GroupUtils.getGroupMembersAsList(itemView.getContext(), group.getMembers());
+            members = GroupUtils.getGroupMembersAsList(group.getMembers());
         } else {
             // if there are no members show the logged user as "you"
             members = itemView.getContext().getString(R.string.activity_message_list_group_info_you_label);

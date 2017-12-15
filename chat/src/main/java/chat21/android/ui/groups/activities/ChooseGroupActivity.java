@@ -67,7 +67,7 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
 
         initViews();
 
-        mGroupsDAO = new GroupsDAO(this);
+        mGroupsDAO = new GroupsDAO();
     }
 
     @Override
@@ -150,7 +150,7 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
         Log.d(DEBUG_NODE_GROUPS, "ChooseGroupActivity.startCreateGroupActivity: userId == " + userId);
 
         if (mGroupsDAO == null)
-            mGroupsDAO = new GroupsDAO(this);
+            mGroupsDAO = new GroupsDAO();
         mGroupsDAO.getGroupsForUser(userId, this);
     }
 

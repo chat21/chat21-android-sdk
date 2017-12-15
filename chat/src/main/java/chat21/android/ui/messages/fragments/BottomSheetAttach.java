@@ -1,4 +1,4 @@
-package chat21.android.messages.fargments;
+package chat21.android.ui.messages.fragments;
 
 import android.content.Intent;
 import android.os.Build;
@@ -13,11 +13,10 @@ import android.widget.Button;
 
 import chat21.android.R;
 import chat21.android.core.conversations.models.Conversation;
-import chat21.android.core.ChatManager;
-import chat21.android.messages.listeners.OnAttachDocumentsClickListener;
+import chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 import chat21.android.ui.ChatUI;
 
-import static chat21.android.messages.activites.MessageListActivity._INTENT_ACTION_GET_PICTURE;
+import static chat21.android.ui.messages.activities.MessageListActivity._INTENT_ACTION_GET_PICTURE;
 
 /**
  * Created by stefanodp91 on 28/09/17.

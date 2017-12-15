@@ -24,8 +24,7 @@ import chat21.android.core.users.models.IChatUser;
 /**
  * Created by stefanodp91 on 28/09/17.
  */
-public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDialogFragment implements
-        View.OnClickListener {
+public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDialogFragment implements View.OnClickListener {
 
     private static final String DEBUG_TAG = BottomSheetConversationsListFragmentLongPress.class.getName();
 

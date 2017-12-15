@@ -22,7 +22,7 @@ import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
 import chat21.android.core.groups.models.Group;
 import chat21.android.groups.utils.GroupUtils;
-import chat21.android.messages.activites.MessageListActivity;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
 
 /**

@@ -29,15 +29,15 @@ import chat21.android.core.conversations.listeners.OnConversationTreeChangeListe
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.presence.PresenceManger;
 import chat21.android.core.presence.listeners.OnMyPresenceChangesListener;
-import chat21.android.messages.activites.MessageListActivity;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.conversations.adapters.ConversationListAdapter;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
 import chat21.android.ui.groups.activities.MyGroupsListActivity;
 import chat21.android.utils.ChatUtils;
-import chat21.android.utils.listeners.OnContactListClickListener;
-import chat21.android.utils.listeners.OnSupportContactListClickListener;
+import chat21.android.ui.conversations.listeners.OnContactListClickListener;
+import chat21.android.ui.conversations.listeners.OnSupportContactListClickListener;
 
 import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
 
@@ -69,8 +69,7 @@ public class ConversationListFragment extends Fragment implements
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_conversation_list, container, false);
 

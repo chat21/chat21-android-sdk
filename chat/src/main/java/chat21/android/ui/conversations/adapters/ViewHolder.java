@@ -24,7 +24,7 @@ import chat21.android.utils.image.CropCircleTransformation;
  * Created by stefanodp91 on 19/10/17.
  */
 
-public class ViewHolder extends RecyclerView.ViewHolder {
+class ViewHolder extends RecyclerView.ViewHolder {
     private final TextView mRecipientName;
     private final EmojiTextView mLastReceivedMessage;
     private final TextView mTimestamp;
@@ -32,7 +32,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = ViewHolder.class.getName();
 
-    public ViewHolder(View itemView) {
+    ViewHolder(View itemView) {
         super(itemView);
         mRecipientName = (TextView) itemView.findViewById(R.id.recipient_name);
         mLastReceivedMessage = (EmojiTextView) itemView.findViewById(R.id.last_received_message);
@@ -161,7 +161,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     private void setProfilePicture(String url) {
 
         Glide.with(itemView.getContext())
-                .load("")
+                .load(url)
                 .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
                 .into(mProfilePicture);

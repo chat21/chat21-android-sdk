@@ -1,4 +1,4 @@
-package chat21.android.messages.adapters;
+package chat21.android.ui.messages.adapters;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -20,10 +20,10 @@ import com.vanniktech.emoji.EmojiTextView;
 import java.util.Date;
 
 import chat21.android.R;
-import chat21.android.messages.activites.ImageDetailsActivity;
-import chat21.android.messages.listeners.OnMessageClickListener;
+import chat21.android.ui.messages.activities.ImageDetailsActivity;
+import chat21.android.ui.messages.listeners.OnMessageClickListener;
 import chat21.android.core.messages.models.Message;
-import chat21.android.messages.utils.TextViewLinkHandler;
+import chat21.android.utils.views.TextViewLinkHandler;
 import chat21.android.ui.ChatUI;
 import chat21.android.utils.image.ImageUtils;
 import chat21.android.utils.StringUtils;
@@ -43,7 +43,7 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
     private final ImageView mPreview; // Resolve Issue #32
     private final ProgressBar mProgressBar;   // Resolve Issue #52
 
-    public RecipientViewHolder(View itemView) {
+    RecipientViewHolder(View itemView) {
         super(itemView);
         mMessage = (EmojiTextView) itemView.findViewById(R.id.message);
         mDate = (TextView) itemView.findViewById(R.id.date);
@@ -54,8 +54,8 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
         mProgressBar = (ProgressBar) itemView.findViewById(R.id.progress);  // Resolve Issue #52
     }
 
-    public void bind(final Message previousMessage, final Message message,
-                     int position, OnMessageClickListener onMessageClickListener) {
+    void bind(final Message previousMessage, final Message message,
+              int position, OnMessageClickListener onMessageClickListener) {
 
         if (message.getType().equals(Message.TYPE_IMAGE)) {
             mMessage.setVisibility(View.GONE);
@@ -119,7 +119,6 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
                     }
                 })
                 .into(mPreview);
-
 
 
         mPreview.setOnClickListener(new View.OnClickListener() {

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/chat_background"
     android:orientation="vertical"
-    tools:context=".messages.activites.MessageListActivity">
+    tools:context=".ui.messages.activities.MessageListActivity">
 
     <!-- toolbar -->
     <android.support.design.widget.AppBarLayout

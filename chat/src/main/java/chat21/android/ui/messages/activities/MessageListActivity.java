@@ -1,4 +1,4 @@
-package chat21.android.messages.activites;
+package chat21.android.ui.messages.activities;
 
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
@@ -54,16 +54,18 @@ import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.listeners.OnConversationRetrievedCallback;
 import chat21.android.core.conversations.models.Conversation;
+import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.groups.models.Group;
+import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.presence.PresenceManger;
 import chat21.android.core.presence.listeners.OnUserPresenceChangesListener;
 import chat21.android.dao.message.MessageDAO;
 import chat21.android.dao.message.OnDetachObserveMessageTree;
 import chat21.android.groups.utils.GroupUtils;
-import chat21.android.messages.adapters.MessageListAdapter;
-import chat21.android.messages.fargments.BottomSheetAttach;
-import chat21.android.messages.listeners.OnMessageClickListener;
+import chat21.android.ui.messages.adapters.MessageListAdapter;
+import chat21.android.ui.messages.fragments.BottomSheetAttach;
+import chat21.android.ui.messages.listeners.OnMessageClickListener;
 import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
@@ -73,7 +75,7 @@ import chat21.android.utils.ChatUtils;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
-import chat21.android.utils.listeners.OnProfilePictureClickListener;
+import chat21.android.ui.messages.listeners.OnProfilePictureClickListener;
 
 import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
@@ -146,7 +148,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
         initToolbar(null);
 
-        mMessageDAO = new MessageDAO(this);
+        mMessageDAO = new MessageDAO();
 
         // retrieve custom extras, if they exist
         extras = getExtras();
@@ -363,7 +365,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
                         String members;
                         if (group != null && group.getMembers() != null) {
-                            members = GroupUtils.getGroupMembersAsList(MessageListActivity.this, group.getMembers());
+                            members = GroupUtils.getGroupMembersAsList(group.getMembers());
                         } else {
                             Log.e(TAG, "displayGroupMembersInSubtitle" +
                                     ".subscribeOnGroupsChanges.onGroupChanged: group is null.");
@@ -540,13 +542,24 @@ public class MessageListActivity extends AppCompatActivity implements
                     return;
 
                 if (StringUtils.isValid((conversation.getGroup_id()))) {
+                    ChatManager.getInstance()
+                            .sendTextMessage(conversation.getGroup_id(), text, null,
+                                    new SendMessageListener() {
+                                        @Override
+                                        public void onResult(Message message, ChatRuntimeException chatException) {
+                                            // TODO: 15/12/17
+                                        }
+                                    });
 
-                    mMessageDAO.sendGroupMessage(text, Message.TYPE_TEXT,
-                            conversation);
                 } else {
-                    // update firebase references and send notification
-                    mMessageDAO.sendMessage(text, Message.TYPE_TEXT,
-                            conversation, extras);
+                    ChatManager.getInstance()
+                            .sendTextMessage(conversation.getConvers_with(), text, null,
+                                    new SendMessageListener() {
+                                        @Override
+                                        public void onResult(Message message, ChatRuntimeException chatException) {
+                                            // TODO: 15/12/17
+                                        }
+                                    });
                 }
 
                 // clear the edittext

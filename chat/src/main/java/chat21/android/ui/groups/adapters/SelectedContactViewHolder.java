@@ -15,12 +15,12 @@ import chat21.android.ui.groups.listeners.OnRemoveClickListener;
  * Created by stefanodp91 on 07/12/17.
  */
 
-public class SelectedContactViewHolder extends RecyclerView.ViewHolder {
+class SelectedContactViewHolder extends RecyclerView.ViewHolder {
     private final TextView contact;
     private final ImageView profilePicture;
     private final ImageView remove;
 
-    public SelectedContactViewHolder(View itemView) {
+    SelectedContactViewHolder(View itemView) {
         super(itemView);
         contact = (TextView) itemView.findViewById(R.id.username);
         profilePicture = (ImageView) itemView.findViewById(R.id.profile_picture);

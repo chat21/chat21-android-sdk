@@ -1,4 +1,4 @@
-package chat21.android.messages.activites;
+package chat21.android.ui.messages.activities;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;

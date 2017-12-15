@@ -29,7 +29,7 @@ import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.groups.models.Group;
 import chat21.android.dao.groups.GroupsDAO;
 import chat21.android.dao.groups.OnGroupsRetrievedCallback;
-import chat21.android.messages.activites.MessageListActivity;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.groups.adapters.MyGroupsListAdapter;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
@@ -65,7 +65,7 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 
         initViews();
 
-        mGroupsDAO = new GroupsDAO(this);
+        mGroupsDAO = new GroupsDAO();
     }
 
     @Override
@@ -119,7 +119,7 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
         Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.retrieveGroupsForUser: userId == " + userId);
 
         if (mGroupsDAO == null)
-            mGroupsDAO = new GroupsDAO(this);
+            mGroupsDAO = new GroupsDAO();
         mGroupsDAO.getGroupsForUser(userId, this);
     }
 

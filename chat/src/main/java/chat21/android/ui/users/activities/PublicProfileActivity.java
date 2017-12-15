@@ -24,8 +24,7 @@ import chat21.android.utils.image.CropCircleTransformation;
  * <p>
  * bugfix Issue #30
  */
-public class PublicProfileActivity extends AppCompatActivity implements
-        OnUserPresenceChangesListener {
+public class PublicProfileActivity extends AppCompatActivity implements OnUserPresenceChangesListener {
     private static final String TAG = PublicProfileActivity.class.getName();
 
     private TextView mPresenceTextView;

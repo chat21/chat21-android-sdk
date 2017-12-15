@@ -1,4 +1,4 @@
-package chat21.android.utils.listeners;
+package chat21.android.ui.conversations.listeners;
 
 import android.content.Context;
 import android.content.Intent;

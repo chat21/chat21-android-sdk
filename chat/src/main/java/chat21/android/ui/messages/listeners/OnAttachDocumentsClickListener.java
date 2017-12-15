@@ -1,4 +1,4 @@
-package chat21.android.messages.listeners;
+package chat21.android.ui.messages.listeners;
 
 import java.io.Serializable;
 

@@ -79,8 +79,7 @@ public class ConversationUtils {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.d(TAG, "addOnChildEventListener.onChildAdded");
 
-                Conversation conversation =
-                        ConversationUtils.decodeConversationSnapshop(dataSnapshot);
+                Conversation conversation = ConversationUtils.decodeConversationSnapshop(dataSnapshot);
 
                 // it sets the conversation as read if the person whom are talking to is the current user
                 if (ChatManager.getInstance().getLoggedUser().getId().equals(conversation.getSender())) {
@@ -95,8 +94,7 @@ public class ConversationUtils {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Log.d(TAG, "addOnChildEventListener.onChildChanged");
 
-                Conversation conversation =
-                        ConversationUtils.decodeConversationSnapshop(dataSnapshot);
+                Conversation conversation = ConversationUtils.decodeConversationSnapshop(dataSnapshot);
 
                 // it sets the conversation as read if the person whom are talking to is the current user
                 if (ChatManager.getInstance().getLoggedUser().getId().equals(conversation.getSender())) {

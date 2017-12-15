@@ -1,11 +1,10 @@
-package chat21.android.messages.utils;
+package chat21.android.utils.views;
 
 import android.text.Layout;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.URLSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 

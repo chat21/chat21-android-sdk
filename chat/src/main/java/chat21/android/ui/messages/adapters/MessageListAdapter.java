@@ -1,4 +1,4 @@
-package chat21.android.messages.adapters;
+package chat21.android.ui.messages.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,16 +8,15 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import chat21.android.R;
-import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import chat21.android.core.ChatManager;
-import chat21.android.messages.listeners.OnMessageClickListener;
 import chat21.android.core.messages.models.Message;
+import chat21.android.ui.messages.listeners.OnMessageClickListener;
+import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 
 /**
  * Created by stefano on 31/08/2015.
  */
 public class MessageListAdapter extends AbstractRecyclerAdapter<Message, RecyclerView.ViewHolder> {
-    private static final String TAG = MessageListAdapter.class.getName();
 
     private String sender;
     private OnMessageClickListener onMessageClickListener;

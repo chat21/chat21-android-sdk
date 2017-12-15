@@ -1,4 +1,4 @@
-package chat21.android.utils.listeners;
+package chat21.android.ui.conversations.listeners;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,8 @@ import com.google.firebase.crash.FirebaseCrash;
 import chat21.android.R;
 import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
-import chat21.android.messages.activites.MessageListActivity;
+import chat21.android.ui.conversations.listeners.OnContactListClickListener;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
 
 /**

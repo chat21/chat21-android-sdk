@@ -1,4 +1,4 @@
-package chat21.android.messages.listeners;
+package chat21.android.ui.messages.listeners;
 
 import android.text.style.ClickableSpan;
 import android.widget.TextView;

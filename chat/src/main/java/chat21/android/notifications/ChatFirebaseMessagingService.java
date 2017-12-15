@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.Map;
 
 import chat21.android.R;
-import chat21.android.messages.activites.MessageListActivity;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.conversations.activities.ConversationListActivity;
 import chat21.android.utils.StringUtils;

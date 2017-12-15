@@ -1,4 +1,4 @@
-package chat21.android.messages.adapters;
+package chat21.android.ui.messages.adapters;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -20,9 +20,9 @@ import java.util.Date;
 
 import chat21.android.R;
 import chat21.android.core.messages.models.Message;
-import chat21.android.messages.activites.ImageDetailsActivity;
-import chat21.android.messages.listeners.OnMessageClickListener;
-import chat21.android.messages.utils.TextViewLinkHandler;
+import chat21.android.ui.messages.activities.ImageDetailsActivity;
+import chat21.android.ui.messages.listeners.OnMessageClickListener;
+import chat21.android.utils.views.TextViewLinkHandler;
 import chat21.android.ui.ChatUI;
 import chat21.android.utils.image.ImageUtils;
 import chat21.android.utils.TimeUtils;
@@ -43,7 +43,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
     private final ImageView mMessageStatusRead;
     private final ProgressBar mProgressBar;   // Resolve Issue #52
 
-    public SenderViewHolder(View itemView) {
+    SenderViewHolder(View itemView) {
         super(itemView);
         mMessage = (EmojiTextView) itemView.findViewById(R.id.message);
         mDate = (TextView) itemView.findViewById(R.id.date);
@@ -57,8 +57,8 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         mProgressBar = (ProgressBar) itemView.findViewById(R.id.progress);   // Resolve Issue #52
     }
 
-    public void bind(final Message previousMessage, final Message message,
-                     int position, OnMessageClickListener onMessageClickListener) {
+    void bind(final Message previousMessage, final Message message,
+              int position, OnMessageClickListener onMessageClickListener) {
 
         if (message.getType().equals(Message.TYPE_IMAGE)) {
             mBoxText.setVisibility(View.GONE);

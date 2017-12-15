@@ -1,4 +1,4 @@
-package chat21.android.utils.listeners;
+package chat21.android.ui.messages.listeners;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,6 @@ import android.view.View;
 import com.google.firebase.crash.FirebaseCrash;
 
 import chat21.android.R;
-import chat21.android.core.ChatManager;
 import chat21.android.ui.ChatUI;
 import chat21.android.utils.StringUtils;
 

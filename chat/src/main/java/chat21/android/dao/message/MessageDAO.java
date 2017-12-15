@@ -26,7 +26,7 @@ public class MessageDAO {
         Log.d(TAG, "observeMessageTree");
 
         mNode = mNodeDAO.getNodeConversation(conversationId);
-        ObserveMessagesTask observeMessagesTask = new ObserveMessagesTask(mNode);
+        ObserveMessagesTask observeMessagesTask = new ObserveMessagesTask();
         mChildEventListener = observeMessagesTask.observeMessages(onTreeUpdateListener);
     }
 

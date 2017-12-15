@@ -1,6 +1,5 @@
 package chat21.android.groups.utils;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -80,10 +79,8 @@ public class GroupUtils {
         return group;
     }
 
-    public static void subscribeOnGroupsChanges(
-            String appId,
-            final String groupId,
-            final OnGroupsChangeListener onGroupsChangeListener) {
+    public static void subscribeOnGroupsChanges(String appId, final String groupId,
+                                                final OnGroupsChangeListener onGroupsChangeListener) {
 
         // retrieve group
         DatabaseReference nodeGroup = FirebaseDatabase.getInstance().getReference()
@@ -110,10 +107,8 @@ public class GroupUtils {
 
     }
 
-    public static void subscribeOnNodeMembersChanges(
-            String appId,
-            String groupId,
-            final OnNodeMembersChangeListener onNodeMembersChangeListener) {
+    public static void subscribeOnNodeMembersChanges(String appId, String groupId,
+                                                     final OnNodeMembersChangeListener onNodeMembersChangeListener) {
 
         DatabaseReference nodeGroup = FirebaseDatabase.getInstance().getReference()
                 .child("apps/" + appId + "/groups/" + groupId);
@@ -192,7 +187,7 @@ public class GroupUtils {
                 && group.getMembers().containsKey(userId) ? true : false;
     }
 
-    public static String getGroupMembersAsList(Context context, Map<String, Integer> membersMap) {
+    public static String getGroupMembersAsList(Map<String, Integer> membersMap) {
         String members = "";
 
         for (Map.Entry<String, Integer> entry : membersMap.entrySet()) {

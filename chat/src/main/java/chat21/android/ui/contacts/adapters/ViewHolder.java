@@ -8,20 +8,20 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import chat21.android.R;
-import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.utils.image.CropCircleTransformation;
 
 /**
  * Created by stefanodp91 on 19/10/17.
  */
 
-public class ViewHolder extends RecyclerView.ViewHolder {
+class ViewHolder extends RecyclerView.ViewHolder {
     private final TextView mContactFullName;
     private final TextView mContactUsername;
     private final ImageView mProfilePicture;
 
-    public ViewHolder(View itemView) {
+     ViewHolder(View itemView) {
         super(itemView);
         mContactFullName = (TextView) itemView.findViewById(R.id.fullname);
         mContactUsername = (TextView) itemView.findViewById(R.id.username);
