@@ -21,16 +21,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
 
 import chat21.android.R;
-import chat21.android.dao.node.NodeDAO;
-import chat21.android.dao.node.NodeDAOImpl;
-import chat21.android.presence.OnPresenceChangesListener;
-import chat21.android.user.presence.MyPresenceHandler;
+import chat21.android.core.presence.PresenceManger;
+import chat21.android.core.presence.listeners.OnPresenceListener;
 import chat21.android.user.receiver.TokenBroadcastReceiver;
 import chat21.android.user.task.GetCustomTokenTask;
 import chat21.android.user.task.OnCustomAuthTokenCallback;
@@ -137,8 +136,8 @@ public final class ChatAuthentication {
         };
     }
 
-    public void signInWithUid(final Activity loginActivity, String uid,
-                              final OnChatLoginCallback onChatLoginCallback) {
+    public void signInWithUid(final Activity loginActivity, final String appId,
+                              String uid, final OnChatLoginCallback onChatLoginCallback) {
         Log.d(DEBUG_LOGIN, "signInWithUid");
 
         final String userIdNormalized = ChatUtils.normalizeUsername(uid);
@@ -152,7 +151,7 @@ public final class ChatAuthentication {
             public void onCustomAuthRetrievedSuccess(String token) {
                 Log.i(DEBUG_LOGIN, "signInWithUid.onCustomAuthRetrievedSuccess : authToken == " + token);
 
-                createContactNode(loginActivity, userIdNormalized);
+                createContactNode(appId, userIdNormalized);
                 signInWithToken(loginActivity, token, onChatLoginCallback);
             }
 
@@ -166,14 +165,11 @@ public final class ChatAuthentication {
         }).execute(generateTokenUrl);
     }
 
-    private void createContactNode(Context context, String userId) {
+    private void createContactNode(String appId, String userId) {
         Log.d(DEBUG_LOGIN, "createContactNode: userId == " + userId);
 
-        NodeDAO mNodeDAO = new NodeDAOImpl(context);
-
-        // retrieve node contacts
-        DatabaseReference mNodeContacts = mNodeDAO.getNodeContacts()
-                .child(userId);
+        DatabaseReference mNodeContacts = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/contacts/" + userId);
 
         // add uid
         mNodeContacts
@@ -181,16 +177,13 @@ public final class ChatAuthentication {
                 .setValue(userId);
     }
 
-    public void updateNodeContacts(Context context, String userId, String email,
-                                   String name, String surname) {
+    public void updateNodeContacts(String appId, String userId, String email, String name, String surname) {
         Log.d(DEBUG_LOGIN, "updateNodeContacts: userId == " + userId + ", email == "
                 + email + ", name == " + name + ", surname == " + surname);
 
-        NodeDAO mNodeDAO = new NodeDAOImpl(context);
-
         // retrieve node contacts
-        DatabaseReference mNodeContacts = mNodeDAO.getNodeContacts()
-                .child(userId);
+        DatabaseReference mNodeContacts = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/contacts/" + userId);
 
 //            // add uid
 //            mNodeContacts
@@ -292,8 +285,7 @@ public final class ChatAuthentication {
         return true;
     }
 
-    public void signOut(final Context context,
-                        final OnChatLogoutCallback onChatLogoutCallback) {
+    public void signOut(final String appId, final OnChatLogoutCallback onChatLogoutCallback) {
         Log.d(DEBUG_LOGIN, "signOut");
 
         new AsyncTask<Void, Void, Void>() {
@@ -315,7 +307,7 @@ public final class ChatAuthentication {
                             .getUid();
 
                     // fix Issue #5
-                    removeInstanceId(context);  // fix Issue #23
+                    removeInstanceId(appId, userId);  // fix Issue #23
 
                     FirebaseInstanceId.getInstance().deleteInstanceId();
                 } catch (IOException e) {
@@ -328,43 +320,41 @@ public final class ChatAuthentication {
             @Override
             protected void onPostExecute(Void aVoid) {
 
+                OnPresenceListener onMyPresenceListener = new OnPresenceListener() {
+                    @Override
+                    public void onChanged(boolean imConnected) {
+                        // if connected => disconnect
+                        if (imConnected) {
+                            getFirebaseAuth().signOut();
+                            Log.i(DEBUG_LOGIN, "signed out from firebase with success");
+                            Log.i(DEBUG_MY_PRESENCE, "Chat.onPresenceChange - " +
+                                    "signed out from firebase with success");
+                            onChatLogoutCallback.onChatLogoutSuccess();
+                        }
+                    }
+
+                    @Override
+                    public void onLastOnlineChanged(long lastOnline) {
+                        Log.d(DEBUG_LOGIN, "onLastOnlineChange - lastOnline: " + lastOnline);
+                        Log.d(DEBUG_MY_PRESENCE, "Chat.onLastOnlineChange " +
+                                "- lastOnline: " + lastOnline);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e(DEBUG_LOGIN, e.getMessage());
+                        Log.d(DEBUG_MY_PRESENCE, "Chat.onPresenceChangeError" + e.getMessage());
+                        FirebaseCrash.report(e);
+                        onChatLogoutCallback.onChatLogoutError(logoutException);
+                    }
+                };
+
                 if (logoutException == null) {
-
-                    String userId = ChatManager.getInstance().getLoggedUser().getId();
-                    String normalizedLoggedUserId = ChatUtils.normalizeUsername(userId);
-
                     // bugfix Issue #16
                     if (StringUtils.isValid(ChatManager.getPresenceDeviceInstance())) {
-                        MyPresenceHandler.signOut(context, normalizedLoggedUserId,
-                                ChatManager.getPresenceDeviceInstance(), new OnPresenceChangesListener() {
-                                    @Override
-                                    public void onPresenceChange(boolean imConnected) {
-
-                                        // if connected => disconnect
-                                        if (imConnected) {
-                                            getFirebaseAuth().signOut();
-                                            Log.i(DEBUG_LOGIN, "signed out from firebase with success");
-                                            Log.i(DEBUG_MY_PRESENCE, "Chat.onPresenceChange - " +
-                                                    "signed out from firebase with success");
-                                            onChatLogoutCallback.onChatLogoutSuccess();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onLastOnlineChange(long lastOnline) {
-                                        Log.d(DEBUG_LOGIN, "onLastOnlineChange - lastOnline: " + lastOnline);
-                                        Log.d(DEBUG_MY_PRESENCE, "Chat.onLastOnlineChange " +
-                                                "- lastOnline: " + lastOnline);
-                                    }
-
-                                    @Override
-                                    public void onPresenceChangeError(Exception e) {
-                                        Log.e(DEBUG_LOGIN, e.getMessage());
-                                        Log.d(DEBUG_MY_PRESENCE, "Chat.onPresenceChangeError" + e.getMessage());
-                                        FirebaseCrash.report(e);
-                                        onChatLogoutCallback.onChatLogoutError(logoutException);
-                                    }
-                                });
+                        PresenceManger.logout(ChatManager.getInstance().getTenant(),
+                                ChatManager.getPresenceDeviceInstance(),
+                                ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
                     }
 
                 } else {
@@ -382,11 +372,11 @@ public final class ChatAuthentication {
     // remove the instanceId for an user on a tenant
     // fix Issue #5
     // fix Issue #23
-    private void removeInstanceId(Context context) {
+    private void removeInstanceId(String appId, String userId) {
         Log.d(DEBUG_LOGIN, "removeInstanceId");
 
-        DatabaseReference firebaseUsersPath = new NodeDAOImpl(context)
-                .getNodeInstances();
+        DatabaseReference firebaseUsersPath = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/users/" + userId + "/instanceId");
         firebaseUsersPath.removeValue();
     }
 

@@ -11,24 +11,27 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import chat21.android.dao.node.NodeDAOImpl;
-import chat21.android.utils.IOUtils;
-import chat21.android.utils.ImageCompressor;
+import chat21.android.R;
+import chat21.android.utils.image.ImageCompressor;
 
 /**
  * Created by stefanodp91 on 02/08/17.
@@ -37,17 +40,16 @@ import chat21.android.utils.ImageCompressor;
 public class StorageHandler {
     private static final String TAG = StorageHandler.class.getName();
 
-    public static void uploadFile(Context context, File fileToUpload,
-                                  final OnUploadedCallback callback) {
+    public static void uploadFile(Context context, File fileToUpload, final OnUploadedCallback callback) {
         Log.d(TAG, "uploadFile");
 
         Uri file = Uri.fromFile(fileToUpload);
 
         // check the type
         // if it is an image compress it
-        IOUtils.Type type = IOUtils.getType(fileToUpload);
+        Type type = getType(fileToUpload);
         String typeStr = type.toString().toLowerCase();
-        if (type.equals(IOUtils.Type.Image)) {
+        if (type.equals(Type.Image)) {
             // its an image
             compressImage(context, file, typeStr, callback); // compress and upload
         } else {
@@ -70,9 +72,10 @@ public class StorageHandler {
     // execute the upload
     private static void performUpload(Context context, Uri file, final String type,
                                       final OnUploadedCallback callback) {
-        // public folder
-        StorageReference storageRef = new NodeDAOImpl(context)
-                .getPublicStorageFolder();
+        // public storage folder
+        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(
+                context.getString(R.string.firebase_storage_reference))
+                .child("public");
 
         // random uid.
         // this is used to generate an unique folder in which
@@ -85,52 +88,38 @@ public class StorageHandler {
         UploadTask uploadTask = riversRef.putFile(file);
 
         // Register observers to listen for when the download is done or if it fails
-        uploadTask
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                        Log.e(TAG, "addOnFailureListener.onFailure: " + exception.getMessage());
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.e(TAG, "addOnFailureListener.onFailure: " + exception.getMessage());
 
-                        callback.onUploadFailed(exception);
-                    }
-                })
-//                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-//                        // progress
-//                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) /
-//                                taskSnapshot.getTotalByteCount();
-//                        Log.d(TAG, "addOnFailureListener.onProgress - progress: " + progress);
-//
-//                        callback.onProgress(progress);
-//                    }
-//                })
-                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                        Log.d(TAG, "Upload is " + progress + "% done");
-                        int currentProgress = (int) progress;
-                        callback.onProgress(currentProgress);
-                    }
-                }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+                callback.onUploadFailed(exception);
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                Log.d(TAG, "Upload is " + progress + "% done");
+                int currentProgress = (int) progress;
+                callback.onProgress(currentProgress);
+            }
+        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
                 System.out.println("Upload is paused");
             }
-        })
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size,
-                        // content-type, and download URL.
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        Log.d(TAG, "addOnFailureListener.onSuccess - downloadUrl: " + downloadUrl);
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size,
+                // content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Log.d(TAG, "addOnFailureListener.onSuccess - downloadUrl: " + downloadUrl);
 
-                        callback.onUploadSuccess(downloadUrl, type);
-                    }
-                });
+                callback.onUploadSuccess(downloadUrl, type);
+            }
+        });
     }
 
     public static String getFilePathFromUri(Context context, Uri uri) {
@@ -284,5 +273,72 @@ public class StorageHandler {
         }
 
         return null;
+    }
+
+    /**
+     * Returns the file type
+     *
+     * @param file the file which wants to get the type
+     * @return Type.Image if the file extensions if one between (jpg, jpeg, gif, png) - Type.File otherwise
+     */
+    private static Type getType(File file) {
+
+        // retrieve the extension from the file uri
+        String extension = getExtensionFromUri(file);
+        Log.d(TAG, "extension == " + extension);
+
+        if (isImage(extension)) {
+            return Type.Image;
+        } else {
+            return Type.File;
+        }
+    }
+
+    /**
+     * Returns the mime type from a file
+     * <p>
+     * source :
+     * http://www.edumobile.org/android/get-file-extension-and-mime-type-in-android-development/
+     *
+     * @param file the file which wants to get the mime type
+     * @return the mime type
+     */
+    private static String getExtensionFromUri(File file) {
+        Uri fileUri = Uri.fromFile(file);
+
+        String fileExtension
+                = MimeTypeMap.getFileExtensionFromUrl(fileUri.toString());
+
+        return fileExtension;
+    }
+
+
+    private static boolean isImage(String extension) {
+        boolean isImage = false;
+
+        // image extensions
+        for (String currentExtension : getImageExtensions()) {
+            if (extension.equalsIgnoreCase(currentExtension)) {
+                isImage = true;
+                break;
+            }
+        }
+
+        return isImage;
+    }
+
+    private static List<String> getImageExtensions() {
+        List<String> list = new ArrayList<>();
+        list.add("jpg");
+        list.add("jpeg");
+        list.add("gif");
+        list.add("png");
+        return list;
+    }
+
+
+    public enum Type {
+        Image,
+        File
     }
 }

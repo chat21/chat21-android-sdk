@@ -3,19 +3,12 @@ package chat21.android.utils;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class IOUtils {
     private static final String TAG = IOUtils.class.getName();
@@ -113,72 +106,5 @@ public class IOUtils {
             // should never happen
             throw new RuntimeException("Could not get package name: " + e);
         }
-    }
-
-    /**
-     * Returns the file type
-     *
-     * @param file    the file which wants to get the type
-     * @return Type.Image if the file extensions if one between (jpg, jpeg, gif, png) - Type.File otherwise
-     */
-    public static Type getType(File file) {
-
-        // retrieve the extension from the file uri
-        String extension = getExtensionFromUri(file);
-        Log.d(TAG, "extension == " + extension);
-
-        if (isImage(extension)) {
-            return Type.Image;
-        } else {
-            return Type.File;
-        }
-    }
-
-    /**
-     * Returns the mime type from a file
-     * <p>
-     * source :
-     * http://www.edumobile.org/android/get-file-extension-and-mime-type-in-android-development/
-     *
-     * @param file    the file which wants to get the mime type
-     * @return the mime type
-     */
-    private static String getExtensionFromUri(File file) {
-        Uri fileUri = Uri.fromFile(file);
-
-        String fileExtension
-                = MimeTypeMap.getFileExtensionFromUrl(fileUri.toString());
-
-       return  fileExtension;
-    }
-
-
-    private static boolean isImage(String extension) {
-        boolean isImage = false;
-
-        // image extensions
-        for (String currentExtension : getImageExtensions()) {
-            if (extension.equalsIgnoreCase(currentExtension)) {
-                isImage = true;
-                break;
-            }
-        }
-
-        return isImage;
-    }
-
-    private static List<String> getImageExtensions() {
-        List<String> list = new ArrayList<>();
-        list.add("jpg");
-        list.add("jpeg");
-        list.add("gif");
-        list.add("png");
-        return list;
-    }
-
-
-    public enum Type {
-        Image,
-        File
     }
 }

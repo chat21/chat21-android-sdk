@@ -2,19 +2,17 @@
 package chat21.android.dao.message;
 
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Map;
 
-import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
-import chat21.android.dao.node.NodeDAO;
-import chat21.android.dao.node.NodeDAOImpl;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.messages.models.Message;
 
 /**
@@ -23,13 +21,11 @@ import chat21.android.core.messages.models.Message;
 class UploadMessageOnFirebaseTask {
     private static final String TAG = UploadMessageOnFirebaseTask.class.getName();
 
-    private NodeDAO mNodeDAO;
+    UploadMessageOnFirebaseTask() {
 
-    UploadMessageOnFirebaseTask(Context context) {
-        mNodeDAO = new NodeDAOImpl(context);
     }
 
-    void uploadMessage(String text, Message message, String conversationId, final Map<String, Object> extras) {
+    void uploadMessage(String appId, String text, Message message, String conversationId, final Map<String, Object> extras) {
 
         Log.d(TAG, "uploadMessage");
 
@@ -57,14 +53,14 @@ class UploadMessageOnFirebaseTask {
                 }); // save message on db
 
         // update node sender
-        updateNodeSender(text, message, conversationId, extras);
+        updateNodeSender(appId, text, message, conversationId, extras);
 
         // update node recipient
-        updateNodeRecipient(text, message, conversationId, extras);
+        updateNodeRecipient(appId, text, message, conversationId, extras);
     }
 
 
-    private void updateNodeSender(String text,
+    private void updateNodeSender(String appId, String text,
                                   Message message, String conversationId,
                                   final Map<String, Object> extras) {
         Log.d(TAG, "updateNodeSender");
@@ -78,36 +74,37 @@ class UploadMessageOnFirebaseTask {
         cSender.setRecipient(message.getRecipient());
 //        cSender.setRecipientFullName(StringUtils.isValid(conversation.getConvers_with_fullname()) ? conversation.getConvers_with_fullname() : conversation.getConvers_with());
         cSender.getTimestamp();
-        cSender.setStatus(ChatManager.CONVERSATION_STATUS_LAST_MESSAGE);
+        cSender.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
         cSender.setIs_new(true); // the conversation has new messages
         cSender.setLast_message_text(text);
 
         // save to firebase
-        mNodeDAO.getNodeConversations(ChatManager.getInstance().getLoggedUser().getId())
-                .child(conversationId).setValue(cSender,
-                new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference firebase) {
-                        Log.d(TAG, "updateNodeSender.onComplete");
+        FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/users/" + ChatManager.getInstance().getLoggedUser().getId() + "/conversations/" + conversationId)
+                .setValue(cSender,
+                        new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference firebase) {
+                                Log.d(TAG, "updateNodeSender.onComplete");
 
-                        // check of there are errors
-                        if (databaseError == null) {
-                            Log.d(TAG, "extras added with success to node sender");
-                            if (extras != null) {
-                                // add extras
-                                firebase.child("extras").setValue(extras);
+                                // check of there are errors
+                                if (databaseError == null) {
+                                    Log.d(TAG, "extras added with success to node sender");
+                                    if (extras != null) {
+                                        // add extras
+                                        firebase.child("extras").setValue(extras);
+                                    }
+                                } else {
+                                    String errorMessage = "updateNodeSender.onComplete: Cannot add extras. " +
+                                            databaseError.getMessage();
+                                    Log.e(TAG, errorMessage);
+                                    FirebaseCrash.report(new Exception(errorMessage));
+                                }
                             }
-                        } else {
-                            String errorMessage = "updateNodeSender.onComplete: Cannot add extras. " +
-                                    databaseError.getMessage();
-                            Log.e(TAG, errorMessage);
-                            FirebaseCrash.report(new Exception(errorMessage));
-                        }
-                    }
-                });
+                        });
     }
 
-    private void updateNodeRecipient(String text, Message message, String conversationId,
+    private void updateNodeRecipient(String appId, String text, Message message, String conversationId,
                                      final Map<String, Object> extras) {
         Log.d(TAG, "updateNodeRecipient");
 
@@ -127,32 +124,33 @@ class UploadMessageOnFirebaseTask {
         cRecipient.setRecipient(conversWithId);
 //        cRecipient.setRecipientFullName(StringUtils.isValid(conversation.getConvers_with_fullname()) ? conversation.getConvers_with_fullname() : conversation.getConvers_with());
         cRecipient.getTimestamp();
-        cRecipient.setStatus(ChatManager.CONVERSATION_STATUS_LAST_MESSAGE);
+        cRecipient.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
         cRecipient.setIs_new(true);  // the conversation has new messages
         cRecipient.setLast_message_text(text);
 
         // save to firebase
-        mNodeDAO.getNodeConversations(message.getRecipient())
-                .child(conversationId).setValue(cRecipient,
-                new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference firebase) {
-                        Log.d(TAG, "updateNodeRecipient.onComplete");
+        FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/users/" + message.getRecipient() + "/conversations/" + conversationId)
+                .setValue(cRecipient,
+                        new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference firebase) {
+                                Log.d(TAG, "updateNodeRecipient.onComplete");
 
-                        // check of there are errors
-                        if (databaseError == null) {
-                            Log.d(TAG, "extras added with success to node recipient");
-                            if (extras != null) {
-                                // add extras
-                                firebase.child("extras").setValue(extras);
+                                // check of there are errors
+                                if (databaseError == null) {
+                                    Log.d(TAG, "extras added with success to node recipient");
+                                    if (extras != null) {
+                                        // add extras
+                                        firebase.child("extras").setValue(extras);
+                                    }
+                                } else {
+                                    String errorMessage = "updateNodeRecipient.onComplete: Cannot add extras. " +
+                                            databaseError.getMessage();
+                                    Log.e(TAG, errorMessage);
+                                    FirebaseCrash.report(new Exception(errorMessage));
+                                }
                             }
-                        } else {
-                            String errorMessage = "updateNodeRecipient.onComplete: Cannot add extras. " +
-                                    databaseError.getMessage();
-                            Log.e(TAG, errorMessage);
-                            FirebaseCrash.report(new Exception(errorMessage));
-                        }
-                    }
-                });
+                        });
     }
 }

@@ -19,9 +19,9 @@ import java.util.Date;
 import java.util.Map;
 
 import chat21.android.R;
-import chat21.android.conversations.activities.ConversationListActivity;
-import chat21.android.core.ChatManager;
-import chat21.android.messages.activites.MessageListActivity;
+import chat21.android.ui.messages.activities.MessageListActivity;
+import chat21.android.ui.ChatUI;
+import chat21.android.ui.conversations.activities.ConversationListActivity;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 
@@ -205,8 +205,8 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         int notificationId = (int) new Date().getTime();
 
         Intent resultIntent = new Intent(this, MessageListActivity.class);
-        resultIntent.putExtra(ChatManager._INTENT_BUNDLE_CONVERSATION_ID, conversationId);
-        resultIntent.putExtra(ChatManager.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
+        resultIntent.putExtra(ChatUI._INTENT_BUNDLE_CONVERSATION_ID, conversationId);
+        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(ConversationListActivity.class);
         stackBuilder.addNextIntent(resultIntent);
@@ -233,8 +233,8 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         int notificationId = (int) new Date().getTime();
 
         Intent resultIntent = new Intent(this, MessageListActivity.class);
-        resultIntent.putExtra(ChatManager._INTENT_BUNDLE_CONVERSATION_ID, conversationId);
-        resultIntent.putExtra(ChatManager.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
+        resultIntent.putExtra(ChatUI._INTENT_BUNDLE_CONVERSATION_ID, conversationId);
+        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(ConversationListActivity.class);
         stackBuilder.addNextIntent(resultIntent);

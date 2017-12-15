@@ -1,12 +1,12 @@
 package chat21.android.groups.utils;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.core.ChatManager;
-import chat21.android.dao.node.NodeDAOImpl;
-import chat21.android.groups.models.Group;
-import chat21.android.user.models.ChatUser;
-import chat21.android.user.models.IChatUser;
+import chat21.android.core.groups.models.Group;
+import chat21.android.core.users.models.ChatUser;
+import chat21.android.core.users.models.IChatUser;
+import chat21.android.utils.StringUtils;
 
 /**
  * Created by stefanodp91 on 14/07/17.
@@ -26,6 +26,23 @@ import chat21.android.user.models.IChatUser;
 
 public class GroupUtils {
     private static final String TAG = GroupUtils.class.getName();
+
+    public static boolean isValidGroup(Group group) {
+        if (group != null) {
+
+            boolean isValidName = StringUtils.isValid(group.getName());
+            boolean isValidMembers = group.getMembers() != null && group.getMembers().size() > 0;
+            boolean isValidOwner = StringUtils.isValid(group.getOwner());
+            boolean isValidTimestamp = group.getCreatedOnLong() != 0;
+
+            if (isValidName && isValidMembers && isValidOwner && isValidTimestamp)
+                return true;
+            else
+                return false;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * @param dataSnapshot the datasnapshot to decode
@@ -62,17 +79,16 @@ public class GroupUtils {
         return group;
     }
 
-    public static void subscribeOnGroupsChanges(
-            Context context,
-            final String groupId,
-            final OnGroupsChangeListener onGroupsChangeListener) {
+    public static void subscribeOnGroupsChanges(String appId, final String groupId,
+                                                final OnGroupsChangeListener onGroupsChangeListener) {
 
         // retrieve group
-        final DatabaseReference mGroup = new NodeDAOImpl(context).getGroupById(groupId);
+        DatabaseReference nodeGroup = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/groups/" + groupId);
 
-        Log.d(TAG, "subscribeOnGroupsChanges.node: " + mGroup.getRef());
+        Log.d(TAG, "subscribeOnGroupsChanges.nodeGroup: " + nodeGroup.getRef());
 
-        mGroup.addListenerForSingleValueEvent(new ValueEventListener() {
+        nodeGroup.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -91,15 +107,14 @@ public class GroupUtils {
 
     }
 
-    public static void subscribeOnNodeMembersChanges(
-            Context context,
-            String groupId,
-            final OnNodeMembersChangeListener onNodeMembersChangeListener) {
+    public static void subscribeOnNodeMembersChanges(String appId, String groupId,
+                                                     final OnNodeMembersChangeListener onNodeMembersChangeListener) {
 
-        DatabaseReference mGroup = new NodeDAOImpl(context).getGroupById(groupId);
+        DatabaseReference nodeGroup = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/groups/" + groupId);
 
         // subscribe for members change
-        mGroup.addChildEventListener(new ChildEventListener() {
+        nodeGroup.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.d(TAG, "onChildAdded");
@@ -172,7 +187,7 @@ public class GroupUtils {
                 && group.getMembers().containsKey(userId) ? true : false;
     }
 
-    public static String getGroupMembersAsList(Context context, Map<String, Integer> membersMap) {
+    public static String getGroupMembersAsList(Map<String, Integer> membersMap) {
         String members = "";
 
         for (Map.Entry<String, Integer> entry : membersMap.entrySet()) {

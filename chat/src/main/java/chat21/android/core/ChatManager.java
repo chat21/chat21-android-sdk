@@ -7,7 +7,6 @@ import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
-import chat21.android.user.models.IChatUser;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.IOUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
@@ -166,7 +165,7 @@ public class ChatManager {
         conversationMessagesDAO.sendMessage(Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 
-    public void sendtFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener){
+    public void sendFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener){
 
     }
 
