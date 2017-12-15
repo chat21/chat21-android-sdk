@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -25,15 +26,13 @@ import chat21.android.R;
 import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
-import chat21.android.dao.groups.GroupsDAO;
-import chat21.android.dao.groups.GroupsDAOImpl;
-import chat21.android.dao.groups.OnGroupsRetrievedCallback;
-import chat21.android.dao.node.NodeDAO;
-import chat21.android.ui.groups.adapters.MyGroupsListAdapter;
-import chat21.android.ui.groups.listeners.OnGroupClickListener;
 import chat21.android.core.groups.models.Group;
+import chat21.android.dao.groups.GroupsDAO;
+import chat21.android.dao.groups.OnGroupsRetrievedCallback;
 import chat21.android.messages.activites.MessageListActivity;
 import chat21.android.ui.ChatUI;
+import chat21.android.ui.groups.adapters.MyGroupsListAdapter;
+import chat21.android.ui.groups.listeners.OnGroupClickListener;
 
 import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
 
@@ -44,7 +43,6 @@ import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
 public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsRetrievedCallback,
         OnGroupClickListener {
 
-    private NodeDAO mNodeDAO;
     private GroupsDAO mGroupsDAO;
     private Toolbar mToolbar;
     private RecyclerView mMyGroupsListRecyclerView;
@@ -67,8 +65,7 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 
         initViews();
 
-        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
-        mGroupsDAO = new GroupsDAOImpl(this);
+        mGroupsDAO = new GroupsDAO(this);
     }
 
     @Override
@@ -122,7 +119,7 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
         Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.retrieveGroupsForUser: userId == " + userId);
 
         if (mGroupsDAO == null)
-            mGroupsDAO = new GroupsDAOImpl(this);
+            mGroupsDAO = new GroupsDAO(this);
         mGroupsDAO.getGroupsForUser(userId, this);
     }
 
@@ -164,10 +161,11 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
         Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupClicked: " +
                 "group == " + group.toString() + ", position == " + position);
 
-        // TODO: 26/09/17 spostare da qua - mettere in un dao
-        DatabaseReference nodeConversation = mNodeDAO
-                .getNodeConversations(ChatManager.getInstance().getTenant())
-                .child(group.getGroupId());
+        DatabaseReference nodeConversation = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + ChatManager.getInstance().getTenant()
+                        + "/users/" + ChatManager.getInstance().getLoggedUser().getId()
+                        + "/conversations/" + group.getGroupId());
+
         Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
                 ".addValueEventListener.onDataChange: " +
                 "nodeConversation == " + nodeConversation.toString());

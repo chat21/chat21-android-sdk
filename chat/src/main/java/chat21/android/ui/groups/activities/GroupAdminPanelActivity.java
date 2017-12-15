@@ -26,14 +26,14 @@ import java.util.Map;
 import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
+import chat21.android.core.groups.models.Group;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.groups.utils.GroupUtils;
+import chat21.android.ui.ChatUI;
 import chat21.android.ui.groups.adapters.GroupMembersListAdapter;
 import chat21.android.ui.groups.fragments.BottomSheetGroupAdminPanelMemberFragment;
 import chat21.android.ui.groups.listeners.OnGroupMemberClickListener;
-import chat21.android.core.groups.models.Group;
-import chat21.android.groups.utils.GroupUtils;
-import chat21.android.ui.ChatUI;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
@@ -74,10 +74,10 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         // observes for group changes
-        GroupUtils.subscribeOnGroupsChanges(this, getGroupId(), this);
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), getGroupId(), this);
 
         // observes for members change
-        GroupUtils.subscribeOnNodeMembersChanges(this, getGroupId(), this);
+        GroupUtils.subscribeOnNodeMembersChanges(ChatManager.getInstance().getTenant(), getGroupId(), this);
 
         super.onResume();
     }
@@ -132,7 +132,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
                 hideAddMember();
             }
         } else {
-            GroupUtils.subscribeOnGroupsChanges(this, getGroupId(),
+            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), getGroupId(),
                     new GroupUtils.OnGroupsChangeListener() {
                         @Override
                         public void onGroupChanged(Group group, String groupId) {
@@ -343,7 +343,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
 //                startActivityForResult(intent, Chat.INTENT_ADD_MEMBERS_ACTIVITY);
                 startActivity(intent);
             } else {
-                GroupUtils.subscribeOnGroupsChanges(this, getGroupId(),
+                GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), getGroupId(),
                         new GroupUtils.OnGroupsChangeListener() {
                             @Override
                             public void onGroupChanged(Group group, String groupId) {

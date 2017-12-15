@@ -26,7 +26,6 @@ import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.dao.groups.GroupsDAO;
-import chat21.android.dao.groups.GroupsDAOImpl;
 import chat21.android.dao.groups.OnGroupsRetrievedCallback;
 import chat21.android.ui.groups.adapters.MyGroupsListAdapter;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
@@ -68,7 +67,7 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
 
         initViews();
 
-        mGroupsDAO = new GroupsDAOImpl(this);
+        mGroupsDAO = new GroupsDAO(this);
     }
 
     @Override
@@ -151,7 +150,7 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
         Log.d(DEBUG_NODE_GROUPS, "ChooseGroupActivity.startCreateGroupActivity: userId == " + userId);
 
         if (mGroupsDAO == null)
-            mGroupsDAO = new GroupsDAOImpl(this);
+            mGroupsDAO = new GroupsDAO(this);
         mGroupsDAO.getGroupsForUser(userId, this);
     }
 

@@ -20,21 +20,21 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import chat21.android.R;
 import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.listeners.OnConversationTreeChangeListener;
 import chat21.android.core.conversations.models.Conversation;
-import chat21.android.dao.node.NodeDAO;
-import chat21.android.messages.activites.MessageListActivity;
 import chat21.android.core.presence.PresenceManger;
+import chat21.android.core.presence.listeners.OnMyPresenceChangesListener;
+import chat21.android.messages.activites.MessageListActivity;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.conversations.adapters.ConversationListAdapter;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
 import chat21.android.ui.groups.activities.MyGroupsListActivity;
-import chat21.android.core.presence.listeners.OnMyPresenceChangesListener;
 import chat21.android.utils.ChatUtils;
 import chat21.android.utils.listeners.OnContactListClickListener;
 import chat21.android.utils.listeners.OnSupportContactListClickListener;
@@ -58,8 +58,6 @@ public class ConversationListFragment extends Fragment implements
 
     private LinearLayoutManager mLayoutManager;
 
-    private NodeDAO mNodeDAO;
-
     private TextView mGroupsView;
 
     private ProgressBar mProgressBar;
@@ -67,13 +65,6 @@ public class ConversationListFragment extends Fragment implements
     public static Fragment newInstance() {
         Fragment mFragment = new ConversationListFragment();
         return mFragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
     }
 
     @Nullable
@@ -87,7 +78,7 @@ public class ConversationListFragment extends Fragment implements
 
         initViews(rootView);
 
-        observeConversations();
+        observeConversations(ChatManager.getInstance().getTenant());
 
         // subscribe for user presence changes
         PresenceManger.observeMyPresenceChanges(this);
@@ -164,12 +155,14 @@ public class ConversationListFragment extends Fragment implements
         }
     }
 
-    private void observeConversations() {
+    private void observeConversations(String appId) {
         Log.d(TAG, "observeConversations");
 
-        ConversationUtils.observeMessageTree(getActivity(),
-                mNodeDAO.getNodeConversations(ChatManager.getInstance().getTenant()),
-                this);
+        DatabaseReference nodeConversations = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/users/" + ChatManager.getInstance().getLoggedUser().getId() + "/conversations");
+
+        ConversationUtils.observeMessageTree(appId, ChatManager.getInstance().getLoggedUser().getId(),
+                nodeConversations, this);
     }
 
     private void updateConversationListAdapter(DatabaseReference node) {
@@ -249,7 +242,9 @@ public class ConversationListFragment extends Fragment implements
         String conversationId = conversation.getConversationId();
 
         try {
-            ConversationUtils.setConversationRead(getActivity(), conversationId);
+            ConversationUtils.setConversationRead(ChatManager.getInstance().getTenant(),
+                    ChatManager.getInstance().getLoggedUser().getId(),
+                    conversationId);
             startMessageActivity(conversation.getConversationId());
         } catch (Exception e) {
             Log.e(TAG, "cannot start messageActivity. " + e.getMessage());

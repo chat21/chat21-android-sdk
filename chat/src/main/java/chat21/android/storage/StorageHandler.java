@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -26,8 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import chat21.android.core.ChatManager;
-import chat21.android.dao.node.NodeDAO;
+import chat21.android.R;
 import chat21.android.utils.IOUtils;
 import chat21.android.utils.image.ImageCompressor;
 
@@ -71,9 +71,10 @@ public class StorageHandler {
     // execute the upload
     private static void performUpload(Context context, Uri file, final String type,
                                       final OnUploadedCallback callback) {
-        // public folder
-        StorageReference storageRef = new NodeDAO(ChatManager.getInstance().getTenant())
-                .getPublicStorageFolder(context);
+        // public storage folder
+        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(
+                context.getString(R.string.firebase_storage_reference))
+                .child("public");
 
         // random uid.
         // this is used to generate an unique folder in which

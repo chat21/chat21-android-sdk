@@ -14,11 +14,11 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import chat21.android.R;
-import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
-import chat21.android.dao.node.NodeDAO;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.users.models.IChatUser;
 
 /**
@@ -37,7 +37,6 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
 
     private Button mDeleteConversationView;
 
-    private NodeDAO mNodeDAO;
 
     public static BottomSheetConversationsListFragmentLongPress
     newInstance(Conversation conversation) {
@@ -61,8 +60,6 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
         mLoggedUser = ChatManager.getInstance().getLoggedUser();
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onCreate:" +
                 " mLoggedUser == " + mLoggedUser.toString());
-
-        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
     }
 
     @Override
@@ -144,22 +141,15 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
     private void perfomDeleteConversation() {
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.perfomDeleteConversation");
 
-//        String conversationId;
-//        if (StringUtils.isValid(mConversation.getGroup_id())) {
-//            conversationId = mConversation.getGroup_id();
-//        } else {
-//            conversationId = ConversationUtils.getConversationId(
-//                    mConversation.getSender(), mConversation.getRecipient());
-//        }
-
         String conversationId = mConversation.getConversationId();
 
 
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
                 ".perfomDeleteConversation: conversationId == " + conversationId);
 
-        DatabaseReference nodeConversation = mNodeDAO.getNodeConversations(mLoggedUser.getId())
-                .child(conversationId);
+        DatabaseReference nodeConversation = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + ChatManager.getInstance().getTenant() + "/users/" + mLoggedUser.getId() + "/conversations/" + conversationId);
+
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
                 ".perfomDeleteConversation: nodeConversation == " + nodeConversation.toString());
 

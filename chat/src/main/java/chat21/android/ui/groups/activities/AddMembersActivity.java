@@ -29,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +42,6 @@ import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.groups.models.Group;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.dao.node.NodeDAO;
 import chat21.android.groups.utils.GroupUtils;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
@@ -85,14 +85,10 @@ public class AddMembersActivity extends AppCompatActivity implements
     private MenuItem mAddMemberMenuItem;
     private SearchView searchView;
 
-    private NodeDAO mNodeDAO;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_members);
-
-        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
 
         initData();
         registerViews();
@@ -610,7 +606,7 @@ public class AddMembersActivity extends AppCompatActivity implements
         Group group = addMembersToGroup();
         Log.d(TAG, group.toString());
 
-        uploadGroup(getGroupId(), group);
+        uploadGroup(ChatManager.getInstance().getTenant(), getGroupId(), group);
     }
 
     private void onAddMemberOptionsItemClicked() {
@@ -619,7 +615,7 @@ public class AddMembersActivity extends AppCompatActivity implements
         Group group = addMembersToGroup();
         Log.d(TAG, group.toString());
 
-        uploadGroup(getGroupId(), group);
+        uploadGroup(ChatManager.getInstance().getTenant(), getGroupId(), group);
     }
 
     // add the list of member to the created group
@@ -674,14 +670,16 @@ public class AddMembersActivity extends AppCompatActivity implements
                 .getString(ChatUI._INTENT_EXTRAS_PARENT_ACTIVITY);
     }
 
-    private void uploadGroup(String groupId, final Group group) {
+    private void uploadGroup(String appId, String groupId, final Group group) {
         Log.d(TAG, "uploadGroup");
 
         if (group.getMembers().size() > 0) {
             if (!StringUtils.isValid(groupId)) {
 
-                mNodeDAO.getNodeGroups()
-                        .push().setValue(group, new DatabaseReference.CompletionListener() {
+                DatabaseReference nodeGroups = FirebaseDatabase.getInstance().getReference()
+                        .child("apps/" + ChatManager.getInstance().getTenant() + "/groups");
+
+                nodeGroups.push().setValue(group, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError,
                                            DatabaseReference databaseReference) {
@@ -703,7 +701,8 @@ public class AddMembersActivity extends AppCompatActivity implements
                     }
                 });
             } else {
-                mNodeDAO.getGroupById(groupId).child("members")
+                FirebaseDatabase.getInstance().getReference()
+                        .child("apps/" + appId + "/groups/" + groupId + "/members")
                         .setValue(group.getMembers(),
                                 new DatabaseReference.CompletionListener() {
                                     @Override
@@ -737,7 +736,7 @@ public class AddMembersActivity extends AppCompatActivity implements
     public void onGroupCreatedSuccess(String groupId, Group group) {
         Log.d(TAG, "onGroupCreatedSuccess");
 
-        createConversationsOnFirebaseAsync(groupId, group);
+        createConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, group);
 
         startNextActivity(groupId);
     }
@@ -754,7 +753,7 @@ public class AddMembersActivity extends AppCompatActivity implements
     public void onGroupUpdatedSuccess(String groupId, Group group) {
         Log.d(TAG, "onGroupCreatedSuccess");
 
-        updateConversationsOnFirebaseAsync(groupId, group);
+        updateConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, group);
 
         startNextActivity(groupId);
     }
@@ -769,7 +768,7 @@ public class AddMembersActivity extends AppCompatActivity implements
 
     // create a conversation for each member of the group with a custom message.
     // the creator of the group has a custom message
-    private void createConversationsOnFirebaseAsync(String groupId, Group group) {
+    private void createConversationsOnFirebaseAsync(String appId, String groupId, Group group) {
         Log.d(TAG, "createConversationsOnFirebaseAsync");
 
         IChatUser loggedUser = ChatManager.getInstance().getLoggedUser();
@@ -803,11 +802,11 @@ public class AddMembersActivity extends AppCompatActivity implements
             conversation.setConversationId(groupId);
 
             // upload the conversation
-            ConversationUtils.uploadConversationOnFirebase(groupId, memberId, conversation);
+            ConversationUtils.uploadConversationOnFirebase(appId, groupId, memberId, conversation);
         }
     }
 
-    private void updateConversationsOnFirebaseAsync(String groupId, Group group) {
+    private void updateConversationsOnFirebaseAsync(String appId, String groupId, Group group) {
         Log.d(TAG, "updateConversationsOnFirebaseAsync");
 
         IChatUser loggedUser = ChatManager.getInstance().getLoggedUser();
@@ -836,7 +835,7 @@ public class AddMembersActivity extends AppCompatActivity implements
                 conversation.setConversationId(groupId);
 
                 // upload the conversation
-                ConversationUtils.uploadConversationOnFirebase(groupId, memberId, conversation);
+                ConversationUtils.uploadConversationOnFirebase(appId, groupId, memberId, conversation);
             }
         }
     }

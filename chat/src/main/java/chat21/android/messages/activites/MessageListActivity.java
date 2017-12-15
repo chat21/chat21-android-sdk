@@ -56,16 +56,15 @@ import chat21.android.core.conversations.listeners.OnConversationRetrievedCallba
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.groups.models.Group;
 import chat21.android.core.messages.models.Message;
+import chat21.android.core.presence.PresenceManger;
+import chat21.android.core.presence.listeners.OnUserPresenceChangesListener;
 import chat21.android.dao.message.MessageDAO;
-import chat21.android.dao.message.MessageDAOImpl;
 import chat21.android.dao.message.OnDetachObserveMessageTree;
 import chat21.android.groups.utils.GroupUtils;
 import chat21.android.messages.adapters.MessageListAdapter;
 import chat21.android.messages.fargments.BottomSheetAttach;
 import chat21.android.messages.listeners.OnMessageClickListener;
 import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
-import chat21.android.core.presence.listeners.OnUserPresenceChangesListener;
-import chat21.android.core.presence.PresenceManger;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
 import chat21.android.ui.ChatUI;
@@ -147,7 +146,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
         initToolbar(null);
 
-        mMessageDAO = new MessageDAOImpl(this);
+        mMessageDAO = new MessageDAO(this);
 
         // retrieve custom extras, if they exist
         extras = getExtras();
@@ -159,7 +158,9 @@ public class MessageListActivity extends AppCompatActivity implements
         if (isFromBackgroundNotification) {
             onConversationRetrievedSuccess(ConversationUtils.createConversationFromBackgroundPush(getIntent()));
         } else {
-            ConversationUtils.getConversationFromId(this, conversationId, this);
+            ConversationUtils.getConversationFromId(ChatManager.getInstance().getTenant(),
+                    ChatManager.getInstance().getLoggedUser().getId(),
+                    conversationId, this);
         }
     }
 
@@ -355,7 +356,7 @@ public class MessageListActivity extends AppCompatActivity implements
     private void displayGroupMembersInSubtitle() {
         mSubTitleTextView.setText(getString(R.string.activity_message_list_group_info_label));
 
-        GroupUtils.subscribeOnGroupsChanges(this, conversationId,
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), conversationId,
                 new GroupUtils.OnGroupsChangeListener() {
                     @Override
                     public void onGroupChanged(Group group, String groupId) {
@@ -560,7 +561,7 @@ public class MessageListActivity extends AppCompatActivity implements
     private void toggleTelegramPanelVisibility() {
         if (isGroupConversation) {
             // group conversation
-            GroupUtils.subscribeOnGroupsChanges(this, conversationId,
+            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), conversationId,
                     new GroupUtils.OnGroupsChangeListener() {
                         @Override
                         public void onGroupChanged(Group group, String groupId) {

@@ -1,16 +1,15 @@
 package chat21.android.dao.message;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.ChatManager;
-import chat21.android.dao.node.NodeDAO;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.messages.models.Message;
 
 /**
@@ -19,13 +18,7 @@ import chat21.android.core.messages.models.Message;
 class UploadGroupMessageOnFirebaseTask {
     private static final String TAG = UploadGroupMessageOnFirebaseTask.class.getName();
 
-    private NodeDAO mNodeDAO;
-
-    UploadGroupMessageOnFirebaseTask(Context context) {
-        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
-    }
-
-    void uploadMessage(String text, Message message,
+    void uploadMessage(String appId, String text, Message message,
                        Conversation conversation, String conversationId) {
         Log.d(TAG, "uploadMessage");
 
@@ -33,10 +26,10 @@ class UploadGroupMessageOnFirebaseTask {
                 .push()
                 .setValue(message);
 
-        updateNodesFromGroupMessage(text, conversation, conversationId);
+        updateNodesFromGroupMessage(appId, text, conversation, conversationId);
     }
 
-    private void updateNodesFromGroupMessage(String text,
+    private void updateNodesFromGroupMessage(final String appId, String text,
                                              final Conversation conversation,
                                              final String conversationId) {
         Log.d(TAG, "updateNodesFromGroupMessage");
@@ -48,7 +41,8 @@ class UploadGroupMessageOnFirebaseTask {
         conversation.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
         conversation.setIs_new(true);
 
-        DatabaseReference nodeMembers = mNodeDAO.getGroupMembersNode(conversation.getGroup_id());
+        DatabaseReference nodeMembers = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/groups/" + conversation.getGroup_id() + "/members");
 
         nodeMembers.addValueEventListener(new ValueEventListener() {
             @Override
@@ -58,8 +52,8 @@ class UploadGroupMessageOnFirebaseTask {
                     String member = snapshot.getKey();
                     Log.d(TAG, "member ==" + member);
 
-                    mNodeDAO.getNodeConversations(member)
-                            .child(conversationId).setValue(conversation);
+                    FirebaseDatabase.getInstance().getReference()
+                            .child("apps/" + appId + "/users/" + member + "/conversations/" + conversationId).setValue(conversation);
                 }
             }
 

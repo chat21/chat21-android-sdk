@@ -1,7 +1,6 @@
 
 package chat21.android.conversations.utils;
 
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -10,6 +9,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
@@ -20,7 +20,6 @@ import chat21.android.core.conversations.listeners.OnConversationRetrievedCallba
 import chat21.android.core.conversations.listeners.OnConversationTreeChangeListener;
 import chat21.android.core.conversations.listeners.OnUnreadConversationCountListener;
 import chat21.android.core.conversations.models.Conversation;
-import chat21.android.dao.node.NodeDAO;
 import chat21.android.utils.StringUtils;
 
 /**
@@ -31,16 +30,14 @@ public class ConversationUtils {
     private static final String TAG = ConversationUtils.class.getName();
     private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
 
-    public static void observeMessageTree(
-            Context context,
-            DatabaseReference node,
-            OnConversationTreeChangeListener onConversationTreeChangeListener) {
+    public static void observeMessageTree(String appId, String userId, DatabaseReference node,
+                                          OnConversationTreeChangeListener onConversationTreeChangeListener) {
         Log.d(TAG, "observeMessageTree");
 
         Log.d(TAG, "ConversationUtils.observeMessageTree: node == " + node.toString());
 
         addOnValueEventListener(node, onConversationTreeChangeListener);
-        addOnChildEventListener(context, node, onConversationTreeChangeListener);
+        addOnChildEventListener(appId, userId, node, onConversationTreeChangeListener);
     }
 
     // observe the conversation list for this node.
@@ -72,10 +69,9 @@ public class ConversationUtils {
         });
     }
 
-    private static void addOnChildEventListener(
-            final Context context,
-            final DatabaseReference node,
-            final OnConversationTreeChangeListener onConversationTreeChangeListener) {
+    private static void addOnChildEventListener(final String appId, final String userId,
+                                                final DatabaseReference node,
+                                                final OnConversationTreeChangeListener onConversationTreeChangeListener) {
         Log.d(TAG, "addOnChildEventListener");
 
         node.addChildEventListener(new ChildEventListener() {
@@ -88,7 +84,7 @@ public class ConversationUtils {
 
                 // it sets the conversation as read if the person whom are talking to is the current user
                 if (ChatManager.getInstance().getLoggedUser().getId().equals(conversation.getSender())) {
-                    ConversationUtils.setConversationRead(context, conversation.getConversationId());
+                    ConversationUtils.setConversationRead(appId, userId, conversation.getConversationId());
                 }
 
                 onConversationTreeChangeListener.onTreeChildAdded(node,
@@ -104,7 +100,7 @@ public class ConversationUtils {
 
                 // it sets the conversation as read if the person whom are talking to is the current user
                 if (ChatManager.getInstance().getLoggedUser().getId().equals(conversation.getSender())) {
-                    ConversationUtils.setConversationRead(context, conversation.getConversationId());
+                    ConversationUtils.setConversationRead(appId, userId, conversation.getConversationId());
                 }
 
                 onConversationTreeChangeListener.onTreeChildChanged(node,
@@ -155,11 +151,12 @@ public class ConversationUtils {
         return sortedUsers[0] + "-" + sortedUsers[1];
     }
 
-    public static void setConversationRead(Context context, final String conversationId) {
+    public static void setConversationRead(String appId, String userId, final String conversationId) {
         Log.d(TAG, "setConversationRead");
 
-        final DatabaseReference nodeConversations = new NodeDAO(ChatManager.getInstance().getTenant())
-                .getNodeConversations(ChatManager.getInstance().getTenant());
+        final DatabaseReference nodeConversations = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/users/" + userId + "/conversations");
+
         nodeConversations.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -272,15 +269,12 @@ public class ConversationUtils {
         return conversationId.split(Pattern.quote("-"));
     }
 
-    public static void getConversationFromId(
-            Context context,
-            final String conversationId,
-            final OnConversationRetrievedCallback callback) {
+    public static void getConversationFromId(String appId, String userId, final String conversationId,
+                                             final OnConversationRetrievedCallback callback) {
         Log.d(TAG, "getConversationFromId");
 
-        NodeDAO nodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
-
-        DatabaseReference nodeConversation = nodeDAO.getNodeConversations(ChatManager.getInstance().getLoggedUser().getId()).child(conversationId);
+        DatabaseReference nodeConversation = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/users/" + userId + "/conversations/" + conversationId);
 
         nodeConversation.addValueEventListener(new ValueEventListener() {
             @Override
@@ -302,40 +296,42 @@ public class ConversationUtils {
         });
     }
 
-    public static void getUnreadConversationsCount(String userId,
+    public static void getUnreadConversationsCount(String appId, String userId,
                                                    final OnUnreadConversationCountListener callback) {
         Log.d(TAG, "getUnreadConversationsCount");
 
-        new NodeDAO(ChatManager.getInstance().getTenant()).getNodeConversations(userId)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        Log.d(TAG, "OnUnreadConversationCountListener.onDataChange");
+        DatabaseReference nodeConversations = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/users/" + userId + "/conversations");
 
-                        Log.d("Count ", "" + snapshot.getChildrenCount());
-                        //get the conversations list
-                        int count = 0;
-                        for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                            Conversation conversation = postSnapshot.getValue(Conversation.class);
+        nodeConversations.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Log.d(TAG, "OnUnreadConversationCountListener.onDataChange");
 
-                            if (conversation.getIs_new()) {
-                                count++;
-                            }
-                        }
+                Log.d("Count ", "" + snapshot.getChildrenCount());
+                //get the conversations list
+                int count = 0;
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    Conversation conversation = postSnapshot.getValue(Conversation.class);
 
-                        callback.onUnreadConversationCounted(count);
+                    if (conversation.getIs_new()) {
+                        count++;
                     }
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.d(TAG, "OnUnreadConversationCountListener.onCancelled");
+                callback.onUnreadConversationCounted(count);
+            }
 
-                        String errorMessage = "getUnreadConversationsCount.onCancelled: " +
-                                "Cannot count the unread conversations." + databaseError.getMessage();
-                        Log.e(TAG, errorMessage);
-                        FirebaseCrash.report(new Exception(errorMessage));
-                    }
-                });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "OnUnreadConversationCountListener.onCancelled");
+
+                String errorMessage = "getUnreadConversationsCount.onCancelled: " +
+                        "Cannot count the unread conversations." + databaseError.getMessage();
+                Log.e(TAG, errorMessage);
+                FirebaseCrash.report(new Exception(errorMessage));
+            }
+        });
     }
 
     public static Conversation decodeConversationSnapshop(DataSnapshot dataSnapshot) {
@@ -462,12 +458,13 @@ public class ConversationUtils {
         return conversation;
     }
 
-    public static void uploadConversationOnFirebase(String groupId, String userIdNode, Conversation conversation) {
+    public static void uploadConversationOnFirebase(String appId, String groupId, String userIdNode,
+                                                    Conversation conversation) {
         Log.d(TAG, "uploadConversationOnFirebase");
 
-        new NodeDAO(ChatManager.getInstance().getTenant())
-                .getNodeConversations(userIdNode)
-                .child(groupId)
-                .setValue(conversation);
+        DatabaseReference nodeConversations = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/users/" + userIdNode + "/conversations");
+
+        nodeConversations.child(groupId).setValue(conversation);
     }
 }

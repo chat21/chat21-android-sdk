@@ -14,10 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import chat21.android.R;
-import chat21.android.core.ChatManager;
-import chat21.android.dao.node.NodeDAO;
 import chat21.android.conversations.utils.ConversationUtils;
+import chat21.android.core.ChatManager;
 import chat21.android.core.groups.models.Group;
 import chat21.android.groups.utils.GroupUtils;
 import chat21.android.messages.activites.MessageListActivity;
@@ -45,8 +47,6 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private Button mBtnSendMessage;
     private Button mBtnCancel;
 
-    private NodeDAO mNodeDAO;
-
     public static BottomSheetGroupAdminPanelMemberFragment newInstance(
             String username,
             String groupId) {
@@ -73,8 +73,6 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
 
         // retrieves the logged userId from chant configuration
         loggedUserId = ChatManager.getInstance().getLoggedUser().getId();
-
-        mNodeDAO = new NodeDAO(ChatManager.getInstance().getTenant());
     }
 
     @Override
@@ -125,7 +123,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void initRemoveMemberButton() {
         Log.d(TAG, "initRemoveMemberButton");
 
-        GroupUtils.subscribeOnGroupsChanges(getActivity(), groupId,
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), groupId,
                 new GroupUtils.OnGroupsChangeListener() {
                     @Override
                     public void onGroupChanged(Group group, String groupId) {
@@ -163,7 +161,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void initSendMessageButton() {
         Log.d(TAG, "initSendMessageButton");
 
-        GroupUtils.subscribeOnGroupsChanges(getActivity(), groupId,
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), groupId,
                 new GroupUtils.OnGroupsChangeListener() {
                     @Override
                     public void onGroupChanged(Group group, String groupId) {
@@ -261,7 +259,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
                 .setPositiveButton(positiveClickMessage, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        removeMemberFromGroup(groupId, username);
+                        removeMemberFromGroup(ChatManager.getInstance().getTenant(), groupId, username);
 
                         // dismiss the dialog
                         dialog.dismiss();
@@ -282,9 +280,12 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
                 }).show();
     }
 
-    private void removeMemberFromGroup(final String groupId, final String userId) {
+    private void removeMemberFromGroup(String appId, final String groupId, final String userId) {
         Log.d(TAG, "removeMemberFromGroup");
 
-        mNodeDAO.getGroupMembersNode(groupId).child(userId).removeValue();
+        DatabaseReference nodeMembers = FirebaseDatabase.getInstance().getReference()
+                .child("apps/" + appId + "/groups/" + groupId + "/members/" + userId);
+
+        nodeMembers.removeValue();
     }
 }
