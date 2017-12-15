@@ -155,7 +155,7 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
 
         String conversationId = mConversation.getConversationId();
 
-
+//TODO move to ChatManager conversation API
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
                 ".perfomDeleteConversation: conversationId == " + conversationId);
 
