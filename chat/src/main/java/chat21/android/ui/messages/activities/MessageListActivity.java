@@ -59,23 +59,23 @@ import chat21.android.core.groups.models.Group;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.presence.PresenceManger;
-import chat21.android.core.presence.listeners.OnUserPresenceChangesListener;
+import chat21.android.core.presence.listeners.OnPresenceListener;
 import chat21.android.dao.message.MessageDAO;
 import chat21.android.dao.message.OnDetachObserveMessageTree;
 import chat21.android.groups.utils.GroupUtils;
-import chat21.android.ui.messages.adapters.MessageListAdapter;
-import chat21.android.ui.messages.fragments.BottomSheetAttach;
-import chat21.android.ui.messages.listeners.OnMessageClickListener;
 import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.groups.activities.GroupAdminPanelActivity;
+import chat21.android.ui.messages.adapters.MessageListAdapter;
+import chat21.android.ui.messages.fragments.BottomSheetAttach;
+import chat21.android.ui.messages.listeners.OnMessageClickListener;
+import chat21.android.ui.messages.listeners.OnProfilePictureClickListener;
 import chat21.android.utils.ChatUtils;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
-import chat21.android.ui.messages.listeners.OnProfilePictureClickListener;
 
 import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
@@ -84,7 +84,6 @@ import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
  */
 public class MessageListActivity extends AppCompatActivity implements
         OnMessageTreeUpdateListener,
-        OnUserPresenceChangesListener,
         OnConversationRetrievedCallback {
     private static final String TAG = MessageListActivity.class.getName();
     private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
@@ -128,6 +127,46 @@ public class MessageListActivity extends AppCompatActivity implements
     private ImageView attachButton;
     private ImageView sendButton;
     private LinearLayout mEmojiBar;
+
+    private OnPresenceListener onConversWithPresenceListener = new OnPresenceListener() {
+        @Override
+        public void onChanged(boolean imConnected) {
+            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
+                    ".onChanged: imConnected ==  " + imConnected);
+
+            if (imConnected) {
+                conversWithOnline = true;
+                mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_online));
+            } else {
+                conversWithOnline = false;
+
+                if (conversWithLastOnline != 0) {
+                    mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
+                    Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener " +
+                            ".onChanged: conversWithLastOnline == " + conversWithLastOnline);
+                } else {
+                    mSubTitleTextView.setText("");
+                }
+            }
+        }
+
+        @Override
+        public void onLastOnlineChanged(long lastOnline) {
+            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
+                    ".onLastOnlineChanged: lastOnline ==  " + lastOnline);
+
+            conversWithLastOnline = lastOnline;
+
+            if (!conversWithOnline)
+                mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
+        }
+
+        @Override
+        public void onError(Exception e) {
+            Log.e(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
+                    ".onError == " + e.getMessage());
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +239,7 @@ public class MessageListActivity extends AppCompatActivity implements
             conversationId = getConversationIdFromPushNotification(getIntent());
         }
 
-        Log.i(TAG_NOTIFICATION, "MessageListActivity.getConversationId: conversationId: " + conversationId);
+        Log.d(TAG_NOTIFICATION, "MessageListActivity.getConversationId: conversationId: " + conversationId);
 
         return conversationId;
     }
@@ -217,7 +256,9 @@ public class MessageListActivity extends AppCompatActivity implements
         if (!isGroupConversation) {
             // subscribe for convers_with user presence changes
             // bugfix Issue #16
-            PresenceManger.observeUserPresenceChanges(conversation.getConvers_with(), this);
+            PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
+                    conversation.getConvers_with(),
+                    onConversWithPresenceListener);
         }
 
         if (!areViewsInit) {
@@ -237,7 +278,9 @@ public class MessageListActivity extends AppCompatActivity implements
         conversation = ConversationUtils.createNewConversation(conversationId);
 
         // subscribe for convers_with user presence changes
-        PresenceManger.observeUserPresenceChanges(conversation.getConvers_with(), this);
+        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
+                conversation.getConvers_with(),
+                onConversWithPresenceListener);
 
         if (!areViewsInit) {
             initViews(conversation);
@@ -865,44 +908,6 @@ public class MessageListActivity extends AppCompatActivity implements
                         Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-
-    @Override
-    public void onUserPresenceChange(boolean imConnected) {
-        Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onUserPresenceChange - imConnected: " + imConnected);
-
-        if (imConnected) {
-            conversWithOnline = true;
-            mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_online));
-        } else {
-            conversWithOnline = false;
-
-            if (conversWithLastOnline != 0) {
-                mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
-                Log.i(DEBUG_USER_PRESENCE, "MessageListActivity.onUserPresenceChange " +
-                        "- conversWithLastOnline: " + conversWithLastOnline);
-            } else {
-                mSubTitleTextView.setText("");
-            }
-        }
-    }
-
-    @Override
-    public void onUserLastOnlineChange(long lastOnline) {
-        Log.d(TAG, "onUserLastOnlineChange - lastOnline: " + lastOnline);
-        Log.i(DEBUG_USER_PRESENCE, "MessageListActivity.onUserLastOnlineChange - lastOnline: " + lastOnline);
-
-        conversWithLastOnline = lastOnline;
-
-        if (!conversWithOnline)
-            mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
-    }
-
-    @Override
-    public void onUserPresenceChangeError(Exception e) {
-        Log.e(TAG, "onUserPresenceChangeError " + e.getMessage());
-        Log.i(DEBUG_USER_PRESENCE, "MessageListActivity.onUserPresenceChangeError: " + e.getMessage());
     }
 
     @Override

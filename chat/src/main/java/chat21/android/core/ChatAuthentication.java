@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import chat21.android.R;
 import chat21.android.core.presence.PresenceManger;
-import chat21.android.core.presence.listeners.OnMyPresenceChangesListener;
+import chat21.android.core.presence.listeners.OnPresenceListener;
 import chat21.android.user.receiver.TokenBroadcastReceiver;
 import chat21.android.user.task.GetCustomTokenTask;
 import chat21.android.user.task.OnCustomAuthTokenCallback;
@@ -320,38 +320,41 @@ public final class ChatAuthentication {
             @Override
             protected void onPostExecute(Void aVoid) {
 
+                OnPresenceListener onMyPresenceListener = new OnPresenceListener() {
+                    @Override
+                    public void onChanged(boolean imConnected) {
+                        // if connected => disconnect
+                        if (imConnected) {
+                            getFirebaseAuth().signOut();
+                            Log.i(DEBUG_LOGIN, "signed out from firebase with success");
+                            Log.i(DEBUG_MY_PRESENCE, "Chat.onPresenceChange - " +
+                                    "signed out from firebase with success");
+                            onChatLogoutCallback.onChatLogoutSuccess();
+                        }
+                    }
+
+                    @Override
+                    public void onLastOnlineChanged(long lastOnline) {
+                        Log.d(DEBUG_LOGIN, "onLastOnlineChange - lastOnline: " + lastOnline);
+                        Log.d(DEBUG_MY_PRESENCE, "Chat.onLastOnlineChange " +
+                                "- lastOnline: " + lastOnline);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e(DEBUG_LOGIN, e.getMessage());
+                        Log.d(DEBUG_MY_PRESENCE, "Chat.onPresenceChangeError" + e.getMessage());
+                        FirebaseCrash.report(e);
+                        onChatLogoutCallback.onChatLogoutError(logoutException);
+                    }
+                };
+
                 if (logoutException == null) {
                     // bugfix Issue #16
                     if (StringUtils.isValid(ChatManager.getPresenceDeviceInstance())) {
-                        PresenceManger.logout(ChatManager.getPresenceDeviceInstance(), new OnMyPresenceChangesListener() {
-                            @Override
-                            public void onMyPresenceChange(boolean imConnected) {
-
-                                // if connected => disconnect
-                                if (imConnected) {
-                                    getFirebaseAuth().signOut();
-                                    Log.i(DEBUG_LOGIN, "signed out from firebase with success");
-                                    Log.i(DEBUG_MY_PRESENCE, "Chat.onPresenceChange - " +
-                                            "signed out from firebase with success");
-                                    onChatLogoutCallback.onChatLogoutSuccess();
-                                }
-                            }
-
-                            @Override
-                            public void onMyLastOnlineChange(long lastOnline) {
-                                Log.d(DEBUG_LOGIN, "onLastOnlineChange - lastOnline: " + lastOnline);
-                                Log.d(DEBUG_MY_PRESENCE, "Chat.onLastOnlineChange " +
-                                        "- lastOnline: " + lastOnline);
-                            }
-
-                            @Override
-                            public void onMyPresenceChangeError(Exception e) {
-                                Log.e(DEBUG_LOGIN, e.getMessage());
-                                Log.d(DEBUG_MY_PRESENCE, "Chat.onPresenceChangeError" + e.getMessage());
-                                FirebaseCrash.report(e);
-                                onChatLogoutCallback.onChatLogoutError(logoutException);
-                            }
-                        });
+                        PresenceManger.logout(ChatManager.getInstance().getTenant(),
+                                ChatManager.getPresenceDeviceInstance(),
+                                ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
                     }
 
                 } else {

@@ -12,24 +12,71 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import chat21.android.R;
-import chat21.android.core.presence.listeners.OnUserPresenceChangesListener;
+import chat21.android.core.ChatManager;
 import chat21.android.core.presence.PresenceManger;
+import chat21.android.core.presence.listeners.OnPresenceListener;
 import chat21.android.ui.ChatUI;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
+
+import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
 /**
  * Created by stefanodp91 on 04/08/17.
  * <p>
  * bugfix Issue #30
  */
-public class PublicProfileActivity extends AppCompatActivity implements OnUserPresenceChangesListener {
+public class PublicProfileActivity extends AppCompatActivity {
     private static final String TAG = PublicProfileActivity.class.getName();
 
     private TextView mPresenceTextView;
     private boolean isOnline = false;
-    private long lastOnline = 0;
+    private long mlastOnline = 0;
+
+    private OnPresenceListener onPresenceListener = new OnPresenceListener() {
+        @Override
+        public void onChanged(boolean imConnected) {
+            Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.onPresenceListener.onChanged:" +
+                    " imConnected == " + imConnected);
+
+            if (imConnected) {
+                isOnline = true;
+
+                if (mPresenceTextView != null)
+                    mPresenceTextView.setText(getString(R.string.activity_public_profile_presence_online));
+            } else {
+                isOnline = false;
+
+                if (mlastOnline != 0) {
+                    if (mPresenceTextView != null)
+                        mPresenceTextView.setText(TimeUtils.getFormattedTimestamp(mlastOnline));
+                } else {
+                    if (mPresenceTextView != null)
+                        mPresenceTextView.setText("");
+                }
+            }
+        }
+
+        @Override
+        public void onLastOnlineChanged(long lastOnline) {
+            Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.onPresenceListener.onLastOnlineChanged:" +
+                    " lastOnline == " + lastOnline);
+
+            mlastOnline = lastOnline;
+
+            if (!isOnline)
+                mPresenceTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
+        }
+
+        @Override
+        public void onError(Exception e) {
+            Log.e(DEBUG_USER_PRESENCE, "PublicProfileActivity.onPresenceListener.onError: " + e.getMessage());
+
+            if (mPresenceTextView != null)
+                mPresenceTextView.setText(R.string.activity_public_profile_presence_not_available);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +95,7 @@ public class PublicProfileActivity extends AppCompatActivity implements OnUserPr
 
         // subscribe for convers with user presence changes
         // bugfix Issue #16
-        PresenceManger.observeUserPresenceChanges(getUserId(), this);
+        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(), getUserId(), onPresenceListener);
     }
 
     private void initToolbar() {
@@ -98,41 +145,6 @@ public class PublicProfileActivity extends AppCompatActivity implements OnUserPr
                 .placeholder(R.drawable.ic_person_avatar)
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(profilePictureToolbar);
-    }
-
-    @Override
-    public void onUserPresenceChange(boolean imConnected) {
-        Log.d(TAG, "onUserPresenceChange - imConnected: " + imConnected);
-
-        if (imConnected) {
-            isOnline = true;
-            mPresenceTextView.setText(getString(R.string.activity_public_profile_presence_online));
-        } else {
-            isOnline = false;
-
-            if (lastOnline != 0) {
-                mPresenceTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
-            } else {
-                mPresenceTextView.setText("");
-            }
-        }
-    }
-
-    @Override
-    public void onUserLastOnlineChange(long lastOnline) {
-        Log.d(TAG, "onUserLastOnlineChange - lastOnline: " + lastOnline);
-
-        this.lastOnline = lastOnline;
-
-        if (!isOnline)
-            mPresenceTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
-    }
-
-    @Override
-    public void onUserPresenceChangeError(Exception e) {
-        Log.e(TAG, "onUserPresenceChangeError " + e.getMessage());
-
-        mPresenceTextView.setText(R.string.activity_public_profile_presence_not_available);
     }
 
     @Override

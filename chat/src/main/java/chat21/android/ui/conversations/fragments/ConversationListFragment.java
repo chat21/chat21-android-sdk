@@ -28,16 +28,16 @@ import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.listeners.OnConversationTreeChangeListener;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.presence.PresenceManger;
-import chat21.android.core.presence.listeners.OnMyPresenceChangesListener;
-import chat21.android.ui.messages.activities.MessageListActivity;
+import chat21.android.core.presence.listeners.OnPresenceListener;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.conversations.adapters.ConversationListAdapter;
+import chat21.android.ui.conversations.listeners.OnContactListClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
-import chat21.android.ui.groups.activities.MyGroupsListActivity;
-import chat21.android.utils.ChatUtils;
-import chat21.android.ui.conversations.listeners.OnContactListClickListener;
 import chat21.android.ui.conversations.listeners.OnSupportContactListClickListener;
+import chat21.android.ui.groups.activities.MyGroupsListActivity;
+import chat21.android.ui.messages.activities.MessageListActivity;
+import chat21.android.utils.ChatUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
 
@@ -47,8 +47,7 @@ import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
 public class ConversationListFragment extends Fragment implements
         OnConversationTreeChangeListener,
         OnConversationClickListener,
-        OnConversationLongClickListener,
-        OnMyPresenceChangesListener {
+        OnConversationLongClickListener {
     public static final String TAG = ConversationListFragment.class.getName();
 
     private RelativeLayout noConversationLayout;
@@ -67,6 +66,26 @@ public class ConversationListFragment extends Fragment implements
         return mFragment;
     }
 
+    private OnPresenceListener onMyPresenceListener = new OnPresenceListener() {
+        @Override
+        public void onChanged(boolean imConnected) {
+            Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
+                    ".onChanged: imConnected == " + imConnected);
+        }
+
+        @Override
+        public void onLastOnlineChanged(long lastOnline) {
+            Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
+                    ".onLastOnlineChanged: lastOnline == " + lastOnline);
+        }
+
+        @Override
+        public void onError(Exception e) {
+            Log.e(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
+                    ".onError: " + e.getMessage());
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,7 +99,9 @@ public class ConversationListFragment extends Fragment implements
         observeConversations(ChatManager.getInstance().getTenant());
 
         // subscribe for user presence changes
-        PresenceManger.observeMyPresenceChanges(this);
+        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
+                ChatManager.getInstance().getLoggedUser().getId(),
+                onMyPresenceListener);
 
         return rootView;
     }
@@ -270,28 +291,5 @@ public class ConversationListFragment extends Fragment implements
         intent.putExtra(ChatUI._INTENT_BUNDLE_CONVERSATION_ID, conversationId);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
-    }
-
-    @Override
-    public void onMyPresenceChange(boolean imConnected) {
-        Log.d(TAG, "onPresenceChange - imConnected: " + imConnected);
-        Log.i(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange - imConnected: " + imConnected);
-
-        // TODO: 19/10/17
-    }
-
-    @Override
-    public void onMyLastOnlineChange(long lastOnline) {
-        Log.i(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyLastOnlineChange - lastOnline: " + lastOnline);
-        // TODO: 04/08/17
-    }
-
-    @Override
-    public void onMyPresenceChangeError(Exception e) {
-        Log.i(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChangeError: " + e.getMessage());
-
-        Log.e(TAG, "onPresenceChangeError " + e.getMessage());
-
-        // TODO: 19/10/17
     }
 }
