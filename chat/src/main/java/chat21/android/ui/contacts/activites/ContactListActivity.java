@@ -23,14 +23,13 @@ import java.util.List;
 
 import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
-import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
-import chat21.android.ui.groups.activities.CreateGroupActivity;
-import chat21.android.ui.messages.activities.MessageListActivity;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
-import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.groups.activities.CreateGroupActivity;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.ChatUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
@@ -236,7 +235,9 @@ public class ContactListActivity extends AppCompatActivity
 
         String loggedUserId = ChatManager.getInstance().getLoggedUser().getId();
         String contactId = contact.getId();
-        String conversationId = ConversationUtils.getConversationId(loggedUserId, contactId);
+
+        String conversationId = contactId;
+//        String conversationId = ConversationUtils.getConversationId(loggedUserId, contactId);
 
         // start the conversation activity
         startMessageListActivity(conversationId);

@@ -37,9 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.R;
-import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
-import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.groups.models.Group;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.groups.utils.GroupUtils;
@@ -736,7 +734,7 @@ public class AddMembersActivity extends AppCompatActivity implements
     public void onGroupCreatedSuccess(String groupId, Group group) {
         Log.d(TAG, "onGroupCreatedSuccess");
 
-        createConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, group);
+        //createConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, group);
 
         startNextActivity(groupId);
     }
@@ -753,7 +751,7 @@ public class AddMembersActivity extends AppCompatActivity implements
     public void onGroupUpdatedSuccess(String groupId, Group group) {
         Log.d(TAG, "onGroupCreatedSuccess");
 
-        updateConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, group);
+        //updateConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, group);
 
         startNextActivity(groupId);
     }
@@ -768,77 +766,77 @@ public class AddMembersActivity extends AppCompatActivity implements
 
     // create a conversation for each member of the group with a custom message.
     // the creator of the group has a custom message
-    private void createConversationsOnFirebaseAsync(String appId, String groupId, Group group) {
-        Log.d(TAG, "createConversationsOnFirebaseAsync");
-
-        IChatUser loggedUser = ChatManager.getInstance().getLoggedUser();
-
-        // iterate the list of members
-        for (Map.Entry<String, Integer> entry : group.getMembers().entrySet()) {
-            Conversation conversation = new Conversation();
-
-            String memberId = entry.getKey();
-
-            // check if the memberid is the current user or not and create the conversation
-            if (memberId.equals(loggedUser.getId())) {
-                // logged user
-                conversation.setLast_message_text(
-                        getString(R.string.menu_add_members_created_the_group, group.getName()));
-            } else {
-                // other members
-                // bugfix Issue #49
-                String groupOwner = group.getOwner();
-                conversation.setLast_message_text(
-                        getString(R.string.menu_add_members_added_to_the_group, groupOwner));
-            }
-
-            // update the common conversation info
-            conversation.setGroup_id(groupId); // group id
-            conversation.setGroup_name(group.getName()); // group name
-            conversation.setIs_new(true);
-            conversation.setSender(loggedUser.getId());
-            conversation.setSender_fullname(loggedUser.getFullName());
-            conversation.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
-            conversation.setConversationId(groupId);
-
-            // upload the conversation
-            ConversationUtils.uploadConversationOnFirebase(appId, groupId, memberId, conversation);
-        }
-    }
-
-    private void updateConversationsOnFirebaseAsync(String appId, String groupId, Group group) {
-        Log.d(TAG, "updateConversationsOnFirebaseAsync");
-
-        IChatUser loggedUser = ChatManager.getInstance().getLoggedUser();
-
-        // iterate the list of members
-        for (Map.Entry<String, Integer> entry : group.getMembers().entrySet()) {
-            Conversation conversation = new Conversation();
-
-            String memberId = entry.getKey();
-
-            // check if the memberid is the current user or not and create the conversation
-            if (!memberId.equals(loggedUser.getId())) {
-
-                // bugfix Issue #49
-                String groupOwner = group.getOwner();
-                conversation.setLast_message_text(
-                        getString(R.string.menu_add_members_added_to_the_group, groupOwner));
-
-                // update the common conversation info
-                conversation.setGroup_id(groupId); // group id
-                conversation.setGroup_name(group.getName()); // group name
-                conversation.setIs_new(true);
-                conversation.setSender(loggedUser.getId());
-                conversation.setSender_fullname(loggedUser.getFullName());
-                conversation.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
-                conversation.setConversationId(groupId);
-
-                // upload the conversation
-                ConversationUtils.uploadConversationOnFirebase(appId, groupId, memberId, conversation);
-            }
-        }
-    }
+//    private void createConversationsOnFirebaseAsync(String appId, String groupId, Group group) {
+//        Log.d(TAG, "createConversationsOnFirebaseAsync");
+//
+//        IChatUser loggedUser = ChatManager.getInstance().getLoggedUser();
+//
+//        // iterate the list of members
+//        for (Map.Entry<String, Integer> entry : group.getMembers().entrySet()) {
+//            Conversation conversation = new Conversation();
+//
+//            String memberId = entry.getKey();
+//
+//            // check if the memberid is the current user or not and create the conversation
+//            if (memberId.equals(loggedUser.getId())) {
+//                // logged user
+//                conversation.setLast_message_text(
+//                        getString(R.string.menu_add_members_created_the_group, group.getName()));
+//            } else {
+//                // other members
+//                // bugfix Issue #49
+//                String groupOwner = group.getOwner();
+//                conversation.setLast_message_text(
+//                        getString(R.string.menu_add_members_added_to_the_group, groupOwner));
+//            }
+//
+//            // update the common conversation info
+////            conversation.setGroup_id(groupId); // group id
+////            conversation.setGroup_name(group.getName()); // group name
+//            conversation.setIs_new(true);
+//            conversation.setSender(loggedUser.getId());
+//            conversation.setSender_fullname(loggedUser.getFullName());
+//            conversation.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
+//            conversation.setConversationId(groupId);
+//
+//            // upload the conversation
+//            ConversationUtils.uploadConversationOnFirebase(appId, groupId, memberId, conversation);
+//        }
+//    }
+//
+//    private void updateConversationsOnFirebaseAsync(String appId, String groupId, Group group) {
+//        Log.d(TAG, "updateConversationsOnFirebaseAsync");
+//
+//        IChatUser loggedUser = ChatManager.getInstance().getLoggedUser();
+//
+//        // iterate the list of members
+//        for (Map.Entry<String, Integer> entry : group.getMembers().entrySet()) {
+//            Conversation conversation = new Conversation();
+//
+//            String memberId = entry.getKey();
+//
+//            // check if the memberid is the current user or not and create the conversation
+//            if (!memberId.equals(loggedUser.getId())) {
+//
+//                // bugfix Issue #49
+//                String groupOwner = group.getOwner();
+//                conversation.setLast_message_text(
+//                        getString(R.string.menu_add_members_added_to_the_group, groupOwner));
+//
+//                // update the common conversation info
+//                conversation.setGroup_id(groupId); // group id
+//                conversation.setGroup_name(group.getName()); // group name
+//                conversation.setIs_new(true);
+//                conversation.setSender(loggedUser.getId());
+//                conversation.setSender_fullname(loggedUser.getFullName());
+//                conversation.setStatus(Conversation.CONVERSATION_STATUS_LAST_MESSAGE);
+//                conversation.setConversationId(groupId);
+//
+//                // upload the conversation
+//                ConversationUtils.uploadConversationOnFirebase(appId, groupId, memberId, conversation);
+//            }
+//        }
+//    }
 
     private void startNextActivity(String groupId) {
         Log.d(TAG, "startNextActivity");

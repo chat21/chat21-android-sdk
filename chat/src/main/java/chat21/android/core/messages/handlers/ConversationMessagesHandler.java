@@ -29,10 +29,10 @@ public class ConversationMessagesHandler {
 
     String recipientId;
     DatabaseReference conversationMessagesNode;
-//    List<ConversationMessagesListener> conversationMessagesListeners;
+//    List<ConversationsListener> conversationMessagesListeners;
 
     public ConversationMessagesHandler(String firebaseUrl, String recipientId, String appId, String currentUserId
-//            , ConversationMessagesListener conversationMessagesListener
+//            , ConversationsListener conversationMessagesListener
     ) {
 
         this.recipientId = recipientId;
@@ -41,7 +41,7 @@ public class ConversationMessagesHandler {
         this.conversationMessagesNode.keepSynced(true);
 
 
-//        this.conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
+//        this.conversationMessagesListeners = new ArrayList<ConversationsListener>();
 //        this.conversationMessagesListeners.add(conversationMessagesListener);
 
     }
@@ -103,7 +103,7 @@ public class ConversationMessagesHandler {
         ChildEventListener childEventListener = conversationMessagesNode.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                Log.d(TAG, "observeMessages.onChildAdded");
+                Log.d(TAG, "ConversationMessagesHandler.connect.onChildAdded");
 
                 try {
                     Message message = decodeMessageSnapShop(dataSnapshot);
@@ -124,7 +124,7 @@ public class ConversationMessagesHandler {
             //for return recepit
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
-                Log.d(TAG, "observeMessages.onChildChanged");
+                Log.d(TAG, "ConversationMessagesHandler.connect.onChildChanged");
 
                 try {
                     Message message = decodeMessageSnapShop(dataSnapshot);

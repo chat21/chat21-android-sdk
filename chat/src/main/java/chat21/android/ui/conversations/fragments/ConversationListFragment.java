@@ -18,15 +18,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import chat21.android.R;
-import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
-import chat21.android.core.conversations.listeners.OnConversationTreeChangeListener;
+import chat21.android.core.conversations.ConversationsHandler;
+import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.conversations.models.Conversation;
+import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.presence.PresenceManger;
 import chat21.android.core.presence.listeners.OnPresenceListener;
 import chat21.android.ui.ChatUI;
@@ -45,9 +42,11 @@ import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
  * Created by stefano on 15/10/2016.
  */
 public class ConversationListFragment extends Fragment implements
-        OnConversationTreeChangeListener,
+//        OnConversationTreeChangeListener,
+        ConversationsListener,
         OnConversationClickListener,
         OnConversationLongClickListener {
+
     public static final String TAG = ConversationListFragment.class.getName();
 
     private RelativeLayout noConversationLayout;
@@ -60,6 +59,8 @@ public class ConversationListFragment extends Fragment implements
     private TextView mGroupsView;
 
     private ProgressBar mProgressBar;
+
+    ConversationsHandler conversationsHandler;
 
     public static Fragment newInstance() {
         Fragment mFragment = new ConversationListFragment();
@@ -96,7 +97,9 @@ public class ConversationListFragment extends Fragment implements
 
         initViews(rootView);
 
-        observeConversations(ChatManager.getInstance().getTenant());
+        conversationsHandler = ChatManager.getInstance().addConversationsListener(this);
+
+//        observeConversations(ChatManager.getInstance().getTenant());
 
         // subscribe for user presence changes
         PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
@@ -175,21 +178,21 @@ public class ConversationListFragment extends Fragment implements
         }
     }
 
-    private void observeConversations(String appId) {
-        Log.d(TAG, "observeConversations");
+//    private void observeConversations(String appId) {
+//        Log.d(TAG, "observeConversations");
+//
+//        DatabaseReference nodeConversations = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+//                .child("apps/" + appId + "/users/" + ChatManager.getInstance().getLoggedUser().getId() + "/conversations");
+//
+//        ConversationUtils.observeMessageTree(appId, ChatManager.getInstance().getLoggedUser().getId(),
+//                nodeConversations, this);
+//    }
 
-        DatabaseReference nodeConversations = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
-                .child("apps/" + appId + "/users/" + ChatManager.getInstance().getLoggedUser().getId() + "/conversations");
-
-        ConversationUtils.observeMessageTree(appId, ChatManager.getInstance().getLoggedUser().getId(),
-                nodeConversations, this);
-    }
-
-    private void updateConversationListAdapter(DatabaseReference node) {
+    private void updateConversationListAdapter() {
         Log.d(TAG, "updateConversationListAdapter");
 
         if (conversationListAdapter == null) {
-            conversationListAdapter = new ConversationListAdapter(node);
+            conversationListAdapter = new ConversationListAdapter(conversationsHandler.getConversationsNode());
             conversationListAdapter.setOnConversationClickListener(this);
             conversationListAdapter.setOnConversationLongClickListener(this);
             recyclerView.setAdapter(conversationListAdapter);
@@ -200,61 +203,75 @@ public class ConversationListFragment extends Fragment implements
         // scroll to first position
         // bugfix Issue #19
         if (conversationListAdapter.getItemCount() > 0) {
-            int position = conversationListAdapter.getItemCount() - 1;
-            mLayoutManager.scrollToPositionWithOffset(position, 0);
-        }
-    }
-
-    @Override
-    public void onTreeDataChanged(DatabaseReference node, DataSnapshot dataSnapshot,
-                                  int childrenCount) {
-        Log.d(TAG, "onTreeDataChanged");
-
-        Log.d(TAG, "childrenCount: " + childrenCount);
-        // if at least one conversation extists show the list, else show a placeholder layout
-        if (childrenCount > 0) {
             noConversationLayout.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            updateConversationListAdapter(node);
+
+            int position = conversationListAdapter.getItemCount() - 1;
+            mLayoutManager.scrollToPositionWithOffset(position, 0);
         } else {
-            Log.d(TAG, "dataSnapshot hasn't Children()");
             noConversationLayout.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
-
-        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override
-    public void onTreeChildAdded(DatabaseReference node, DataSnapshot dataSnapshot,
-                                 Conversation conversation) {
-        Log.d(TAG, "onTreeChildAdded");
+    public void onConversationAdded(Conversation conversation, ChatRuntimeException e) {
+        Log.d(TAG, "onConversationAdded");
 
-        updateConversationListAdapter(node);
+        if (e==null) {
+            updateConversationListAdapter();
+        }else {
+            Log.w(TAG, "Exception on onConversationAdded", e );
+        }
     }
 
     @Override
-    public void onTreeChildChanged(DatabaseReference node, DataSnapshot dataSnapshot,
-                                   Conversation conversation) {
-        Log.d(TAG, "onTreeChildChanged");
+    public void onConversationChanged(Conversation conversation, ChatRuntimeException e) {
+        Log.d(TAG, "onConversationChanged");
 
-        updateConversationListAdapter(node);
+        if (e==null) {
+            updateConversationListAdapter();
+        }else {
+            Log.w(TAG, "Exception on onConversationChanged", e );
+        }
     }
 
-    @Override
-    public void onTreeChildRemoved() {
-        Log.d(TAG, "onTreeChildRemoved");
-    }
+//    @Override
+//    public void onTreeDataChanged(DatabaseReference node, DataSnapshot dataSnapshot,
+//                                  int childrenCount) {
+//        Log.d(TAG, "onTreeDataChanged");
+//
+//        Log.d(TAG, "childrenCount: " + childrenCount);
+//        // if at least one conversation extists show the list, else show a placeholder layout
+//        if (childrenCount > 0) {
+//            noConversationLayout.setVisibility(View.GONE);
+//            recyclerView.setVisibility(View.VISIBLE);
+//            updateConversationListAdapter();
+//        } else {
+//            Log.d(TAG, "dataSnapshot hasn't Children()");
+//            noConversationLayout.setVisibility(View.VISIBLE);
+//            recyclerView.setVisibility(View.GONE);
+//        }
+//
+//        mProgressBar.setVisibility(View.GONE);
+//    }
 
-    @Override
-    public void onTreeChildMoved() {
-        Log.d(TAG, "onTreeChildMoved");
-    }
+//    @Override
+//    public void onTreeChildAdded(DatabaseReference node, DataSnapshot dataSnapshot,
+//                                 Conversation conversation) {
+//        Log.d(TAG, "onTreeChildAdded");
+//
+//        updateConversationListAdapter(node);
+//    }
 
-    @Override
-    public void onTreeCancelled() {
-        Log.d(TAG, "onTreeCancelled");
-    }
+//    @Override
+//    public void onTreeChildChanged(DatabaseReference node, DataSnapshot dataSnapshot,
+//                                   Conversation conversation) {
+//        Log.d(TAG, "onTreeChildChanged");
+//
+//        updateConversationListAdapter();
+//    }
+
 
     @Override
     public void onConversationClicked(Conversation conversation, int position) {
@@ -262,7 +279,7 @@ public class ConversationListFragment extends Fragment implements
         String conversationId = conversation.getConversationId();
 
         try {
-            ConversationUtils.setConversationRead(ChatManager.getInstance().getTenant(),
+            conversationsHandler.setConversationRead(ChatManager.getInstance().getTenant(),
                     ChatManager.getInstance().getLoggedUser().getId(),
                     conversationId);
             startMessageActivity(conversation.getConversationId());
@@ -292,4 +309,6 @@ public class ConversationListFragment extends Fragment implements
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }
+
+
 }

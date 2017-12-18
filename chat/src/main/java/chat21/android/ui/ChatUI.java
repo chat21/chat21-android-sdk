@@ -9,15 +9,12 @@ import android.util.Log;
 
 import java.io.Serializable;
 
-import chat21.android.conversations.utils.ConversationUtils;
-import chat21.android.core.ChatManager;
-import chat21.android.ui.messages.activities.MessageListActivity;
-import chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
-import chat21.android.ui.messages.listeners.OnMessageClickListener;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.ui.conversations.activities.ConversationListActivity;
 import chat21.android.ui.conversations.fragments.ConversationListFragment;
-import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.messages.activities.MessageListActivity;
+import chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
+import chat21.android.ui.messages.listeners.OnMessageClickListener;
 
 /**
  * Created by andrealeo on 04/12/17.

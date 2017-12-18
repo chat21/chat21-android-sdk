@@ -59,8 +59,9 @@ class ViewHolder extends RecyclerView.ViewHolder {
             Log.e(TAG, "ViewHolder.bind: cannot set the timestamp. " + e.getMessage());
         }
 
+
         try {
-            if (StringUtils.isValid(conversation.getGroup_id())) {
+            if (conversation.isGroupChannel()) {
                 try {
                     // it is a group
                     setGroupInfo(conversation);
@@ -96,7 +97,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
         String text = conversation.getLast_message_text();
 
         //  group conversation
-        if (StringUtils.isValid(conversation.getGroup_id())) {
+        if (conversation.isGroupChannel()) {
             IChatUser loggedUser = ChatManager.getInstance().getLoggedUser(); // retrieve the lgoged user
             String loggedUserId = loggedUser.getId(); // retrive the logged user id
 
@@ -130,8 +131,8 @@ class ViewHolder extends RecyclerView.ViewHolder {
 
 
     private void setGroupInfo(Conversation conversation) throws Exception {
-        mRecipientName.setText(StringUtils.isValid(conversation.getGroup_name()) ?
-                conversation.getGroup_name() : conversation.getGroup_id());
+        mRecipientName.setText(StringUtils.isValid(conversation.getRecipientFullName()) ?
+                conversation.getRecipientFullName() : conversation.getRecipient());
         setGroupPicture();
     }
 

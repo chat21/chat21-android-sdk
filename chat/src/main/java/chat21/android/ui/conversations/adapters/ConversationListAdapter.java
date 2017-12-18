@@ -4,12 +4,10 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 
 import chat21.android.R;
-import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
-import chat21.android.utils.StringUtils;
 
 
 /**

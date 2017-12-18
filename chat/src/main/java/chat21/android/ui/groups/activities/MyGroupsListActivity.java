@@ -23,16 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import chat21.android.R;
-import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
+import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.groups.models.Group;
 import chat21.android.dao.groups.GroupsDAO;
 import chat21.android.dao.groups.OnGroupsRetrievedCallback;
-import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.groups.adapters.MyGroupsListAdapter;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
+import chat21.android.ui.messages.activities.MessageListActivity;
 
 import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
 
@@ -180,12 +180,12 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 
                 if (dataSnapshot.getValue() != null) {
                     // decode conversation
-                    mConversation = ConversationUtils.decodeConversationSnapshop(dataSnapshot);
+                    mConversation = ConversationsHandler.decodeConversationFromSnapshot(dataSnapshot);
                 } else {
                     // create a new group conversation
                     mConversation = new Conversation();
-                    mConversation.setGroup_name(group.getName());
-                    mConversation.setGroup_id(group.getGroupId());
+                    mConversation.setRecipientFullName(group.getName());
+                    mConversation.setRecipient(group.getGroupId());
                     mConversation.setConversationId(group.getGroupId());
                 }
 

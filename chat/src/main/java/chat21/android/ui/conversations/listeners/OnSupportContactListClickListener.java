@@ -7,13 +7,10 @@ import android.view.View;
 
 import com.google.firebase.crash.FirebaseCrash;
 
-
 import chat21.android.R;
-import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
-import chat21.android.ui.conversations.listeners.OnContactListClickListener;
-import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
+import chat21.android.ui.messages.activities.MessageListActivity;
 
 /**
  * Created by frontiere21 on 08/11/16.
@@ -48,8 +45,11 @@ public class OnSupportContactListClickListener implements View.OnClickListener {
                 FirebaseCrash.report(new Exception(errorMessage));
             }
         } else {
-            String conversationId = ConversationUtils.getConversationId(
-            ChatManager.getInstance().getLoggedUser().getId(), getContext().getResources().getString(R.string.chat_support_account_id));
+            String conversationId =  getContext().getResources().getString(R.string.chat_support_account_id);
+
+//            String conversationId = ConversationUtils.getConversationId(
+//                    ChatManager.getInstance().getLoggedUser().getId(), getContext().getResources().getString(R.string.chat_support_account_id));
+
 
             Intent intent = new Intent(getContext(), MessageListActivity.class);
             intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);

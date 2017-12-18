@@ -18,12 +18,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import chat21.android.R;
-import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
 import chat21.android.core.groups.models.Group;
 import chat21.android.groups.utils.GroupUtils;
-import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
+import chat21.android.ui.messages.activities.MessageListActivity;
 
 /**
  * Created by frontiere21 on 25/11/16.
@@ -213,9 +212,10 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void onSendMessageClickListener() {
         Log.d(TAG, "onSendMessageClickListener");
 
-        String conversationId = ConversationUtils.getConversationId(ChatManager.getInstance()
-                .getLoggedUser()
-                .getId(), username);
+        String conversationId =  username;
+//        String conversationId = ConversationUtils.getConversationId(ChatManager.getInstance()
+//                .getLoggedUser()
+//                .getId(), username);
 
         startMessageActivity(conversationId);
 

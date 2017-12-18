@@ -31,8 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiImageView;
 import com.vanniktech.emoji.EmojiPopup;
@@ -50,20 +48,16 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.R;
-import chat21.android.conversations.utils.ConversationUtils;
 import chat21.android.core.ChatManager;
-import chat21.android.core.conversations.listeners.OnConversationRetrievedCallback;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.groups.models.Group;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
-import chat21.android.core.presence.PresenceManger;
 import chat21.android.core.presence.listeners.OnPresenceListener;
 import chat21.android.dao.message.OnDetachObserveMessageTree;
 import chat21.android.groups.utils.GroupUtils;
-import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
 import chat21.android.ui.ChatUI;
@@ -252,7 +246,8 @@ public class MessageListActivity extends AppCompatActivity implements
         } else {
             //from background notification
             isFromBackgroundNotification = true;
-            recipientId = getRecipientIdFromPushNotification(getIntent());
+            recipientId = getIntent().getStringExtra("recipient");
+
         }
 
         Log.d(TAG_NOTIFICATION, "MessageListActivity.recipientId: recipientId: " + recipientId);
@@ -260,6 +255,64 @@ public class MessageListActivity extends AppCompatActivity implements
         return recipientId;
     }
 
+//    @Override
+//    public void onConversationRetrievedSuccess(Conversation conversation) {
+//        this.conversation = conversation;
+//
+//        if (StringUtils.isValid(conversation.getGroup_id())) {
+//            isGroupConversation = true;
+//        }
+//
+//        // if it is a direct conversation observe the convers_with user presence
+//        if (!isGroupConversation) {
+//            // subscribe for convers_with user presence changes
+//            // bugfix Issue #16
+//            PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
+//                    conversation.getConvers_with(),
+//                    onConversWithPresenceListener);
+//        }
+//
+//        if (!areViewsInit) {
+//            initViews(conversation);
+//            areViewsInit = true;
+//        }
+//
+//        if (!isNodeObserved) {
+//            observeMessages(conversation.getConversationId());
+//            isNodeObserved = true;
+//        }
+//    }
+
+//    @Override
+//    public void onNewConversationCreated(String conversationId) {
+//
+//        conversation = ConversationUtils.createNewConversation(conversationId);
+//
+//        // subscribe for convers_with user presence changes
+//        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
+//                conversation.getConvers_with(),
+//                onConversWithPresenceListener);
+//
+//        if (!areViewsInit) {
+//            initViews(conversation);
+//            areViewsInit = true;
+//        }
+//
+//        if (!isNodeObserved) {
+//            observeMessages(conversationId);
+//            isNodeObserved = true;
+//        }
+//    }
+
+//    @Override
+//    public void onConversationRetrievedError(Exception e) {
+//        Log.e(TAG, e.toString());
+//
+//        mEmojiBar.setVisibility(View.GONE); // dismiss the input edittext
+//
+//        // shows a placeholder message layout
+//        mNoMessageLayout.setVisibility(View.VISIBLE);
+//    }
 
 
     private void registerViews() {
@@ -290,8 +343,8 @@ public class MessageListActivity extends AppCompatActivity implements
         if (conversation != null) {
 
             // bugfix Issue #29
-            if (StringUtils.isValid(conversation.getGroup_id()) ||
-                    StringUtils.isValid(conversation.getGroup_name())) {
+            if (StringUtils.isValid(conversation.getRecipient()) ||
+                    StringUtils.isValid(conversation.getRecipientFullName())) {
                 // its a group conversation
                 initGroupToolbar(conversation);
             } else {
@@ -328,7 +381,7 @@ public class MessageListActivity extends AppCompatActivity implements
         Log.d(TAG, "initGroupToolbar");
 
         // group name
-        mTitleTextView.setText(conversation.getGroup_name());
+        mTitleTextView.setText(conversation.getRecipientFullName());
 
         displayGroupMembersInSubtitle();
 
@@ -336,7 +389,7 @@ public class MessageListActivity extends AppCompatActivity implements
         setGroupPicture();
 
         // click on the toolbar to show the group information
-        if (StringUtils.isValid(conversation.getGroup_id())) {
+        if (StringUtils.isValid(conversation.getRecipient())) {
             toolbar.setOnClickListener(onToolbarClickListener);
         }
     }
@@ -385,8 +438,8 @@ public class MessageListActivity extends AppCompatActivity implements
             return;
 
         Intent intent = new Intent(this, GroupAdminPanelActivity.class);
-        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_NAME, conversation.getGroup_name());
-        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_ID, conversation.getGroup_id());
+        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_NAME, conversation.getRecipientFullName());
+        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_ID, conversation.getRecipient());
         startActivityForResult(intent, ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
     }
 
@@ -980,25 +1033,25 @@ public class MessageListActivity extends AppCompatActivity implements
         super.onStop();
     }
 
-    private String getRecipientIdFromPushNotification(Intent pushData) {
-        String recipientId = pushData.getStringExtra("recipient");
-//        isGroupConversation = false;
+//    private String getRecipientIdFromPushNotification(Intent pushData) {
+//        String recipientId = pushData.getStringExtra("recipient");
+////        isGroupConversation = false;
+////
+////        // retrieve the group_id
+////        try {
+////            String groupId = pushData.getStringExtra("group_id");
+////            if (StringUtils.isValid(groupId)) {
+////                conversationId = groupId;
+////                isGroupConversation = true;
+////            } else {
+////                Log.w(TAG, "group_id is empty or null. ");
+////            }
+////        } catch (Exception e) {
+////            Log.w(TAG, "cannot retrieve group_id. it may not exist" + e.getMessage());
+////        }
 //
-//        // retrieve the group_id
-//        try {
-//            String groupId = pushData.getStringExtra("group_id");
-//            if (StringUtils.isValid(groupId)) {
-//                conversationId = groupId;
-//                isGroupConversation = true;
-//            } else {
-//                Log.w(TAG, "group_id is empty or null. ");
-//            }
-//        } catch (Exception e) {
-//            Log.w(TAG, "cannot retrieve group_id. it may not exist" + e.getMessage());
-//        }
-
-        return recipientId;
-    }
+//        return recipientId;
+//    }
 
     private void setUpEmojiPopup() {
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView)

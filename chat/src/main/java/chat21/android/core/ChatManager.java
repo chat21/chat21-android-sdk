@@ -10,6 +10,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import chat21.android.core.conversations.ConversationsHandler;
+import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
@@ -146,6 +149,17 @@ public class ChatManager {
         return mContacts;
     }
 
+
+    public ConversationsHandler addConversationsListener (ConversationsListener conversationsListener) {
+        ConversationsHandler conversationsHandler = new ConversationsHandler(
+                Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId()
+//                , conversationMessagesListener
+        );
+
+        conversationsHandler.connect(conversationsListener);
+
+        return conversationsHandler;
+    }
     public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
 
         ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(

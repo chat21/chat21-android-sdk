@@ -19,12 +19,17 @@ public class Conversation implements Serializable {
     public static final int CONVERSATION_STATUS_LAST_MESSAGE = 2;
 
 
+    public static final int DIRECT_CHANNEL_TYPE = 1;
+    public static final int GROUP_CHANNEL_TYPE = 2;
+
     @Exclude
     private String conversationId;
 
     @Exclude
     private String convers_with;
+    @Exclude
     private String convers_with_fullname;
+
     private Boolean is_new;
     private String last_message_text;
     private String recipient;
@@ -34,11 +39,9 @@ public class Conversation implements Serializable {
     private int status;
     private Long timestamp;
     private Map<String, Object> extras;
-    private String group_id;
-    private String group_name;
 
-    // Required default constructor for Firebase object mapping
-    @SuppressWarnings("unused")
+    private int channelType;
+
     public Conversation() {
     }
 
@@ -61,11 +64,11 @@ public class Conversation implements Serializable {
     public void setConvers_with(String convers_with) {
         this.convers_with = convers_with;
     }
-
+    @Exclude
     public String getConvers_with_fullname() {
         return convers_with_fullname;
     }
-
+    @Exclude
     public void setConvers_with_fullname(String convers_with_fullname) {
         this.convers_with_fullname = convers_with_fullname;
     }
@@ -147,20 +150,20 @@ public class Conversation implements Serializable {
         this.extras = extras;
     }
 
-    public String getGroup_id() {
-        return group_id;
+    public int getChannelType() {
+        return channelType;
     }
 
-    public void setGroup_id(String group_id) {
-        this.group_id = group_id;
+    public void setChannelType(int channelType) {
+        this.channelType = channelType;
     }
 
-    public String getGroup_name() {
-        return group_name;
-    }
-
-    public void setGroup_name(String group_name) {
-        this.group_name = group_name;
+    public boolean isGroupChannel() {
+        if (this.channelType==GROUP_CHANNEL_TYPE) {
+            return true;
+        }else {
+            return false;
+        }
     }
 
     @Override
@@ -178,8 +181,7 @@ public class Conversation implements Serializable {
                 ", status=" + status +
                 ", timestamp=" + timestamp +
                 ", extras=" + extras +
-                ", group_id='" + group_id + '\'' +
-                ", group_name='" + group_name + '\'' +
+                ", channelType=" + channelType +
                 '}';
     }
 }

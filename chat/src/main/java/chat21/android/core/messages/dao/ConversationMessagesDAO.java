@@ -14,7 +14,7 @@
 //
 //import chat21.android.core.ChatManager;
 //import chat21.android.core.exception.ChatRuntimeException;
-//import chat21.android.core.messages.listeners.ConversationMessagesListener;
+//import chat21.android.core.messages.listeners.ConversationsListener;
 //import chat21.android.core.messages.listeners.SendMessageListener;
 //import chat21.android.core.messages.models.Message;
 //
