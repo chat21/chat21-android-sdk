@@ -89,10 +89,16 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
     public void updateMessage(Message message) {
         List<Message> messageList = getItems();
 
-        int position = messageList.size() - 1;
+        int messagePosition = messageList.indexOf(message);
 
-        messageList.remove(position);
-        messageList.add(message);
+        if (messagePosition >= 0 && messagePosition < messageList.size()) {
+            messageList.set(messagePosition, message);
+        }else {
+            messageList.add(message);
+//            int lastPosition = messageList.size() - 1;
+
+//            messageList.add(lastPosition, message);
+        }
         notifyDataSetChanged();
     }
 }

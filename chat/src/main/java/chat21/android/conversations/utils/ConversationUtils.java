@@ -408,39 +408,39 @@ public class ConversationUtils {
         }
 
         // group_id
-        try {
-            String groupId = (String) map.get("group_id");
-            if (StringUtils.isValid(groupId)) {
-                conversation.setGroup_id(groupId);
-            } else {
-                Log.w(TAG, "group_id is empty or null. ");
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "cannot retrieve group_id. it may not exist" + e.getMessage());
-        }
-
-        // group_name
-        try {
-            String groupName = (String) map.get("group_name");
-            if (StringUtils.isValid(groupName)) {
-                conversation.setGroup_name(groupName);
-            } else {
-                Log.w(TAG, "group_name is empty or null. ");
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "cannot retrieve group_name. it may not exist" + e.getMessage());
-
-            try {
-                String groupName = (String) map.get("name");
-                if (StringUtils.isValid(groupName)) {
-                    conversation.setGroup_name(groupName);
-                } else {
-                    Log.w(TAG, "group_name is empty or null. ");
-                }
-            } catch (Exception e1) {
-                Log.w(TAG, "cannot retrieve name. it may not exist" + e1.getMessage());
-            }
-        }
+//        try {
+//            String groupId = (String) map.get("group_id");
+//            if (StringUtils.isValid(groupId)) {
+//                conversation.setGroup_id(groupId);
+//            } else {
+//                Log.w(TAG, "group_id is empty or null. ");
+//            }
+//        } catch (Exception e) {
+//            Log.w(TAG, "cannot retrieve group_id. it may not exist" + e.getMessage());
+//        }
+//
+//        // group_name
+//        try {
+//            String groupName = (String) map.get("group_name");
+//            if (StringUtils.isValid(groupName)) {
+//                conversation.setGroup_name(groupName);
+//            } else {
+//                Log.w(TAG, "group_name is empty or null. ");
+//            }
+//        } catch (Exception e) {
+//            Log.w(TAG, "cannot retrieve group_name. it may not exist" + e.getMessage());
+//
+//            try {
+//                String groupName = (String) map.get("name");
+//                if (StringUtils.isValid(groupName)) {
+//                    conversation.setGroup_name(groupName);
+//                } else {
+//                    Log.w(TAG, "group_name is empty or null. ");
+//                }
+//            } catch (Exception e1) {
+//                Log.w(TAG, "cannot retrieve name. it may not exist" + e1.getMessage());
+//            }
+//        }
 
         // convers with
         if (!StringUtils.isValid(conversation.getGroup_id())) {

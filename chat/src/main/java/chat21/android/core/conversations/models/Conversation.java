@@ -21,6 +21,7 @@ public class Conversation implements Serializable {
 
     @Exclude
     private String conversationId;
+
     @Exclude
     private String convers_with;
     private String convers_with_fullname;

@@ -178,7 +178,7 @@ public class ConversationListFragment extends Fragment implements
     private void observeConversations(String appId) {
         Log.d(TAG, "observeConversations");
 
-        DatabaseReference nodeConversations = FirebaseDatabase.getInstance().getReference()
+        DatabaseReference nodeConversations = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
                 .child("apps/" + appId + "/users/" + ChatManager.getInstance().getLoggedUser().getId() + "/conversations");
 
         ConversationUtils.observeMessageTree(appId, ChatManager.getInstance().getLoggedUser().getId(),
@@ -288,7 +288,7 @@ public class ConversationListFragment extends Fragment implements
         Log.d(TAG, "startMessageActivity");
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
-        intent.putExtra(ChatUI._INTENT_BUNDLE_CONVERSATION_ID, conversationId);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }

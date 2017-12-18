@@ -1,80 +1,80 @@
-package chat21.android.dao.message;
-
-import android.util.Log;
-
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DatabaseReference;
-
-import java.util.Map;
-
-import chat21.android.core.ChatManager;
-import chat21.android.core.conversations.models.Conversation;
-import chat21.android.core.messages.models.Message;
-import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
-
-/**
- * Created by stefanodp91 on 08/09/17.
- */
-public class MessageDAO {
-    private static final String TAG = MessageDAO.class.getName();
-
-    private DatabaseReference mNode;
-    private ChildEventListener mChildEventListener;
-
-    public void observeMessageTree(String conversationId,
-                                   OnMessageTreeUpdateListener onTreeUpdateListener) {
-        Log.d(TAG, "observeMessageTree");
-
-        mNode = mNodeDAO.getNodeConversation(conversationId);
-        ObserveMessagesTask observeMessagesTask = new ObserveMessagesTask();
-        mChildEventListener = observeMessagesTask.observeMessages(onTreeUpdateListener);
-    }
-
-    public void detachObserveMessageTree(OnDetachObserveMessageTree callback) {
-        Log.d(TAG, "detachObserveMessageTree");
-
-        mNode.removeEventListener(mChildEventListener);
-
-        callback.onDetachedObserveMessageTree();
-    }
-
-    public void sendMessage(String text, String type,
-                            Conversation conversation, Map<String, Object> extras) {
-        Log.d(TAG, "sendMessage");
-
-        // the message to send
-        Message message = new Message();
-        message.setSender(ChatManager.getInstance().getLoggedUser().getId());
-        message.setRecipient(conversation.getConvers_with());
-        message.setText(text);
-        message.getTimestamp();
-        message.setType(type);
-        message.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
-        message.setStatus(Message.STATUS_SENT);
-        message.setConversationId(conversation.getConversationId());
-
-        // upload message on firebase
-        new UploadMessageOnFirebaseTask()
-                .uploadMessage(ChatManager.getInstance().getTenant(), text, message, conversation.getConversationId(), extras);
-    }
-
-    public void sendGroupMessage(String text,
-                                 String type, Conversation conversation) {
-        Log.d(TAG, "sendGroupMessage");
-
-        // the message to send
-        Message message = new Message();
-        message.setConversationId(conversation.getGroup_id());
-        message.setRecipientGroupId(conversation.getGroup_id());
-        message.setSender(ChatManager.getInstance().getLoggedUser().getId());
-        message.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
-        message.setStatus(Message.STATUS_SENT);
-        message.setText(text);
-        message.getTimestamp();
-        message.setType(type);
-
-        // upload message on firebase
-        new UploadGroupMessageOnFirebaseTask()
-                .uploadMessage(ChatManager.getInstance().getTenant(), text, message, conversation, conversation.getConversationId());
-    }
-}
+//package chat21.android.dao.message;
+//
+//import android.util.Log;
+//
+//import com.google.firebase.database.ChildEventListener;
+//import com.google.firebase.database.DatabaseReference;
+//
+//import java.util.Map;
+//
+//import chat21.android.core.ChatManager;
+//import chat21.android.core.conversations.models.Conversation;
+//import chat21.android.core.messages.models.Message;
+//import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
+//
+///**
+// * Created by stefanodp91 on 08/09/17.
+// */
+//public class MessageDAO {
+//    private static final String TAG = MessageDAO.class.getName();
+//
+//    private DatabaseReference mNode;
+//    private ChildEventListener mChildEventListener;
+//
+//    public void observeMessageTree(String conversationId,
+//                                   OnMessageTreeUpdateListener onTreeUpdateListener) {
+//        Log.d(TAG, "observeMessageTree");
+//
+//        mNode = mNodeDAO.getNodeConversation(conversationId);
+//        ObserveMessagesTask observeMessagesTask = new ObserveMessagesTask();
+//        mChildEventListener = observeMessagesTask.observeMessages(onTreeUpdateListener);
+//    }
+//
+//    public void detachObserveMessageTree(OnDetachObserveMessageTree callback) {
+//        Log.d(TAG, "detachObserveMessageTree");
+//
+//        mNode.removeEventListener(mChildEventListener);
+//
+//        callback.onDetachedObserveMessageTree();
+//    }
+//
+//    public void sendMessage(String text, String type,
+//                            Conversation conversation, Map<String, Object> extras) {
+//        Log.d(TAG, "sendMessage");
+//
+//        // the message to send
+//        Message message = new Message();
+//        message.setSender(ChatManager.getInstance().getLoggedUser().getId());
+//        message.setRecipient(conversation.getConvers_with());
+//        message.setText(text);
+//        message.getTimestamp();
+//        message.setType(type);
+//        message.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
+//        message.setStatus(Message.STATUS_SENDING);
+//        message.setConversationId(conversation.getConversationId());
+//
+//        // upload message on firebase
+//        new UploadMessageOnFirebaseTask()
+//                .uploadMessage(ChatManager.getInstance().getTenant(), text, message, conversation.getConversationId(), extras);
+//    }
+//
+//    public void sendGroupMessage(String text,
+//                                 String type, Conversation conversation) {
+//        Log.d(TAG, "sendGroupMessage");
+//
+//        // the message to send
+//        Message message = new Message();
+//        message.setConversationId(conversation.getGroup_id());
+//        message.setRecipientGroupId(conversation.getGroup_id());
+//        message.setSender(ChatManager.getInstance().getLoggedUser().getId());
+//        message.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
+//        message.setStatus(Message.STATUS_SENDING);
+//        message.setText(text);
+//        message.getTimestamp();
+//        message.setType(type);
+//
+//        // upload message on firebase
+//        new UploadGroupMessageOnFirebaseTask()
+//                .uploadMessage(ChatManager.getInstance().getTenant(), text, message, conversation, conversation.getConversationId());
+//    }
+//}

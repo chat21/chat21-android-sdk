@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +19,7 @@ import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
-import chat21.android.messages.listeners.OnMessageTreeUpdateListener;
-
+import java.util.Date;
 /**
  * Created by andrealeo on 05/12/17.
  */
@@ -29,23 +29,80 @@ public class ConversationMessagesHandler {
 
     String recipientId;
     DatabaseReference conversationMessagesNode;
-    List<ConversationMessagesListener> conversationMessagesListeners;
+//    List<ConversationMessagesListener> conversationMessagesListeners;
 
-    public ConversationMessagesHandler(String recipientId, String appId, String currentUserId, List<ConversationMessagesListener> conversationMessagesListeners) {
+    public ConversationMessagesHandler(String firebaseUrl, String recipientId, String appId, String currentUserId
+//            , ConversationMessagesListener conversationMessagesListener
+    ) {
 
         this.recipientId = recipientId;
 
-        this.conversationMessagesNode = FirebaseDatabase.getInstance().getReference().child("/apps/"+appId+"/users/"+currentUserId+"/messages/"+recipientId);
+        this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/"+appId+"/users/"+currentUserId+"/messages/"+recipientId);
         this.conversationMessagesNode.keepSynced(true);
-        this.conversationMessagesListeners = conversationMessagesListeners;
+
+
+//        this.conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
+//        this.conversationMessagesListeners.add(conversationMessagesListener);
 
     }
 
-    ChildEventListener connect(final List<ConversationMessagesListener> conversationMessagesListeners) {
+    public void sendMessage(
+            String sender,
+            String senderFullname,
+            String type, String text,
+                            final Map<String, Object> customAttributes, final SendMessageListener sendMessageListener) {
+        Log.d(TAG, "sendMessage");
+
+        // the message to send
+        final Message message = new Message();
+        message.setSender(sender);
+        message.setRecipient(this.recipientId);
+        message.setText(text);
+        message.setType(type);
+        message.setSender_fullname(senderFullname);
+        message.setStatus(Message.STATUS_SENDING);
+        message.setTimestamp(new Date().getTime());
+
+
+        conversationMessagesNode
+                .push()
+                .setValue(message, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        Log.d(TAG, "sendMessage.onComplete");
+
+                        if (databaseError != null) {
+                            String errorMessage = "sendMessage.onComplete Message not sent. " +
+                                    databaseError.getMessage();
+                            Log.e(TAG, errorMessage);
+                            FirebaseCrash.report(new Exception(errorMessage));
+                            if (sendMessageListener!=null){
+                                sendMessageListener.onResult(null, new ChatRuntimeException(databaseError.toException()));
+                            }
+
+                        } else {
+                            Log.d(TAG, "message sent with success");
+                            Log.d(TAG, databaseReference.toString());
+//                            databaseReference.child("status").setValue(Message.STATUS_RECEIVED);
+                            databaseReference.child("customAttributes").setValue(customAttributes);
+                            //TODO lookup and return the message from the firebase server to retrieve all the fields (timestamp, status, etc)
+                            if (sendMessageListener!=null){
+                                sendMessageListener.onResult(message, null);
+                            }
+                        }
+                    }
+                }); // save message on db
+    }
+
+
+    public ChildEventListener connect(final ConversationMessagesListener conversationMessagesListener) {
+
+        final List<ConversationMessagesListener> conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
+        conversationMessagesListeners.add(conversationMessagesListener);
 
         ChildEventListener childEventListener = conversationMessagesNode.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                 Log.d(TAG, "observeMessages.onChildAdded");
 
                 try {
@@ -54,6 +111,8 @@ public class ConversationMessagesHandler {
                     for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
                         conversationMessagesListener.onConversationMessageReceived(message, null);
                     }
+
+                    //TODO settare status a 200 qui
 
                 } catch (Exception e) {
                     for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
@@ -64,7 +123,7 @@ public class ConversationMessagesHandler {
 
             //for return recepit
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
                 Log.d(TAG, "observeMessages.onChildChanged");
 
                 try {
@@ -87,7 +146,7 @@ public class ConversationMessagesHandler {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
 //                Log.d(TAG, "observeMessages.onChildMoved");
             }
 
@@ -111,26 +170,25 @@ public class ConversationMessagesHandler {
 
         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
+        String messageId = dataSnapshot.getKey();
         String sender_fullname = (String) map.get("sender_fullname");
         String recipient = (String) map.get("recipient");
-        String conversationId = (String) map.get("conversationId");
         long status = (long) map.get("status");
         String text = (String) map.get("text");
         long timestamp = (long) map.get("timestamp");
         String type = (String) map.get("type");
         String sender = (String) map.get("sender");
-        String recipientGroupId = (String) map.get("recipientGroupId");
 
         Message message = new Message();
+
+        message.setId(messageId);
         message.setSender_fullname(sender_fullname);
         message.setRecipient(recipient);
-        message.setConversationId(conversationId);
         message.setStatus((int) status);
         message.setText(text);
         message.setTimestamp(timestamp);
         message.setType(type);
         message.setSender(sender);
-        message.setRecipientGroupId(recipientGroupId);
 
 //        Log.d(TAG, "message >: " + dataSnapshot.toString());
 

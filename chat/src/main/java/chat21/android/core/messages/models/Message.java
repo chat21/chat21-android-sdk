@@ -1,9 +1,7 @@
 package chat21.android.core.messages.models;
 
-import com.google.firebase.database.Exclude;
-import com.google.firebase.database.ServerValue;
-
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by stefano on 06/10/2015.
@@ -12,26 +10,43 @@ public class Message implements Serializable {
     private static final String TAG = Message.class.getName();
 
     // message status
-    public static final int STATUS_SENT = 0; // message sent (pending)
-    public static final int STATUS_RECEIVED = 1; // message received from the server
-    public static final int STATUS_READ = 2; // message read from contact
+    public static final int STATUS_FAILED = -100;
+    public static final int STATUS_SENDING = 0;
+    public static final int STATUS_SENT = 100; //(SALVATO SULLA TIMELINE DEL MITTENTE)
+    public static final int STATUS_DELIVERED_TO_RECIPIENT_TIMELINE = 150; //(SALVATO SULLA TIMELINE DEL DESTINATARIO)
+
+    public static final int STATUS_RECEIVED_FROM_RECIPIENT_CLIENT = 200;
+    public static final int STATUS_RETURN_RECEIPT = 250;  // from the recipient client app)
+    public static final int STATUS_SEEN = 300; // message read from contact
+
+
 
     // message type
     public static final String TYPE_TEXT = "text";
     public static final String TYPE_IMAGE = "image";
     public static final String TYPE_FILE = "file";
 
-    private String sender, recipient, text, conversationId;
+    private String id;
+    private String sender, recipient, text;
     private int status;
     private Long timestamp;
     private String type;
     private String sender_fullname;
-    private String recipientGroupId;
+    private String recipient_fullname;
 
-    // Required default constructor for Firebase object mapping
-    @SuppressWarnings("unused")
+
     public Message() {
-        this.status = STATUS_SENT;
+
+        this.status = STATUS_SENDING;
+        this.timestamp = new Date().getTime();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getSender() {
@@ -56,14 +71,6 @@ public class Message implements Serializable {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public String getConversationId() {
-        return conversationId;
-    }
-
-    public void setConversationId(String conversationId) {
-        this.conversationId = conversationId;
     }
 
     public int getStatus() {
@@ -99,12 +106,26 @@ public class Message implements Serializable {
         this.sender_fullname = sender_fullname;
     }
 
-    public String getRecipientGroupId() {
-        return recipientGroupId;
+    public String getRecipient_fullname() {
+        return recipient_fullname;
     }
 
-    public void setRecipientGroupId(String recipientGroupId) {
-        this.recipientGroupId = recipientGroupId;
+    public void setRecipient_fullname(String recipient_fullname) {
+        this.recipient_fullname = recipient_fullname;
+    }
+
+    @Override
+    public boolean equals(Object object){
+        if (object instanceof  Message) {
+            Message message = (Message)object;
+            if (this.getId().equals(message.getId())){
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            return false;
+        }
     }
 
     @Override
@@ -113,12 +134,10 @@ public class Message implements Serializable {
                 "sender='" + sender + '\'' +
                 ", recipient='" + recipient + '\'' +
                 ", text='" + text + '\'' +
-                ", conversationId='" + conversationId + '\'' +
                 ", status=" + status +
                 ", timestamp=" + timestamp +
                 ", type='" + type + '\'' +
                 ", sender_fullname='" + sender_fullname + '\'' +
-                ", recipientGroupId='" + recipientGroupId + '\'' +
                 '}';
     }
 }

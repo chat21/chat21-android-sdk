@@ -47,13 +47,13 @@ public class ConversationListAdapter extends FirebaseRecyclerAdapter<Conversatio
     protected void populateViewHolder(final ViewHolder holder, Conversation model, int position) {
         final Conversation conversation = getItem(position);
 
-        if (!StringUtils.isValid(conversation.getGroup_id())) {
-            // update the convers_with user
-            setConversWith(conversation);
-        }
+//        if (!StringUtils.isValid(conversation.getGroup_id())) {
+//            // update the convers_with user
+//            setConversWith(conversation);
+//        }
 
         // update the conversationId
-        setConversationId(conversation);
+//        setConversationId(conversation);
 
         holder.bind(conversation, position, getOnConversationClickListener(),
                 getOnConversationLongClickListener());
@@ -69,13 +69,13 @@ public class ConversationListAdapter extends FirebaseRecyclerAdapter<Conversatio
         }
     }
 
-    private void setConversationId(Conversation conversation) {
-        if (StringUtils.isValid(conversation.getGroup_id())) {
-            conversation.setConversationId(conversation.getGroup_id());
-        } else {
-            conversation.setConversationId(ConversationUtils
-                    .getConversationId(ChatManager.getInstance().getLoggedUser().getId(),
-                            conversation.getConvers_with()));
-        }
-    }
+//    private void setConversationId(Conversation conversation) {
+//        if (StringUtils.isValid(conversation.getGroup_id())) {
+//            conversation.setConversationId(conversation.getGroup_id());
+//        } else {
+//            conversation.setConversationId(ConversationUtils
+//                    .getConversationId(ChatManager.getInstance().getLoggedUser().getId(),
+//                            conversation.getConvers_with()));
+//        }
+//    }
 }

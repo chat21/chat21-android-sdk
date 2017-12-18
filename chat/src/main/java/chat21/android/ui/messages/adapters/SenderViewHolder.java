@@ -202,18 +202,18 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void dispatchStatus(int status) {
-        if (status == Message.STATUS_SENT) {
+        if (status == Message.STATUS_SENDING) {
+            setMessageSending();
+        } else if (status == Message.STATUS_SENT) {
             setMessageSent();
-        } else if (status == Message.STATUS_RECEIVED) {
+        } else if (status == Message.STATUS_RETURN_RECEIPT) {
             setMessageReceived();
-        } else if (status == Message.STATUS_READ) {
-            setMessageRead();
         } else {
             setMessageUndefined();
         }
     }
 
-    private void setMessageSent() {
+    private void setMessageSending() {
 
         Drawable messageSent = itemView.getContext()
                 .getResources()
@@ -225,7 +225,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         mMessageStatusRead.setVisibility(View.GONE);
     }
 
-    private void setMessageReceived() {
+    private void setMessageSent() {
 
         Drawable checkReceived = itemView.getContext()
                 .getResources()
@@ -237,7 +237,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         mMessageStatusRead.setVisibility(View.GONE);
     }
 
-    private void setMessageRead() {
+    private void setMessageReceived() {
         Drawable checkRead = itemView.getContext()
                 .getResources()
                 .getDrawable(R.drawable.ic_message_read_16dp);

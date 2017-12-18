@@ -10,8 +10,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import chat21.android.core.messages.dao.ConversationMessagesDAO;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
@@ -45,13 +43,10 @@ public class ChatManager {
 
     private List<IChatUser> mContacts;
 
-    Map<String, List<ConversationMessagesListener>> conversationMessagesListeners;
-
 
 
     // private constructor
     private ChatManager() {
-        this.conversationMessagesListeners = new HashMap<>();
     }
 
     // bugfix Issue #16
@@ -152,17 +147,21 @@ public class ChatManager {
     }
 
     public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
-        List conversationMessagesListenersArray  = conversationMessagesListeners.get(recipientId);
-        conversationMessagesListenersArray.add(conversationMessagesListener);
 
         ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
-                recipientId, this.getTenant(), this.getLoggedUser().getId(),conversationMessagesListenersArray);
+                Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser().getId()
+//                , conversationMessagesListener
+        );
+
+        messageHandler.connect(conversationMessagesListener);
     }
 
     public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener){
 
-        ConversationMessagesDAO conversationMessagesDAO = new ConversationMessagesDAO(recipient_id, this.getTenant(), this.getLoggedUser().getId());
-        conversationMessagesDAO.sendMessage(Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
+        ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(Configuration.firebaseUrl, recipient_id, this.getTenant(), this.getLoggedUser().getId());
+        messageHandler.sendMessage(getLoggedUser().getId(),
+                getLoggedUser().getFullName(),
+                Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 
     public void sendFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener){
@@ -182,8 +181,8 @@ public class ChatManager {
         private static final String TAG = Configuration.class.getName();
 
         public static String appId;
-        public String firebaseUrl;
-        public String storageBucket;
+        public static String firebaseUrl;
+        public static String storageBucket;
 
         public Configuration(Builder builder) {
             Log.d(TAG, ">>>>>> Configuration <<<<<<");

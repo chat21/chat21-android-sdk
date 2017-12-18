@@ -227,7 +227,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
         Log.d(TAG, "startMessageActivity");
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
-        intent.putExtra(ChatUI._INTENT_BUNDLE_CONVERSATION_ID, conversationId);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }
