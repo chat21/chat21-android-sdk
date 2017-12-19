@@ -6,6 +6,8 @@ import com.google.firebase.database.ServerValue;
 import java.io.Serializable;
 import java.util.Map;
 
+import chat21.android.core.messages.models.Message;
+
 /**
  * Created by stefano on 06/10/2015.
  */
@@ -165,6 +167,21 @@ public class Conversation implements Serializable {
             return false;
         }
     }
+
+    @Override
+    public boolean equals(Object object){
+        if (object instanceof Conversation) {
+            Conversation conversation = (Conversation)object;
+            if (this.getConversationId().equals(conversation.getConversationId())){
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            return false;
+        }
+    }
+
 
     @Override
     public String toString() {

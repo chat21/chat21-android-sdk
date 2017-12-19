@@ -5,15 +5,13 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!--android:background="@drawable/conversations_background">-->
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="@dimen/chat_progress_bar_size"
-        android:layout_height="@dimen/chat_progress_bar_size"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
+    <!--<ProgressBar-->
+        <!--android:id="@+id/progress_bar"-->
+        <!--android:layout_width="@dimen/chat_progress_bar_size"-->
+        <!--android:layout_height="@dimen/chat_progress_bar_size"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:visibility="gone" />-->
 
     <include
         android:id="@+id/layout_no_conversations"
@@ -51,12 +49,10 @@
 
         </LinearLayout>
 
-
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/chat_list"
+            android:id="@+id/conversations_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
@@ -68,7 +64,6 @@
         android:layout_marginBottom="@dimen/chat_margin_normal"
         android:layout_marginRight="@dimen/chat_margin_normal"
         android:clickable="true"
-        app:srcCompat="@drawable/ic_chat_white_48dp"
-        android:visibility="gone"
-        app:backgroundTint="@color/colorAccent" />
+        app:backgroundTint="@color/colorAccent"
+        app:srcCompat="@drawable/ic_chat_white_48dp" />
 </android.support.design.widget.CoordinatorLayout>
