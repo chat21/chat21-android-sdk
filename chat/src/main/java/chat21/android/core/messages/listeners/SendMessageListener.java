@@ -9,7 +9,7 @@ import chat21.android.core.messages.models.Message;
 
 public interface SendMessageListener {
 
-    void onResult(Message message, ChatRuntimeException chatException);
+    void onBeforeMessageSent(Message message, ChatRuntimeException chatException);
 
-
+    void onMessageSentComplete(Message message, ChatRuntimeException chatException);
 }

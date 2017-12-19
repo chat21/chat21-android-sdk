@@ -43,15 +43,13 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.groups.models.Group;
+import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
@@ -80,12 +78,11 @@ public class MessageListActivity extends AppCompatActivity implements
         ConversationMessagesListener
         //OnMessageTreeUpdateListener,
         //OnConversationRetrievedCallback
-         {
+{
 
 
     private static final String TAG = MessageListActivity.class.getName();
     private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
-
 
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
@@ -94,14 +91,14 @@ public class MessageListActivity extends AppCompatActivity implements
     private RecyclerView recyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private MessageListAdapter messageListAdapter;
-    private Map<String, Object> extras;
+    //    private Map<String, Object> extras;
     private Toolbar toolbar;
 
     private TextView mTitleTextView;
     private TextView mSubTitleTextView;
     private RelativeLayout mNoMessageLayout;
 
-    private List<Message> messageList = new ArrayList<>();
+//    private List<Message> messageList = new ArrayList<>();
 
     private boolean isGroupConversation;
 
@@ -117,7 +114,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
     private Conversation conversation;
 
-    private boolean isNodeObserved = false;
+//    private boolean isNodeObserved = false;
 //    private boolean areViewsInit = false;
 
     private EmojiPopup emojiPopup;
@@ -127,6 +124,8 @@ public class MessageListActivity extends AppCompatActivity implements
     private ImageView attachButton;
     private ImageView sendButton;
     private LinearLayout mEmojiBar;
+
+    private ConversationMessagesHandler conversationMessagesHandler;
 
     private OnPresenceListener onConversWithPresenceListener = new OnPresenceListener() {
         @Override
@@ -185,25 +184,23 @@ public class MessageListActivity extends AppCompatActivity implements
 
         registerViews();
 
+//        mMessageDAO = new MessageDAO();
+
+//        // retrieve custom extras, if they exist
+//        extras = getExtras();
+
+        // retrieve the conversationId
+        recipientId = getRecipientId();
+
+        conversationMessagesHandler = ChatManager.getInstance().getConversationMessagesHandler(recipientId);
+        conversationMessagesHandler.connect();
+
         initRecyclerView();
 
         // panel which contains the edittext, the emoji button and the attach button
         initInputPanel();
 
         initToolbar(null);
-
-//        mMessageDAO = new MessageDAO();
-
-        // retrieve custom extras, if they exist
-        extras = getExtras();
-
-        // retrieve the conversationId
-        recipientId = getRecipientId();
-
-        if (!isNodeObserved) {
-            ChatManager.getInstance().addConversationMessagesListener(recipientId,this);
-            isNodeObserved = true;
-        }
 
         // create a conversation object
 //        if (isFromBackgroundNotification) {
@@ -215,14 +212,65 @@ public class MessageListActivity extends AppCompatActivity implements
 //        }
     }
 
-    private Map<String, Object> getExtras() {
-        Log.d(TAG, "getExtras");
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "  MessageListActivity.onStart");
+        super.onStart();
 
-        Map<String, Object> extras = (Map<String, Object>) getIntent()
-                .getExtras()
-                .getSerializable(ChatUI.INTENT_BUNDLE_EXTRAS);
+        conversationMessagesHandler.upsertConversationMessagesListener(this);
+        Log.d(TAG, "  MessageListActivity.onStart: conversationMessagesHandler attached");
+    }
 
-        return extras;
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "  MessageListActivity.onStop");
+
+        // dismiss the emoji panel
+        if (emojiPopup != null) {
+            emojiPopup.dismiss();
+        }
+
+        // detach the conversation messages listener
+        if (conversationMessagesHandler != null)
+            conversationMessagesHandler.removeConversationMessagesListener(this);
+
+        Log.d(TAG, "  MessageListActivity.onStop: conversationMessagesHandler detached");
+
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "  MessageListActivity.onPause");
+
+        // detach the conversation messages listener
+        if (conversationMessagesHandler != null)
+            conversationMessagesHandler.removeConversationMessagesListener(this);
+
+        Log.d(TAG, "  MessageListActivity.onPause: conversationMessagesHandler detached");
+
+        super.onPause();
+    }
+
+    //    private Map<String, Object> getExtras() {
+//        Log.d(TAG, "getExtras");
+//
+//        Map<String, Object> extras = (Map<String, Object>) getIntent()
+//                .getExtras()
+//                .getSerializable(ChatUI.INTENT_BUNDLE_EXTRAS);
+//
+//        return extras;
+//    }
+
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "  MessageListActivity.onResume");
+
+        super.onResume();
+
+        conversationMessagesHandler.upsertConversationMessagesListener(this);
+        Log.d(TAG, "  MessageListActivity.onResume: conversationMessagesHandler attached");
     }
 
     private String getRecipientId() {
@@ -282,7 +330,7 @@ public class MessageListActivity extends AppCompatActivity implements
 //            isNodeObserved = true;
 //        }
 //    }
-
+//
 //    @Override
 //    public void onNewConversationCreated(String conversationId) {
 //
@@ -303,7 +351,7 @@ public class MessageListActivity extends AppCompatActivity implements
 //            isNodeObserved = true;
 //        }
 //    }
-
+//
 //    @Override
 //    public void onConversationRetrievedError(Exception e) {
 //        Log.e(TAG, e.toString());
@@ -479,7 +527,7 @@ public class MessageListActivity extends AppCompatActivity implements
     private void initRecyclerViewAdapter(RecyclerView recyclerView) {
         Log.d(TAG, "initRecyclerViewAdapter");
 
-        messageListAdapter = new MessageListAdapter(this, messageList);
+        messageListAdapter = new MessageListAdapter(this, conversationMessagesHandler.getMessages());
         messageListAdapter.setMessageClickListener(this.onMessageClickListener);
         recyclerView.setAdapter(messageListAdapter);
 
@@ -580,22 +628,34 @@ public class MessageListActivity extends AppCompatActivity implements
 
 //                if (conversation == null)
 //                    return;
-
 //                String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener){
-                    ChatManager.getInstance()
-                            .sendTextMessage(recipientId, text, null,
-                                    new SendMessageListener() {
-                                        @Override
-                                        public void onResult(Message message, ChatRuntimeException chatException) {
-                                            if (chatException==null) {
+                ChatManager.getInstance()
+                        .sendTextMessage(recipientId, text, null,
+                                new SendMessageListener() {
+                                    @Override
+                                    public void onBeforeMessageSent(Message message, ChatRuntimeException chatException) {
+                                        if (chatException == null) {
+                                            // if the message exists update it, else add it
+                                            messageListAdapter.updateMessage(message);
+                                        } else {
+                                            Log.e(TAG, "sendTextMessage.onBeforeMessageSent: ", chatException);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onMessageSentComplete(Message message, ChatRuntimeException chatException) {
+                                        if (chatException == null) {
 //                                                messageListAdapter.insertBottom(message);
 //                                                scrollToBottom();
-                                                Log.d(TAG, "message sent: " + message.toString());
-                                            }else {
-                                                Log.e(TAG, "error sending message : ", chatException);
-                                            }
+
+                                            // TODO: 19/12/17
+
+                                            Log.d(TAG, "message sent: " + message.toString());
+                                        } else {
+                                            Log.e(TAG, "error sending message : ", chatException);
                                         }
-                                    });
+                                    }
+                                });
 
 
                 // clear the edittext
@@ -623,7 +683,7 @@ public class MessageListActivity extends AppCompatActivity implements
                                     mNoMessageLayout.setVisibility(View.GONE);
                                 } else {
                                     // TODO implement this
-                                   // mMessageDAO.detachObserveMessageTree(onDetachObserveMessageTree);
+                                    // mMessageDAO.detachObserveMessageTree(onDetachObserveMessageTree);
                                 }
                             } else {
                                 Log.e(TAG, "toggleTelegramPanelVisibility" +
@@ -652,7 +712,7 @@ public class MessageListActivity extends AppCompatActivity implements
             // shows a placeholder message layout
             mNoMessageLayout.setVisibility(View.VISIBLE);
 
-            isNodeObserved = false;
+//            isNodeObserved = false;
         }
     };
 
@@ -667,10 +727,10 @@ public class MessageListActivity extends AppCompatActivity implements
 //            Log.e(TAG, "cannot update conversation status. " + e.getMessage());
 //        }
 
-        if (e==null) {
-            messageListAdapter.insertBottom(message);
+        if (e == null) {
+            messageListAdapter.updateMessage(message);
             scrollToBottom();
-        }else {
+        } else {
             Log.w(TAG, "Error onConversationMessageReceived ", e);
         }
     }
@@ -694,17 +754,17 @@ public class MessageListActivity extends AppCompatActivity implements
 //            }
 //        }
 
-        if (e==null) {
+        if (e == null) {
             messageListAdapter.updateMessage(message);
             scrollToBottom();
 
-        }else {
-             Log.w(TAG, "Error onConversationMessageReceived ", e);
-         }
+        } else {
+            Log.w(TAG, "Error onConversationMessageReceived ", e);
+        }
 
     }
 
-    private void scrollToBottom(){
+    private void scrollToBottom() {
         // scroll to last position
         if (messageListAdapter.getItemCount() > 0) {
             int position = messageListAdapter.getItemCount() - 1;
@@ -931,9 +991,9 @@ public class MessageListActivity extends AppCompatActivity implements
 //                    mMessageDAO.sendGroupMessage(downloadUrl.toString(), type,
 //                            conversation);
 //                } else {
-                    // update firebase references and send notification
+                // update firebase references and send notification
 
-                    ChatManager.getInstance().sendTextMessage(recipientId, downloadUrl.toString(),null, null );
+                ChatManager.getInstance().sendTextMessage(recipientId, downloadUrl.toString(), null, null);
 
 //                    ChatManager.getInstance().sendMessage(downloadUrl.toString(), type,
 //                            conversation, extras);
@@ -1024,16 +1084,7 @@ public class MessageListActivity extends AppCompatActivity implements
         return intent;
     }
 
-    @Override
-    protected void onStop() {
-        if (emojiPopup != null) {
-            emojiPopup.dismiss();
-        }
-
-        super.onStop();
-    }
-
-//    private String getRecipientIdFromPushNotification(Intent pushData) {
+    //    private String getRecipientIdFromPushNotification(Intent pushData) {
 //        String recipientId = pushData.getStringExtra("recipient");
 ////        isGroupConversation = false;
 ////
@@ -1093,6 +1144,4 @@ public class MessageListActivity extends AppCompatActivity implements
                 })
                 .build(editText);
     }
-
-
 }

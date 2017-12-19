@@ -1,6 +1,5 @@
 package chat21.android.core.messages.handlers;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -11,15 +10,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import chat21.android.core.ChatManager;
 import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
-import java.util.Date;
+
 /**
  * Created by andrealeo on 05/12/17.
  */
@@ -27,22 +26,27 @@ import java.util.Date;
 public class ConversationMessagesHandler {
     private static final String TAG = ConversationMessagesHandler.class.getName();
 
+    private List<Message> messages = new ArrayList<Message>(); // messages in memory
+
     String recipientId;
     DatabaseReference conversationMessagesNode;
-//    List<ConversationsListener> conversationMessagesListeners;
+    List<ConversationMessagesListener> conversationMessagesListeners;
 
     public ConversationMessagesHandler(String firebaseUrl, String recipientId, String appId, String currentUserId
 //            , ConversationsListener conversationMessagesListener
     ) {
 
+        conversationMessagesListeners = new ArrayList<>();
+
         this.recipientId = recipientId;
 
-        this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/"+appId+"/users/"+currentUserId+"/messages/"+recipientId);
+        this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUserId + "/messages/" + recipientId);
         this.conversationMessagesNode.keepSynced(true);
 
 
 //        this.conversationMessagesListeners = new ArrayList<ConversationsListener>();
 //        this.conversationMessagesListeners.add(conversationMessagesListener);
+
 
     }
 
@@ -50,7 +54,7 @@ public class ConversationMessagesHandler {
             String sender,
             String senderFullname,
             String type, String text,
-                            final Map<String, Object> customAttributes, final SendMessageListener sendMessageListener) {
+            final Map<String, Object> customAttributes, final SendMessageListener sendMessageListener) {
         Log.d(TAG, "sendMessage");
 
         // the message to send
@@ -63,9 +67,18 @@ public class ConversationMessagesHandler {
         message.setStatus(Message.STATUS_SENDING);
         message.setTimestamp(new Date().getTime());
 
+        // generate a message id
+        DatabaseReference newMessageReference = conversationMessagesNode.push();
+        message.setId(newMessageReference.getKey()); // assign an id to the message
 
-        conversationMessagesNode
-                .push()
+        saveOrUpdateMessageInMemory(message);
+        if (sendMessageListener != null) {
+            sendMessageListener.onBeforeMessageSent(message, null);
+        }
+
+//        conversationMessagesNode
+//                .push()
+        newMessageReference
                 .setValue(message, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -76,29 +89,61 @@ public class ConversationMessagesHandler {
                                     databaseError.getMessage();
                             Log.e(TAG, errorMessage);
                             FirebaseCrash.report(new Exception(errorMessage));
-                            if (sendMessageListener!=null){
-                                sendMessageListener.onResult(null, new ChatRuntimeException(databaseError.toException()));
+                            if (sendMessageListener != null) {
+                                sendMessageListener.onMessageSentComplete(null, new ChatRuntimeException(databaseError.toException()));
                             }
 
                         } else {
                             Log.d(TAG, "message sent with success");
                             Log.d(TAG, databaseReference.toString());
+
+
+                            message.setStatus(Message.STATUS_SENT);
+                            saveOrUpdateMessageInMemory(message);
+
+
 //                            databaseReference.child("status").setValue(Message.STATUS_RECEIVED);
                             databaseReference.child("customAttributes").setValue(customAttributes);
                             //TODO lookup and return the message from the firebase server to retrieve all the fields (timestamp, status, etc)
-                            if (sendMessageListener!=null){
-                                sendMessageListener.onResult(message, null);
+                            if (sendMessageListener != null) {
+                                sendMessageListener.onMessageSentComplete(message, null);
                             }
                         }
                     }
                 }); // save message on db
     }
 
+    // it checks if the message already exists.
+    // if the message exists update it, add it otherwise
+    private void saveOrUpdateMessageInMemory(Message newMessage) {
 
-    public ChildEventListener connect(final ConversationMessagesListener conversationMessagesListener) {
+        // look for the message
 
-        final List<ConversationMessagesListener> conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
-        conversationMessagesListeners.add(conversationMessagesListener);
+        int index = -1;
+        for (Message tempMessage : messages) {
+            if (tempMessage.equals(newMessage)) {
+                index = messages.indexOf(tempMessage);
+                break;
+            }
+        }
+
+        if (index != -1) {
+            // message already exists
+            messages.set(index, newMessage); // update the existing message
+        } else {
+            // message not exists
+            messages.add(newMessage); // insert a new message
+        }
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public ChildEventListener connect() {
+
+//        final List<ConversationMessagesListener> conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
+//        conversationMessagesListeners.add(conversationMessagesListener);
 
         ChildEventListener childEventListener = conversationMessagesNode.addChildEventListener(new ChildEventListener() {
             @Override
@@ -107,6 +152,7 @@ public class ConversationMessagesHandler {
 
                 try {
                     Message message = decodeMessageSnapShop(dataSnapshot);
+                    saveOrUpdateMessageInMemory(message);
 
                     for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
                         conversationMessagesListener.onConversationMessageReceived(message, null);
@@ -128,6 +174,7 @@ public class ConversationMessagesHandler {
 
                 try {
                     Message message = decodeMessageSnapShop(dataSnapshot);
+                    saveOrUpdateMessageInMemory(message);
 
                     for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
                         conversationMessagesListener.onConversationMessageChanged(message, null);
@@ -195,6 +242,28 @@ public class ConversationMessagesHandler {
         return message;
     }
 
+    public List<ConversationMessagesListener> getConversationMessagesListeners() {
+        return conversationMessagesListeners;
+    }
 
+//    public void setConversationMessagesListener(List<ConversationMessagesListener> conversationMessagesListeners) {
+//        this.conversationMessagesListeners = conversationMessagesListeners;
+//    }
 
+    public void addConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
+        this.conversationMessagesListeners.add(conversationMessagesListener);
+    }
+
+    public void removeConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
+        this.conversationMessagesListeners.remove(conversationMessagesListener);
+    }
+
+    public void upsertConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
+        if (conversationMessagesListeners.contains(conversationMessagesListener)) {
+            this.removeConversationMessagesListener(conversationMessagesListener);
+            this.addConversationMessagesListener(conversationMessagesListener);
+        } else {
+            this.addConversationMessagesListener(conversationMessagesListener);
+        }
+    }
 }
