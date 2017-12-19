@@ -25,9 +25,9 @@ public class ChatUtils {
     public static boolean isChatSupportAccountEnabled(Context context) {
         Log.d(TAG, "isChatSupportAccountEnabled");
         boolean isEnabled = false;
-        if (context.getString(R.string.enable_chat_support_account).trim().compareToIgnoreCase("yes") == 0) {
+        if (context.getString(R.string.enable_chat_support_account).trim().compareToIgnoreCase("true") == 0) {
             isEnabled = true;
-        } else if (context.getString(R.string.enable_chat_support_account).trim().compareToIgnoreCase("no") == 0) {
+        } else if (context.getString(R.string.enable_chat_support_account).trim().compareToIgnoreCase("false") == 0) {
             isEnabled = false;
         }
         return isEnabled;
@@ -37,9 +37,9 @@ public class ChatUtils {
     public static boolean areGroupsEnabled(Context context) {
         Log.d(TAG, "areGroupsEnabled");
         boolean isEnabled = false;
-        if (context.getString(R.string.enable_groups).trim().compareToIgnoreCase("yes") == 0) {
+        if (context.getString(R.string.enable_groups).trim().compareToIgnoreCase("true") == 0) {
             isEnabled = true;
-        } else if (context.getString(R.string.enable_groups).trim().compareToIgnoreCase("no") == 0) {
+        } else if (context.getString(R.string.enable_groups).trim().compareToIgnoreCase("false") == 0) {
             isEnabled = false;
         }
         return isEnabled;
