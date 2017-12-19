@@ -1,6 +1,6 @@
 package chat21.android.utils.image;
 
-import android.content.Context;
+import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,29 +19,29 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import chat21.android.R;
+import chat21.android.core.ChatManager;
 
 /**
  * Created by stefanodp91 on 02/08/17.
  */
 public class ImageCompressor {
-    public static void compress(Context context, Uri uri, OnImageCompressListener callback) {
-        new Compressor.CompressorTask(context, callback).execute(uri);
+    public static void compress(ContentResolver contentResolver, Uri uri, OnImageCompressListener callback) {
+        new Compressor.CompressorTask(contentResolver, callback).execute(uri);
     }
 
     private static class Compressor {
         private static class CompressorTask extends AsyncTask<Uri, Uri, Uri> {
-            private Context context;
+            private ContentResolver contentResolver;
             private OnImageCompressListener callback;
 
-            private CompressorTask(Context context, OnImageCompressListener callback) {
-                this.context = context;
+            private CompressorTask(ContentResolver contentResolver, OnImageCompressListener callback) {
+                this.contentResolver = contentResolver;
                 this.callback = callback;
             }
 
             @Override
             protected Uri doInBackground(Uri... uris) {
-                return compressImage(context, uris[0]);
+                return compressImage(contentResolver, uris[0]);
             }
 
             @Override
@@ -52,8 +52,8 @@ public class ImageCompressor {
         }
 
 
-        private static Uri compressImage(Context context, Uri imageUri) {
-            String filePath = getRealPathFromURI(context, imageUri);
+        private static Uri compressImage(ContentResolver contentResolver, Uri imageUri) {
+            String filePath = getRealPathFromURI(contentResolver, imageUri);
             Bitmap scaledBitmap = null;
 
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -152,7 +152,7 @@ public class ImageCompressor {
             }
 
             FileOutputStream out = null;
-            String filename = getFilename(context.getString(R.string.app_name) + "/images/sent");
+            String filename = getFilename(ChatManager.getInstance().getTenant() + "/images/sent");
             try {
                 out = new FileOutputStream(filename);
 
@@ -199,8 +199,8 @@ public class ImageCompressor {
         }
     }
 
-    private static String getRealPathFromURI(Context context, Uri contentUri) {
-        Cursor cursor = context.getContentResolver().query(contentUri, null, null, null, null);
+    private static String getRealPathFromURI(ContentResolver contentResolver, Uri contentUri) {
+        Cursor cursor = contentResolver.query(contentUri, null, null, null, null);
         if (cursor == null) {
             return contentUri.getPath();
         } else {
