@@ -14,7 +14,6 @@ import java.util.Map;
 import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
-import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
@@ -35,8 +34,6 @@ public class ChatManager {
             "_SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER";
 
 
-
-
     private static ChatManager mInstance;
 
     // bugfix Issue #16
@@ -48,6 +45,7 @@ public class ChatManager {
 
     private Map<String, ConversationMessagesHandler> conversationMessagesHandlerMap;
 
+    private ConversationsHandler conversationsHandler;
 
 
     // private constructor
@@ -94,7 +92,6 @@ public class ChatManager {
     }
 
 
-
     /**
      * It initializes the SDK.
      * It serializes the current user.
@@ -130,7 +127,6 @@ public class ChatManager {
     }
 
 
-
     /**
      * Return the instance of the Chat
      *
@@ -152,31 +148,40 @@ public class ChatManager {
         return mContacts;
     }
 
-
-
-    public ConversationsHandler addConversationsListener (ConversationsListener conversationsListener) {
-        ConversationsHandler conversationsHandler = new ConversationsHandler(
-                Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId()
-//                , conversationMessagesListener
-        );
-
-        conversationsHandler.connect(conversationsListener);
-
-        return conversationsHandler;
-    }
+//
+//    public ConversationsHandler addConversationsListener(ConversationsListener conversationsListener) {
+////        ConversationsHandler conversationsHandler = new ConversationsHandler(
+//        conversationsHandler = new ConversationsHandler(
+//                Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId()
+////                , conversationMessagesListener
+//        );
+//
+//        conversationsHandler.connect(conversationsListener);
+//
+//        return conversationsHandler;
+//    }
 
     public ConversationMessagesHandler getConversationMessagesHandler(String recipientId) {
         if (conversationMessagesHandlerMap.containsKey(recipientId)) {
             return conversationMessagesHandlerMap.get(recipientId);
-        }else {
+        } else {
             ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
                     Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser().getId());
 
             conversationMessagesHandlerMap.put(recipientId, messageHandler);
 
-            return  messageHandler;
+            return messageHandler;
         }
+    }
 
+    public ConversationsHandler getConversationsHandler() {
+        if (conversationsHandler != null) {
+            return conversationsHandler;
+        } else {
+            conversationsHandler =
+                    new ConversationsHandler(Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId());
+            return conversationsHandler;
+        }
     }
 
 //    public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
@@ -189,7 +194,7 @@ public class ChatManager {
 //        messageHandler.connect(conversationMessagesListener);
 //    }
 
-    public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener){
+    public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 
 
         getConversationMessagesHandler(recipient_id).sendMessage(getLoggedUser().getId(),
@@ -197,14 +202,9 @@ public class ChatManager {
                 Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 
-    public void sendFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener){
+    public void sendFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener) {
 
     }
-
-
-
-
-
 
 
 //start configuration

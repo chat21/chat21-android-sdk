@@ -242,7 +242,7 @@ public class ConversationMessagesHandler {
         return message;
     }
 
-    public List<ConversationMessagesListener> getConversationMessagesListeners() {
+    public List<ConversationMessagesListener> getConversationMessagesListener() {
         return conversationMessagesListeners;
     }
 

@@ -1,5 +1,6 @@
 package chat21.android.ui.conversations.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,9 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
@@ -44,13 +42,11 @@ public class ConversationListFragment extends Fragment implements
 
     private static final String TAG = ConversationListFragment.class.getName();
 
-    // conversations data
-    private ConversationsHandler conversationsHandler; // data handler
-    private List<Conversation> conversationsList = new ArrayList<>(); // rendered data
+    private ConversationsHandler conversationsHandler;
 
     // conversation list recyclerview
     private RecyclerView recyclerViewConversations;
-    private RecyclerView.LayoutManager rvConversationsLayoutManager;
+    private LinearLayoutManager rvConversationsLayoutManager;
     private ConversationsListAdapter conversationsListAdapter;
 
     // no conversations layout
@@ -59,6 +55,7 @@ public class ConversationListFragment extends Fragment implements
     private FloatingActionButton addNewConversation;
 
     private TextView currentUserGroups;
+
 
 //    // current user presence listener
 //    private OnPresenceListener onMyPresenceListener = new OnPresenceListener() {
@@ -86,11 +83,28 @@ public class ConversationListFragment extends Fragment implements
         return mFragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // attach listener for conversations change
+//        conversationsHandler = ChatManager.getInstance().addConversationsListener(this);
+//        Log.d(TAG, "ConversationListFragment.onCreate.conversationsHandler.getConversationsNode(): "
+//                + conversationsHandler.getConversationsNode().toString());
+
+        conversationsHandler = ChatManager.getInstance().getConversationsHandler();
+        conversationsHandler.connect();
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "ConversationListFragment.onCreateView");
         View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
+
+        conversationsHandler.upsertConversationsListener(this);
+        Log.d(TAG, "  ConversationListFragment.onCreateView: conversationMessagesHandler attached");
 
         // init RecyclerView
         recyclerViewConversations = view.findViewById(R.id.conversations_list);
@@ -98,7 +112,7 @@ public class ConversationListFragment extends Fragment implements
         recyclerViewConversations.setLayoutManager(rvConversationsLayoutManager);
 
         // init RecyclerView adapter
-        conversationsListAdapter = new ConversationsListAdapter(getActivity(), conversationsList);
+        conversationsListAdapter = new ConversationsListAdapter(getActivity(), conversationsHandler.getConversations());
         conversationsListAdapter.setOnConversationClickListener(this);
         conversationsListAdapter.setOnConversationLongClickListener(this);
         recyclerViewConversations.setAdapter(conversationsListAdapter);
@@ -122,15 +136,20 @@ public class ConversationListFragment extends Fragment implements
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "ConversationListFragment.onViewCreated");
 
-        // attach listener for conversations change
-        conversationsHandler = ChatManager.getInstance().addConversationsListener(this);
-        Log.d(TAG, "ConversationListFragment.onViewCreated.conversationsHandler.getConversationsNode(): "
-                + conversationsHandler.getConversationsNode().toString());
-
 //        // subscribe for current user presence changes
 //        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
 //                ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
     }
+
+    @Override
+    public void onDestroy() {
+
+        conversationsHandler.removeConversationsListener(this);
+        Log.d(TAG, "  ConversationListFragment.onDestroy: conversationMessagesHandler detached");
+
+        super.onDestroy();
+    }
+
 
     // check if the support account is enabled or not and assign the listener
     private void setAddNewConversationClickBehaviour() {
@@ -185,11 +204,19 @@ public class ConversationListFragment extends Fragment implements
 
         Log.d(TAG, "ConversationListFragment.onConversationAdded");
 
-        if (e == null) {
-            conversationsListAdapter.insertTop(conversation);
-        } else {
-            Log.w(TAG, "ConversationListFragment.onConversationAdded: Error onConversationAdded ", e);
-        }
+//        if (e == null) {
+//            conversationsListAdapter.insertTop(conversation);
+//        } else {
+//            Log.w(TAG, "ConversationListFragment.onConversationAdded: Error onConversationAdded ", e);
+//        }
+
+//        if (e == null) {
+//            conversationsListAdapter.update(conversation);
+//        } else {
+//            Log.w(TAG, "ConversationListFragment.onConversationChanged: Error onConversationMessageReceived ", e);
+//        }
+
+        conversationsListAdapter.notifyDataSetChanged();
 
         toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
     }
@@ -200,11 +227,13 @@ public class ConversationListFragment extends Fragment implements
 
         Log.d(TAG, "ConversationListFragment.onConversationChanged");
 
-        if (e == null) {
-            conversationsListAdapter.update(conversation);
-        } else {
-            Log.w(TAG, "ConversationListFragment.onConversationChanged: Error onConversationMessageReceived ", e);
-        }
+//        if (e == null) {
+//            conversationsListAdapter.update(conversation);
+//        } else {
+//            Log.w(TAG, "ConversationListFragment.onConversationChanged: Error onConversationMessageReceived ", e);
+//        }
+
+        conversationsListAdapter.notifyDataSetChanged();
 
         toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
     }
@@ -215,8 +244,7 @@ public class ConversationListFragment extends Fragment implements
 
 //        try {
         // set the conversation as read
-        conversationsHandler.setConversationRead(ChatManager.getInstance().getTenant(),
-                ChatManager.getInstance().getLoggedUser().getId(), conversation.getConversationId());
+        conversationsHandler.setConversationRead(conversation.getConversationId());
 
         // start the message list activity of the corresponding conversation
         startMessageActivity(conversation.getConversationId());
