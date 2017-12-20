@@ -30,6 +30,7 @@ public class ConversationMessagesHandler {
     String recipientId;
     DatabaseReference conversationMessagesNode;
 //    List<ConversationsListener> conversationMessagesListeners;
+    ChildEventListener conversationMessagesChildEventListener;
 
     public ConversationMessagesHandler(String firebaseUrl, String recipientId, String appId, String currentUserId
 //            , ConversationsListener conversationMessagesListener
@@ -100,7 +101,7 @@ public class ConversationMessagesHandler {
         final List<ConversationMessagesListener> conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
         conversationMessagesListeners.add(conversationMessagesListener);
 
-        ChildEventListener childEventListener = conversationMessagesNode.addChildEventListener(new ChildEventListener() {
+        conversationMessagesChildEventListener = conversationMessagesNode.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                 Log.d(TAG, "ConversationMessagesHandler.connect.onChildAdded");
@@ -157,7 +158,7 @@ public class ConversationMessagesHandler {
             }
         });
 
-        return childEventListener;
+        return conversationMessagesChildEventListener;
     }
 
 

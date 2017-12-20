@@ -127,6 +127,9 @@ public class ChatManager {
     }
 
 
+    public static void stop() {
+
+    }
 
     /**
      * Return the instance of the Chat
