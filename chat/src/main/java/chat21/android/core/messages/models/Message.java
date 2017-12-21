@@ -39,7 +39,7 @@ public class Message implements Serializable {
 
     public Message() {
 
-        this.status = STATUS_SENDING;
+       // this.status = STATUS_SENDING;
         this.timestamp = new Date().getTime();
     }
 

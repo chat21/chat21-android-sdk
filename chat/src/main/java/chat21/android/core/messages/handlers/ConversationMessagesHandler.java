@@ -18,6 +18,7 @@ import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
+import chat21.android.core.users.models.IChatUser;
 
 /**
  * Created by andrealeo on 05/12/17.
@@ -28,20 +29,27 @@ public class ConversationMessagesHandler {
 
     private List<Message> messages = new ArrayList<Message>(); // messages in memory
 
+    IChatUser currentUser;
     String recipientId;
+
     DatabaseReference conversationMessagesNode;
+
+    ChildEventListener conversationMessagesChildEventListener;
+
     List<ConversationMessagesListener> conversationMessagesListeners;
 
-    public ConversationMessagesHandler(String firebaseUrl, String recipientId, String appId, String currentUserId
+    public ConversationMessagesHandler(String firebaseUrl, String recipientId, String appId, IChatUser currentUser
 //            , ConversationsListener conversationMessagesListener
     ) {
 
         conversationMessagesListeners = new ArrayList<>();
 
         this.recipientId = recipientId;
+        this.currentUser = currentUser;
 
-        this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUserId + "/messages/" + recipientId);
+        this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipientId);
         this.conversationMessagesNode.keepSynced(true);
+        Log.d(TAG, "conversationMessagesNode : " + conversationMessagesNode.toString());
 
 
 //        this.conversationMessagesListeners = new ArrayList<ConversationsListener>();
@@ -51,20 +59,20 @@ public class ConversationMessagesHandler {
     }
 
     public void sendMessage(
-            String sender,
-            String senderFullname,
+            String recipientFullname,
             String type, String text,
             final Map<String, Object> customAttributes, final SendMessageListener sendMessageListener) {
         Log.d(TAG, "sendMessage");
 
         // the message to send
         final Message message = new Message();
-        message.setSender(sender);
-        message.setRecipient(this.recipientId);
+        //message.setSender(sender);
+        //message.setRecipient(this.recipientId);
         message.setText(text);
         message.setType(type);
-        message.setSender_fullname(senderFullname);
-        message.setStatus(Message.STATUS_SENDING);
+        message.setSender_fullname(currentUser.getFullName());
+        message.setRecipient_fullname(recipientFullname);
+//        message.setStatus(Message.STATUS_SENDING);
         message.setTimestamp(new Date().getTime());
 
         // generate a message id
@@ -72,9 +80,6 @@ public class ConversationMessagesHandler {
         message.setId(newMessageReference.getKey()); // assign an id to the message
 
         saveOrUpdateMessageInMemory(message);
-        if (sendMessageListener != null) {
-            sendMessageListener.onBeforeMessageSent(message, null);
-        }
 
 //        conversationMessagesNode
 //                .push()
@@ -111,6 +116,15 @@ public class ConversationMessagesHandler {
                         }
                     }
                 }); // save message on db
+
+
+        if (sendMessageListener != null) {
+            //set sender and recipiet because MessageListActivity use this message to update the view immediatly and MessageListAdapter use message.sender
+            message.setSender(currentUser.getId());
+            message.setRecipient(this.recipientId);
+            sendMessageListener.onBeforeMessageSent(message, null);
+        }
+
     }
 
     // it checks if the message already exists.
@@ -141,70 +155,83 @@ public class ConversationMessagesHandler {
     }
 
     public ChildEventListener connect() {
+        Log.d(TAG, "connecting  for recipientId : " + this.recipientId);
+
 
 //        final List<ConversationMessagesListener> conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
 //        conversationMessagesListeners.add(conversationMessagesListener);
 
-        ChildEventListener childEventListener = conversationMessagesNode.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                Log.d(TAG, "ConversationMessagesHandler.connect.onChildAdded");
+        if (conversationMessagesListeners==null) {
 
-                try {
-                    Message message = decodeMessageSnapShop(dataSnapshot);
-                    saveOrUpdateMessageInMemory(message);
+            Log.d(TAG, "creating a new conversationMessagesChildEventListener");
 
-                    for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                        conversationMessagesListener.onConversationMessageReceived(message, null);
-                    }
+            conversationMessagesChildEventListener = conversationMessagesNode.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                    Log.d(TAG, "ConversationMessagesHandler.connect.onChildAdded");
 
-                    //TODO settare status a 200 qui
+                    try {
+                        Message message = decodeMessageSnapShop(dataSnapshot);
+                        saveOrUpdateMessageInMemory(message);
 
-                } catch (Exception e) {
-                    for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                        conversationMessagesListener.onConversationMessageReceived(null, new ChatRuntimeException(e));
-                    }
-                }
-            }
+                        for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                            conversationMessagesListener.onConversationMessageReceived(message, null);
+                        }
 
-            //for return recepit
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
-                Log.d(TAG, "ConversationMessagesHandler.connect.onChildChanged");
+                        //TODO settare status a 200 qui
 
-                try {
-                    Message message = decodeMessageSnapShop(dataSnapshot);
-                    saveOrUpdateMessageInMemory(message);
-
-                    for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                        conversationMessagesListener.onConversationMessageChanged(message, null);
-                    }
-
-                } catch (Exception e) {
-                    for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                        conversationMessagesListener.onConversationMessageChanged(null, new ChatRuntimeException(e));
+                    } catch (Exception e) {
+                        for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                            conversationMessagesListener.onConversationMessageReceived(null, new ChatRuntimeException(e));
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                //for return recepit
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
+                    Log.d(TAG, "ConversationMessagesHandler.connect.onChildChanged");
+
+                    try {
+                        Message message = decodeMessageSnapShop(dataSnapshot);
+                        saveOrUpdateMessageInMemory(message);
+
+                        for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                            conversationMessagesListener.onConversationMessageChanged(message, null);
+                        }
+
+                    } catch (Exception e) {
+                        for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                            conversationMessagesListener.onConversationMessageChanged(null, new ChatRuntimeException(e));
+                        }
+                    }
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 //                Log.d(TAG, "observeMessages.onChildRemoved");
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
 //                Log.d(TAG, "observeMessages.onChildMoved");
-            }
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 //                Log.d(TAG, "observeMessages.onCancelled");
 
-            }
-        });
+                }
+            });
 
-        return childEventListener;
+            Log.i(TAG, "connected for recipientId: " + recipientId );
+
+
+        }else {
+            Log.i(TAG, "already connected form recipientId : " + recipientId);
+        }
+
+        return conversationMessagesChildEventListener;
     }
 
 
@@ -246,16 +273,16 @@ public class ConversationMessagesHandler {
         return conversationMessagesListeners;
     }
 
-//    public void setConversationMessagesListener(List<ConversationMessagesListener> conversationMessagesListeners) {
-//        this.conversationMessagesListeners = conversationMessagesListeners;
-//    }
+    public void setConversationMessagesListeners(List<ConversationMessagesListener> conversationMessagesListeners) {
+        this.conversationMessagesListeners = conversationMessagesListeners;
+        Log.i(TAG, "  ConversationMessagesListeners setted");
+
+    }
 
     public void addConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
         this.conversationMessagesListeners.add(conversationMessagesListener);
-    }
+        Log.i(TAG, "  conversationMessagesListener added");
 
-    public void removeConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
-        this.conversationMessagesListeners.remove(conversationMessagesListener);
     }
 
     public void upsertConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
@@ -265,5 +292,32 @@ public class ConversationMessagesHandler {
         } else {
             this.addConversationMessagesListener(conversationMessagesListener);
         }
+        Log.i(TAG, "  conversationMessagesListener added");
+
     }
+
+    public void removeConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
+        this.conversationMessagesListeners.remove(conversationMessagesListener);
+        Log.i(TAG, "  conversationMessagesListener removed");
+
+    }
+
+    public void removeAllConversationMessagesListeners() {
+        this.conversationMessagesListeners = null;
+        Log.i(TAG, "Removed all ConversationMessagesListeners");
+
+    }
+
+
+
+
+    public ChildEventListener getConversationMessagesChildEventListener() {
+        return conversationMessagesChildEventListener;
+    }
+
+    public void disconnect() {
+        this.conversationMessagesNode.removeEventListener(conversationMessagesChildEventListener);
+        this.removeAllConversationMessagesListeners();
+    }
+
 }

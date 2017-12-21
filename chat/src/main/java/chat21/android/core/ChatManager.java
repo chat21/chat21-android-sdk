@@ -102,7 +102,7 @@ public class ChatManager {
      * @param currentUser
      */
     public static void start(Context context, Configuration configuration, IChatUser currentUser) {
-        Log.i(TAG, "Chat.start");
+        Log.i(TAG, "starting");
 
 //        // multidex support
 //        // source :
@@ -124,6 +124,19 @@ public class ChatManager {
 
         // serialize the tenant
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
+    }
+
+
+    public void stop() {
+        for (Map.Entry<String, ConversationMessagesHandler> entry : conversationMessagesHandlerMap.entrySet()) {
+
+            String recipientId = entry.getKey();
+            ConversationMessagesHandler conversationMessagesHandler = entry.getValue();
+
+            conversationMessagesHandler.disconnect();
+            Log.d(TAG, "conversationMessagesHandler for recipientId: " + recipientId + " disposed");
+        }
+
     }
 
 
@@ -162,15 +175,21 @@ public class ChatManager {
 //    }
 
     public ConversationMessagesHandler getConversationMessagesHandler(String recipientId) {
+        Log.d(TAG, "Getting ConversationMessagesHandler for recipientId " + recipientId);
+
         if (conversationMessagesHandlerMap.containsKey(recipientId)) {
+            Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
+
             return conversationMessagesHandlerMap.get(recipientId);
         } else {
             ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
-                    Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser().getId());
+                    Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser());
 
             conversationMessagesHandlerMap.put(recipientId, messageHandler);
 
-            return messageHandler;
+            Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " created.");
+
+            return  messageHandler;
         }
     }
 
@@ -197,8 +216,8 @@ public class ChatManager {
     public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 
 
-        getConversationMessagesHandler(recipient_id).sendMessage(getLoggedUser().getId(),
-                getLoggedUser().getFullName(),
+        getConversationMessagesHandler(recipient_id).sendMessage(
+                "fullnameDAELIMINAREANDROID",
                 Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 

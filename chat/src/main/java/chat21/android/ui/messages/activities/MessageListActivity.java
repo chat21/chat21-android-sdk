@@ -110,7 +110,6 @@ public class MessageListActivity extends AppCompatActivity implements
     // check if this activity is called from a foreground notification
     private boolean isFromForegroundNotification = false;
 
-//    private MessageDAO mMessageDAO;
 
     private Conversation conversation;
 
@@ -127,45 +126,6 @@ public class MessageListActivity extends AppCompatActivity implements
 
     private ConversationMessagesHandler conversationMessagesHandler;
 
-    private OnPresenceListener onConversWithPresenceListener = new OnPresenceListener() {
-        @Override
-        public void onChanged(boolean imConnected) {
-            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
-                    ".onChanged: imConnected ==  " + imConnected);
-
-            if (imConnected) {
-                conversWithOnline = true;
-                mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_online));
-            } else {
-                conversWithOnline = false;
-
-                if (conversWithLastOnline != 0) {
-                    mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
-                    Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener " +
-                            ".onChanged: conversWithLastOnline == " + conversWithLastOnline);
-                } else {
-                    mSubTitleTextView.setText("");
-                }
-            }
-        }
-
-        @Override
-        public void onLastOnlineChanged(long lastOnline) {
-            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
-                    ".onLastOnlineChanged: lastOnline ==  " + lastOnline);
-
-            conversWithLastOnline = lastOnline;
-
-            if (!conversWithOnline)
-                mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
-        }
-
-        @Override
-        public void onError(Exception e) {
-            Log.e(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
-                    ".onError == " + e.getMessage());
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,7 +144,6 @@ public class MessageListActivity extends AppCompatActivity implements
 
         registerViews();
 
-//        mMessageDAO = new MessageDAO();
 
 //        // retrieve custom extras, if they exist
 //        extras = getExtras();
@@ -193,6 +152,9 @@ public class MessageListActivity extends AppCompatActivity implements
         recipientId = getRecipientId();
 
         conversationMessagesHandler = ChatManager.getInstance().getConversationMessagesHandler(recipientId);
+
+        conversationMessagesHandler.upsertConversationMessagesListener(this);
+
         conversationMessagesHandler.connect();
 
         initRecyclerView();
@@ -213,13 +175,21 @@ public class MessageListActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onStart() {
-        Log.d(TAG, "  MessageListActivity.onStart");
-        super.onStart();
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "  MessageListActivity.onDestroy");
 
-        conversationMessagesHandler.upsertConversationMessagesListener(this);
-        Log.d(TAG, "  MessageListActivity.onStart: conversationMessagesHandler attached");
+        conversationMessagesHandler.removeConversationMessagesListener(this);
     }
+
+//    @Override
+//    protected void onStart() {
+//        Log.d(TAG, "  MessageListActivity.onStart");
+//        super.onStart();
+//
+////        conversationMessagesHandler.upsertConversationMessagesListener(this);
+////        Log.d(TAG, "  MessageListActivity.onStart: conversationMessagesHandler attached");
+//    }
 
     @Override
     protected void onStop() {
@@ -231,47 +201,9 @@ public class MessageListActivity extends AppCompatActivity implements
         }
 
         // detach the conversation messages listener
-        if (conversationMessagesHandler != null)
-            conversationMessagesHandler.removeConversationMessagesListener(this);
-
-        Log.d(TAG, "  MessageListActivity.onStop: conversationMessagesHandler detached");
-
         super.onStop();
     }
 
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "  MessageListActivity.onPause");
-
-        // detach the conversation messages listener
-        if (conversationMessagesHandler != null)
-            conversationMessagesHandler.removeConversationMessagesListener(this);
-
-        Log.d(TAG, "  MessageListActivity.onPause: conversationMessagesHandler detached");
-
-        super.onPause();
-    }
-
-    //    private Map<String, Object> getExtras() {
-//        Log.d(TAG, "getExtras");
-//
-//        Map<String, Object> extras = (Map<String, Object>) getIntent()
-//                .getExtras()
-//                .getSerializable(ChatUI.INTENT_BUNDLE_EXTRAS);
-//
-//        return extras;
-//    }
-
-
-    @Override
-    protected void onResume() {
-        Log.d(TAG, "  MessageListActivity.onResume");
-
-        super.onResume();
-
-        conversationMessagesHandler.upsertConversationMessagesListener(this);
-        Log.d(TAG, "  MessageListActivity.onResume: conversationMessagesHandler attached");
-    }
 
     private String getRecipientId() {
         Log.d(TAG, "getRecipientId");
@@ -527,6 +459,8 @@ public class MessageListActivity extends AppCompatActivity implements
     private void initRecyclerViewAdapter(RecyclerView recyclerView) {
         Log.d(TAG, "initRecyclerViewAdapter");
 
+        Log.d(TAG, "conversationMessagesHandler.getMessages().size() is " + conversationMessagesHandler.getMessages().size());
+
         messageListAdapter = new MessageListAdapter(this, conversationMessagesHandler.getMessages());
         messageListAdapter.setMessageClickListener(this.onMessageClickListener);
         recyclerView.setAdapter(messageListAdapter);
@@ -638,6 +572,11 @@ public class MessageListActivity extends AppCompatActivity implements
                                             // if the message exists update it, else add it
                                             messageListAdapter.updateMessage(message);
                                         } else {
+
+                                            Toast.makeText(MessageListActivity.this,
+                                                    "Failed to send message",
+                                                    Toast.LENGTH_SHORT).show();
+
                                             Log.e(TAG, "sendTextMessage.onBeforeMessageSent: ", chatException);
                                         }
                                     }
@@ -645,13 +584,12 @@ public class MessageListActivity extends AppCompatActivity implements
                                     @Override
                                     public void onMessageSentComplete(Message message, ChatRuntimeException chatException) {
                                         if (chatException == null) {
-//                                                messageListAdapter.insertBottom(message);
-//                                                scrollToBottom();
-
-                                            // TODO: 19/12/17
 
                                             Log.d(TAG, "message sent: " + message.toString());
                                         } else {
+                                            Toast.makeText(MessageListActivity.this,
+                                                    "Failed to send message",
+                                                    Toast.LENGTH_SHORT).show();
                                             Log.e(TAG, "error sending message : ", chatException);
                                         }
                                     }
@@ -1144,4 +1082,45 @@ public class MessageListActivity extends AppCompatActivity implements
                 })
                 .build(editText);
     }
+
+    private OnPresenceListener onConversWithPresenceListener = new OnPresenceListener() {
+        @Override
+        public void onChanged(boolean imConnected) {
+            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
+                    ".onChanged: imConnected ==  " + imConnected);
+
+            if (imConnected) {
+                conversWithOnline = true;
+                mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_online));
+            } else {
+                conversWithOnline = false;
+
+                if (conversWithLastOnline != 0) {
+                    mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
+                    Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener " +
+                            ".onChanged: conversWithLastOnline == " + conversWithLastOnline);
+                } else {
+                    mSubTitleTextView.setText("");
+                }
+            }
+        }
+
+        @Override
+        public void onLastOnlineChanged(long lastOnline) {
+            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
+                    ".onLastOnlineChanged: lastOnline ==  " + lastOnline);
+
+            conversWithLastOnline = lastOnline;
+
+            if (!conversWithOnline)
+                mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
+        }
+
+        @Override
+        public void onError(Exception e) {
+            Log.e(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
+                    ".onError == " + e.getMessage());
+        }
+    };
+
 }
