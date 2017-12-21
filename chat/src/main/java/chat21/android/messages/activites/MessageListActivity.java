@@ -232,6 +232,12 @@ public class MessageListActivity extends AppCompatActivity implements
 //    public void onNewConversationCreated(String conversationId) {
     public void onNewConversationCreated(Conversation conversation) {
 
+        if (StringUtils.isValid(conversation.getGroup_id())) {
+            if(StringUtils.isValid(getIntent().getStringExtra(_INTENT_BUNDLE_GROUP_NAME))) {
+                conversation.setGroup_name(getIntent().getStringExtra(_INTENT_BUNDLE_GROUP_NAME));
+            }
+        }
+
 //        conversation = ConversationUtils.createNewConversation(conversationId);
         this.conversation = conversation;
 
