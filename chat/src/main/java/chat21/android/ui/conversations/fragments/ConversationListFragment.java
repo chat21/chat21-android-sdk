@@ -1,6 +1,5 @@
 package chat21.android.ui.conversations.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -235,6 +234,12 @@ public class ConversationListFragment extends Fragment implements
 
         conversationsListAdapter.notifyDataSetChanged();
 
+        toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
+    }
+
+    @Override
+    public void onConversationRemoved(ChatRuntimeException e) {
+        conversationsListAdapter.notifyDataSetChanged();
         toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
     }
 

@@ -103,7 +103,25 @@ public class ConversationsHandler {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                Log.d(TAG, "observeMessages.onChildRemoved");
+                Log.d(TAG, "observeMessages.onChildRemoved");
+
+//                Log.d(TAG, "observeMessages.onChildRemoved: dataSnapshot == " + dataSnapshot.toString());
+
+//                try {
+//                    Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
+//
+//                    deleteConversationFromMemory(conversation);
+//                    sortConversationsInMemory();
+//
+//                    for (ConversationsListener conversationsListener : conversationsListeners) {
+//                        conversationsListener.onConversationRemoved(null);
+//                    }
+//
+//                } catch (Exception e) {
+//                    for (ConversationsListener conversationsListener : conversationsListeners) {
+//                        conversationsListener.onConversationRemoved(new ChatRuntimeException(e));
+//                    }
+//                }
             }
 
             @Override
@@ -155,8 +173,7 @@ public class ConversationsHandler {
     // if the conversation exists update it, add it otherwise
     private void saveOrUpdateConversationInMemory(Conversation newConversation) {
 
-        // look for the message
-
+        // look for the conversation
         int index = -1;
         for (Conversation tempConversation : conversations) {
             if (tempConversation.equals(newConversation)) {
@@ -174,9 +191,27 @@ public class ConversationsHandler {
         }
     }
 
+    // it checks if the conversation already exists.
+    // if the conversation exists delete it
+    private void deleteConversationFromMemory(Conversation conversationToDelete) {
+        // look for the conversation
+        int index = -1;
+        for (Conversation tempConversation : conversations) {
+            if (tempConversation.equals(conversationToDelete)) {
+                index = conversations.indexOf(tempConversation);
+                break;
+            }
+        }
+
+        if (index != -1) {
+            // conversation already exists
+            conversations.remove(index); // delete existing conversation
+        }
+    }
+
     private void sortConversationsInMemory() {
 
-        // TODO: 20/12/17 study if is better to create the comparator in the ConversationHandler constructor 
+        // TODO: 20/12/17 study if is better to create the comparator in the ConversationHandler constructor
         Log.d(TAG, "ConversationHandler.sortConversationsInMemory");
 
         if (conversations.size() > 1) {
@@ -311,6 +346,27 @@ public class ConversationsHandler {
             }
         });
     }
+
+//    public void deleteConversation(String recipientId, final ConversationsListener conversationsListener) {
+//        DatabaseReference.CompletionListener onConversationRemoved
+//                = new DatabaseReference.CompletionListener() {
+//            @Override
+//            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//
+//                if (databaseError == null) {
+//                    // conversation deleted with success
+//                    conversationsListener.onConversationRemoved(null);
+//                } else {
+//                    // there are error
+//                    // conversation not deleted
+//                    conversationsListener.onConversationRemoved(new ChatRuntimeException(databaseError.toException()));
+//                }
+//            }
+//        };
+//
+//        // remove the conversation with recipientId
+//        this.conversationsNode.child(recipientId).removeValue(onConversationRemoved);
+//    }
 
 
 //    public DatabaseReference getConversationsNode() {

@@ -24,7 +24,7 @@ import chat21.android.core.users.models.IChatUser;
 /**
  * Created by stefanodp91 on 28/09/17.
  */
-public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDialogFragment implements View.OnClickListener {
+public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDialogFragment implements View.OnClickListener /**, ConversationsListener */ {
 
     private static final String DEBUG_TAG = BottomSheetConversationsListFragmentLongPress.class.getName();
 
@@ -36,6 +36,7 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
 
     private Button mDeleteConversationView;
 
+//    private ConversationsHandler conversationsHandler;
 
     public static BottomSheetConversationsListFragmentLongPress
     newInstance(Conversation conversation) {
@@ -51,6 +52,10 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        conversationsHandler = ChatManager.getInstance().getConversationsHandler();
+//        conversationsHandler.connect();
+//        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onCreate: conversationsHandler connected");
+
         mConversation = (Conversation) getArguments()
                 .getSerializable(_BOTTOM_SHEET_CONVERSATIONS_LIST_FRAGMENT_LONG_PRESS_EXTRAS_CONVERSATION);
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onCreate: " +
@@ -64,45 +69,36 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater
-                .inflate(R.layout.fragment_bottom_sheet_conversation_list_long_press,
-                        container, false);
+        View view = inflater.inflate(R.layout.fragment_bottom_sheet_conversation_list_long_press, container, false);
 
-        registerViews(rootView);
-        initViews();
-        initListeners();
+//        conversationsHandler.addConversationsListener(this);
+//        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onCreateView: conversationsHandler attached");
 
-        return rootView;
-    }
-
-
-    private void registerViews(View rootView) {
-        mDeleteConversationView = rootView.findViewById(R.id.btn_delete_conversation);
-    }
-
-    private void initViews() {
-
-    }
-
-    private void initListeners() {
+        mDeleteConversationView = view.findViewById(R.id.btn_delete_conversation);
         mDeleteConversationView.setOnClickListener(this);
+
+        return view;
     }
 
+//    @Override
+//    public void onDestroy() {
+//
+//        conversationsHandler.removeConversationsListener(this);
+//        Log.d(DEBUG_TAG, "  BottomSheetConversationsListFragmentLongPress.onDestroy: conversationMessagesHandler detached");
+//
+//        super.onDestroy();
+//    }
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
 
         if (id == R.id.btn_delete_conversation) {
-            onDeleteConversationActionListener();
+            mLoggedUser = ChatManager.getInstance().getLoggedUser();
+            Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onClick: btn_delete_conversation ");
+
+            showRemoveMemberAlertDialog();
         }
-    }
-
-    private void onDeleteConversationActionListener() {
-        mLoggedUser = ChatManager.getInstance().getLoggedUser();
-        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onDeleteConversationActionListener");
-
-        showRemoveMemberAlertDialog();
     }
 
     private void showRemoveMemberAlertDialog() {
@@ -140,6 +136,9 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
     private void perfomDeleteConversation() {
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.perfomDeleteConversation");
 
+//        conversationsHandler.deleteConversation(mConversation.getConversationId(),
+//                BottomSheetConversationsListFragmentLongPress.this);
+
         String conversationId = mConversation.getConversationId();
 
 //TODO move to ChatManager conversation API
@@ -154,6 +153,28 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
 
         nodeConversation.removeValue(onConversationRemoved);
     }
+
+//    @Override
+//    public void onConversationAdded(Conversation conversation, ChatRuntimeException e) {
+//        // TODO: 20/12/17
+//    }
+//
+//    @Override
+//    public void onConversationChanged(Conversation conversation, ChatRuntimeException e) {
+//        // TODO: 20/12/17
+//    }
+//
+//    @Override
+//    public void onConversationRemoved(ChatRuntimeException e) {
+//        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onConversationRemoved");
+//
+//        if (e == null) {
+//            // dismiss the bottomsheet
+//            getDialog().dismiss();
+//        } else {
+//            Log.e(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onConversationRemoved cannot delete conversation.", e);
+//        }
+//    }
 
     private DatabaseReference.CompletionListener onConversationRemoved
             = new DatabaseReference.CompletionListener() {
