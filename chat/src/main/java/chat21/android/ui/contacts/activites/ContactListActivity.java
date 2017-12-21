@@ -48,10 +48,6 @@ public class ContactListActivity extends AppCompatActivity
     private ImageView mGroupIcon;
     private RelativeLayout mEmptyLayout;
 
-    private interface OnGroupSettingEnabledCallback {
-        void onGroupSettingEnabledCallback(View boxGroup);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,53 +96,35 @@ public class ContactListActivity extends AppCompatActivity
     private void initBoxCreateGroup() {
         Log.d(TAG, "initBoxCreateGroup");
 
-        enableGroups(new OnGroupSettingEnabledCallback() {
-            @Override
-            public void onGroupSettingEnabledCallback(View boxGroup) {
-                Glide.with(getApplicationContext())
-                        .load("")
-                        .placeholder(R.drawable.ic_group_avatar)
-                        .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                        .into(mGroupIcon);
+        if (ChatUtils.areGroupsEnabled(this)) {
+            Glide.with(getApplicationContext())
+                    .load("")
+                    .placeholder(R.drawable.ic_group_avatar)
+                    .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                    .into(mGroupIcon);
 
-                // box click
-                boxGroup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (AbstractNetworkReceiver.isConnected(getApplicationContext())) {
-                            startCreateGroupActivity();
-                        } else {
-                            Toast.makeText(getApplicationContext(),
-                                    getString(R.string.activity_contact_list_error_cannot_create_group_offline_label),
-                                    Toast.LENGTH_SHORT).show();
-                        }
+            // box click
+            mBoxCreateGroup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (AbstractNetworkReceiver.isConnected(getApplicationContext())) {
+                        startCreateGroupActivity();
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.activity_contact_list_error_cannot_create_group_offline_label),
+                                Toast.LENGTH_SHORT).show();
                     }
-                });
-            }
-        });
+                }
+            });
+            mBoxCreateGroup.setVisibility(View.VISIBLE);
+        } else {
+            mBoxCreateGroup.setVisibility(View.GONE);
+        }
     }
 
     private void initEmptyLayout() {
         TextView mSubTitle = (TextView) mEmptyLayout.findViewById(R.id.error_subtitle);
         mSubTitle.setVisibility(View.GONE);
-    }
-
-    // bugfix Issue #17
-    private void enableGroups(OnGroupSettingEnabledCallback callback) {
-        Log.d(TAG, "enableGroups");
-
-
-        if (ChatUtils.areGroupsEnabled(this)) {
-            Log.d(TAG, "groups enabled");
-
-            mBoxCreateGroup.setVisibility(View.VISIBLE);
-
-            callback.onGroupSettingEnabledCallback(mBoxCreateGroup);
-        } else {
-            Log.d(TAG, "groups not enabled");
-
-            mBoxCreateGroup.setVisibility(View.GONE);
-        }
     }
 
     private void updateAdapter(List<IChatUser> contacts) {
