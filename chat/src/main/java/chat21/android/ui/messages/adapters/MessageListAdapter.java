@@ -93,7 +93,7 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
 
         if (messagePosition >= 0 && messagePosition < messageList.size()) {
             messageList.set(messagePosition, message);
-        }else {
+        } else {
             messageList.add(message);
 //            int lastPosition = messageList.size() - 1;
 

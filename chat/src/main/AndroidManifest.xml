@@ -4,7 +4,6 @@
 
     <application
         android:allowBackup="true"
-        android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
         <!--display the contact list-->
@@ -19,21 +18,21 @@
 
         <!--&lt;!&ndash;display the list of all messages into a specific conversation&ndash;&gt;-->
         <!--<activity-->
-            <!--android:nachat21.android.ui.messages.MessageListActivityvity"-->
-            <!--android:parentActivityName=".conversations.activities.ConversationListActivity"-->
-            <!--android:windowSoftInputMode="adjustPan">-->
+        <!--android:nachat21.android.ui.messages.MessageListActivityvity"-->
+        <!--android:parentActivityName=".conversations.activities.ConversationListActivity"-->
+        <!--android:windowSoftInputMode="adjustPan">-->
 
-            <!--&lt;!&ndash;http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification&ndash;&gt;-->
-            <!--&lt;!&ndash;from notification&ndash;&gt;-->
-            <!--&lt;!&ndash;bugfix Issue #39&ndash;&gt;-->
-            <!--<intent-filter>-->
-                <!--<action android:name="OPEN_MESSAGE_LIST_ACTIVITY" />-->
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-            <!--</intent-filter>-->
+        <!--&lt;!&ndash;http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification&ndash;&gt;-->
+        <!--&lt;!&ndash;from notification&ndash;&gt;-->
+        <!--&lt;!&ndash;bugfix Issue #39&ndash;&gt;-->
+        <!--<intent-filter>-->
+        <!--<action android:name="OPEN_MESSAGE_LIST_ACTIVITY" />-->
+        <!--<category android:name="android.intent.category.DEFAULT" />-->
+        <!--</intent-filter>-->
 
-            <!--<meta-data-->
-                <!--android:name="android.support.PARENT_ACTIVITY"-->
-                <!--android:valchat21.android.ui.conversations.activities.ConversationListActivityvity" />-->
+        <!--<meta-data-->
+        <!--android:name="android.support.PARENT_ACTIVITY"-->
+        <!--android:valchat21.android.ui.conversations.activities.ConversationListActivityvity" />-->
         <!--</activity>-->
 
         <!--display the list of all messages into a specific conversation-->

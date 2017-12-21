@@ -1,5 +1,7 @@
 package chat21.android.core.messages.models;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,12 +22,12 @@ public class Message implements Serializable {
     public static final int STATUS_SEEN = 300; // message read from contact
 
 
-
     // message type
     public static final String TYPE_TEXT = "text";
     public static final String TYPE_IMAGE = "image";
     public static final String TYPE_FILE = "file";
 
+    @Exclude
     private String id;
     private String sender, recipient, text;
     private int status;
@@ -37,14 +39,16 @@ public class Message implements Serializable {
 
     public Message() {
 
-        this.status = STATUS_SENDING;
+       // this.status = STATUS_SENDING;
         this.timestamp = new Date().getTime();
     }
 
+    @Exclude
     public String getId() {
         return id;
     }
 
+    @Exclude
     public void setId(String id) {
         this.id = id;
     }
@@ -114,16 +118,17 @@ public class Message implements Serializable {
         this.recipient_fullname = recipient_fullname;
     }
 
+
     @Override
-    public boolean equals(Object object){
-        if (object instanceof  Message) {
-            Message message = (Message)object;
-            if (this.getId().equals(message.getId())){
+    public boolean equals(Object object) {
+        if (object instanceof Message) {
+            Message message = (Message) object;
+            if (this.getId().equals(message.getId())) {
                 return true;
-            }else {
+            } else {
                 return false;
             }
-        }else {
+        } else {
             return false;
         }
     }

@@ -12,31 +12,31 @@
     <!--* se si è connessi come "support" allora il pulsante "nuova conversazione" mostrerà l'elenco dei contatti-->
     <!--* se si è connessi come "altro utente" il pulsante "nuova conversazione" aprirà direttamente la conversazione con il supporto-->
     <!--valori ammessi:-->
-    <!--YES per abilitare il support-->
-    <!--NO per disabilitare il supporto-->
-    <string name="enable_chat_support_account" translatable="false">no</string>
+    <!--true per abilitare il support-->
+    <!--false per disabilitare il supporto-->
+    <string name="enable_chat_support_account" translatable="false">false</string>
     <string name="chat_support_account_id" translatable="false">support</string>
 
 
     <!--abilita o disabilita il pulsante per la creazione dei gruppi-->
     <!--valori ammessi:-->
-    <!--YES per abilitare la creazione dei gruppi -->
-    <!--NO per disabilitare la creazione dei gruppi-->
-    <string name="enable_groups" translatable="false">no</string>
+    <!--true per abilitare la creazione dei gruppi -->
+    <!--false per disabilitare la creazione dei gruppi-->
+    <string name="enable_groups" translatable="false">true</string>
 
     <!--abilita o disabilita il pulsante per il caricamento dell'icona del gruppo-->
     <!--valori ammessi:-->
-    <!--YES per abilitare l'icona  -->
-    <!--NO per disabilitare l'icona-->
-    <string name="enable_group_icon" translatable="false">no</string>
+    <!--true per abilitare l'icona  -->
+    <!--false per disabilitare l'icona-->
+    <string name="enable_group_icon" translatable="false">false</string>
 
     <!--contact profile activity class.-->
     <!--it must be the  fully-qualified class name-->
-    <string name="target_contact_profile_activity_class" translatable="false">chat21.android.user.activities.PublicProfileActivity</string>
+    <string name="target_contact_profile_activity_class" translatable="false">chat21.android.ui.users.activities.PublicProfileActivity</string>
 
     <!--contact list activity class.-->
     <!--it must be the  fully-qualified class name-->
-    <string name="target_contact_list_activity_class" translatable="false">chat21.android.contacts.activites.ContactListActivity</string>
+    <string name="target_contact_list_activity_class" translatable="false">chat21.android.ui.contacts.activites.ContactListActivity</string>
 
     <!--add members to group activity class.-->
     <!--it must be the  fully-qualified class name-->

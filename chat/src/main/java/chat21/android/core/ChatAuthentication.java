@@ -165,7 +165,9 @@ public final class ChatAuthentication {
         }).execute(generateTokenUrl);
     }
 
-    private void createContactNode(String appId, String userId) {
+
+
+                              private void createContactNode(String appId, String userId) {
         Log.d(DEBUG_LOGIN, "createContactNode: userId == " + userId);
 
         DatabaseReference mNodeContacts = FirebaseDatabase.getInstance().getReference()
@@ -209,6 +211,50 @@ public final class ChatAuthentication {
         mNodeContacts
                 .child("timestamp")
                 .setValue(ServerValue.TIMESTAMP);
+    }
+
+    public void signInWithEmailAndPassword(final Activity loginActivity, final String email, final String password,
+                                           final OnChatLoginCallback onChatLoginCallback) {
+
+        Log.i(DEBUG_LOGIN, "signInWithEmailAndPassword called");
+
+        // bugfix Issue #11
+        // if the google play service is not updated inform the user
+        if (!checkPlayServices(loginActivity.getApplicationContext())) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(loginActivity);
+            builder.setTitle("Google Play Services not updated")
+                    .setMessage("Update the Google Play Service to continue using the app")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            loginActivity.finish();
+                        }
+                    })
+                    .show();
+        }
+
+        getFirebaseAuth().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(loginActivity, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (task.isSuccessful()) {
+                            new RefreshFirebaseInstanceIdTask().execute();
+                            Log.d(DEBUG_LOGIN, "calling  onChatLoginCallback.onChatLoginSuccess()");
+
+                            onChatLoginCallback.onChatLoginSuccess();
+                        } else {
+                            Log.e(DEBUG_LOGIN, "signInWithCustomToken", task.getException());
+                            Toast.makeText(loginActivity, "Authentication failed.",
+                                    Toast.LENGTH_LONG).show();
+                            Log.d(DEBUG_LOGIN, "calling  onChatLoginCallback.onChatLoginError()");
+                            onChatLoginCallback.onChatLoginError(task.getException());
+                        }
+                    }
+                });
     }
 
     // https://bitbucket.org/frontiere21/chat21-android-sdk/issues/2/lutente-andrealeo-sembra-non-registrare-pi

@@ -14,7 +14,6 @@ import java.util.Map;
 import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
-import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
@@ -46,10 +45,13 @@ public class ChatManager {
 
     private List<IChatUser> mContacts;
 
+    private Map<String, ConversationMessagesHandler> conversationMessagesHandlerMap;
+
 
 
     // private constructor
     private ChatManager() {
+        conversationMessagesHandlerMap = new HashMap<String, ConversationMessagesHandler>();
     }
 
     // bugfix Issue #16
@@ -102,7 +104,7 @@ public class ChatManager {
      * @param currentUser
      */
     public static void start(Context context, Configuration configuration, IChatUser currentUser) {
-        Log.i(TAG, "Chat.start");
+        Log.i(TAG, "starting");
 
 //        // multidex support
 //        // source :
@@ -127,7 +129,15 @@ public class ChatManager {
     }
 
 
-    public static void stop() {
+    public void stop() {
+        for (Map.Entry<String, ConversationMessagesHandler> entry : conversationMessagesHandlerMap.entrySet()) {
+
+            String recipientId = entry.getKey();
+            ConversationMessagesHandler conversationMessagesHandler = entry.getValue();
+
+            conversationMessagesHandler.disconnect();
+            Log.d(TAG, "conversationMessagesHandler for recipientId: " + recipientId + " disposed");
+        }
 
     }
 
@@ -153,6 +163,7 @@ public class ChatManager {
     }
 
 
+
     public ConversationsHandler addConversationsListener (ConversationsListener conversationsListener) {
         ConversationsHandler conversationsHandler = new ConversationsHandler(
                 Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId()
@@ -163,21 +174,42 @@ public class ChatManager {
 
         return conversationsHandler;
     }
-    public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
 
-        ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
-                Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser().getId()
-//                , conversationMessagesListener
-        );
+    public ConversationMessagesHandler getConversationMessagesHandler(String recipientId) {
+        Log.d(TAG, "Getting ConversationMessagesHandler for recipientId " + recipientId);
 
-        messageHandler.connect(conversationMessagesListener);
+        if (conversationMessagesHandlerMap.containsKey(recipientId)) {
+            Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
+
+            return conversationMessagesHandlerMap.get(recipientId);
+        }else {
+            ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
+                    Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser());
+
+            conversationMessagesHandlerMap.put(recipientId, messageHandler);
+
+            Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " created.");
+
+            return  messageHandler;
+        }
+
     }
+
+//    public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
+//
+//        ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
+//                Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser().getId()
+////                , conversationMessagesListener
+//        );
+//
+//        messageHandler.connect(conversationMessagesListener);
+//    }
 
     public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener){
 
-        ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(Configuration.firebaseUrl, recipient_id, this.getTenant(), this.getLoggedUser().getId());
-        messageHandler.sendMessage(getLoggedUser().getId(),
-                getLoggedUser().getFullName(),
+
+        getConversationMessagesHandler(recipient_id).sendMessage(
+                "fullnameDAELIMINAREANDROID",
                 Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 

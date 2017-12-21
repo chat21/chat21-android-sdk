@@ -61,7 +61,7 @@ public class StorageHandler {
     // compress the image keeping ratio and quality
     private static void compressImage(final Context context, Uri file, final String type,
                                       final OnUploadedCallback callback) {
-        ImageCompressor.compress(context, file, new ImageCompressor.OnImageCompressListener() {
+        ImageCompressor.compress(context.getContentResolver(), file, new ImageCompressor.OnImageCompressListener() {
             @Override
             public void onImageCompressed(Uri path) {
                 performUpload(context, path, type, callback);

@@ -10,33 +10,17 @@ android {
 
         versionCode 26
         versionName "0.10.2"
-
-//        vectorDrawables.useSupportLibrary = true
-//        resConfigs "auto"
-
-//        // Enabling multidex support.
-//        multiDexEnabled true
-
-//        dexOptions {
-//            javaMaxHeapSize "4g"
-//        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            //minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-
-//    // source:
-//    // https://developer.android.com/studio/build/multidex.html
-//    // https://stackoverflow.com/questions/37312103/unable-to-get-provider-com-google-firebase-provider-firebaseinitprovider
-//    compile 'com.android.support:multidex:1.0.1'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -52,7 +36,7 @@ dependencies {
     compile 'com.google.firebase:firebase-crash:11.6.0'
     compile 'com.google.firebase:firebase-messaging:11.6.0'
     compile 'com.google.firebase:firebase-auth:11.6.0'
-    compile 'com.firebaseui:firebase-ui:2.3.0'
+//    compile 'com.firebaseui:firebase-ui:2.3.0'
 
     // image loading and caching
     compile 'com.github.bumptech.glide:glide:3.7.0'
@@ -80,12 +64,12 @@ configurations.all {
             }
         }
 
-        // firebase resolution
-        // source : https://github.com/firebase/FirebaseUI-Android/issues/218
-        if (details.requested.group == 'com.google.firebase' ||
-                details.requested.group == 'com.google.android.gms') {
-            details.useVersion '11.6.0'
-        }
+//        // firebase resolution
+//        // source : https://github.com/firebase/FirebaseUI-Android/issues/218
+//        if (details.requested.group == 'com.google.firebase' ||
+//                details.requested.group == 'com.google.android.gms') {
+//            details.useVersion '11.6.0'
+//        }
     }
 }
 

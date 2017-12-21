@@ -31,12 +31,14 @@ public class ConversationsHandler {
     String appId;
     String currentUserId;
 
-    public  ConversationsHandler(String firebaseUrl, String appId, String currentUserId) {
+    public ConversationsHandler(String firebaseUrl, String appId, String currentUserId) {
         this.appId = appId;
         this.currentUserId = currentUserId;
-        this.conversationsNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/"+appId+"/users/"+currentUserId+"/conversations/");
+        this.conversationsNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
         this.conversationsNode.keepSynced(true);
 
+
+//        Log.d(TAG, "ConversationsHandler.conversationsNode == " + conversationsNode.toString());
     }
 
     public ChildEventListener connect(final ConversationsListener conversationsListener) {
@@ -74,7 +76,7 @@ public class ConversationsHandler {
                 Log.d(TAG, "observeMessages.onChildChanged");
 
                 try {
-                    Conversation conversation  = decodeConversationFromSnapshot(dataSnapshot);
+                    Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
 
                     for (ConversationsListener conversationsListener : conversationsListeners) {
                         conversationsListener.onConversationChanged(conversation, null);
@@ -222,7 +224,6 @@ public class ConversationsHandler {
             }
         });
     }
-
 
 
     public DatabaseReference getConversationsNode() {

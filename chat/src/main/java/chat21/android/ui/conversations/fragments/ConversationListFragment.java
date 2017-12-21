@@ -12,11 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
@@ -24,10 +24,8 @@ import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
-import chat21.android.core.presence.PresenceManger;
-import chat21.android.core.presence.listeners.OnPresenceListener;
 import chat21.android.ui.ChatUI;
-import chat21.android.ui.conversations.adapters.ConversationListAdapter;
+import chat21.android.ui.conversations.adapters.ConversationsListAdapter;
 import chat21.android.ui.conversations.listeners.OnContactListClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
@@ -36,279 +34,217 @@ import chat21.android.ui.groups.activities.MyGroupsListActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.ChatUtils;
 
-import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
-
 /**
  * Created by stefano on 15/10/2016.
  */
 public class ConversationListFragment extends Fragment implements
-//        OnConversationTreeChangeListener,
         ConversationsListener,
         OnConversationClickListener,
         OnConversationLongClickListener {
 
-    public static final String TAG = ConversationListFragment.class.getName();
+    private static final String TAG = ConversationListFragment.class.getName();
 
-    private RelativeLayout noConversationLayout;
-    private RecyclerView recyclerView;
-    private ConversationListAdapter conversationListAdapter;
+    // conversations data
+    private ConversationsHandler conversationsHandler; // data handler
+    private List<Conversation> conversationsList = new ArrayList<>(); // rendered data
+
+    // conversation list recyclerview
+    private RecyclerView recyclerViewConversations;
+    private RecyclerView.LayoutManager rvConversationsLayoutManager;
+    private ConversationsListAdapter conversationsListAdapter;
+
+    // no conversations layout
+    private RelativeLayout noConversationsLayout;
+
     private FloatingActionButton addNewConversation;
 
-    private LinearLayoutManager mLayoutManager;
+    private TextView currentUserGroups;
 
-    private TextView mGroupsView;
-
-    private ProgressBar mProgressBar;
-
-    ConversationsHandler conversationsHandler;
+//    // current user presence listener
+//    private OnPresenceListener onMyPresenceListener = new OnPresenceListener() {
+//        @Override
+//        public void onChanged(boolean imConnected) {
+//            Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
+//                    ".onChanged: imConnected == " + imConnected);
+//        }
+//
+//        @Override
+//        public void onLastOnlineChanged(long lastOnline) {
+//            Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
+//                    ".onLastOnlineChanged: lastOnline == " + lastOnline);
+//        }
+//
+//        @Override
+//        public void onError(Exception e) {
+//            Log.e(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
+//                    ".onError: " + e.getMessage());
+//        }
+//    };
 
     public static Fragment newInstance() {
         Fragment mFragment = new ConversationListFragment();
         return mFragment;
     }
 
-    private OnPresenceListener onMyPresenceListener = new OnPresenceListener() {
-        @Override
-        public void onChanged(boolean imConnected) {
-            Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
-                    ".onChanged: imConnected == " + imConnected);
-        }
-
-        @Override
-        public void onLastOnlineChanged(long lastOnline) {
-            Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
-                    ".onLastOnlineChanged: lastOnline == " + lastOnline);
-        }
-
-        @Override
-        public void onError(Exception e) {
-            Log.e(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
-                    ".onError: " + e.getMessage());
-        }
-    };
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView");
-        View rootView = inflater.inflate(R.layout.fragment_conversation_list, container, false);
+        Log.d(TAG, "ConversationListFragment.onCreateView");
+        View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
 
-        registerViews(rootView);
+        // init RecyclerView
+        recyclerViewConversations = view.findViewById(R.id.conversations_list);
+        rvConversationsLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerViewConversations.setLayoutManager(rvConversationsLayoutManager);
 
-        initViews(rootView);
+        // init RecyclerView adapter
+        conversationsListAdapter = new ConversationsListAdapter(getActivity(), conversationsList);
+        conversationsListAdapter.setOnConversationClickListener(this);
+        conversationsListAdapter.setOnConversationLongClickListener(this);
+        recyclerViewConversations.setAdapter(conversationsListAdapter);
 
+        // no conversations layout
+        noConversationsLayout = view.findViewById(R.id.layout_no_conversations);
+        toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
+
+        // add new conversations button
+        addNewConversation = (FloatingActionButton) view.findViewById(R.id.button_new_conversation);
+        setAddNewConversationClickBehaviour();
+
+        currentUserGroups = view.findViewById(R.id.groups);
+        showCurrentUserGroups();
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "ConversationListFragment.onViewCreated");
+
+        // attach listener for conversations change
         conversationsHandler = ChatManager.getInstance().addConversationsListener(this);
+        Log.d(TAG, "ConversationListFragment.onViewCreated.conversationsHandler.getConversationsNode(): "
+                + conversationsHandler.getConversationsNode().toString());
 
-//        observeConversations(ChatManager.getInstance().getTenant());
-
-        // subscribe for user presence changes
-        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
-                ChatManager.getInstance().getLoggedUser().getId(),
-                onMyPresenceListener);
-
-        return rootView;
+//        // subscribe for current user presence changes
+//        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
+//                ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
     }
 
-    private void registerViews(View rootView) {
-        Log.d(TAG, "registerViews");
+    // check if the support account is enabled or not and assign the listener
+    private void setAddNewConversationClickBehaviour() {
+        Log.d(TAG, "ConversationListFragment.setAddNewConversationClickBehaviour");
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.chat_list);
-
-        noConversationLayout = (RelativeLayout) rootView
-                .findViewById(R.id.layout_no_conversations);
-
-        addNewConversation = (FloatingActionButton) rootView
-                .findViewById(R.id.button_new_conversation);
-
-        mGroupsView = rootView.findViewById(R.id.groups);
-
-        mProgressBar = rootView.findViewById(R.id.progress_bar);
-    }
-
-    private void initViews(View rootView) {
-        Log.d(TAG, "registerViews");
-
-        mProgressBar.setVisibility(View.VISIBLE);
-
-        setRecyclerView();
-        showEmptyLayout();
-        setAddNewConversationBtn(rootView);
-
-        mGroupsView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), MyGroupsListActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    private void setRecyclerView() {
-        Log.d(TAG, "setRecyclerView");
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mLayoutManager.setReverseLayout(true);
-        mLayoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(mLayoutManager);
-    }
-
-    private void showEmptyLayout() {
-        Log.d(TAG, "showEmptyLayout");
-
-        ImageView vNoOffersAvailableImage =
-                (ImageView) noConversationLayout.findViewById(R.id.error_image);
-        int noOffersAvailableImageColor = getResources().getColor(R.color.error_view_image_color);
-        vNoOffersAvailableImage.setColorFilter(noOffersAvailableImageColor);
-    }
-
-    private void setAddNewConversationBtn(View rootView) {
-        Log.d(TAG, "setAddNewConversationBtn");
-
-        // check if the support account is enabled or not and assign the listener
         if (!ChatUtils.isChatSupportAccountEnabled(getContext())) {
-            addNewConversation =
-                    (FloatingActionButton) rootView.findViewById(R.id.button_new_conversation);
-            addNewConversation.setVisibility(View.VISIBLE);
+            // enable contact list button action
             addNewConversation.setOnClickListener(new OnContactListClickListener(getContext()));
         } else {
-            addNewConversation =
-                    (FloatingActionButton) rootView.findViewById(R.id.button_new_conversation);
-            addNewConversation.setVisibility(View.VISIBLE);
-            addNewConversation.setOnClickListener(
-                    new OnSupportContactListClickListener(getContext()));
+            // enable support account button action
+            addNewConversation.setOnClickListener(new OnSupportContactListClickListener(getContext()));
         }
     }
 
-//    private void observeConversations(String appId) {
-//        Log.d(TAG, "observeConversations");
-//
-//        DatabaseReference nodeConversations = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
-//                .child("apps/" + appId + "/users/" + ChatManager.getInstance().getLoggedUser().getId() + "/conversations");
-//
-//        ConversationUtils.observeMessageTree(appId, ChatManager.getInstance().getLoggedUser().getId(),
-//                nodeConversations, this);
-//    }
-
-    private void updateConversationListAdapter() {
-        Log.d(TAG, "updateConversationListAdapter");
-
-        if (conversationListAdapter == null) {
-            conversationListAdapter = new ConversationListAdapter(conversationsHandler.getConversationsNode());
-            conversationListAdapter.setOnConversationClickListener(this);
-            conversationListAdapter.setOnConversationLongClickListener(this);
-            recyclerView.setAdapter(conversationListAdapter);
+    // toggle the no conversation layout visibilty.
+    // if there are items show the list of item, otherwise show a placeholder layout
+    private void toggleNoConversationLayoutVisibility(int itemCount) {
+        if (itemCount > 0) {
+            // show the item list
+            recyclerViewConversations.setVisibility(View.VISIBLE);
+            noConversationsLayout.setVisibility(View.GONE);
         } else {
-            conversationListAdapter.notifyDataSetChanged();
+            // show the placeholder layout
+            recyclerViewConversations.setVisibility(View.GONE);
+            noConversationsLayout.setVisibility(View.VISIBLE);
         }
+    }
 
-        // scroll to first position
-        // bugfix Issue #19
-        if (conversationListAdapter.getItemCount() > 0) {
-            noConversationLayout.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+    // show current user groups
+    private void showCurrentUserGroups() {
+        if (ChatUtils.areGroupsEnabled(getActivity())) {
+            // groups enabled
+            currentUserGroups.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), MyGroupsListActivity.class);
+                    startActivity(intent);
+                }
+            });
 
-            int position = conversationListAdapter.getItemCount() - 1;
-            mLayoutManager.scrollToPositionWithOffset(position, 0);
+            currentUserGroups.setVisibility(View.VISIBLE);
         } else {
-            noConversationLayout.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
+            // groups not enabled
+
+            currentUserGroups.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onConversationAdded(Conversation conversation, ChatRuntimeException e) {
-        Log.d(TAG, "onConversationAdded");
+        // added a new conversation
 
-        if (e==null) {
-            updateConversationListAdapter();
-        }else {
-            Log.w(TAG, "Exception on onConversationAdded", e );
+        Log.d(TAG, "ConversationListFragment.onConversationAdded");
+
+        if (e == null) {
+            conversationsListAdapter.insertTop(conversation);
+        } else {
+            Log.w(TAG, "ConversationListFragment.onConversationAdded: Error onConversationAdded ", e);
         }
+
+        toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
     }
 
     @Override
     public void onConversationChanged(Conversation conversation, ChatRuntimeException e) {
-        Log.d(TAG, "onConversationChanged");
+        // existing conversation updated
 
-        if (e==null) {
-            updateConversationListAdapter();
-        }else {
-            Log.w(TAG, "Exception on onConversationChanged", e );
+        Log.d(TAG, "ConversationListFragment.onConversationChanged");
+
+        if (e == null) {
+            conversationsListAdapter.update(conversation);
+        } else {
+            Log.w(TAG, "ConversationListFragment.onConversationChanged: Error onConversationMessageReceived ", e);
         }
+
+        toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
     }
-
-//    @Override
-//    public void onTreeDataChanged(DatabaseReference node, DataSnapshot dataSnapshot,
-//                                  int childrenCount) {
-//        Log.d(TAG, "onTreeDataChanged");
-//
-//        Log.d(TAG, "childrenCount: " + childrenCount);
-//        // if at least one conversation extists show the list, else show a placeholder layout
-//        if (childrenCount > 0) {
-//            noConversationLayout.setVisibility(View.GONE);
-//            recyclerView.setVisibility(View.VISIBLE);
-//            updateConversationListAdapter();
-//        } else {
-//            Log.d(TAG, "dataSnapshot hasn't Children()");
-//            noConversationLayout.setVisibility(View.VISIBLE);
-//            recyclerView.setVisibility(View.GONE);
-//        }
-//
-//        mProgressBar.setVisibility(View.GONE);
-//    }
-
-//    @Override
-//    public void onTreeChildAdded(DatabaseReference node, DataSnapshot dataSnapshot,
-//                                 Conversation conversation) {
-//        Log.d(TAG, "onTreeChildAdded");
-//
-//        updateConversationListAdapter(node);
-//    }
-
-//    @Override
-//    public void onTreeChildChanged(DatabaseReference node, DataSnapshot dataSnapshot,
-//                                   Conversation conversation) {
-//        Log.d(TAG, "onTreeChildChanged");
-//
-//        updateConversationListAdapter();
-//    }
-
 
     @Override
     public void onConversationClicked(Conversation conversation, int position) {
+        // click on conversation
 
-        String conversationId = conversation.getConversationId();
+//        try {
+        // set the conversation as read
+        conversationsHandler.setConversationRead(ChatManager.getInstance().getTenant(),
+                ChatManager.getInstance().getLoggedUser().getId(), conversation.getConversationId());
 
-        try {
-            conversationsHandler.setConversationRead(ChatManager.getInstance().getTenant(),
-                    ChatManager.getInstance().getLoggedUser().getId(),
-                    conversationId);
-            startMessageActivity(conversation.getConversationId());
-        } catch (Exception e) {
-            Log.e(TAG, "cannot start messageActivity. " + e.getMessage());
-
-            Toast.makeText(getActivity(),
-                    getString(R.string.fragment_conversation_list_cannot_open_conversation_label),
-                    Toast.LENGTH_SHORT).show();
-        }
+        // start the message list activity of the corresponding conversation
+        startMessageActivity(conversation.getConversationId());
+//        } catch (Exception e) {
+//            Log.e(TAG, "cannot start messageActivity. " + e.getMessage());
+//
+//            Toast.makeText(getActivity(),
+//                    getString(R.string.fragment_conversation_list_cannot_open_conversation_label),
+//                    Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override
-    public void onConversationLongClicked(Conversation item, int position) {
+    public void onConversationLongClicked(Conversation conversation, int position) {
+        // long click on conversation
 
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         BottomSheetConversationsListFragmentLongPress dialog =
-                BottomSheetConversationsListFragmentLongPress.newInstance(item);
+                BottomSheetConversationsListFragmentLongPress.newInstance(conversation);
         dialog.show(ft, BottomSheetConversationsListFragmentLongPress.class.getName());
     }
 
     private void startMessageActivity(String conversationId) {
-        Log.d(TAG, "startMessageActivity");
+        Log.d(TAG, "ConversationListFragment.startMessageActivity");
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
         intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }
-
-
 }

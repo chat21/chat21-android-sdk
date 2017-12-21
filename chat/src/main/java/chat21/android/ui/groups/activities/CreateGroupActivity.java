@@ -80,7 +80,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
 
     private void initMessage() {
-        if (getString(R.string.enable_group_icon).compareToIgnoreCase("no") == 0) {
+        if (getString(R.string.enable_group_icon).compareToIgnoreCase("false") == 0) {
             // icona disabilitata
             mMessage.setText(getString(R.string.create_group_activity_add_group_message_label));
         } else {
@@ -93,7 +93,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         Log.d(TAG, "initBoxGroupIcon");
 
 
-        if (getString(R.string.enable_group_icon).compareToIgnoreCase("no") == 0) {
+        if (getString(R.string.enable_group_icon).compareToIgnoreCase("false") == 0) {
             // icona disabilitata
             mGroupIconBox.setVisibility(View.GONE);
         } else {
