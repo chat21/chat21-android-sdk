@@ -34,6 +34,7 @@ import chat21.android.dao.node.NodeDAOImpl;
 import chat21.android.groups.adapters.MyGroupsListAdapter;
 import chat21.android.groups.models.Group;
 import chat21.android.messages.activites.MessageListActivity;
+import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
 
@@ -197,6 +198,9 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
                 // start the message list activity
                 Intent intent = new Intent(MyGroupsListActivity.this, MessageListActivity.class);
                 intent.putExtra(ChatManager._INTENT_BUNDLE_CONVERSATION_ID, mConversation.getConversationId());
+                if(StringUtils.isValid(mConversation.getGroup_name())) {
+                    intent.putExtra(ChatManager._INTENT_BUNDLE_GROUP_NAME, mConversation.getGroup_name());
+                }
                 intent.putExtra(ChatManager.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
                 startActivity(intent);
 //                finish();

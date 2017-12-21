@@ -75,6 +75,8 @@ import chat21.android.utils.TimeUtils;
 import chat21.android.utils.glide.CropCircleTransformation;
 import chat21.android.utils.listeners.OnProfilePictureClickListener;
 
+import static chat21.android.core.ChatManager._INTENT_BUNDLE_GROUP_NAME;
+
 /**
  * Created by stefano on 31/08/2015.
  */
@@ -227,12 +229,16 @@ public class MessageListActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNewConversationCreated(String conversationId) {
+//    public void onNewConversationCreated(String conversationId) {
+    public void onNewConversationCreated(Conversation conversation) {
 
-        conversation = ConversationUtils.createNewConversation(conversationId);
+//        conversation = ConversationUtils.createNewConversation(conversationId);
+        this.conversation = conversation;
 
-        // subscribe for convers_with user presence changes
-        PresenceHandler.observeUserPresenceChanges(this, conversation.getConvers_with(), this);
+        if (!StringUtils.isValid(conversation.getGroup_id()) && StringUtils.isValid(conversation.getConvers_with())) {
+            // subscribe for convers_with user presence changes
+            PresenceHandler.observeUserPresenceChanges(this, conversation.getConvers_with(), this);
+        }
 
         if (!areViewsInit) {
             initViews(conversation);
@@ -336,7 +342,11 @@ public class MessageListActivity extends AppCompatActivity implements
         Log.d(TAG, "initGroupToolbar");
 
         // group name
-        mTitleTextView.setText(conversation.getGroup_name());
+        if (StringUtils.isValid((getIntent().getExtras().getString(_INTENT_BUNDLE_GROUP_NAME)))) {
+            mTitleTextView.setText(getIntent().getExtras().getString(_INTENT_BUNDLE_GROUP_NAME));
+        } else if (StringUtils.isValid(conversation.getGroup_name())) {
+            mTitleTextView.setText(conversation.getGroup_name());
+        }
 
         displayGroupMembersInSubtitle();
 
@@ -393,7 +403,12 @@ public class MessageListActivity extends AppCompatActivity implements
             return;
 
         Intent intent = new Intent(this, GroupAdminPanelActivity.class);
-        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_NAME, conversation.getGroup_name());
+        if (StringUtils.isValid(conversation.getGroup_name())) {
+            intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_NAME, conversation.getGroup_name());
+        } else {
+            intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_NAME, getIntent().getStringExtra(_INTENT_BUNDLE_GROUP_NAME));
+        }
+
         intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_ID, conversation.getGroup_id());
         startActivityForResult(intent, ChatManager._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
     }

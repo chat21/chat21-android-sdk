@@ -182,6 +182,33 @@ public class ConversationUtils {
         });
     }
 
+//    public static Conversation createNewConversation(String conversationId) {
+//        Log.d(TAG, "createNewConversation");
+//
+//        // create a new conversation
+//
+//        // retrieve the conversation users by the conversationId
+//        String[] users = ConversationUtils.getConversationIdParams(conversationId);
+//        String firstUser = users[0];
+//        String secondUser = users[1];
+//
+//        // retrieve the recipientId
+//        String recipientId = firstUser.equals(ChatManager.getInstance().getLoggedUser().getId()) ? secondUser : firstUser;
+//
+//        // create a new conversation
+//        Conversation conversation = new Conversation();
+//        conversation.setLast_message_text("");
+//        conversation.setConvers_with(recipientId);
+//        conversation.setSender(ChatManager.getInstance().getLoggedUser().getId());
+//        conversation.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
+//        conversation.setStatus(ChatManager.CONVERSATION_STATUS_LAST_MESSAGE);
+//        conversation.setRecipient(recipientId);
+//        conversation.setConversationId(conversationId);
+//
+//        return conversation;
+//    }
+
+
     public static Conversation createNewConversation(String conversationId) {
         Log.d(TAG, "createNewConversation");
 
@@ -189,21 +216,31 @@ public class ConversationUtils {
 
         // retrieve the conversation users by the conversationId
         String[] users = ConversationUtils.getConversationIdParams(conversationId);
-        String firstUser = users[0];
-        String secondUser = users[1];
-
-        // retrieve the recipientId
-        String recipientId = firstUser.equals(ChatManager.getInstance().getLoggedUser().getId()) ? secondUser : firstUser;
 
         // create a new conversation
         Conversation conversation = new Conversation();
         conversation.setLast_message_text("");
-        conversation.setConvers_with(recipientId);
         conversation.setSender(ChatManager.getInstance().getLoggedUser().getId());
         conversation.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
         conversation.setStatus(ChatManager.CONVERSATION_STATUS_LAST_MESSAGE);
-        conversation.setRecipient(recipientId);
         conversation.setConversationId(conversationId);
+
+        if (users.length == 2) {
+            // is direct conversation
+
+            String firstUser = users[0];
+            String secondUser = users[1];
+
+            // retrieve the recipientId
+            String recipientId = firstUser.equals(ChatManager.getInstance().getLoggedUser().getId()) ? secondUser : firstUser;
+            conversation.setConvers_with(recipientId);
+            conversation.setRecipient(recipientId);
+
+        } else {
+            // is group conversation
+            conversation.setGroup_id(conversationId);
+        }
+
 
         return conversation;
     }
@@ -270,18 +307,22 @@ public class ConversationUtils {
     public static String[] getConversationIdParams(String conversationId) {
         Log.d(TAG, "getConversationIdParams");
 
-        return conversationId.split(Pattern.quote("-"));
+        if (!conversationId.startsWith("-")) {
+            return conversationId.split(Pattern.quote("-"));
+        }
+
+        return new String[0]; // return an empty arraay
     }
 
     public static void getConversationFromId(
-            Context context,
+            final Context context,
             final String conversationId,
             final OnConversationRetrievedCallback callback) {
         Log.d(TAG, "getConversationFromId");
 
         NodeDAO nodeDAO = new NodeDAOImpl(context);
 
-        DatabaseReference nodeConversation = nodeDAO.getNodeConversations(ChatManager.getInstance().getLoggedUser().getId()).child(conversationId);
+        final DatabaseReference nodeConversation = nodeDAO.getNodeConversations(ChatManager.getInstance().getLoggedUser().getId()).child(conversationId);
 
         nodeConversation.addValueEventListener(new ValueEventListener() {
             @Override
@@ -291,7 +332,12 @@ public class ConversationUtils {
                     Conversation conversation = decodeConversationSnapshop(dataSnapshot);
                     callback.onConversationRetrievedSuccess(conversation);
                 } else {
-                    callback.onNewConversationCreated(dataSnapshot.getKey());
+                    Log.d(TAG, "ConversationUtils.getConversationFromId.nodeConversation == " + nodeConversation.toString());
+
+
+                    Conversation conversation = createNewConversation(dataSnapshot.getKey());
+//                    callback.onNewConversationCreated(dataSnapshot.getKey());
+                    callback.onNewConversationCreated(conversation);
                 }
             }
 

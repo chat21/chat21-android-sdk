@@ -46,6 +46,7 @@ public class ChatManager {
 
     // conversation object
     public static final String _INTENT_BUNDLE_CONVERSATION_ID = "_INTENT_BUNDLE_CONVERSATION_ID";
+    public static final String _INTENT_BUNDLE_GROUP_NAME = "_INTENT_BUNDLE_GROUP_NAME";
 
     public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
 
