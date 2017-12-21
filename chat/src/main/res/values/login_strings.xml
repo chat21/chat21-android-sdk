@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--activity_chat_login-->
+    <string name="chat_login_activity_chat_login_email_hint">Email</string>
+    <string name="chat_login_activity_chat_login_password_hint">Password</string>
+    <string name="chat_login_activity_chat_login_button_login_label">Login</string>
+</resources>

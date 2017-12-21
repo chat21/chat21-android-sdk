@@ -18,6 +18,10 @@ public interface IChatUser extends Serializable {
 
     String getEmail();
 
+    void setPassword(String password);
+
+    String getPassword();
+
     String getProfilePictureUrl();
 
     void setProfilePictureUrl(String profilePictureUrl);

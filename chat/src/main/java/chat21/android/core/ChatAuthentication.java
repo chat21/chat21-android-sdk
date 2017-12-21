@@ -166,8 +166,7 @@ public final class ChatAuthentication {
     }
 
 
-
-                              private void createContactNode(String appId, String userId) {
+    private void createContactNode(String appId, String userId) {
         Log.d(DEBUG_LOGIN, "createContactNode: userId == " + userId);
 
         DatabaseReference mNodeContacts = FirebaseDatabase.getInstance().getReference()
