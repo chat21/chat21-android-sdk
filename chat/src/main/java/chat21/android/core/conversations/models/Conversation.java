@@ -6,8 +6,6 @@ import com.google.firebase.database.ServerValue;
 import java.io.Serializable;
 import java.util.Map;
 
-import chat21.android.core.messages.models.Message;
-
 /**
  * Created by stefano on 06/10/2015.
  */
@@ -66,10 +64,12 @@ public class Conversation implements Serializable {
     public void setConvers_with(String convers_with) {
         this.convers_with = convers_with;
     }
+
     @Exclude
     public String getConvers_with_fullname() {
         return convers_with_fullname;
     }
+
     @Exclude
     public void setConvers_with_fullname(String convers_with_fullname) {
         this.convers_with_fullname = convers_with_fullname;
@@ -161,27 +161,22 @@ public class Conversation implements Serializable {
     }
 
     public boolean isGroupChannel() {
-        if (this.channelType==GROUP_CHANNEL_TYPE) {
+        if (this.channelType == GROUP_CHANNEL_TYPE) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
     @Override
-    public boolean equals(Object object){
+    public boolean equals(Object object) {
         if (object instanceof Conversation) {
-            Conversation conversation = (Conversation)object;
-            if (this.getConversationId().equals(conversation.getConversationId())){
-                return true;
-            }else {
-                return false;
-            }
-        }else {
-            return false;
+            Conversation conversation = (Conversation) object;
+            return this.getConversationId().equals(conversation.getConversationId()) ? true : false;
         }
-    }
 
+        return false;
+    }
 
     @Override
     public String toString() {

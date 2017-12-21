@@ -34,8 +34,6 @@ public class ChatManager {
             "_SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER";
 
 
-
-
     private static ChatManager mInstance;
 
     // bugfix Issue #16
@@ -47,6 +45,7 @@ public class ChatManager {
 
     private Map<String, ConversationMessagesHandler> conversationMessagesHandlerMap;
 
+    private ConversationsHandler conversationsHandler;
 
 
     // private constructor
@@ -91,7 +90,6 @@ public class ChatManager {
     private void setContext(Context context) {
         mContext = context;
     }
-
 
 
     /**
@@ -141,6 +139,7 @@ public class ChatManager {
 
     }
 
+
     /**
      * Return the instance of the Chat
      *
@@ -162,18 +161,18 @@ public class ChatManager {
         return mContacts;
     }
 
-
-
-    public ConversationsHandler addConversationsListener (ConversationsListener conversationsListener) {
-        ConversationsHandler conversationsHandler = new ConversationsHandler(
-                Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId()
-//                , conversationMessagesListener
-        );
-
-        conversationsHandler.connect(conversationsListener);
-
-        return conversationsHandler;
-    }
+//
+//    public ConversationsHandler addConversationsListener(ConversationsListener conversationsListener) {
+////        ConversationsHandler conversationsHandler = new ConversationsHandler(
+//        conversationsHandler = new ConversationsHandler(
+//                Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId()
+////                , conversationMessagesListener
+//        );
+//
+//        conversationsHandler.connect(conversationsListener);
+//
+//        return conversationsHandler;
+//    }
 
     public ConversationMessagesHandler getConversationMessagesHandler(String recipientId) {
         Log.d(TAG, "Getting ConversationMessagesHandler for recipientId " + recipientId);
@@ -182,7 +181,7 @@ public class ChatManager {
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
 
             return conversationMessagesHandlerMap.get(recipientId);
-        }else {
+        } else {
             ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
                     Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser());
 
@@ -192,7 +191,16 @@ public class ChatManager {
 
             return  messageHandler;
         }
+    }
 
+    public ConversationsHandler getConversationsHandler() {
+        if (conversationsHandler != null) {
+            return conversationsHandler;
+        } else {
+            conversationsHandler =
+                    new ConversationsHandler(Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId());
+            return conversationsHandler;
+        }
     }
 
 //    public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
@@ -205,7 +213,7 @@ public class ChatManager {
 //        messageHandler.connect(conversationMessagesListener);
 //    }
 
-    public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener){
+    public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 
 
         getConversationMessagesHandler(recipient_id).sendMessage(
@@ -213,14 +221,9 @@ public class ChatManager {
                 Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 
-    public void sendFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener){
+    public void sendFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener) {
 
     }
-
-
-
-
-
 
 
 //start configuration

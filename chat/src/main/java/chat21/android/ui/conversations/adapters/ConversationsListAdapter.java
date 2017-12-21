@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.vanniktech.emoji.EmojiTextView;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import chat21.android.R;
@@ -49,6 +51,22 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
 
     public ConversationsListAdapter(Context context, List<Conversation> conversations) {
         super(context, conversations);
+        sortByTimestamp(conversations);
+    }
+
+    @Override
+    public void setList(List<Conversation> mList) {
+        super.setList(mList);
+        sortByTimestamp(mList);
+    }
+
+    private void sortByTimestamp(List<Conversation> conversations) {
+        Collections.sort(conversations, new Comparator<Conversation>() {
+            @Override
+            public int compare(Conversation i1, Conversation i2) {
+                return i1.getTimestampLong().compareTo(i2.getTimestampLong());
+            }
+        });
     }
 
     @Override
@@ -150,27 +168,27 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
         });
     }
 
-    /**
-     * Update an item with a new value
-     *
-     * @param item the item
-     */
-    @Override
-    public void update(Conversation item) {
-        if (item != null) {
-            List<Conversation> list = getItems();
-
-            int itemPosition = list.indexOf(item);
-
-            if (itemPosition >= 0 && itemPosition < list.size()) {
-                list.remove(itemPosition); // remove from its position
-                list.add(0, item); // add on top
-            } else {
-                list.add(0, item); // add on top
-            }
-            notifyDataSetChanged();
-        }
-    }
+//    /**
+//     * Update an item with a new value
+//     *
+//     * @param item the item
+//     */
+//    @Override
+//    public void update(Conversation item) {
+//        if (item != null) {
+//            List<Conversation> list = getItems();
+//
+//            int itemPosition = list.indexOf(item);
+//
+//            if (itemPosition >= 0 && itemPosition < list.size()) {
+//                list.remove(itemPosition); // remove from its position
+//                list.add(0, item); // add on top
+//            } else {
+//                list.add(0, item); // add on top
+//            }
+//            notifyDataSetChanged();
+//        }
+//    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView recipientPicture;

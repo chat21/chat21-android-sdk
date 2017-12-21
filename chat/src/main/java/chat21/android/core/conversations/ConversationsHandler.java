@@ -11,6 +11,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,26 +26,31 @@ import chat21.android.core.exception.ChatRuntimeException;
  */
 
 public class ConversationsHandler {
-
     private static final String TAG = ConversationsHandler.class.getName();
+
+    private List<Conversation> conversations;
 
     DatabaseReference conversationsNode;
     String appId;
     String currentUserId;
 
+    List<ConversationsListener> conversationsListeners;
+
     public ConversationsHandler(String firebaseUrl, String appId, String currentUserId) {
+        conversationsListeners = new ArrayList<ConversationsListener>();
+        conversations = new ArrayList<>(); // conversations in memory
+
         this.appId = appId;
         this.currentUserId = currentUserId;
         this.conversationsNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
         this.conversationsNode.keepSynced(true);
 
-
 //        Log.d(TAG, "ConversationsHandler.conversationsNode == " + conversationsNode.toString());
     }
 
-    public ChildEventListener connect(final ConversationsListener conversationsListener) {
-        final List<ConversationsListener> conversationsListeners = new ArrayList<ConversationsListener>();
-        conversationsListeners.add(conversationsListener);
+    public ChildEventListener connect() {
+//        final List<ConversationsListener> conversationsListeners = new ArrayList<ConversationsListener>();
+//        conversationsListeners.add(conversationsListener);
 
         ChildEventListener childEventListener = conversationsNode.addChildEventListener(new ChildEventListener() {
             @Override
@@ -55,9 +62,11 @@ public class ConversationsHandler {
 
                     // it sets the conversation as read if the person whom are talking to is the current user
                     if (currentUserId.equals(conversation.getSender())) {
-                        setConversationRead(appId, currentUserId, conversation.getConversationId());
+                        setConversationRead(conversation.getConversationId());
                     }
 
+                    saveOrUpdateConversationInMemory(conversation);
+                    sortConversationsInMemory();
 
                     for (ConversationsListener conversationsListener : conversationsListeners) {
                         conversationsListener.onConversationAdded(conversation, null);
@@ -70,13 +79,16 @@ public class ConversationsHandler {
                 }
             }
 
-            //for return recepit
+            //for return receipt
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
                 Log.d(TAG, "observeMessages.onChildChanged");
 
                 try {
                     Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
+
+                    saveOrUpdateConversationInMemory(conversation);
+                    sortConversationsInMemory();
 
                     for (ConversationsListener conversationsListener : conversationsListeners) {
                         conversationsListener.onConversationChanged(conversation, null);
@@ -109,9 +121,84 @@ public class ConversationsHandler {
         return childEventListener;
     }
 
+    public List<Conversation> getConversations() {
+        sortConversationsInMemory(); // ensure to return a sorted list
+        return conversations;
+    }
+
+    public List<ConversationsListener> getConversationsListener() {
+        return conversationsListeners;
+    }
+
+//    public void setConversationsListener(List<ConversationsListener> conversationsListeners) {
+//        this.conversationsListeners = conversationsListeners;
+//    }
+
+    public void addConversationsListener(ConversationsListener conversationsListener) {
+        this.conversationsListeners.add(conversationsListener);
+    }
+
+    public void removeConversationsListener(ConversationsListener conversationsListener) {
+        this.conversationsListeners.remove(conversationsListener);
+    }
+
+    public void upsertConversationsListener(ConversationsListener conversationsListener) {
+        if (conversations.contains(conversationsListener)) {
+            this.removeConversationsListener(conversationsListener);
+            this.addConversationsListener(conversationsListener);
+        } else {
+            this.addConversationsListener(conversationsListener);
+        }
+    }
+
+    // it checks if the conversation already exists.
+    // if the conversation exists update it, add it otherwise
+    private void saveOrUpdateConversationInMemory(Conversation newConversation) {
+
+        // look for the message
+
+        int index = -1;
+        for (Conversation tempConversation : conversations) {
+            if (tempConversation.equals(newConversation)) {
+                index = conversations.indexOf(tempConversation);
+                break;
+            }
+        }
+
+        if (index != -1) {
+            // conversation already exists
+            conversations.set(index, newConversation); // update the existing conversation
+        } else {
+            // conversation not exists
+            conversations.add(newConversation); // insert a new conversation
+        }
+    }
+
+    private void sortConversationsInMemory() {
+
+        // TODO: 20/12/17 study if is better to create the comparator in the ConversationHandler constructor 
+        Log.d(TAG, "ConversationHandler.sortConversationsInMemory");
+
+        if (conversations.size() > 1) {
+            Collections.sort(conversations, new Comparator<Conversation>() {
+                @Override
+                public int compare(Conversation o1, Conversation o2) {
+                    try {
+                        return o2.getTimestampLong().compareTo(o1.getTimestampLong());
+                    } catch (Exception e) {
+                        Log.e(TAG, "ConversationHandler.sortConversationsInMemory: cannot compare conversations timestamp", e);
+                        return 0;
+                    }
+                }
+            });
+        } else {
+            // 1 item is already sorted
+        }
+    }
+
 
     public static Conversation decodeConversationFromSnapshot(DataSnapshot dataSnapshot) {
-        Log.d(TAG, "decodeConversationFromSnapshop");
+        Log.d(TAG, "ConversationHandler.decodeConversationFromSnapshop");
 
         Conversation conversation = new Conversation();
 
@@ -200,7 +287,7 @@ public class ConversationsHandler {
     }
 
 
-    public void setConversationRead(String appId, String userId, final String recipientId) {
+    public void setConversationRead(final String recipientId) {
         Log.d(TAG, "setConversationRead");
 
 
@@ -226,7 +313,7 @@ public class ConversationsHandler {
     }
 
 
-    public DatabaseReference getConversationsNode() {
-        return conversationsNode;
-    }
+//    public DatabaseReference getConversationsNode() {
+//        return conversationsNode;
+//    }
 }
