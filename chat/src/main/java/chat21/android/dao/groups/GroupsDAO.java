@@ -31,7 +31,7 @@ public class GroupsDAO {
 
         // retrieve the node groups
         DatabaseReference nodeGroups = FirebaseDatabase.getInstance().getReference()
-                .child("apps/" + ChatManager.getInstance().getTenant() + "/groups");
+                .child("apps/" + ChatManager.getInstance().getAppId() + "/groups");
         Log.d(DEBUG_NODE_GROUPS, "GroupsDAO.createGroup: nodeGroups == " + nodeGroups.toString());
 
         // create a child for the node groups
@@ -75,7 +75,7 @@ public class GroupsDAO {
 
             // retrieve the node users
             DatabaseReference nodeUsers = FirebaseDatabase.getInstance().getReference()
-                    .child("apps/" + ChatManager.getInstance().getTenant() + "/users");
+                    .child("apps/" + ChatManager.getInstance().getAppId() + "/users");
             Log.d(DEBUG_NODE_GROUPS, "GroupsDAO.updateGroup: nodeUsers == " + nodeUsers.toString());
 
             // retrieve the current user id
@@ -138,7 +138,7 @@ public class GroupsDAO {
 
         // retrieve the node users
         DatabaseReference nodeUsers = FirebaseDatabase.getInstance().getReference()
-                .child("apps/" + ChatManager.getInstance().getTenant() + "/users");
+                .child("apps/" + ChatManager.getInstance().getAppId() + "/users");
         Log.d(DEBUG_NODE_GROUPS, "GroupsDAO.getGroupByID: nodeUsers == " + nodeUsers.toString());
 
         // retrieve the current user id
@@ -195,7 +195,7 @@ public class GroupsDAO {
 
         // retrieve the node users
         DatabaseReference nodeUsers = FirebaseDatabase.getInstance().getReference()
-                .child("apps/" + ChatManager.getInstance().getTenant() + "/users");
+                .child("apps/" + ChatManager.getInstance().getAppId() + "/users");
         Log.d(DEBUG_NODE_GROUPS, "GroupsDAO.getGroupsForUser: nodeUsers == " + nodeUsers.toString());
 
         // retrieve the node for the current user

@@ -152,7 +152,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
     private void setSender() {
         Log.i(TAG, "setSender");
         if (getMessage() != null) {
-            String sender = getMessage().getSender_fullname();
+            String sender = getMessage().getSenderFullname();
             if (StringUtils.isValid(sender)) {
                 mSender.setText(sender);
             }

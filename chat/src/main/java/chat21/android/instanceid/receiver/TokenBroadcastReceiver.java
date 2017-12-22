@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package chat21.android.user.receiver;
+package chat21.android.instanceid.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

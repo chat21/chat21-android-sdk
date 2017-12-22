@@ -17,18 +17,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import chat21.android.R;
-import chat21.android.core.ChatManager;
-import chat21.android.core.users.models.ChatUser;
-import chat21.android.core.users.models.IChatUser;
-import chat21.android.ui.ChatUI;
-import chat21.android.utils.StringUtils;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import chat21.android.R;
+import chat21.android.core.ChatManager;
+import chat21.android.core.users.models.ChatUser;
+import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.ChatUI;
 
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 

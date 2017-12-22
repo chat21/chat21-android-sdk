@@ -39,6 +39,8 @@ public class ChatManager {
 
     private IChatUser loggedUser;
 
+    private String appId;
+
     // bugfix Issue #16
     private static String mPresenceDeviceInstance;
 
@@ -80,20 +82,21 @@ public class ChatManager {
 //    }
 
     public void setLoggedUser(IChatUser loggedUser) {
+        this.loggedUser = loggedUser;
         Log.d(DEBUG_SESSION, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
         IOUtils.saveObjectToFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, loggedUser); // serialize on disk
-        this.loggedUser = loggedUser;
+
     }
 
     public IChatUser getLoggedUser() {
-        Log.d(DEBUG_SESSION, "ChatManager.getloggedUser");
+        Log.v(DEBUG_SESSION, "ChatManager.getloggedUser");
         // retrieve from disk
-        if (loggedUser!=null) {
+//        if (loggedUser!=null) {
             return  loggedUser;
-        }else {
-            loggedUser = (IChatUser) IOUtils.getObjectFromFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
-            return loggedUser;
-        }
+//        }else {
+//            loggedUser = (IChatUser) IOUtils.getObjectFromFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
+//            return loggedUser;
+//        }
     }
 
     public boolean isUserLogged() {
@@ -103,14 +106,10 @@ public class ChatManager {
         return isUserLogged;
     }
 
-    public String getTenant() {
-        Log.d(TAG, "getTenant");
+    public String getAppId() {
+        Log.d(TAG, "getAppId");
 
-        String tenant = (String) IOUtils.getObjectFromFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_TENANT);
-
-        Log.d(TAG, "serialize_tenant: " + tenant);
-
-        return tenant;
+        return this.appId;
     }
 
 
@@ -146,10 +145,13 @@ public class ChatManager {
         // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.
         EmojiManager.install(new IosEmojiProvider());
 
+        chat.loggedUser = currentUser;
         // serialize the current user
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, currentUser);
 
-        // serialize the tenant
+        chat.appId = configuration.appId;
+
+        // serialize the appId
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
     }
 
@@ -173,7 +175,7 @@ public class ChatManager {
      * @return the instance
      */
     public static ChatManager getInstance() {
-        Log.d(TAG, "getInstance");
+        Log.v(TAG, "getInstance");
         if (mInstance == null) {
             throw new RuntimeException("instance cannot be null. call start first.");
         }
@@ -187,6 +189,11 @@ public class ChatManager {
     public List<IChatUser> getContacts() {
         return mContacts;
     }
+
+    public void addContact(IChatUser contact) {
+        mContacts.add(contact);
+    }
+
 
 //
 //    public ConversationsHandler addConversationsListener(ConversationsListener conversationsListener) {
@@ -210,7 +217,7 @@ public class ChatManager {
             return conversationMessagesHandlerMap.get(recipientId);
         } else {
             ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
-                    Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser());
+                    Configuration.firebaseUrl, recipientId, this.getAppId(), this.getLoggedUser());
 
             conversationMessagesHandlerMap.put(recipientId, messageHandler);
 
@@ -225,7 +232,7 @@ public class ChatManager {
             return conversationsHandler;
         } else {
             conversationsHandler =
-                    new ConversationsHandler(Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId());
+                    new ConversationsHandler(Configuration.firebaseUrl, this.getAppId(), this.getLoggedUser().getId());
             return conversationsHandler;
         }
     }
@@ -242,6 +249,7 @@ public class ChatManager {
 
     public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 
+        Log.d(TAG, "sending text message to recipientId : " + recipient_id + " with text : "+ text + " and customAttributes : "+ customAttributes );
 
         getConversationMessagesHandler(recipient_id).sendMessage(
                 "fullnameDAELIMINAREANDROID",
@@ -264,7 +272,7 @@ public class ChatManager {
         public static String storageBucket;
 
         public Configuration(Builder builder) {
-            Log.d(TAG, ">>>>>> Configuration <<<<<<");
+            Log.v(TAG, "Configuration constructor called");
 
             this.appId = builder.mAppId;
             this.firebaseUrl = builder.mFirebaseUrl;

@@ -205,8 +205,8 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
 //        if (StringUtils.isValid(message.getRecipientGroupId())) {
             mSenderDisplayName.setVisibility(View.VISIBLE);
 
-            String senderDisplayName = StringUtils.isValid(message.getSender_fullname()) ?
-                    message.getSender_fullname() : message.getSender();
+            String senderDisplayName = StringUtils.isValid(message.getSenderFullname()) ?
+                    message.getSenderFullname() : message.getSender();
             mSenderDisplayName.setText(senderDisplayName);
 //        } else {
 //            mSenderDisplayName.setVisibility(View.GONE);

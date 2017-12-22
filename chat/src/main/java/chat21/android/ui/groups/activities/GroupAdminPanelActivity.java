@@ -74,10 +74,10 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         // observes for group changes
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), getGroupId(), this);
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), getGroupId(), this);
 
         // observes for members change
-        GroupUtils.subscribeOnNodeMembersChanges(ChatManager.getInstance().getTenant(), getGroupId(), this);
+        GroupUtils.subscribeOnNodeMembersChanges(ChatManager.getInstance().getAppId(), getGroupId(), this);
 
         super.onResume();
     }
@@ -132,7 +132,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
                 hideAddMember();
             }
         } else {
-            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), getGroupId(),
+            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), getGroupId(),
                     new GroupUtils.OnGroupsChangeListener() {
                         @Override
                         public void onGroupChanged(Group group, String groupId) {
@@ -343,7 +343,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
 //                startActivityForResult(intent, Chat.INTENT_ADD_MEMBERS_ACTIVITY);
                 startActivity(intent);
             } else {
-                GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), getGroupId(),
+                GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), getGroupId(),
                         new GroupUtils.OnGroupsChangeListener() {
                             @Override
                             public void onGroupChanged(Group group, String groupId) {

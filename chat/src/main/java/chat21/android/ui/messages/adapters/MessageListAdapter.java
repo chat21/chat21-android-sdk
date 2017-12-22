@@ -42,11 +42,11 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
 
     @Override
     public int getItemViewType(int position) {
-        Log.d(TAG, "position: " + position);
+//        Log.d(TAG, "position: " + position);
 
         Message message = getItems().get(position);
-        Log.d(TAG, "message.id: " + message.getId());
-        Log.d(TAG, "message.sender: " + message.getSender());
+//        Log.d(TAG, "message.id: " + message.getId());
+//        Log.d(TAG, "message.sender: " + message.getSender());
 
 
         sender = message.getSender();

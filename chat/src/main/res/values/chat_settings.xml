@@ -5,7 +5,7 @@
     <string name="firebase_storage_reference" translatable="false">gs://chat21-sdk-demo.appspot.com</string>
 
     <!--tenant in which it is messaging-->
-    <string name="tenant" translatable="false">default</string>
+    <string name="tenant" translatable="false">tilechat</string>
 
     <!--abilita o disabilita l'email di supporto per la chat-->
     <!--se l'opzione è abilitata, il pulsante per una nuova chat funzionerà come segue:-->

@@ -604,7 +604,7 @@ public class AddMembersActivity extends AppCompatActivity implements
         Group group = addMembersToGroup();
         Log.d(TAG, group.toString());
 
-        uploadGroup(ChatManager.getInstance().getTenant(), getGroupId(), group);
+        uploadGroup(ChatManager.getInstance().getAppId(), getGroupId(), group);
     }
 
     private void onAddMemberOptionsItemClicked() {
@@ -613,7 +613,7 @@ public class AddMembersActivity extends AppCompatActivity implements
         Group group = addMembersToGroup();
         Log.d(TAG, group.toString());
 
-        uploadGroup(ChatManager.getInstance().getTenant(), getGroupId(), group);
+        uploadGroup(ChatManager.getInstance().getAppId(), getGroupId(), group);
     }
 
     // add the list of member to the created group
@@ -675,7 +675,7 @@ public class AddMembersActivity extends AppCompatActivity implements
             if (!StringUtils.isValid(groupId)) {
 
                 DatabaseReference nodeGroups = FirebaseDatabase.getInstance().getReference()
-                        .child("apps/" + ChatManager.getInstance().getTenant() + "/groups");
+                        .child("apps/" + ChatManager.getInstance().getAppId() + "/groups");
 
                 nodeGroups.push().setValue(group, new DatabaseReference.CompletionListener() {
                     @Override
