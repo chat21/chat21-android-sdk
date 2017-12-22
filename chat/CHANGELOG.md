@@ -1,5 +1,11 @@
 ﻿# CHANGELOG
 
+## 0.10.3
+- corrette icone gruppo in "i miei guppi" - 15a473a
+- aggiunta dipendenza maven -12fa28e
+- corretto crash per conversazione non esistente - 23384b1
+- corretto nome gruppo assente -32c6907
+
 ## 0.10.2
 - rimosso supporto MultiDex - 59f1003
 - fix Glide context - 13a13c9
