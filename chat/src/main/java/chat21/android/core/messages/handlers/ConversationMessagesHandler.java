@@ -66,14 +66,18 @@ public class ConversationMessagesHandler {
 
         // the message to send
         final Message message = new Message();
-        //message.setSender(sender);
-        //message.setRecipient(this.recipientId);
+
+        message.setSender(currentUser.getId());
+        message.setRecipient(this.recipientId);
+        message.setStatus(Message.STATUS_SENDING);
+
         message.setText(text);
         message.setType(type);
         message.setSender_fullname(currentUser.getFullName());
         message.setRecipient_fullname(recipientFullname);
 //        message.setStatus(Message.STATUS_SENDING);
         message.setTimestamp(new Date().getTime());
+
 
         // generate a message id
         DatabaseReference newMessageReference = conversationMessagesNode.push();
@@ -83,8 +87,10 @@ public class ConversationMessagesHandler {
 
 //        conversationMessagesNode
 //                .push()
+        Message messageForSending = createMessageForFirebase(message);
+
         newMessageReference
-                .setValue(message, new DatabaseReference.CompletionListener() {
+                .setValue(messageForSending, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         Log.d(TAG, "sendMessage.onComplete");
@@ -120,13 +126,19 @@ public class ConversationMessagesHandler {
 
         if (sendMessageListener != null) {
             //set sender and recipiet because MessageListActivity use this message to update the view immediatly and MessageListAdapter use message.sender
-            message.setSender(currentUser.getId());
-            message.setRecipient(this.recipientId);
+
             sendMessageListener.onBeforeMessageSent(message, null);
         }
 
     }
 
+    private Message createMessageForFirebase(Message message)  {
+        Message messageForFirebase = (Message)message.clone();
+        messageForFirebase.setSender(null);
+        messageForFirebase.setRecipient(null);
+        messageForFirebase.setStatus(null);
+        return  messageForFirebase;
+    }
     // it checks if the message already exists.
     // if the message exists update it, add it otherwise
     private void saveOrUpdateMessageInMemory(Message newMessage) {
@@ -161,7 +173,7 @@ public class ConversationMessagesHandler {
 //        final List<ConversationMessagesListener> conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
 //        conversationMessagesListeners.add(conversationMessagesListener);
 
-        if (conversationMessagesListeners==null) {
+        if (conversationMessagesChildEventListener==null) {
 
             Log.d(TAG, "creating a new conversationMessagesChildEventListener");
 
@@ -247,22 +259,35 @@ public class ConversationMessagesHandler {
         String messageId = dataSnapshot.getKey();
         String sender_fullname = (String) map.get("sender_fullname");
         String recipient = (String) map.get("recipient");
-        long status = (long) map.get("status");
+        String recipient_fullname = (String) map.get("recipient_fullname");
+
+        Long status = null;
+        if (map.containsKey("status")){
+            status =  (Long) map.get("status");
+        }
+
         String text = (String) map.get("text");
-        long timestamp = (long) map.get("timestamp");
+
+        Long timestamp = null;
+        if (map.containsKey("timestamp")) {
+            timestamp = (Long) map.get("timestamp");
+        }
+
         String type = (String) map.get("type");
         String sender = (String) map.get("sender");
 
         Message message = new Message();
 
         message.setId(messageId);
+        message.setSender(sender);
         message.setSender_fullname(sender_fullname);
         message.setRecipient(recipient);
-        message.setStatus((int) status);
+        message.setRecipient_fullname(recipient_fullname);
+        message.setStatus(status);
         message.setText(text);
         message.setTimestamp(timestamp);
         message.setType(type);
-        message.setSender(sender);
+
 
 //        Log.d(TAG, "message >: " + dataSnapshot.toString());
 

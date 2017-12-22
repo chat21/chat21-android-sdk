@@ -201,7 +201,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         mBackgroundBubble.setBackground(bubble);
     }
 
-    private void dispatchStatus(int status) {
+    private void dispatchStatus(long status) {
         if (status == Message.STATUS_SENDING) {
             setMessageSending();
         } else if (status == Message.STATUS_SENT) {

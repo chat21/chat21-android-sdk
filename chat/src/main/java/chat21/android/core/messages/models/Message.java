@@ -8,18 +8,18 @@ import java.util.Date;
 /**
  * Created by stefano on 06/10/2015.
  */
-public class Message implements Serializable {
+public class Message implements Serializable, Cloneable {
     private static final String TAG = Message.class.getName();
 
     // message status
-    public static final int STATUS_FAILED = -100;
-    public static final int STATUS_SENDING = 0;
-    public static final int STATUS_SENT = 100; //(SALVATO SULLA TIMELINE DEL MITTENTE)
-    public static final int STATUS_DELIVERED_TO_RECIPIENT_TIMELINE = 150; //(SALVATO SULLA TIMELINE DEL DESTINATARIO)
+    public static final long STATUS_FAILED = -100;
+    public static final long STATUS_SENDING = 0;
+    public static final long STATUS_SENT = 100; //(SALVATO SULLA TIMELINE DEL MITTENTE)
+    public static final long STATUS_DELIVERED_TO_RECIPIENT_TIMELINE = 150; //(SALVATO SULLA TIMELINE DEL DESTINATARIO)
 
-    public static final int STATUS_RECEIVED_FROM_RECIPIENT_CLIENT = 200;
-    public static final int STATUS_RETURN_RECEIPT = 250;  // from the recipient client app)
-    public static final int STATUS_SEEN = 300; // message read from contact
+    public static final long STATUS_RECEIVED_FROM_RECIPIENT_CLIENT = 200;
+    public static final long STATUS_RETURN_RECEIPT = 250;  // from the recipient client app)
+    public static final long STATUS_SEEN = 300; // message read from contact
 
 
     // message type
@@ -30,7 +30,7 @@ public class Message implements Serializable {
     @Exclude
     private String id;
     private String sender, recipient, text;
-    private int status;
+    private Long status; //could be null
     private Long timestamp;
     private String type;
     private String sender_fullname;
@@ -77,11 +77,11 @@ public class Message implements Serializable {
         this.text = text;
     }
 
-    public int getStatus() {
+    public Long getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Long status) {
         this.status = status;
     }
 
@@ -130,6 +130,14 @@ public class Message implements Serializable {
             }
         } else {
             return false;
+        }
+    }
+
+    public Object clone(){
+        try {
+            return super.clone();
+        }catch (CloneNotSupportedException cnse) {
+            return null;
         }
     }
 

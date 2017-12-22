@@ -570,6 +570,9 @@ public class MessageListActivity extends AppCompatActivity implements
                                     public void onBeforeMessageSent(Message message, ChatRuntimeException chatException) {
                                         if (chatException == null) {
                                             // if the message exists update it, else add it
+                                            Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.id: " + message.getId());
+                                            Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.sender: " + message.getSender());
+
                                             messageListAdapter.updateMessage(message);
                                         } else {
 

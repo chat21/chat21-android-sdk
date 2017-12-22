@@ -11,6 +11,7 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
     private String id;
     private String profilePictureUrl;
     private String auth;
+//    private String password;
 
     @Override
     public String getFullName() {
@@ -21,6 +22,16 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
     public String getEmail() {
         return email;
     }
+
+//    @Override
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
+//
+//    @Override
+//    public String getPassword() {
+//        return null;
+//    }
 
     @Override
     public String getId() {

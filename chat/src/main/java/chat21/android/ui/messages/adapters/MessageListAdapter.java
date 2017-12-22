@@ -2,6 +2,7 @@ package chat21.android.ui.messages.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.messages.models.Message;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 
@@ -20,6 +22,8 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
 
     private String sender;
     private OnMessageClickListener onMessageClickListener;
+
+    private static final String TAG = MessageListAdapter.class.getName();
 
     public MessageListAdapter(Context context, List<Message> items) {
         super(context, items);
@@ -38,7 +42,13 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
 
     @Override
     public int getItemViewType(int position) {
+        Log.d(TAG, "position: " + position);
+
         Message message = getItems().get(position);
+        Log.d(TAG, "message.id: " + message.getId());
+        Log.d(TAG, "message.sender: " + message.getSender());
+
+
         sender = message.getSender();
 
         if (sender.compareTo(ChatManager.getInstance().getLoggedUser().getId()) == 0) {

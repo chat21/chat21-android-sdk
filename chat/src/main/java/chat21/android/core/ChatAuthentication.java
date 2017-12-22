@@ -44,6 +44,7 @@ import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
  * Created by stefanodp91 on 27/11/17.
  */
 
+@Deprecated
 public final class ChatAuthentication {
 
     //firebase auth START

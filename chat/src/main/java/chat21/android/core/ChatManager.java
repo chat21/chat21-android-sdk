@@ -20,6 +20,7 @@ import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.IOUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
+import static chat21.android.utils.DebugConstants.DEBUG_SESSION;
 
 /**
  * Created by stefano on 19/05/2016.
@@ -35,6 +36,8 @@ public class ChatManager {
 
 
     private static ChatManager mInstance;
+
+    private IChatUser loggedUser;
 
     // bugfix Issue #16
     private static String mPresenceDeviceInstance;
@@ -65,15 +68,39 @@ public class ChatManager {
         return mPresenceDeviceInstance;
     }
 
+//    public IChatUser getLoggedUser() {
+//        IChatUser loggedUser = (IChatUser) IOUtils.getObjectFromFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
+//
+//        if (loggedUser != null)
+//            Log.d(TAG, "serialized_logged_user: " + loggedUser.toString());
+//        else
+//            Log.d(TAG, "serialized_logged_user is null");
+//
+//        return loggedUser;
+//    }
+
+    public void setLoggedUser(IChatUser loggedUser) {
+        Log.d(DEBUG_SESSION, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
+        IOUtils.saveObjectToFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, loggedUser); // serialize on disk
+        this.loggedUser = loggedUser;
+    }
+
     public IChatUser getLoggedUser() {
-        IChatUser loggedUser = (IChatUser) IOUtils.getObjectFromFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
+        Log.d(DEBUG_SESSION, "ChatManager.getloggedUser");
+        // retrieve from disk
+        if (loggedUser!=null) {
+            return  loggedUser;
+        }else {
+            loggedUser = (IChatUser) IOUtils.getObjectFromFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
+            return loggedUser;
+        }
+    }
 
-        if (loggedUser != null)
-            Log.d(TAG, "serialized_logged_user: " + loggedUser.toString());
-        else
-            Log.d(TAG, "serialized_logged_user is null");
-
-        return loggedUser;
+    public boolean isUserLogged() {
+        Log.d(DEBUG_SESSION, "ChatManager.isUserLogged");
+        boolean isUserLogged = getLoggedUser() != null ? true : false;
+        Log.d(DEBUG_SESSION, "ChatManager.isUserLogged: isUserLogged == " + isUserLogged);
+        return isUserLogged;
     }
 
     public String getTenant() {

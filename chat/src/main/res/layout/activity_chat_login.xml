@@ -93,6 +93,7 @@
             android:layout_height="match_parent"
             android:hint="@string/chat_login_activity_chat_login_email_hint"
             android:inputType="textVisiblePassword|textNoSuggestions"
+            android:text="andrea.leo@frontiere21.it"
             android:maxLines="1"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
@@ -109,6 +110,7 @@
             android:layout_height="match_parent"
             android:hint="@string/chat_login_activity_chat_login_password_hint"
             android:inputType="textPassword"
+            android:text="123456"
             android:maxLines="1"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />

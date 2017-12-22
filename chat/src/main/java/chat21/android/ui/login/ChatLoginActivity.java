@@ -1,8 +1,13 @@
 package chat21.android.ui.login;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -10,13 +15,20 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import chat21.android.R;
-import chat21.android.core.ChatAuthentication;
 import chat21.android.core.ChatManager;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.ChatUI;
 import chat21.android.utils.StringUtils;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
@@ -26,20 +38,30 @@ import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
 public class ChatLoginActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "ChatLoginActivity";
+
     private EditText vEmail;
     private EditText vPassword;
     private Button vLogin;
+    private FirebaseAuth mAuth;
 
     private String email, username, password;
+
+    @VisibleForTesting
+    public ProgressDialog mProgressDialog;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_login);
 
-        ChatAuthentication.getInstance().setTenant(ChatManager.getInstance().getTenant());
-        ChatAuthentication.getInstance().createAuthListener();
-        Log.d(DEBUG_LOGIN, "ChatLoginActivity.onCreate: auth state listener created ");
+        mAuth = FirebaseAuth.getInstance();
+
+//        ChatAuthentication.getInstance().setTenant(ChatManager.getInstance().getTenant());
+//        ChatAuthentication.getInstance().createAuthListener();
+
+//        Log.d(DEBUG_LOGIN, "ChatLoginActivity.onCreate: auth state listener created ");
 
         vLogin = (Button) findViewById(R.id.login);
         vEmail = (EditText) findViewById(R.id.email);
@@ -53,18 +75,25 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
     public void onStart() {
         super.onStart();
 
-        ChatAuthentication.getInstance().getFirebaseAuth()
-                .addAuthStateListener(ChatAuthentication.getInstance().getAuthListener());
 
-        Log.d(DEBUG_LOGIN, "ChatLoginActivity.onStart: auth state listener attached ");
+        // Check if user is signed in (non-null) and update UI accordingly.
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        updateUI(currentUser);
+//        ChatAuthentication.getInstance().getFirebaseAuth()
+//                .addAuthStateListener(ChatAuthentication.getInstance().getAuthListener());
+//
+//        Log.d(DEBUG_LOGIN, "ChatLoginActivity.onStart: auth state listener attached ");
     }
 
     @Override
     public void onStop() {
-        ChatAuthentication.getInstance().removeAuthStateListener();
-        Log.d(DEBUG_LOGIN, "ChatLoginActivity.onStart: auth state listener detached ");
+//        ChatAuthentication.getInstance().removeAuthStateListener();
+//        Log.d(DEBUG_LOGIN, "ChatLoginActivity.onStart: auth state listener detached ");
 
         super.onStop();
+
+        hideProgressDialog();
+
     }
 
     @Override
@@ -72,7 +101,8 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
         int viewId = view.getId();
 
         if (viewId == R.id.login) {
-            performLogin();
+            signIn(vEmail.getText().toString(), vPassword.getText().toString());
+//            performLogin();
         }
     }
 
@@ -91,7 +121,8 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     Log.d(DEBUG_LOGIN, "ChatLoginActivity.initPasswordIMEAction");
 
-                    performLogin();
+//                    performLogin();
+                    signIn(vEmail.getText().toString(), vPassword.getText().toString());
 
                     handled = true;
                 }
@@ -100,26 +131,154 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
         });
     }
 
-    private void performLogin() {
-
-        if (StringUtils.isValid(vEmail.getText().toString()) && StringUtils.isValid(vPassword.getText().toString())) {
-            IChatUser loggedUser = new ChatUser();
-            loggedUser.setEmail(vEmail.getText().toString());
-            loggedUser.set(vEmail.getText().toString());
-
-
-            // usename and password are valid
-        } else {
-            // email is not valid
-            if (!StringUtils.isValid(vEmail.getText().toString())) {
-
-            }
-
-            // password is not valid
-            if (!StringUtils.isValid(vPassword.getText().toString())) {
-
-            }
+    private void signIn(String email, String password) {
+        Log.d(TAG, "signIn:" + email);
+        if (!validateForm()) {
+            return;
         }
 
+        showProgressDialog();
+
+        // [START sign_in_with_email]
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+
+                            ChatManager.Configuration mChatConfiguration =
+                                    new ChatManager.Configuration.Builder(getString(R.string.tenant)).firebaseUrl("https://chat-v2-dev.firebaseio.com/").build();
+
+
+                            IChatUser iChatUser = new ChatUser();
+                            iChatUser.setId(user.getUid());
+                            iChatUser.setEmail(user.getEmail());
+
+                            ChatManager.start(ChatLoginActivity.this, mChatConfiguration, iChatUser);
+                            Log.i(TAG, "chat has been initialized with success");
+
+                            ChatUI.getInstance().setContext(ChatLoginActivity.this);
+                            Log.i(TAG, "ChatUI has been initialized with success");
+
+
+                            setResult(Activity.RESULT_OK);
+                            finish();
+
+//                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+
+                            Toast.makeText(ChatLoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+
+//                            setResult(Activity.RESULT_CANCELED);
+//                            finish();
+//                            updateUI(null);
+                        }
+
+                        // [START_EXCLUDE]
+                        if (!task.isSuccessful()) {
+//                            setResult(Activity.RESULT_CANCELED);
+//                            finish();
+//                            mStatusTextView.setText(R.string.auth_failed);
+                        }
+                        hideProgressDialog();
+                        // [END_EXCLUDE]
+                    }
+                });
+        // [END sign_in_with_email]
     }
+
+    private boolean validateForm() {
+        boolean valid = true;
+
+        String email = vEmail.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            vEmail.setError("Required.");
+            valid = false;
+        } else {
+            vEmail.setError(null);
+        }
+
+        String password = vPassword.getText().toString();
+        if (TextUtils.isEmpty(password)) {
+            vPassword.setError("Required.");
+            valid = false;
+        } else {
+            vPassword.setError(null);
+        }
+
+        return valid;
+    }
+
+//    private void performLogin() {
+//
+//
+//        if (StringUtils.isValid(vEmail.getText().toString()) && StringUtils.isValid(vPassword.getText().toString())) {
+//
+//            final IChatUser loggedUser = new ChatUser();
+//            loggedUser.setEmail(vEmail.getText().toString());
+////            loggedUser.setPassword(vPassword.getText().toString());
+//
+//            String email = vEmail.getText().toString();
+//            String password = vPassword.getText().toString();
+//
+//            ChatAuthentication.getInstance().signInWithEmailAndPassword(this,email, password, new ChatAuthentication.OnChatLoginCallback(){
+//                    @Override
+//                    public void onChatLoginSuccess() {
+//
+//                        ChatManager.getInstance().setLoggedUser(loggedUser);
+//
+//                        setResult(Activity.RESULT_OK);
+//                        finish();
+//                        //TODO DELETE ACTIVITY STACK
+//                    }
+//
+//                    @Override
+//                    public void onChatLoginError(Exception e) {
+//                        // fix Issue #24
+//                        Log.e(DEBUG_LOGIN, "signInWithUid.onChatLoginError. " + e.getMessage());
+//
+//                        setResult(Activity.RESULT_CANCELED);
+//                        finish();
+//                    }
+//            });
+//
+//
+//        } else {
+//            // email is not valid
+//            if (!StringUtils.isValid(vEmail.getText().toString())) {
+//                //TODO
+//            }
+//
+//            // password is not valid
+//            if (!StringUtils.isValid(vPassword.getText().toString())) {
+//
+//            }
+//        }
+//
+//
+//    }
+
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+//            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
 }

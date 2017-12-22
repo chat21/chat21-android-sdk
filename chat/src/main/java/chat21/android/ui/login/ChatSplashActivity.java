@@ -5,8 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import chat21.android.core.session.UserSessionManager;
+import com.google.firebase.auth.FirebaseAuth;
 
+import chat21.android.core.ChatManager;
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
 /**
@@ -62,8 +63,8 @@ public abstract class ChatSplashActivity extends AppCompatActivity {
         Log.d(DEBUG_LOGIN, "ChatSplashActivity.runDispatch");
         // If current user has already logged in launch the target activity,
         // else launch the login activity
-        if (UserSessionManager.getInstance().isUserLogged(this)) {
-            Log.d(DEBUG_LOGIN, "ChatSplashActivity.runDispatch: user is logged in ");
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            Log.d(DEBUG_LOGIN, "ChatSplashActivity.runDispatch: user is logged in. Goto : " + getTargetClass().getName());
             Intent targetIntent = new Intent(this, getTargetClass());
             Bundle extras = getIntent().getExtras();
             if (extras != null) {
@@ -71,7 +72,7 @@ public abstract class ChatSplashActivity extends AppCompatActivity {
             }
             startActivityForResult(targetIntent, TARGET_REQUEST);
         } else {
-            Log.d(DEBUG_LOGIN, "ChatSplashActivity.runDispatch: user is not logged in ");
+            Log.d(DEBUG_LOGIN, "ChatSplashActivity.runDispatch: user is not logged in. Goto  ChatLoginActivity");
             // Send user to login activity
 //            startActivityForResult(getLoginIntent(), LOGIN_REQUEST);
             startActivityForResult(new Intent(this, ChatLoginActivity.class), LOGIN_REQUEST);
