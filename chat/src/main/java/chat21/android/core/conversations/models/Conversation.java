@@ -166,6 +166,16 @@ public class Conversation implements Serializable {
         }
     }
 
+    @Exclude
+    public boolean isDirectChannel() {
+        if (this.channelType==null || this.channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     @Override
     public boolean equals(Object object) {
         if (object instanceof Conversation) {
