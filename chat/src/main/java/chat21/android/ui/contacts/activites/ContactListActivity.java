@@ -225,7 +225,7 @@ public class ContactListActivity extends AppCompatActivity
         Log.d(TAG, "startMessageListActivity");
 
         Intent intent = new Intent(this, MessageListActivity.class);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
+        intent.putExtra(MessageListActivity.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
 
         // put this flag to start activity without an activity (using context instead of activity)

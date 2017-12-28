@@ -205,7 +205,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         int notificationId = (int) new Date().getTime();
 
         Intent resultIntent = new Intent(this, MessageListActivity.class);
-        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
+        resultIntent.putExtra(MessageListActivity.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
         resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(ConversationListActivity.class);
@@ -233,7 +233,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         int notificationId = (int) new Date().getTime();
 
         Intent resultIntent = new Intent(this, MessageListActivity.class);
-        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
+        resultIntent.putExtra(MessageListActivity.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
         resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(ConversationListActivity.class);

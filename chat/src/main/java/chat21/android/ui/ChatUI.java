@@ -152,7 +152,7 @@ public class ChatUI implements Serializable {
 
         // launch the chat
         Intent intent = new Intent(mContext, MessageListActivity.class);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, recipientId);
+        intent.putExtra(MessageListActivity.INTENT_BUNDLE_RECIPIENT_ID, recipientId);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         // extras to be sent in messages or in the conversation
 //        intent.putExtra(Chat.INTENT_BUNDLE_EXTRAS, (Serializable) mConfiguration.getExtras());

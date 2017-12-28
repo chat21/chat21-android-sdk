@@ -157,6 +157,9 @@ public class ChatManager {
 
 
     public void stop() {
+
+        this.conversationsHandler.disconnect();
+
         for (Map.Entry<String, ConversationMessagesHandler> entry : conversationMessagesHandlerMap.entrySet()) {
 
             String recipientId = entry.getKey();
@@ -228,10 +231,10 @@ public class ChatManager {
     }
 
     public ConversationsHandler getConversationsHandler() {
-        if (conversationsHandler != null) {
-            return conversationsHandler;
+        if (this.conversationsHandler != null) {
+            return this.conversationsHandler;
         } else {
-            conversationsHandler =
+            this.conversationsHandler =
                     new ConversationsHandler(Configuration.firebaseUrl, this.getAppId(), this.getLoggedUser().getId());
             return conversationsHandler;
         }

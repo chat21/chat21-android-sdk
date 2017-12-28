@@ -252,7 +252,7 @@ public class ConversationListFragment extends Fragment implements
         conversationsHandler.setConversationRead(conversation.getConversationId());
 
         // start the message list activity of the corresponding conversation
-        startMessageActivity(conversation.getConversationId());
+        startMessageActivity(conversation);
 //        } catch (Exception e) {
 //            Log.e(TAG, "cannot start messageActivity. " + e.getMessage());
 //
@@ -272,12 +272,12 @@ public class ConversationListFragment extends Fragment implements
         dialog.show(ft, BottomSheetConversationsListFragmentLongPress.class.getName());
     }
 
-    private void startMessageActivity(String conversationId) {
+    private void startMessageActivity(Conversation conversation) {
         Log.d(TAG, "ConversationListFragment.startMessageActivity");
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
+        intent.putExtra(MessageListActivity.INTENT_BUNDLE_CONVERSATION, conversation);
+//        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }
 }

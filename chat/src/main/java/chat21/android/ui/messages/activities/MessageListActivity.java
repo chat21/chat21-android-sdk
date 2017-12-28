@@ -82,12 +82,30 @@ public class MessageListActivity extends AppCompatActivity implements
 
 
     private static final String TAG = MessageListActivity.class.getName();
+
+    public static final String INTENT_BUNDLE_RECIPIENT_ID = "INTENT_BUNDLE_RECIPIENT_ID";
+    public static final String INTENT_BUNDLE_CONVERSATION = "INTENT_BUNDLE_CONVERSATION";
+
     private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
 
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
 
+
+    private ConversationMessagesHandler conversationMessagesHandler;
     private String recipientId;
+    private boolean conversWithOnline = false;
+    private long conversWithLastOnline = 0;
+    private boolean isGroupConversation;
+
+    // check if this activity is called from a background notification
+    private boolean isFromBackgroundNotification = false;
+    // check if this activity is called from a foreground notification
+    private boolean isFromForegroundNotification = false;
+    private Conversation conversation;
+
+
+
     private RecyclerView recyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private MessageListAdapter messageListAdapter;
@@ -98,20 +116,6 @@ public class MessageListActivity extends AppCompatActivity implements
     private TextView mSubTitleTextView;
     private RelativeLayout mNoMessageLayout;
 
-//    private List<Message> messageList = new ArrayList<>();
-
-    private boolean isGroupConversation;
-
-    private boolean conversWithOnline = false;
-    private long conversWithLastOnline = 0;
-
-    // check if this activity is called from a background notification
-    private boolean isFromBackgroundNotification = false;
-    // check if this activity is called from a foreground notification
-    private boolean isFromForegroundNotification = false;
-
-
-    private Conversation conversation;
 
 //    private boolean isNodeObserved = false;
 //    private boolean areViewsInit = false;
@@ -124,7 +128,6 @@ public class MessageListActivity extends AppCompatActivity implements
     private ImageView sendButton;
     private LinearLayout mEmojiBar;
 
-    private ConversationMessagesHandler conversationMessagesHandler;
 
 
     @Override
@@ -210,11 +213,11 @@ public class MessageListActivity extends AppCompatActivity implements
 
         String getRecipientId;
 
-        if (getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID) != null) {
+        if (getIntent().getSerializableExtra(INTENT_BUNDLE_RECIPIENT_ID) != null) {
             // retrieve conversationId
             isFromBackgroundNotification = false;
             isFromForegroundNotification = false;
-            recipientId = getIntent().getStringExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID);
+            recipientId = getIntent().getStringExtra(INTENT_BUNDLE_RECIPIENT_ID);
             // check if the activity has been called from foreground notification
             try {
                 isFromForegroundNotification = getIntent().getExtras().getBoolean(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION);
