@@ -366,7 +366,7 @@ public class MessageListActivity extends AppCompatActivity implements
     private void displayGroupMembersInSubtitle() {
         mSubTitleTextView.setText(getString(R.string.activity_message_list_group_info_label));
 
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), recipientId,
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipientId,
                 new GroupUtils.OnGroupsChangeListener() {
                     @Override
                     public void onGroupChanged(Group group, String groupId) {
@@ -536,7 +536,7 @@ public class MessageListActivity extends AppCompatActivity implements
                                         if (chatException == null) {
                                             // if the message exists update it, else add it
                                             Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.id: " + message.getId());
-                                            Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.sender: " + message.getSender());
+                                            Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.recipient: " + message.getRecipient());
 
                                             messageListAdapter.updateMessage(message);
                                         } else {
@@ -576,7 +576,7 @@ public class MessageListActivity extends AppCompatActivity implements
     private void toggleTelegramPanelVisibility() {
         if (isGroupConversation) {
             // group conversation
-            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), recipientId,
+            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipientId,
                     new GroupUtils.OnGroupsChangeListener() {
                         @Override
                         public void onGroupChanged(Group group, String groupId) {
@@ -644,7 +644,7 @@ public class MessageListActivity extends AppCompatActivity implements
     @Override
     public void onConversationMessageChanged(Message message, ChatRuntimeException e) {
 
-        Log.d(TAG, "onTreeChildChanged");
+        Log.d(TAG, "onConversationMessageChanged");
 
 //        if (StringUtils.isValid(message.getRecipientGroupId())) {
 //            // it is a group conversation

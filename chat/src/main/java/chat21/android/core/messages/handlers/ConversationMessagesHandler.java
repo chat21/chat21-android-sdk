@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import chat21.android.core.exception.ChatFieldNotFoundException;
 import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
@@ -62,7 +63,7 @@ public class ConversationMessagesHandler {
             String recipientFullname,
             String type, String text,
             final Map<String, Object> customAttributes, final SendMessageListener sendMessageListener) {
-        Log.d(TAG, "sendMessage");
+        Log.v(TAG, "sendMessage called");
 
         // the message to send
         final Message message = new Message();
@@ -73,27 +74,33 @@ public class ConversationMessagesHandler {
 
         message.setText(text);
         message.setType(type);
-        message.setSender_fullname(currentUser.getFullName());
-        message.setRecipient_fullname(recipientFullname);
+        message.setSenderFullname(currentUser.getFullName());
+        message.setRecipientFullname(recipientFullname);
 //        message.setStatus(Message.STATUS_SENDING);
         message.setTimestamp(new Date().getTime());
+        message.setCustomAttributes(customAttributes);
 
+        Log.d(TAG, "sendMessage.message: " + message.toString());
 
         // generate a message id
         DatabaseReference newMessageReference = conversationMessagesNode.push();
-        message.setId(newMessageReference.getKey()); // assign an id to the message
+        String messageId = newMessageReference.getKey();
+
+        Log.d(TAG, "Generated messagedId with value : "+ messageId);
+        message.setId(messageId); // assign an id to the message
 
         saveOrUpdateMessageInMemory(message);
 
 //        conversationMessagesNode
 //                .push()
         Message messageForSending = createMessageForFirebase(message);
+        Log.d(TAG, "sendMessage.messageForSending: " + messageForSending.toString());
 
         newMessageReference
                 .setValue(messageForSending, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        Log.d(TAG, "sendMessage.onComplete");
+                        Log.v(TAG, "sendMessage.onComplete");
 
                         if (databaseError != null) {
                             String errorMessage = "sendMessage.onComplete Message not sent. " +
@@ -105,16 +112,15 @@ public class ConversationMessagesHandler {
                             }
 
                         } else {
-                            Log.d(TAG, "message sent with success");
-                            Log.d(TAG, databaseReference.toString());
+                            Log.d(TAG, "message sent with success to : " + databaseReference.toString());
 
-
-                            message.setStatus(Message.STATUS_SENT);
+                            //the cloud code set status to 100 automaticaly
+                            //message.setStatus(Message.STATUS_SENT);
                             saveOrUpdateMessageInMemory(message);
 
 
 //                            databaseReference.child("status").setValue(Message.STATUS_RECEIVED);
-                            databaseReference.child("customAttributes").setValue(customAttributes);
+                           // databaseReference.child("customAttributes").setValue(customAttributes);
                             //TODO lookup and return the message from the firebase server to retrieve all the fields (timestamp, status, etc)
                             if (sendMessageListener != null) {
                                 sendMessageListener.onMessageSentComplete(message, null);
@@ -126,6 +132,7 @@ public class ConversationMessagesHandler {
 
         if (sendMessageListener != null) {
             //set sender and recipiet because MessageListActivity use this message to update the view immediatly and MessageListAdapter use message.sender
+            Log.d(TAG, "onBeforeMessageSent called with message : " + message);
 
             sendMessageListener.onBeforeMessageSent(message, null);
         }
@@ -137,11 +144,13 @@ public class ConversationMessagesHandler {
         messageForFirebase.setSender(null);
         messageForFirebase.setRecipient(null);
         messageForFirebase.setStatus(null);
+        messageForFirebase.setTimestamp(null);
         return  messageForFirebase;
     }
     // it checks if the message already exists.
     // if the message exists update it, add it otherwise
     private void saveOrUpdateMessageInMemory(Message newMessage) {
+        Log.d(TAG, "saveOrUpdateMessageInMemory  for message : " + newMessage);
 
         // look for the message
 
@@ -156,9 +165,13 @@ public class ConversationMessagesHandler {
         if (index != -1) {
             // message already exists
             messages.set(index, newMessage); // update the existing message
+            Log.v(TAG, "message " + newMessage + "updated into messages at position " + index);
+
         } else {
             // message not exists
             messages.add(newMessage); // insert a new message
+            Log.v(TAG, "message " + newMessage + "is not found into messages. The message was added at the end of the list");
+
         }
     }
 
@@ -177,13 +190,24 @@ public class ConversationMessagesHandler {
 
             Log.d(TAG, "creating a new conversationMessagesChildEventListener");
 
-            conversationMessagesChildEventListener = conversationMessagesNode.addChildEventListener(new ChildEventListener() {
+            conversationMessagesChildEventListener = conversationMessagesNode.orderByChild(Message.TIMESTAMP_FIELD_KEY).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.d(TAG, "ConversationMessagesHandler.connect.onChildAdded");
+                    Log.v(TAG, "ConversationMessagesHandler.connect.onChildAdded");
 
                     try {
                         Message message = decodeMessageSnapShop(dataSnapshot);
+                        Log.d(TAG, "ConversationMessagesHandler.connect.onChildAdded.message : "+ message);
+
+
+                        if (message.getStatus()< Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT
+                                && !message.getSender().equals(currentUser.getId())
+                                && message.isDirectChannel()){
+
+                            dataSnapshot.getRef().child(Message.STATUS_FIELD_KEY).setValue(Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
+                            Log.d(TAG, "Message with id : " + message.getId() + " is received from the recipient client and the status field of the message has beed set to " + Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
+                        }
+
                         saveOrUpdateMessageInMemory(message);
 
                         for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
@@ -192,6 +216,8 @@ public class ConversationMessagesHandler {
 
                         //TODO settare status a 200 qui
 
+                    }catch (ChatFieldNotFoundException cfnfe) {
+                        Log.w(TAG, "Error decoding message on onChildAdded " + cfnfe.getMessage());
                     } catch (Exception e) {
                         for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
                             conversationMessagesListener.onConversationMessageReceived(null, new ChatRuntimeException(e));
@@ -202,17 +228,22 @@ public class ConversationMessagesHandler {
                 //for return recepit
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.d(TAG, "ConversationMessagesHandler.connect.onChildChanged");
+                    Log.v(TAG, "ConversationMessagesHandler.connect.onChildChanged");
 
                     try {
                         Message message = decodeMessageSnapShop(dataSnapshot);
+
+                        Log.d(TAG, "ConversationMessagesHandler.connect.onChildChanged.message : "+ message);
+
                         saveOrUpdateMessageInMemory(message);
 
                         for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
                             conversationMessagesListener.onConversationMessageChanged(message, null);
                         }
 
-                    } catch (Exception e) {
+                    } catch (ChatFieldNotFoundException cfnfe) {
+                        Log.w(TAG, "Error decoding message on onChildAdded " + cfnfe.getMessage());
+                    }  catch (Exception e) {
                         for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
                             conversationMessagesListener.onConversationMessageChanged(null, new ChatRuntimeException(e));
                         }
@@ -251,14 +282,25 @@ public class ConversationMessagesHandler {
      * @param dataSnapshot the datasnapshot to decode
      * @return the decoded message
      */
-    public static Message decodeMessageSnapShop(DataSnapshot dataSnapshot) {
-        Log.d(TAG, "decodeMessageSnapShop");
+    public static Message decodeMessageSnapShop(DataSnapshot dataSnapshot) throws ChatFieldNotFoundException {
+        Log.v(TAG, "decodeMessageSnapShop called");
 
         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
         String messageId = dataSnapshot.getKey();
-        String sender_fullname = (String) map.get("sender_fullname");
+
+        String sender = (String) map.get("sender");
+        if (sender ==null) {
+            throw new ChatFieldNotFoundException("Required sender field is null for message id : "+ messageId);
+        }
+
         String recipient = (String) map.get("recipient");
+        if (recipient ==null) {
+            throw new ChatFieldNotFoundException("Required recipient field is null for message id : "+ messageId);
+        }
+
+
+        String sender_fullname = (String) map.get("sender_fullname");
         String recipient_fullname = (String) map.get("recipient_fullname");
 
         Long status = null;
@@ -274,20 +316,23 @@ public class ConversationMessagesHandler {
         }
 
         String type = (String) map.get("type");
-        String sender = (String) map.get("sender");
+
+        String channelType = (String) map.get("channel_type");
 
         Message message = new Message();
 
         message.setId(messageId);
         message.setSender(sender);
-        message.setSender_fullname(sender_fullname);
+        message.setSenderFullname(sender_fullname);
         message.setRecipient(recipient);
-        message.setRecipient_fullname(recipient_fullname);
+        message.setRecipientFullname(recipient_fullname);
         message.setStatus(status);
         message.setText(text);
         message.setTimestamp(timestamp);
         message.setType(type);
+        message.setChannelType(channelType);
 
+        Log.v(TAG, "decodeMessageSnapShop.message : "+ message);
 
 //        Log.d(TAG, "message >: " + dataSnapshot.toString());
 
@@ -305,25 +350,33 @@ public class ConversationMessagesHandler {
     }
 
     public void addConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
+        Log.v(TAG, "  addConversationMessagesListener called");
+
         this.conversationMessagesListeners.add(conversationMessagesListener);
-        Log.i(TAG, "  conversationMessagesListener added");
+        Log.i(TAG, "  conversationMessagesListener with hashCode: "+ conversationMessagesListener.hashCode() + " added");
 
     }
 
     public void upsertConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
+        Log.v(TAG, "  upsertConversationMessagesListener called");
+
         if (conversationMessagesListeners.contains(conversationMessagesListener)) {
-            this.removeConversationMessagesListener(conversationMessagesListener);
-            this.addConversationMessagesListener(conversationMessagesListener);
+            this.conversationMessagesListeners.remove(conversationMessagesListener);
+            this.conversationMessagesListeners.add(conversationMessagesListener);
+            Log.i(TAG, "  conversationMessagesListener with hashCode: "+ conversationMessagesListener.hashCode() + " updated");
         } else {
-            this.addConversationMessagesListener(conversationMessagesListener);
+            this.conversationMessagesListeners.add(conversationMessagesListener);
+            Log.i(TAG, "  conversationMessagesListener with hashCode: "+ conversationMessagesListener.hashCode() + " added");
+
         }
-        Log.i(TAG, "  conversationMessagesListener added");
 
     }
 
     public void removeConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
+        Log.v(TAG, "  removeConversationMessagesListener called");
+
         this.conversationMessagesListeners.remove(conversationMessagesListener);
-        Log.i(TAG, "  conversationMessagesListener removed");
+        Log.i(TAG, "  conversationMessagesListener with hashCode: "+ conversationMessagesListener.hashCode() + " removed");
 
     }
 
@@ -344,5 +397,6 @@ public class ConversationMessagesHandler {
         this.conversationMessagesNode.removeEventListener(conversationMessagesChildEventListener);
         this.removeAllConversationMessagesListeners();
     }
+
 
 }

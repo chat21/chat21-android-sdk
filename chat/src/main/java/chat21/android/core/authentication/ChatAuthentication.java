@@ -1,4 +1,4 @@
-package chat21.android.core;
+package chat21.android.core.authentication;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,12 +28,13 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.io.IOException;
 
 import chat21.android.R;
+import chat21.android.core.ChatManager;
 import chat21.android.core.presence.PresenceManger;
 import chat21.android.core.presence.listeners.OnPresenceListener;
-import chat21.android.user.receiver.TokenBroadcastReceiver;
-import chat21.android.user.task.GetCustomTokenTask;
-import chat21.android.user.task.OnCustomAuthTokenCallback;
-import chat21.android.user.task.RefreshFirebaseInstanceIdTask;
+import chat21.android.instanceid.receiver.TokenBroadcastReceiver;
+import chat21.android.core.authentication.task.GetCustomTokenTask;
+import chat21.android.core.authentication.task.OnCustomAuthTokenCallback;
+import chat21.android.core.authentication.task.RefreshFirebaseInstanceIdTask;
 import chat21.android.utils.ChatUtils;
 import chat21.android.utils.StringUtils;
 
@@ -398,7 +399,7 @@ public final class ChatAuthentication {
                 if (logoutException == null) {
                     // bugfix Issue #16
                     if (StringUtils.isValid(ChatManager.getPresenceDeviceInstance())) {
-                        PresenceManger.logout(ChatManager.getInstance().getTenant(),
+                        PresenceManger.logout(ChatManager.getInstance().getAppId(),
                                 ChatManager.getPresenceDeviceInstance(),
                                 ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
                     }

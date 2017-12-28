@@ -1,4 +1,4 @@
-package chat21.android.user.task;
+package chat21.android.core.authentication.task;
 
 import android.os.AsyncTask;
 import android.util.Log;

@@ -122,7 +122,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void initRemoveMemberButton() {
         Log.d(TAG, "initRemoveMemberButton");
 
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), groupId,
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), groupId,
                 new GroupUtils.OnGroupsChangeListener() {
                     @Override
                     public void onGroupChanged(Group group, String groupId) {
@@ -160,7 +160,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void initSendMessageButton() {
         Log.d(TAG, "initSendMessageButton");
 
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getTenant(), groupId,
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), groupId,
                 new GroupUtils.OnGroupsChangeListener() {
                     @Override
                     public void onGroupChanged(Group group, String groupId) {
@@ -259,7 +259,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
                 .setPositiveButton(positiveClickMessage, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        removeMemberFromGroup(ChatManager.getInstance().getTenant(), groupId, username);
+                        removeMemberFromGroup(ChatManager.getInstance().getAppId(), groupId, username);
 
                         // dismiss the dialog
                         dialog.dismiss();

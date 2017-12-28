@@ -1,4 +1,4 @@
-package chat21.android.user.service;
+package chat21.android.instanceid.service;
 
 import android.util.Log;
 
@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
-import chat21.android.core.ChatAuthentication;
+import chat21.android.core.authentication.ChatAuthentication;
 import chat21.android.utils.ChatUtils;
 import chat21.android.utils.StringUtils;
 

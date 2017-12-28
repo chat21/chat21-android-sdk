@@ -6,6 +6,8 @@ import com.google.firebase.database.ServerValue;
 import java.io.Serializable;
 import java.util.Map;
 
+import chat21.android.core.messages.models.Message;
+
 /**
  * Created by stefano on 06/10/2015.
  */
@@ -17,10 +19,6 @@ public class Conversation implements Serializable {
     public static final int CONVERSATION_STATUS_JUST_CREATED = 1;
     // la conversazione contiene l'ultimo messaggio inviato
     public static final int CONVERSATION_STATUS_LAST_MESSAGE = 2;
-
-
-    public static final int DIRECT_CHANNEL_TYPE = 1;
-    public static final int GROUP_CHANNEL_TYPE = 2;
 
     @Exclude
     private String conversationId;
@@ -40,7 +38,7 @@ public class Conversation implements Serializable {
     private Long timestamp;
     private Map<String, Object> extras;
 
-    private int channelType;
+    private String channelType;
 
     public Conversation() {
     }
@@ -152,21 +150,31 @@ public class Conversation implements Serializable {
         this.extras = extras;
     }
 
-    public int getChannelType() {
+    public String getChannelType() {
         return channelType;
     }
 
-    public void setChannelType(int channelType) {
+    public void setChannelType(String channelType) {
         this.channelType = channelType;
     }
 
     public boolean isGroupChannel() {
-        if (this.channelType == GROUP_CHANNEL_TYPE) {
+        if (this.channelType!=null && this.channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
             return true;
         } else {
             return false;
         }
     }
+
+    @Exclude
+    public boolean isDirectChannel() {
+        if (this.channelType==null || this.channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     @Override
     public boolean equals(Object object) {

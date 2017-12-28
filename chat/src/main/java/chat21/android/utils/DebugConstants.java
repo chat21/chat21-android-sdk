@@ -5,11 +5,12 @@ package chat21.android.utils;
  */
 
 public class DebugConstants {
-    public static final String DEBUG_LOGIN = "DEBUG_LOGIN";
-    public static final String DEBUG_SESSION = "DEBUG_SESSION";
+    public static final String DEBUG_CORE = "CHAT21_D_CORE";
+    public static final String DEBUG_LOGIN = "CHAT21_D_LOGIN";
+    public static final String DEBUG_SESSION = "CHAT21_DEBUG_SESSION";
 
 
-    public static final String DEBUG_NODE_GROUPS = "DEBUG_NODE_GROUPS";
-    public static final String DEBUG_USER_PRESENCE = "DEBUG_USER_PRESENCE";
-    public static final String DEBUG_MY_PRESENCE = "DEBUG_MY_PRESENCE";
+    public static final String DEBUG_NODE_GROUPS = "CHAT21_D_NODE_GROUPS";
+    public static final String DEBUG_USER_PRESENCE = "CHAT21_D_USER_PRESENCE";
+    public static final String DEBUG_MY_PRESENCE = "CHAT21_D_MY_PRESENCE";
 }

@@ -152,7 +152,7 @@ public class ImageCompressor {
             }
 
             FileOutputStream out = null;
-            String filename = getFilename(ChatManager.getInstance().getTenant() + "/images/sent");
+            String filename = getFilename(ChatManager.getInstance().getAppId() + "/images/sent");
             try {
                 out = new FileOutputStream(filename);
 

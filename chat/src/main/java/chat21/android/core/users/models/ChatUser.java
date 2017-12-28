@@ -10,8 +10,18 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
     private String email;
     private String id;
     private String profilePictureUrl;
-    private String auth;
+//    private String auth;
 //    private String password;
+
+
+    public ChatUser() {
+
+    }
+
+    public ChatUser(String id, String fullname) {
+        this.id = id;
+        this.fullName = fullname;
+    }
 
     @Override
     public String getFullName() {
@@ -22,16 +32,6 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
     public String getEmail() {
         return email;
     }
-
-//    @Override
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//
-//    @Override
-//    public String getPassword() {
-//        return null;
-//    }
 
     @Override
     public String getId() {
@@ -63,26 +63,7 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
         this.profilePictureUrl = profilePictureUrl;
     }
 
-    @Override
-    public String getAuth() {
-        return auth;
-    }
 
-    @Override
-    public void setAuth(String auth) {
-        this.auth = auth;
-    }
-
-    @Override
-    public String toString() {
-        return "ChatUser{" +
-                "auth='" + auth + '\'' +
-                ", profilePictureUrl='" + profilePictureUrl + '\'' +
-                ", id='" + id + '\'' +
-                ", email='" + email + '\'' +
-                ", fullName='" + fullName + '\'' +
-                '}';
-    }
 
     private static int compare(String x, String y) {
         return x.compareTo(y) < 0 ? -1 : x.compareTo(y) > 0 ? 1 : 0;
@@ -104,5 +85,15 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
         }
 
         return isEqual;
+    }
+
+    @Override
+    public String toString() {
+        return "ChatUser{" +
+                ", id='" + id + '\'' +
+                ", email='" + email + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", profilePictureUrl='" + profilePictureUrl + '\'' +
+                '}';
     }
 }

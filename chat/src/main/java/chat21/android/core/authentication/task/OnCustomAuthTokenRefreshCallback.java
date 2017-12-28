@@ -1,4 +1,4 @@
-package chat21.android.user.task;
+package chat21.android.core.authentication.task;
 
 /**
  * Created by stefanodp91 on 29/05/17.

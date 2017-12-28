@@ -26,9 +26,9 @@ public interface IChatUser extends Serializable {
 
     void setProfilePictureUrl(String profilePictureUrl);
 
-    String getAuth();
-
-    void setAuth(String auth);
+//    String getAuth();
+//
+//    void setAuth(String auth);
 
     @Override
     String toString();

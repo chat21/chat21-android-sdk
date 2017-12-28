@@ -95,7 +95,7 @@ public class PublicProfileActivity extends AppCompatActivity {
 
         // subscribe for convers with user presence changes
         // bugfix Issue #16
-        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(), getUserId(), onPresenceListener);
+        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getAppId(), getUserId(), onPresenceListener);
     }
 
     private void initToolbar() {

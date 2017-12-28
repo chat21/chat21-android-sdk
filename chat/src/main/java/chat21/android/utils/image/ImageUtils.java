@@ -33,7 +33,7 @@ public class ImageUtils {
      */
     public static Drawable changeDrawableColor(Context context, @ColorRes int colorToId,
                                                @DrawableRes int drawableToChangeId) {
-        Log.d(TAG, "changeDrawableColor");
+        Log.v(TAG, "changeDrawableColor");
         int color = context.getResources().getColor(colorToId);
         Drawable drawable = context.getResources().getDrawable(drawableToChangeId);
         drawable.setColorFilter(color, PorterDuff.Mode.MULTIPLY);

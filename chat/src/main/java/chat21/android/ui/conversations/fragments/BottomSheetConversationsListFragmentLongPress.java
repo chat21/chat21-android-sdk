@@ -146,7 +146,7 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
                 ".perfomDeleteConversation: conversationId == " + conversationId);
 
         DatabaseReference nodeConversation = FirebaseDatabase.getInstance().getReference()
-                .child("apps/" + ChatManager.getInstance().getTenant() + "/users/" + mLoggedUser.getId() + "/conversations/" + conversationId);
+                .child("apps/" + ChatManager.getInstance().getAppId() + "/users/" + mLoggedUser.getId() + "/conversations/" + conversationId);
 
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
                 ".perfomDeleteConversation: nodeConversation == " + nodeConversation.toString());

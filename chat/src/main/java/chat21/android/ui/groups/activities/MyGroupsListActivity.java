@@ -162,7 +162,7 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
                 "group == " + group.toString() + ", position == " + position);
 
         DatabaseReference nodeConversation = FirebaseDatabase.getInstance().getReference()
-                .child("apps/" + ChatManager.getInstance().getTenant()
+                .child("apps/" + ChatManager.getInstance().getAppId()
                         + "/users/" + ChatManager.getInstance().getLoggedUser().getId()
                         + "/conversations/" + group.getGroupId());
 
