@@ -219,7 +219,7 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
 
     private void onShowChoiceGroupDialogPositiveClick(Group group) {
         Intent intent = getIntent();
-        intent.putExtra(ChatUI._INTENT_BUNDLE_GROUP, group);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, group);
         setResult(RESULT_OK, intent);
         finish();
     }

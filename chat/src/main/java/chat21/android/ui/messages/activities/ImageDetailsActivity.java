@@ -53,7 +53,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
 
     private Message getMessage() {
         Log.i(TAG, "getMessage");
-        return (Message) getIntent().getExtras().getSerializable(ChatUI._INTENT_EXTRAS_MESSAGE);
+        return (Message) getIntent().getExtras().getSerializable(ChatUI.INTENT_BUNDLE_MESSAGE);
     }
 
     private void registerViews() {

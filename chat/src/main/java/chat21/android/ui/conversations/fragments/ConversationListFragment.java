@@ -31,6 +31,9 @@ import chat21.android.ui.groups.activities.MyGroupsListActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.ChatUtils;
 
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_RECIPIENT_ID;
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CONVERSATION;
+
 /**
  * Created by stefano on 15/10/2016.
  */
@@ -252,7 +255,7 @@ public class ConversationListFragment extends Fragment implements
         conversationsHandler.setConversationRead(conversation.getConversationId());
 
         // start the message list activity of the corresponding conversation
-        startMessageActivity(conversation.getConversationId(), conversation);
+        startMessageActivity(conversation);
 //        } catch (Exception e) {
 //            Log.e(TAG, "cannot start messageActivity. " + e.getMessage());
 //
@@ -272,13 +275,13 @@ public class ConversationListFragment extends Fragment implements
         dialog.show(ft, BottomSheetConversationsListFragmentLongPress.class.getName());
     }
 
-    private void startMessageActivity(String conversationId, Conversation conversation) {
+    private void startMessageActivity(Conversation conversation) {
         Log.d(TAG, "ConversationListFragment.startMessageActivity");
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_CONVERSATION, conversation);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
+        intent.putExtra(INTENT_BUNDLE_CONVERSATION, conversation);
+        intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversation.getConversationId());
+//        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }
 }

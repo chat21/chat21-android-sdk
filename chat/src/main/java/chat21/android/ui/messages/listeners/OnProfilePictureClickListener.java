@@ -9,8 +9,11 @@ import android.view.View;
 import com.google.firebase.crash.FirebaseCrash;
 
 import chat21.android.R;
-import chat21.android.ui.ChatUI;
 import chat21.android.utils.StringUtils;
+
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CALLING_ACTIVITY;
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME;
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_RECIPIENT_ID;
 
 /**
  * Created by frontiere21 on 03/10/16.
@@ -37,9 +40,9 @@ public class OnProfilePictureClickListener implements View.OnClickListener {
             if (targetClass != null && StringUtils.isValid(contactId)) {
                 Intent intent = new Intent(context, targetClass);
 
-                intent.putExtra(ChatUI.INTENT_BUNDLE_CONTACT_ID, contactId);
-                intent.putExtra(ChatUI.INTENT_BUNDLE_CONTACT_DISPLAY_NAME, mContactDisplayName);
-                intent.putExtra(ChatUI.INTENT_BUNDLE_CALLING_ACTIVITY, targetClass);
+                intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, contactId);
+                intent.putExtra(INTENT_BUNDLE_CONTACT_FULL_NAME, mContactDisplayName);
+                intent.putExtra(INTENT_BUNDLE_CALLING_ACTIVITY, targetClass);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // start activity from context
                 context.startActivity(intent);
             } else {

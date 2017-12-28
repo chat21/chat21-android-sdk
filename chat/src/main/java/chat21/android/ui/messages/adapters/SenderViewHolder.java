@@ -149,7 +149,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
     private void startImagePreviewActivity(Message message) {
         Intent intent = new Intent(itemView.getContext(), ImageDetailsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(ChatUI._INTENT_EXTRAS_MESSAGE, message);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_MESSAGE, message);
         itemView.getContext().startActivity(intent);
     }
 

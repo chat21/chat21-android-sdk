@@ -336,10 +336,10 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
             final Intent intent = new Intent(this, targetClass);
 
             if (mGroup != null) {
-                intent.putExtra(ChatUI._INTENT_BUNDLE_GROUP, mGroup);
-                intent.putExtra(ChatUI._INTENT_EXTRAS_PARENT_ACTIVITY,
+                intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, mGroup);
+                intent.putExtra(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY,
                         GroupAdminPanelActivity.class.getName());
-                intent.putExtra(ChatUI._INTENT_EXTRAS_GROUP_ID, getGroupId());
+                intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP_ID, getGroupId());
 //                startActivityForResult(intent, Chat.INTENT_ADD_MEMBERS_ACTIVITY);
                 startActivity(intent);
             } else {
@@ -348,10 +348,10 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
                             @Override
                             public void onGroupChanged(Group group, String groupId) {
                                 mGroup = group;
-                                intent.putExtra(ChatUI._INTENT_BUNDLE_GROUP, group);
-                                intent.putExtra(ChatUI._INTENT_EXTRAS_PARENT_ACTIVITY,
+                                intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, group);
+                                intent.putExtra(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY,
                                         GroupAdminPanelActivity.class.getName());
-                                intent.putExtra(ChatUI._INTENT_EXTRAS_GROUP_ID, groupId);
+                                intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP_ID, groupId);
 //                                startActivityForResult(intent, Chat.INTENT_ADD_MEMBERS_ACTIVITY);
                                 startActivity(intent);
                             }

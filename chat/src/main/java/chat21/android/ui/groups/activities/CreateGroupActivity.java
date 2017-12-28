@@ -212,8 +212,8 @@ public class CreateGroupActivity extends AppCompatActivity {
             // targetClass MUST NOT BE NULL
             Class<?> targetClass = Class.forName(getString(R.string.target_add_members_activity_class));
             Intent intent = new Intent(this, targetClass);
-            intent.putExtra(ChatUI._INTENT_BUNDLE_GROUP, group);
-            intent.putExtra(ChatUI._INTENT_EXTRAS_PARENT_ACTIVITY,
+            intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, group);
+            intent.putExtra(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY,
                     CreateGroupActivity.class.getName());
             startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
         } catch (ClassNotFoundException e) {

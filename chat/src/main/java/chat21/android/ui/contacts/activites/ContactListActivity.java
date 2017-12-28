@@ -213,8 +213,6 @@ public class ContactListActivity extends AppCompatActivity
             ChatUI.getInstance().getOnContactClickListener().onContactClicked(contact, position);
         }
 
-        String conversationId = contact.getId();
-
         // TODO: 27/12/17 check
         Conversation conversation = new Conversation();
         conversation.setSender(ChatManager.getInstance().getLoggedUser().getId());
@@ -225,16 +223,19 @@ public class ContactListActivity extends AppCompatActivity
         conversation.setRecipientFullName(contact.getFullName());
         conversation.setChannelType(Message.DIRECT_CHANNEL_TYPE);
 
+        String conversationId = contact.getId();
+
         // start the conversation activity
-        startMessageListActivity(conversationId, conversation);
+        startMessageListActivity(conversationId, conversation, contact.getFullName());
     }
 
-    private void startMessageListActivity(String conversationId, Conversation conversation) {
+    private void startMessageListActivity(String conversationId, Conversation conversation, String contactFullName) {
         Log.d(TAG, "startMessageListActivity");
 
         Intent intent = new Intent(this, MessageListActivity.class);
         intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
         intent.putExtra(ChatUI.INTENT_BUNDLE_CONVERSATION, conversation);
+//        intent.putExtra(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME, contactFullName);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
 
         // put this flag to start activity without an activity (using context instead of activity)

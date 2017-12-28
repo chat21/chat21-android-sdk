@@ -27,7 +27,23 @@ public class ChatUI implements Serializable {
     public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
     public static final String INTENT_BUNDLE_CONVERSATION = "INTENT_BUNDLE_CONVERSATION";
     public static final String INTENT_BUNDLE_RECIPIENT_ID = "INTENT_BUNDLE_RECIPIENT_ID";
+    public static final String INTENT_BUNDLE_CONTACT_FULL_NAME = "INTENT_BUNDLE_CONTACT_FULL_NAME";
+    // target class to be called in listeners (such as OnProfileClickListener)
+    public static final String INTENT_BUNDLE_CALLING_ACTIVITY = "INTENT_BUNDLE_CALLING_ACTIVITY";
+    public static final String INTENT_BUNDLE_MESSAGE = "INTENT_BUNDLE_MESSAGE";
+    public static final String INTENT_BUNDLE_GROUP = "INTENT_BUNDLE_GROUP";
+    public static final String INTENT_BUNDLE_GROUP_ID = "INTENT_BUNDLE_GROUP_ID";
+    public static final String INTENT_BUNDLE_PARENT_ACTIVITY = "INTENT_BUNDLE_PARENT_ACTIVITY";
 
+    // request constants
+    public static final int _REQUEST_CODE_CREATE_GROUP = 100;
+    public static final int _REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY = 200;
+
+    // public static final String _INTENT_BUNDLE_CONVERSATION_ID = "_INTENT_BUNDLE_CONVERSATION_ID";
+    // public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
+    // public static final String INTENT_BUNDLE_EXTRAS = "INTENT_BUNDLE_EXTRAS";
+    // public static final String INTENT_BUNDLE_CONTACT_ID = "username"; // FIXME: 17/10/16 NOT EDIT
+    // public static final String _INTENT_BUNDLE_CONTACT = "_INTENT_BUNDLE_CONTACT";
 
     // singleton
     // source : https://android.jlelse.eu/how-to-make-the-perfect-singleton-de6b951dfdb0
@@ -64,37 +80,6 @@ public class ChatUI implements Serializable {
     private OnMessageClickListener onMessageClickListener;
     private OnAttachDocumentsClickListener onAttachDocumentsClickListener;
     private OnContactClickListener onContactClickListener;
-
-
-    // contact
-    public static final String INTENT_BUNDLE_CONTACT_ID = "username"; // FIXME: 17/10/16 NOT EDIT
-    public static final String _INTENT_BUNDLE_CONTACT = "_INTENT_BUNDLE_CONTACT";
-    public static final String INTENT_BUNDLE_CONTACT_DISPLAY_NAME = "INTENT_BUNDLE_CONTACT_DISPLAY_NAME";
-
-    // target class to be called in listeners (such as OnProfileClickListener)
-    public static final String INTENT_BUNDLE_CALLING_ACTIVITY = "INTENT_BUNDLE_CALLING_ACTIVITY";
-
-    // conversation object
-//    public static final String _INTENT_BUNDLE_CONVERSATION_ID = "_INTENT_BUNDLE_CONVERSATION_ID";
-//
-//    public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
-
-    // message object
-    public static final String _INTENT_EXTRAS_MESSAGE = "_INTENT_EXTRAS_MESSAGE";
-
-    // extras
-    public static final String INTENT_BUNDLE_EXTRAS = "INTENT_BUNDLE_EXTRAS";
-
-    // group conversation object
-    public static final String _INTENT_BUNDLE_GROUP = "_INTENT_BUNDLE_GROUP";
-    public static final String _INTENT_EXTRAS_GROUP_ID = "_INTENT_EXTRAS_GROUP_ID";
-
-    public static final String _INTENT_EXTRAS_PARENT_ACTIVITY = "_INTENT_EXTRAS_PARENT_ACTIVITY";
-
-
-    // request constants
-    public static final int _REQUEST_CODE_CREATE_GROUP = 100;
-    public static final int _REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY = 200;
 
 
     public OnMessageClickListener getOnMessageClickListener() {
@@ -154,7 +139,7 @@ public class ChatUI implements Serializable {
 
         // launch the chat
         Intent intent = new Intent(mContext, MessageListActivity.class);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, recipientId);
+        intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, recipientId);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         // extras to be sent in messages or in the conversation
 //        intent.putExtra(Chat.INTENT_BUNDLE_EXTRAS, (Serializable) mConfiguration.getExtras());

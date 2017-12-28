@@ -653,19 +653,19 @@ public class AddMembersActivity extends AppCompatActivity implements
 
         return (Group) getIntent()
                 .getExtras()
-                .getSerializable(ChatUI._INTENT_BUNDLE_GROUP);
+                .getSerializable(ChatUI.INTENT_BUNDLE_GROUP);
     }
 
     private String getGroupId() {
         return getIntent()
                 .getExtras()
-                .getString(ChatUI._INTENT_EXTRAS_GROUP_ID);
+                .getString(ChatUI.INTENT_BUNDLE_GROUP_ID);
     }
 
     private String getParentActivity() {
         return getIntent()
                 .getExtras()
-                .getString(ChatUI._INTENT_EXTRAS_PARENT_ACTIVITY);
+                .getString(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY);
     }
 
     private void uploadGroup(String appId, String groupId, final Group group) {
@@ -843,7 +843,7 @@ public class AddMembersActivity extends AppCompatActivity implements
 
         Intent callingIntent = getIntent();
         if (callingIntent != null) {
-            callingIntent.putExtra(ChatUI._INTENT_EXTRAS_GROUP_ID, groupId);
+            callingIntent.putExtra(ChatUI.INTENT_BUNDLE_GROUP_ID, groupId);
             setResult(RESULT_OK, callingIntent);
         } else {
             setResult(RESULT_CANCELED);

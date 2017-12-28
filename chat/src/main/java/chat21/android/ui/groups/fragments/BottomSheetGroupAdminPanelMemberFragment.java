@@ -24,6 +24,8 @@ import chat21.android.groups.utils.GroupUtils;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.messages.activities.MessageListActivity;
 
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_RECIPIENT_ID;
+
 /**
  * Created by frontiere21 on 25/11/16.
  */
@@ -227,7 +229,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
         Log.d(TAG, "startMessageActivity");
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
+        intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversationId);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }

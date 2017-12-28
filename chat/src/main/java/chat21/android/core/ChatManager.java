@@ -92,7 +92,7 @@ public class ChatManager {
         Log.v(DEBUG_SESSION, "ChatManager.getloggedUser");
         // retrieve from disk
 //        if (loggedUser!=null) {
-            return  loggedUser;
+        return loggedUser;
 //        }else {
 //            loggedUser = (IChatUser) IOUtils.getObjectFromFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
 //            return loggedUser;
@@ -157,6 +157,9 @@ public class ChatManager {
 
 
     public void stop() {
+
+        this.conversationsHandler.disconnect();
+
         for (Map.Entry<String, ConversationMessagesHandler> entry : conversationMessagesHandlerMap.entrySet()) {
 
             String recipientId = entry.getKey();
@@ -223,15 +226,15 @@ public class ChatManager {
 
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " created.");
 
-            return  messageHandler;
+            return messageHandler;
         }
     }
 
     public ConversationsHandler getConversationsHandler() {
-        if (conversationsHandler != null) {
-            return conversationsHandler;
+        if (this.conversationsHandler != null) {
+            return this.conversationsHandler;
         } else {
-            conversationsHandler =
+            this.conversationsHandler =
                     new ConversationsHandler(Configuration.firebaseUrl, this.getAppId(), this.getLoggedUser().getId());
             return conversationsHandler;
         }
@@ -249,10 +252,19 @@ public class ChatManager {
 
     public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 
-        Log.d(TAG, "sending text message to recipientId : " + recipient_id + " with text : "+ text + " and customAttributes : "+ customAttributes );
+        Log.d(TAG, "sending text message to recipientId : " + recipient_id + " with text : " + text + " and customAttributes : " + customAttributes);
 
         getConversationMessagesHandler(recipient_id).sendMessage(
                 "fullnameDAELIMINAREANDROID",
+                Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
+    }
+
+    public void sendTextMessage(String recipient_id, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
+
+        Log.d(TAG, "sending text message to recipientId : " + recipient_id + " with text : " + text + " and customAttributes : " + customAttributes);
+
+        getConversationMessagesHandler(recipient_id).sendMessage(
+                recipientFullName,
                 Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 

@@ -12,6 +12,8 @@ import chat21.android.core.ChatManager;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.messages.activities.MessageListActivity;
 
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_RECIPIENT_ID;
+
 /**
  * Created by frontiere21 on 08/11/16.
  */
@@ -52,7 +54,7 @@ public class OnSupportContactListClickListener implements View.OnClickListener {
 
 
             Intent intent = new Intent(getContext(), MessageListActivity.class);
-            intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
+            intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversationId);
             intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // start activity from context
             getContext().startActivity(intent);

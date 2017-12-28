@@ -36,6 +36,8 @@ public class ConversationsHandler {
 
     List<ConversationsListener> conversationsListeners;
 
+    ChildEventListener conversationsChildEventListener;
+
     public ConversationsHandler(String firebaseUrl, String appId, String currentUserId) {
         conversationsListeners = new ArrayList<ConversationsListener>();
         conversations = new ArrayList<>(); // conversations in memory
@@ -49,61 +51,61 @@ public class ConversationsHandler {
     }
 
     public ChildEventListener connect() {
-//        final List<ConversationsListener> conversationsListeners = new ArrayList<ConversationsListener>();
-//        conversationsListeners.add(conversationsListener);
 
-        ChildEventListener childEventListener = conversationsNode.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                Log.d(TAG, "ConversationsHandler.connect.onChildAdded");
+        if (this.conversationsChildEventListener==null) {
 
-                try {
-                    Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
+            this.conversationsChildEventListener = conversationsNode.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                    Log.d(TAG, "ConversationsHandler.connect.onChildAdded");
 
-                    // it sets the conversation as read if the person whom are talking to is the current user
-                    if (currentUserId.equals(conversation.getSender())) {
-                        setConversationRead(conversation.getConversationId());
-                    }
+                    try {
+                        Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
 
-                    saveOrUpdateConversationInMemory(conversation);
-                    sortConversationsInMemory();
+                        // it sets the conversation as read if the person whom are talking to is the current user
+                        if (currentUserId.equals(conversation.getSender())) {
+                            setConversationRead(conversation.getConversationId());
+                        }
 
-                    for (ConversationsListener conversationsListener : conversationsListeners) {
-                        conversationsListener.onConversationAdded(conversation, null);
-                    }
+                        saveOrUpdateConversationInMemory(conversation);
+                        sortConversationsInMemory();
 
-                } catch (Exception e) {
-                    for (ConversationsListener conversationsListener : conversationsListeners) {
-                        conversationsListener.onConversationAdded(null, new ChatRuntimeException(e));
-                    }
-                }
-            }
+                        for (ConversationsListener conversationsListener : conversationsListeners) {
+                            conversationsListener.onConversationAdded(conversation, null);
+                        }
 
-            //for return receipt
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
-                Log.d(TAG, "observeMessages.onChildChanged");
-
-                try {
-                    Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
-
-                    saveOrUpdateConversationInMemory(conversation);
-                    sortConversationsInMemory();
-
-                    for (ConversationsListener conversationsListener : conversationsListeners) {
-                        conversationsListener.onConversationChanged(conversation, null);
-                    }
-
-                } catch (Exception e) {
-                    for (ConversationsListener conversationsListener : conversationsListeners) {
-                        conversationsListener.onConversationChanged(null, new ChatRuntimeException(e));
+                    } catch (Exception e) {
+                        for (ConversationsListener conversationsListener : conversationsListeners) {
+                            conversationsListener.onConversationAdded(null, new ChatRuntimeException(e));
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "observeMessages.onChildRemoved");
+                //for return receipt
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
+                    Log.d(TAG, "observeMessages.onChildChanged");
+
+                    try {
+                        Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
+
+                        saveOrUpdateConversationInMemory(conversation);
+                        sortConversationsInMemory();
+
+                        for (ConversationsListener conversationsListener : conversationsListeners) {
+                            conversationsListener.onConversationChanged(conversation, null);
+                        }
+
+                    } catch (Exception e) {
+                        for (ConversationsListener conversationsListener : conversationsListeners) {
+                            conversationsListener.onConversationChanged(null, new ChatRuntimeException(e));
+                        }
+                    }
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    Log.d(TAG, "observeMessages.onChildRemoved");
 
 //                Log.d(TAG, "observeMessages.onChildRemoved: dataSnapshot == " + dataSnapshot.toString());
 
@@ -122,51 +124,29 @@ public class ConversationsHandler {
 //                        conversationsListener.onConversationRemoved(new ChatRuntimeException(e));
 //                    }
 //                }
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
 //                Log.d(TAG, "observeMessages.onChildMoved");
-            }
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 //                Log.d(TAG, "observeMessages.onCancelled");
 
-            }
-        });
+                }
+            });
+        }else {
+            Log.i(TAG, "already connected : " );
+        }
 
-        return childEventListener;
+        return conversationsChildEventListener;
     }
 
     public List<Conversation> getConversations() {
         sortConversationsInMemory(); // ensure to return a sorted list
         return conversations;
-    }
-
-    public List<ConversationsListener> getConversationsListener() {
-        return conversationsListeners;
-    }
-
-//    public void setConversationsListener(List<ConversationsListener> conversationsListeners) {
-//        this.conversationsListeners = conversationsListeners;
-//    }
-
-    public void addConversationsListener(ConversationsListener conversationsListener) {
-        this.conversationsListeners.add(conversationsListener);
-    }
-
-    public void removeConversationsListener(ConversationsListener conversationsListener) {
-        this.conversationsListeners.remove(conversationsListener);
-    }
-
-    public void upsertConversationsListener(ConversationsListener conversationsListener) {
-        if (conversations.contains(conversationsListener)) {
-            this.removeConversationsListener(conversationsListener);
-            this.addConversationsListener(conversationsListener);
-        } else {
-            this.addConversationsListener(conversationsListener);
-        }
     }
 
     // it checks if the conversation already exists.
@@ -346,6 +326,67 @@ public class ConversationsHandler {
             }
         });
     }
+
+
+    public List<ConversationsListener> getConversationsListener() {
+        return conversationsListeners;
+    }
+
+//    public void setConversationsListener(List<ConversationsListener> conversationsListeners) {
+//        this.conversationsListeners = conversationsListeners;
+//    }
+
+    public void addConversationsListener(ConversationsListener conversationsListener) {
+        Log.v(TAG, "  addConversationsListener called");
+
+        this.conversationsListeners.add(conversationsListener);
+
+        Log.i(TAG, "  conversationsListener with hashCode: "+ conversationsListener.hashCode() + " added");
+
+    }
+
+    public void removeConversationsListener(ConversationsListener conversationsListener) {
+        Log.v(TAG, "  removeConversationsListener called");
+
+        this.conversationsListeners.remove(conversationsListener);
+
+        Log.i(TAG, "  conversationsListener with hashCode: "+ conversationsListener.hashCode() + " removed");
+
+    }
+
+    public void upsertConversationsListener(ConversationsListener conversationsListener) {
+        Log.v(TAG, "  upsertConversationsListener called");
+
+        if (conversations.contains(conversationsListener)) {
+            this.removeConversationsListener(conversationsListener);
+            this.addConversationsListener(conversationsListener);
+            Log.i(TAG, "  conversationsListener with hashCode: "+ conversationsListener.hashCode() + " updated");
+
+        } else {
+            this.addConversationsListener(conversationsListener);
+            Log.i(TAG, "  conversationsListener with hashCode: "+ conversationsListener.hashCode() + " added");
+
+        }
+    }
+
+    public void removeAllConversationsListeners() {
+        this.conversationsListeners = null;
+        Log.i(TAG, "Removed all ConversationsListeners");
+
+    }
+
+
+
+
+    public ChildEventListener getConversationsChildEventListener() {
+        return conversationsChildEventListener;
+    }
+
+    public void disconnect() {
+        this.conversationsNode.removeEventListener(this.conversationsChildEventListener);
+        this.removeAllConversationsListeners();
+    }
+
 
 //    public void deleteConversation(String recipientId, final ConversationsListener conversationsListener) {
 //        DatabaseReference.CompletionListener onConversationRemoved

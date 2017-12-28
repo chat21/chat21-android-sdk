@@ -99,13 +99,13 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     }
 
     private void setRecipientPicture(ViewHolder holder, Conversation conversation, String pictureUrl) {
-        if (conversation.getChannelType() == Message.DIRECT_CHANNEL_TYPE) {
+        if (conversation.isDirectChannel()) {
             Glide.with(holder.itemView.getContext())
                     .load(pictureUrl)
                     .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);
-        } else if (conversation.getChannelType() == Message.GROUP_CHANNEL_TYPE) {
+        } else if (conversation.isGroupChannel()) {
             Glide.with(holder.itemView.getContext())
                     .load(pictureUrl)
                     .placeholder(R.drawable.ic_group_avatar)

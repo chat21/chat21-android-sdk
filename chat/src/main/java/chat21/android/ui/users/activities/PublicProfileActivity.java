@@ -106,7 +106,7 @@ public class PublicProfileActivity extends AppCompatActivity {
     private String getUserId() {
         Log.d(TAG, "getUserId");
 
-        String userId = getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_ID);
+        String userId = getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_RECIPIENT_ID);
         Log.d(TAG, "userId: " + userId);
         return userId;
     }
@@ -116,9 +116,9 @@ public class PublicProfileActivity extends AppCompatActivity {
 
         String displayName = "";
         if (getIntent().getExtras() != null) {
-            if (StringUtils.isValid(getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_DISPLAY_NAME))) {
-                displayName = StringUtils.isValid(getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_DISPLAY_NAME)) ?
-                        getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_DISPLAY_NAME) :
+            if (StringUtils.isValid(getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME))) {
+                displayName = StringUtils.isValid(getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME)) ?
+                        getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME) :
                         getUserId();
             }
         }
