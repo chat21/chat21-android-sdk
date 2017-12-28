@@ -20,12 +20,12 @@ import java.util.Date;
 
 import chat21.android.R;
 import chat21.android.core.messages.models.Message;
+import chat21.android.ui.ChatUI;
 import chat21.android.ui.messages.activities.ImageDetailsActivity;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
-import chat21.android.utils.views.TextViewLinkHandler;
-import chat21.android.ui.ChatUI;
-import chat21.android.utils.image.ImageUtils;
 import chat21.android.utils.TimeUtils;
+import chat21.android.utils.image.ImageUtils;
+import chat21.android.utils.views.TextViewLinkHandler;
 
 /**
  * Created by stefano on 25/11/2016.

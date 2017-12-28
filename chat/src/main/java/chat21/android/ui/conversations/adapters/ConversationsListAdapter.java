@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.vanniktech.emoji.EmojiTextView;
 
 import java.util.Collections;
@@ -18,11 +20,13 @@ import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.conversations.models.Conversation;
+import chat21.android.core.messages.models.Message;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
+import chat21.android.utils.image.CropCircleTransformation;
 
 /**
  * Created by stefanodp91 on 18/12/17.
@@ -80,8 +84,8 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     public void onBindViewHolder(ConversationsListAdapter.ViewHolder holder, final int position) {
         final Conversation conversation = getItem(position);
 
-        // TODO: 19/12/17
-        setRecipientPicture(holder, "");
+        // TODO: 19/12/17 retrieve the pictrure url from the recipient
+        setRecipientPicture(holder, conversation, "");
 
         setRecipientDisplayName(holder, conversation.getConvers_with_fullname(), conversation.getConvers_with());
 
@@ -94,9 +98,22 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
         setConversationLongCLickAction(holder, conversation, position);
     }
 
-    private void setRecipientPicture(ViewHolder holder, String pictureUrl) {
-        // TODO: 18/12/17 profile picture - check if the conversWith is a group or a person
-        // TODO: 19/12/17
+    private void setRecipientPicture(ViewHolder holder, Conversation conversation, String pictureUrl) {
+        if (conversation.isGroupChannel()) {
+            Glide.with(holder.itemView.getContext())
+                    .load(pictureUrl)
+                    .placeholder(R.drawable.ic_person_avatar)
+                    .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
+                    .into(holder.recipientPicture);
+        } else if (conversation.isDirectChannel()) {
+            Glide.with(holder.itemView.getContext())
+                    .load(pictureUrl)
+                    .placeholder(R.drawable.ic_group_avatar)
+                    .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
+                    .into(holder.recipientPicture);
+        } else {
+            Toast.makeText(holder.itemView.getContext(), "channel type is undefined", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // set the recipient display name whom are talking with
