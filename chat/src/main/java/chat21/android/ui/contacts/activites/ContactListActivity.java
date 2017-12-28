@@ -25,6 +25,7 @@ import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
+import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
@@ -222,7 +223,7 @@ public class ContactListActivity extends AppCompatActivity
         conversation.setConvers_with_fullname(contact.getFullName());
         conversation.setRecipient(contact.getId());
         conversation.setRecipientFullName(contact.getFullName());
-        conversation.setChannelType(Conversation.DIRECT_CHANNEL_TYPE);
+        conversation.setChannelType(Message.DIRECT_CHANNEL_TYPE);
 
         // start the conversation activity
         startMessageListActivity(conversationId, conversation);

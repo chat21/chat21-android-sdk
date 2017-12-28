@@ -20,6 +20,7 @@ import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.conversations.models.Conversation;
+import chat21.android.core.messages.models.Message;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
@@ -98,13 +99,13 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     }
 
     private void setRecipientPicture(ViewHolder holder, Conversation conversation, String pictureUrl) {
-        if (conversation.getChannelType() == Conversation.DIRECT_CHANNEL_TYPE) {
+        if (conversation.getChannelType() == Message.DIRECT_CHANNEL_TYPE) {
             Glide.with(holder.itemView.getContext())
                     .load(pictureUrl)
                     .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);
-        } else if (conversation.getChannelType() == Conversation.GROUP_CHANNEL_TYPE) {
+        } else if (conversation.getChannelType() == Message.GROUP_CHANNEL_TYPE) {
             Glide.with(holder.itemView.getContext())
                     .load(pictureUrl)
                     .placeholder(R.drawable.ic_group_avatar)

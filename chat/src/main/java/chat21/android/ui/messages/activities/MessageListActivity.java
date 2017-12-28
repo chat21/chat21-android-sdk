@@ -300,10 +300,10 @@ public class MessageListActivity extends AppCompatActivity implements
         if (conversation != null) {
 
             // bugfix Issue #29
-            if (conversation.getChannelType() == Conversation.GROUP_CHANNEL_TYPE) {
+            if (conversation.getChannelType() == Message.GROUP_CHANNEL_TYPE) {
                 // its a group conversation
                 initGroupToolbar(conversation);
-            } else if (conversation.getChannelType() == Conversation.DIRECT_CHANNEL_TYPE) {
+            } else if (conversation.getChannelType() == Message.DIRECT_CHANNEL_TYPE) {
                 // its a one to one conversation
                 initOneToOneToolbar(conversation);
             } else {
