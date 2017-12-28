@@ -25,6 +25,7 @@ public class ChatUI implements Serializable {
     private static final String TAG = ChatUI.class.getName();
 
     public static final String INTENT_BUNDLE_RECIPIENT_ID = "INTENT_BUNDLE_RECIPIENT_ID";
+    public static final String INTENT_BUNDLE_CONVERSATION = "INTENT_BUNDLE_CONVERSATION";
     public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
 
 

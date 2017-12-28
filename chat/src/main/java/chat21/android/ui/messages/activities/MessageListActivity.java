@@ -75,15 +75,10 @@ import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
  * Created by stefano on 31/08/2015.
  */
 public class MessageListActivity extends AppCompatActivity implements
-        ConversationMessagesListener
-        //OnMessageTreeUpdateListener,
-        //OnConversationRetrievedCallback
-{
-
+        ConversationMessagesListener {
 
     private static final String TAG = MessageListActivity.class.getName();
     private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
-
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
 
@@ -91,14 +86,12 @@ public class MessageListActivity extends AppCompatActivity implements
     private RecyclerView recyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private MessageListAdapter messageListAdapter;
-    //    private Map<String, Object> extras;
     private Toolbar toolbar;
+    private ImageView toolbarRecipientPicture;
 
     private TextView mTitleTextView;
     private TextView mSubTitleTextView;
     private RelativeLayout mNoMessageLayout;
-
-//    private List<Message> messageList = new ArrayList<>();
 
     private boolean isGroupConversation;
 
@@ -110,11 +103,7 @@ public class MessageListActivity extends AppCompatActivity implements
     // check if this activity is called from a foreground notification
     private boolean isFromForegroundNotification = false;
 
-
     private Conversation conversation;
-
-//    private boolean isNodeObserved = false;
-//    private boolean areViewsInit = false;
 
     private EmojiPopup emojiPopup;
     private EmojiEditText editText;
@@ -131,30 +120,17 @@ public class MessageListActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // FIXME: 24/11/17
-//        // check if Configuration.Context is null.
-//        // if yes set the current ApplicationContext
-//        if (Chat.Configuration.getContext() == null) {
-//            Chat.Configuration.setContext(getApplicationContext());
-//
-//            EmojiManager.install(new IosEmojiProvider());
-//        }
-
         setContentView(R.layout.activity_message_list);
 
         registerViews();
 
-
-//        // retrieve custom extras, if they exist
-//        extras = getExtras();
+        conversation = (Conversation) getIntent().getExtras().get(ChatUI.INTENT_BUNDLE_CONVERSATION);
 
         // retrieve the conversationId
         recipientId = getRecipientId();
 
         conversationMessagesHandler = ChatManager.getInstance().getConversationMessagesHandler(recipientId);
-
         conversationMessagesHandler.upsertConversationMessagesListener(this);
-
         conversationMessagesHandler.connect();
 
         initRecyclerView();
@@ -162,7 +138,7 @@ public class MessageListActivity extends AppCompatActivity implements
         // panel which contains the edittext, the emoji button and the attach button
         initInputPanel();
 
-        initToolbar(null);
+        initToolbar();
 
         // create a conversation object
 //        if (isFromBackgroundNotification) {
@@ -298,13 +274,14 @@ public class MessageListActivity extends AppCompatActivity implements
     private void registerViews() {
         Log.d(TAG, "registerViews");
 
-        recyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbarRecipientPicture = (ImageView) findViewById(R.id.profile_picture);
         mTitleTextView = (TextView) findViewById(R.id.toolbar_title);
         mSubTitleTextView = (TextView) findViewById(R.id.toolbar_subtitle);
 
         mNoMessageLayout = (RelativeLayout) findViewById(R.id.no_messages_layout);
-
+        recyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
 
         editText = (EmojiEditText) findViewById(R.id.main_activity_chat_bottom_message_edittext);
         rootView = (ViewGroup) findViewById(R.id.main_activity_root_view);
@@ -316,20 +293,21 @@ public class MessageListActivity extends AppCompatActivity implements
     }
 
 
-    private void initToolbar(Conversation conversation) {
+    private void initToolbar() {
         Log.d(TAG, "initToolbar");
 
-        // setup the toolnbar with conversations data
+        // setup the toolbar with conversations data
         if (conversation != null) {
 
             // bugfix Issue #29
-            if (StringUtils.isValid(conversation.getRecipient()) ||
-                    StringUtils.isValid(conversation.getRecipientFullName())) {
+            if (conversation.getChannelType() == Conversation.GROUP_CHANNEL_TYPE) {
                 // its a group conversation
                 initGroupToolbar(conversation);
-            } else {
+            } else if (conversation.getChannelType() == Conversation.DIRECT_CHANNEL_TYPE) {
                 // its a one to one conversation
                 initOneToOneToolbar(conversation);
+            } else {
+                Toast.makeText(this, "channel type is undefined", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -348,7 +326,12 @@ public class MessageListActivity extends AppCompatActivity implements
         mTitleTextView.setText(displayName);
 
         // set profile picture
-        setProfilePicture();
+        // TODO: 27/12/17 retrieve the recipient picture url
+        Glide.with(getApplicationContext())
+                .load("")
+                .placeholder(R.drawable.ic_person_avatar)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                .into(toolbarRecipientPicture);
 
         OnProfilePictureClickListener onProfilePictureClickListener =
                 new OnProfilePictureClickListener(this, conversation.getConvers_with());
@@ -366,7 +349,12 @@ public class MessageListActivity extends AppCompatActivity implements
         displayGroupMembersInSubtitle();
 
         // group picture
-        setGroupPicture();
+        // TODO: 27/12/17 retrieve the recipient picture url
+        Glide.with(getApplicationContext())
+                .load("")
+                .placeholder(R.drawable.ic_group_avatar)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                .into(toolbarRecipientPicture);
 
         // click on the toolbar to show the group information
         if (StringUtils.isValid(conversation.getRecipient())) {
@@ -423,29 +411,6 @@ public class MessageListActivity extends AppCompatActivity implements
         startActivityForResult(intent, ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
     }
 
-    private void setProfilePicture() {
-        Log.d(TAG, "setProfilePicture");
-
-        ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
-
-        Glide.with(getApplicationContext())
-                .load("")
-                .placeholder(R.drawable.ic_person_avatar)
-                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .into(profilePictureToolbar);
-    }
-
-    private void setGroupPicture() {
-        Log.d(TAG, "setProfilePicture");
-
-        ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
-
-        Glide.with(getApplicationContext())
-                .load("")
-                .placeholder(R.drawable.ic_group_avatar)
-                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .into(profilePictureToolbar);
-    }
 
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView");
@@ -713,92 +678,6 @@ public class MessageListActivity extends AppCompatActivity implements
         }
     }
 
-//    @Override
-//    public void onTreeChildAdded(DatabaseReference node,
-//                                 DataSnapshot dataSnapshot, Message message) {
-//        Log.d(TAG, "onTreeChildAdded");
-//
-//        try {
-//            updateStatus(message, node, dataSnapshot);
-//        } catch (Exception e) {
-//            Log.e(TAG, "cannot update conversation status. " + e.getMessage());
-//        }
-//
-//        messageListAdapter.insertBottom(message);
-//
-//        // scroll to last position
-//        if (messageListAdapter.getItemCount() > 0) {
-//            int position = messageListAdapter.getItemCount() - 1;
-//            mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
-//        }
-//    }
-
-//    private void updateMessageStatus(Message message, DatabaseReference node,
-//                              DataSnapshot dataSnapshot) throws Exception {
-//        if (StringUtils.isValid(message.getRecipientGroupId())) {
-//            // it is a group conversation
-//            node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//        } else {
-//            // it is a one to one conversations
-//            // udpate status read
-//            if (message.getRecipient().compareTo(ChatManager.getInstance().getLoggedUser().getId()) == 0) {
-//
-//                node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//            } else {
-//                Log.d(TAG, "recipient is not equal to loggedUser");
-//            }
-//        }
-//    }
-
-//    @Override
-//    public void onTreeChildChanged(DatabaseReference node, DataSnapshot
-//            dataSnapshot, Message message) {
-//        Log.d(TAG, "onTreeChildChanged");
-//
-//        if (StringUtils.isValid(message.getRecipientGroupId())) {
-//            // it is a group conversation
-//            node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//        } else {
-//            // it is a one to one conversations
-//            // udpate status read
-//
-//            if (message.getRecipient().compareTo(ChatManager.getInstance().getLoggedUser().getId()) == 0) {
-//                node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//            } else {
-//                Log.d(TAG, "recipient is not equal to loggedUser");
-//            }
-//        }
-//
-//        messageListAdapter.updateMessage(message);
-//
-//        // scroll to last position
-//        if (messageListAdapter.getItemCount() > 0) {
-//            int position = messageListAdapter.getItemCount() - 1;
-//            mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
-//        }
-//    }
-
-
-//    @Override
-//    public void onTreeChildRemoved() {
-//        Log.d(TAG, "onTreeChildRemoved");
-//
-//        // TODO: 19/10/17
-//    }
-
-//    @Override
-//    public void onTreeChildMoved() {
-//        Log.d(TAG, "onTreeChildMoved");
-//
-//        // TODO: 19/10/17
-//    }
-
-//    @Override
-//    public void onTreeCancelled() {
-//        Log.d(TAG, "onTreeCancelled");
-//
-//        // TODO: 19/10/17
-//    }
 
     //    @Override
 //    public void onAttachClicked() {
@@ -866,9 +745,10 @@ public class MessageListActivity extends AppCompatActivity implements
                 toggleTelegramPanelVisibility(); // update the input panel ui
             }
 
-            // bugfix Issue #33
-            if (conversation != null)
-                initToolbar(conversation);
+            // TODO: 27/12/17 update only toolbar members, not re-init the toolbar
+//            // bugfix Issue #33
+//            if (conversation != null)
+//                initToolbar(conversation);
 
             // bugfix Issue #15
         } else if (requestCode == _INTENT_ACTION_GET_PICTURE) {

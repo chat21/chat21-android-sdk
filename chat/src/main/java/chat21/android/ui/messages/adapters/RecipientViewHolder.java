@@ -20,14 +20,14 @@ import com.vanniktech.emoji.EmojiTextView;
 import java.util.Date;
 
 import chat21.android.R;
+import chat21.android.core.messages.models.Message;
+import chat21.android.ui.ChatUI;
 import chat21.android.ui.messages.activities.ImageDetailsActivity;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
-import chat21.android.core.messages.models.Message;
-import chat21.android.utils.views.TextViewLinkHandler;
-import chat21.android.ui.ChatUI;
-import chat21.android.utils.image.ImageUtils;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
+import chat21.android.utils.image.ImageUtils;
+import chat21.android.utils.views.TextViewLinkHandler;
 
 /**
  * Created by stefano on 25/11/2016.
@@ -203,11 +203,11 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
     private void setSenderDisplayName(Message message) {
 
 //        if (StringUtils.isValid(message.getRecipientGroupId())) {
-            mSenderDisplayName.setVisibility(View.VISIBLE);
+        mSenderDisplayName.setVisibility(View.VISIBLE);
 
-            String senderDisplayName = StringUtils.isValid(message.getSender_fullname()) ?
-                    message.getSender_fullname() : message.getSender();
-            mSenderDisplayName.setText(senderDisplayName);
+        String senderDisplayName = StringUtils.isValid(message.getSender_fullname()) ?
+                message.getSender_fullname() : message.getSender();
+        mSenderDisplayName.setText(senderDisplayName);
 //        } else {
 //            mSenderDisplayName.setVisibility(View.GONE);
 //        }

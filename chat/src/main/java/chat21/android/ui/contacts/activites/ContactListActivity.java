@@ -24,6 +24,7 @@ import java.util.List;
 import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
@@ -211,21 +212,28 @@ public class ContactListActivity extends AppCompatActivity
             ChatUI.getInstance().getOnContactClickListener().onContactClicked(contact, position);
         }
 
-        String loggedUserId = ChatManager.getInstance().getLoggedUser().getId();
-        String contactId = contact.getId();
+        String conversationId = contact.getId();
 
-        String conversationId = contactId;
-//        String conversationId = ConversationUtils.getConversationId(loggedUserId, contactId);
+        // TODO: 27/12/17 check
+        Conversation conversation = new Conversation();
+        conversation.setSender(ChatManager.getInstance().getLoggedUser().getId());
+        conversation.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
+        conversation.setConvers_with(contact.getId());
+        conversation.setConvers_with_fullname(contact.getFullName());
+        conversation.setRecipient(contact.getId());
+        conversation.setRecipientFullName(contact.getFullName());
+        conversation.setChannelType(Conversation.DIRECT_CHANNEL_TYPE);
 
         // start the conversation activity
-        startMessageListActivity(conversationId);
+        startMessageListActivity(conversationId, conversation);
     }
 
-    private void startMessageListActivity(String conversationId) {
+    private void startMessageListActivity(String conversationId, Conversation conversation) {
         Log.d(TAG, "startMessageListActivity");
 
         Intent intent = new Intent(this, MessageListActivity.class);
         intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_CONVERSATION, conversation);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
 
         // put this flag to start activity without an activity (using context instead of activity)
