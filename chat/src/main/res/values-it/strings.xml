@@ -81,6 +81,7 @@
     <string name="activity_message_list_group_info_label">tocca qui per info sul gruppo</string>
     <string name="activity_message_list_group_info_you_label">tu</string>
     <string name="activity_message_list_convers_with_presence_online">Online</string>
+    <string name="activity_message_list_convers_with_presence_offline">Offline</string>
     <string name="activity_message_list_progress_dialog_upload">Upload in corso..</string>
     <string name="activity_message_list_progress_dialog_upload_failed">Impossibile completare l\'upload</string>
     <string name="activity_message_list_no_message_error_title_label">Sei stato rimosso dal gruppo</string>

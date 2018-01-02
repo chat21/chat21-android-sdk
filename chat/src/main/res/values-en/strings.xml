@@ -81,6 +81,7 @@
     <string name="activity_message_list_group_info_label">press here to get group info</string>
     <string name="activity_message_list_group_info_you_label">you</string>
     <string name="activity_message_list_convers_with_presence_online">Online</string>
+    <string name="activity_message_list_convers_with_presence_offline">Offline</string>
     <string name="activity_message_list_progress_dialog_upload">Upload in progress..</string>
     <string name="activity_message_list_progress_dialog_upload_failed">Cannot complete the upload</string>
     <string name="activity_message_list_no_message_error_title_label">You have been removed from the group</string>
