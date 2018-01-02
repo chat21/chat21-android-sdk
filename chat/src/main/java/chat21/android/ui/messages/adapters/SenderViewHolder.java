@@ -5,8 +5,12 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.style.ClickableSpan;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -49,7 +53,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         mDate = (TextView) itemView.findViewById(R.id.date);
         mTimestamp = (TextView) itemView.findViewById(R.id.timestamp);
         mPreview = (ImageView) itemView.findViewById(R.id.preview); // Resolve Issue #32
-        mBackgroundBubble = itemView.findViewById(R.id.message_group);
+        mBackgroundBubble = itemView.findViewById(R.id.message_group_content);
         mBoxText = itemView.findViewById(R.id.box_text);
         mMessageStatusSent = (ImageView) itemView.findViewById(R.id.status_sent);
         mMessageStatusReceived = (ImageView) itemView.findViewById(R.id.status_received);
