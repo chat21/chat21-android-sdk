@@ -664,12 +664,7 @@ public class MessageListActivity extends AppCompatActivity implements
             data) {
 
         // comes from admin panel activity
-<<<<<<< HEAD
-
-
         //TODO da ristrutturare con il GroupHandler
-=======
->>>>>>> a1729815d0b3f3b3179b66b8708dc8e1cb5b57a9
         if (requestCode == ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY) {
 
             if (resultCode == RESULT_OK) {
@@ -738,7 +733,6 @@ public class MessageListActivity extends AppCompatActivity implements
 
                 progressDialog.dismiss(); // bugfix Issue #45
 
-<<<<<<< HEAD
 //                if (StringUtils.isValid((conversation.getGroup_id()))) {
 //                    mMessageDAO.sendGroupMessage(downloadUrl.toString(), type,
 //                            conversation);
@@ -750,10 +744,6 @@ public class MessageListActivity extends AppCompatActivity implements
 //                    ChatManager.getInstance().sendMessage(downloadUrl.toString(), type,
 //                            conversation, extras);
 //                }
-=======
-                ChatManager.getInstance().sendTextMessage(conversation.getConvers_with(),
-                        downloadUrl.toString(), null, null);
->>>>>>> a1729815d0b3f3b3179b66b8708dc8e1cb5b57a9
             }
 
             @Override
