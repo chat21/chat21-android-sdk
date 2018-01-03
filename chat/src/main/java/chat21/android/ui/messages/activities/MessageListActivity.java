@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Px;
 import android.support.v4.app.FragmentTransaction;
@@ -79,7 +80,7 @@ public class MessageListActivity extends AppCompatActivity implements
         ConversationMessagesListener {
     private static final String TAG = MessageListActivity.class.getName();
 
-    private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
+//    private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
 
@@ -92,12 +93,12 @@ public class MessageListActivity extends AppCompatActivity implements
     // check if this activity is called from a foreground notification
     private boolean isFromForegroundNotification = false;
 
-
     private RecyclerView recyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private MessageListAdapter messageListAdapter;
     private Toolbar toolbar;
 
+    private ImageView mPictureView;
     private TextView mTitleTextView;
     private TextView mSubTitleTextView;
     private RelativeLayout mNoMessageLayout;
@@ -112,8 +113,6 @@ public class MessageListActivity extends AppCompatActivity implements
 
     // retrieved data
     private Conversation conversation;
-//    private String recipientId;
-//    private String recipientFullName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,11 +124,6 @@ public class MessageListActivity extends AppCompatActivity implements
 
         // retrieve the conversation
         conversation = (Conversation) getIntent().getSerializableExtra(INTENT_BUNDLE_CONVERSATION);
-
-//        // retrieve the conversationId
-//        recipientId = getRecipientId();
-
-//        recipientFullName = getIntent().getStringExtra(INTENT_BUNDLE_CONTACT_FULL_NAME);
 
         conversationMessagesHandler = ChatManager.getInstance()
                 .getConversationMessagesHandler(conversation.getConvers_with());
@@ -220,6 +214,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
         recyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mPictureView = (ImageView) findViewById(R.id.toolbar_picture);
         mTitleTextView = (TextView) findViewById(R.id.toolbar_title);
         mSubTitleTextView = (TextView) findViewById(R.id.toolbar_subtitle);
 
@@ -241,15 +236,16 @@ public class MessageListActivity extends AppCompatActivity implements
         if (conversation != null) {
             if (conversation.isDirectChannel()) {
                 // its a one to one conversation
-                initDirectToolbar(conversation);
+                initDirectToolbar("", conversation.getConvers_with(), conversation.getConvers_with_fullname());
             } else if (conversation.isGroupChannel()) {
                 // its a group conversation
-                initGroupToolbar(conversation);
+                initGroupToolbar("", conversation.getRecipient(), conversation.getRecipientFullName());
             } else {
                 Toast.makeText(this, "channel type is undefined", Toast.LENGTH_SHORT).show();
             }
         }
 
+        // minimal settings
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -260,45 +256,50 @@ public class MessageListActivity extends AppCompatActivity implements
                 userToObserve, onConversWithPresenceListener);
     }
 
-    private void initDirectToolbar(Conversation conversation) {
+    private void initDirectToolbar(String pictureUrl, String conversWith, String conversWithFullName) {
         Log.d(TAG, "initDirectToolbar");
 
-        // set user display name
-        String displayName;
+        // toolbar picture
+        setPicture(pictureUrl, R.drawable.ic_person_avatar);
 
-        // set username
-        String deNormalizedUsername = ChatUtils.deNormalizeUsername(conversation.getConvers_with());
-        displayName = StringUtils.isValid(conversation.getConvers_with_fullname()) ?
-                conversation.getConvers_with_fullname() : deNormalizedUsername;
+        // toolbar recipient display name
+        String deNormalizedUsername = ChatUtils.deNormalizeUsername(conversWith);
+        String recipientDisplayName = StringUtils.isValid(conversWithFullName) ?
+                conversWithFullName : deNormalizedUsername;
+        mTitleTextView.setText(recipientDisplayName);
 
-        // shows the user display name
-        mTitleTextView.setText(displayName);
-
-        // set profile picture
-        setProfilePicture();
-
+        // toolbar click listener
         OnProfilePictureClickListener onProfilePictureClickListener =
-                new OnProfilePictureClickListener(this, conversation.getConvers_with());
-        onProfilePictureClickListener.setContactDisplayName(displayName);
-
-        toolbar.setOnClickListener(onProfilePictureClickListener);
+                new OnProfilePictureClickListener(this, conversWith);
+        onProfilePictureClickListener.setContactDisplayName(conversWithFullName);
+        toolbar.setOnClickListener(onProfilePictureClickListener); // shows user information
     }
 
-    private void initGroupToolbar(Conversation conversation) {
+    private void initGroupToolbar(String pictureUrl, String recipient, String recipientFullName) {
         Log.d(TAG, "initGroupToolbar");
 
-        // group name
-        mTitleTextView.setText(conversation.getRecipientFullName());
+        // toolbar picture
+        setPicture(pictureUrl, R.drawable.ic_group_avatar);
 
+        // toolbar recipient display name
+        String recipientDisplayName = StringUtils.isValid(recipientFullName) ?
+                recipientFullName : recipient;
+        mTitleTextView.setText(recipientDisplayName);
+
+        // toolbar subtitle
         displayGroupMembersInSubtitle();
 
-        // group picture
-        setGroupPicture();
+        // toolbar click listener
+        View.OnClickListener onToolbarClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onToolbarClickListener.onClick");
 
-        // click on the toolbar to show the group information
-        if (StringUtils.isValid(conversation.getRecipient())) {
-            toolbar.setOnClickListener(onToolbarClickListener);
-        }
+                starGroupDetailsActivity();
+            }
+        };
+
+        toolbar.setOnClickListener(onToolbarClickListener); // shows the group information
     }
 
     // bugfix Issue #31
@@ -329,14 +330,17 @@ public class MessageListActivity extends AppCompatActivity implements
                 });
     }
 
-    private View.OnClickListener onToolbarClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.d(TAG, "onToolbarClickListener.onClick");
-
-            starGroupDetailsActivity();
+    private void setPicture(String pictureUrl, @DrawableRes int placeholder) {
+        if (conversation == null) {
+            return;
         }
-    };
+
+        Glide.with(getApplicationContext())
+                .load(pictureUrl)
+                .placeholder(placeholder)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                .into(mPictureView);
+    }
 
     private void starGroupDetailsActivity() {
         Log.d(TAG, "starGroupDetailsActivity");
@@ -350,29 +354,6 @@ public class MessageListActivity extends AppCompatActivity implements
         startActivityForResult(intent, ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
     }
 
-    private void setProfilePicture() {
-        Log.d(TAG, "setProfilePicture");
-
-        ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
-
-        Glide.with(getApplicationContext())
-                .load("")
-                .placeholder(R.drawable.ic_person_avatar)
-                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .into(profilePictureToolbar);
-    }
-
-    private void setGroupPicture() {
-        Log.d(TAG, "setProfilePicture");
-
-        ImageView profilePictureToolbar = (ImageView) findViewById(R.id.profile_picture);
-
-        Glide.with(getApplicationContext())
-                .load("")
-                .placeholder(R.drawable.ic_group_avatar)
-                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .into(profilePictureToolbar);
-    }
 
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView");
