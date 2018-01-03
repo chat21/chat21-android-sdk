@@ -55,7 +55,6 @@ import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.presence.PresenceManger;
 import chat21.android.core.presence.listeners.OnPresenceListener;
-import chat21.android.dao.message.OnDetachObserveMessageTree;
 import chat21.android.groups.utils.GroupUtils;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
@@ -132,7 +131,8 @@ public class MessageListActivity extends AppCompatActivity implements
 
 //        recipientFullName = getIntent().getStringExtra(INTENT_BUNDLE_CONTACT_FULL_NAME);
 
-        conversationMessagesHandler = ChatManager.getInstance().getConversationMessagesHandler(conversation.getConvers_with());
+        conversationMessagesHandler = ChatManager.getInstance()
+                .getConversationMessagesHandler(conversation.getConvers_with());
         conversationMessagesHandler.upsertConversationMessagesListener(this);
         conversationMessagesHandler.connect();
 
@@ -215,66 +215,6 @@ public class MessageListActivity extends AppCompatActivity implements
 //        return recipientId;
 //    }
 
-//    @Override
-//    public void onConversationRetrievedSuccess(Conversation conversation) {
-//        this.conversation = conversation;
-//
-//        if (StringUtils.isValid(conversation.getGroup_id())) {
-//            isGroupConversation = true;
-//        }
-//
-//        // if it is a direct conversation observe the convers_with user presence
-//        if (!isGroupConversation) {
-//            // subscribe for convers_with user presence changes
-//            // bugfix Issue #16
-//            PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
-//                    conversation.getConvers_with(),
-//                    onConversWithPresenceListener);
-//        }
-//
-//        if (!areViewsInit) {
-//            initViews(conversation);
-//            areViewsInit = true;
-//        }
-//
-//        if (!isNodeObserved) {
-//            observeMessages(conversation.getConversationId());
-//            isNodeObserved = true;
-//        }
-//    }
-//
-//    @Override
-//    public void onNewConversationCreated(String conversationId) {
-//
-//        conversation = ConversationUtils.createNewConversation(conversationId);
-//
-//        // subscribe for convers_with user presence changes
-//        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
-//                conversation.getConvers_with(),
-//                onConversWithPresenceListener);
-//
-//        if (!areViewsInit) {
-//            initViews(conversation);
-//            areViewsInit = true;
-//        }
-//
-//        if (!isNodeObserved) {
-//            observeMessages(conversationId);
-//            isNodeObserved = true;
-//        }
-//    }
-//
-//    @Override
-//    public void onConversationRetrievedError(Exception e) {
-//        Log.e(TAG, e.toString());
-//
-//        mEmojiBar.setVisibility(View.GONE); // dismiss the input edittext
-//
-//        // shows a placeholder message layout
-//        mNoMessageLayout.setVisibility(View.VISIBLE);
-//    }
-
-
     private void registerViews() {
         Log.d(TAG, "registerViews");
 
@@ -285,7 +225,6 @@ public class MessageListActivity extends AppCompatActivity implements
 
         mNoMessageLayout = (RelativeLayout) findViewById(R.id.no_messages_layout);
 
-
         editText = (EmojiEditText) findViewById(R.id.main_activity_chat_bottom_message_edittext);
         rootView = (ViewGroup) findViewById(R.id.main_activity_root_view);
         emojiButton = (ImageView) findViewById(R.id.main_activity_emoji);
@@ -294,7 +233,6 @@ public class MessageListActivity extends AppCompatActivity implements
         recyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmojiBar = (LinearLayout) findViewById(R.id.main_activity_emoji_bar);
     }
-
 
     private void initToolbar(Conversation conversation) {
         Log.d(TAG, "initToolbar");
@@ -318,7 +256,8 @@ public class MessageListActivity extends AppCompatActivity implements
 
     private void observeUserPresence() {
         String userToObserve = conversation.getConvers_with();
-        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getAppId(), userToObserve, onConversWithPresenceListener);
+        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getAppId(),
+                userToObserve, onConversWithPresenceListener);
     }
 
     private void initDirectToolbar(Conversation conversation) {
@@ -326,14 +265,12 @@ public class MessageListActivity extends AppCompatActivity implements
 
         // set user display name
         String displayName;
-//        if (StringUtils.isValid(recipientFullName)) {
-//            displayName = recipientFullName;
-//        } else {
+
         // set username
         String deNormalizedUsername = ChatUtils.deNormalizeUsername(conversation.getConvers_with());
         displayName = StringUtils.isValid(conversation.getConvers_with_fullname()) ?
                 conversation.getConvers_with_fullname() : deNormalizedUsername;
-//        }
+
         // shows the user display name
         mTitleTextView.setText(displayName);
 
@@ -550,10 +487,6 @@ public class MessageListActivity extends AppCompatActivity implements
                     return;
                 }
 
-
-//                if (conversation == null)
-//                    return;
-//                String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener){
                 ChatManager.getInstance()
                         .sendTextMessage(conversation.getConvers_with(), conversation.getConvers_with_fullname(), text, null,
                                 new SendMessageListener() {
@@ -635,30 +568,22 @@ public class MessageListActivity extends AppCompatActivity implements
         }
     }
 
-    // callback called when the message listener is removed
-    private OnDetachObserveMessageTree onDetachObserveMessageTree
-            = new OnDetachObserveMessageTree() {
-        @Override
-        public void onDetachedObserveMessageTree() {
-            mEmojiBar.setVisibility(View.GONE); // dismiss the input edittext
-
-            // shows a placeholder message layout
-            mNoMessageLayout.setVisibility(View.VISIBLE);
-
-//            isNodeObserved = false;
-        }
-    };
+//    // callback called when the message listener is removed
+//    private OnDetachObserveMessageTree onDetachObserveMessageTree
+//            = new OnDetachObserveMessageTree() {
+//        @Override
+//        public void onDetachedObserveMessageTree() {
+//            mEmojiBar.setVisibility(View.GONE); // dismiss the input edittext
+//
+//            // shows a placeholder message layout
+//            mNoMessageLayout.setVisibility(View.VISIBLE);
+//        }
+//    };
 
 
     @Override
     public void onConversationMessageReceived(Message message, ChatRuntimeException e) {
         Log.d(TAG, "onConversationMessageReceived");
-
-//        try {
-//            updateMessageStatus(message, node, dataSnapshot);
-//        } catch (Exception e) {
-//            Log.e(TAG, "cannot update conversation status. " + e.getMessage());
-//        }
 
         if (e == null) {
             messageListAdapter.updateMessage(message);
@@ -673,20 +598,6 @@ public class MessageListActivity extends AppCompatActivity implements
 
         Log.d(TAG, "onConversationMessageChanged");
 
-//        if (StringUtils.isValid(message.getRecipientGroupId())) {
-//            // it is a group conversation
-//            node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//        } else {
-//            // it is a one to one conversations
-//            // udpate status read
-//
-//            if (message.getRecipient().compareTo(ChatManager.getInstance().getLoggedUser().getId()) == 0) {
-//                node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//            } else {
-//                Log.d(TAG, "recipient is not equal to loggedUser");
-//            }
-//        }
-
         if (e == null) {
             messageListAdapter.updateMessage(message);
             scrollToBottom();
@@ -694,7 +605,6 @@ public class MessageListActivity extends AppCompatActivity implements
         } else {
             Log.w(TAG, "Error onConversationMessageReceived ", e);
         }
-
     }
 
     private void scrollToBottom() {
@@ -705,103 +615,6 @@ public class MessageListActivity extends AppCompatActivity implements
         }
     }
 
-//    @Override
-//    public void onTreeChildAdded(DatabaseReference node,
-//                                 DataSnapshot dataSnapshot, Message message) {
-//        Log.d(TAG, "onTreeChildAdded");
-//
-//        try {
-//            updateStatus(message, node, dataSnapshot);
-//        } catch (Exception e) {
-//            Log.e(TAG, "cannot update conversation status. " + e.getMessage());
-//        }
-//
-//        messageListAdapter.insertBottom(message);
-//
-//        // scroll to last position
-//        if (messageListAdapter.getItemCount() > 0) {
-//            int position = messageListAdapter.getItemCount() - 1;
-//            mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
-//        }
-//    }
-
-//    private void updateMessageStatus(Message message, DatabaseReference node,
-//                              DataSnapshot dataSnapshot) throws Exception {
-//        if (StringUtils.isValid(message.getRecipientGroupId())) {
-//            // it is a group conversation
-//            node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//        } else {
-//            // it is a one to one conversations
-//            // udpate status read
-//            if (message.getRecipient().compareTo(ChatManager.getInstance().getLoggedUser().getId()) == 0) {
-//
-//                node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//            } else {
-//                Log.d(TAG, "recipient is not equal to loggedUser");
-//            }
-//        }
-//    }
-
-//    @Override
-//    public void onTreeChildChanged(DatabaseReference node, DataSnapshot
-//            dataSnapshot, Message message) {
-//        Log.d(TAG, "onTreeChildChanged");
-//
-//        if (StringUtils.isValid(message.getRecipientGroupId())) {
-//            // it is a group conversation
-//            node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//        } else {
-//            // it is a one to one conversations
-//            // udpate status read
-//
-//            if (message.getRecipient().compareTo(ChatManager.getInstance().getLoggedUser().getId()) == 0) {
-//                node.child(dataSnapshot.getKey()).child("status").setValue(Message.STATUS_READ);
-//            } else {
-//                Log.d(TAG, "recipient is not equal to loggedUser");
-//            }
-//        }
-//
-//        messageListAdapter.updateMessage(message);
-//
-//        // scroll to last position
-//        if (messageListAdapter.getItemCount() > 0) {
-//            int position = messageListAdapter.getItemCount() - 1;
-//            mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
-//        }
-//    }
-
-
-//    @Override
-//    public void onTreeChildRemoved() {
-//        Log.d(TAG, "onTreeChildRemoved");
-//
-//        // TODO: 19/10/17
-//    }
-
-//    @Override
-//    public void onTreeChildMoved() {
-//        Log.d(TAG, "onTreeChildMoved");
-//
-//        // TODO: 19/10/17
-//    }
-
-//    @Override
-//    public void onTreeCancelled() {
-//        Log.d(TAG, "onTreeCancelled");
-//
-//        // TODO: 19/10/17
-//    }
-
-    //    @Override
-//    public void onAttachClicked() {
-//        Log.d(TAG, "MessageListActivity.onAttachClicked");
-//
-//        if (conversation == null)
-//            return;
-//
-//        showAttachBottomSheet(conversation);
-//    }
-//
     private void showAttachBottomSheet(Conversation conversation) {
         Log.d(TAG, "MessageListActivity.onAttachClicked");
 
@@ -851,9 +664,12 @@ public class MessageListActivity extends AppCompatActivity implements
             data) {
 
         // comes from admin panel activity
+<<<<<<< HEAD
 
 
         //TODO da ristrutturare con il GroupHandler
+=======
+>>>>>>> a1729815d0b3f3b3179b66b8708dc8e1cb5b57a9
         if (requestCode == ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY) {
 
             if (resultCode == RESULT_OK) {
@@ -922,6 +738,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
                 progressDialog.dismiss(); // bugfix Issue #45
 
+<<<<<<< HEAD
 //                if (StringUtils.isValid((conversation.getGroup_id()))) {
 //                    mMessageDAO.sendGroupMessage(downloadUrl.toString(), type,
 //                            conversation);
@@ -933,6 +750,10 @@ public class MessageListActivity extends AppCompatActivity implements
 //                    ChatManager.getInstance().sendMessage(downloadUrl.toString(), type,
 //                            conversation, extras);
 //                }
+=======
+                ChatManager.getInstance().sendTextMessage(conversation.getConvers_with(),
+                        downloadUrl.toString(), null, null);
+>>>>>>> a1729815d0b3f3b3179b66b8708dc8e1cb5b57a9
             }
 
             @Override
@@ -977,8 +798,6 @@ public class MessageListActivity extends AppCompatActivity implements
         if (emojiPopup != null && emojiPopup.isShowing()) {
             emojiPopup.dismiss();
         } else {
-//            mMessageDAO.detachObserveMessageTree(onDetachObserveMessageTree);
-
             if (isFromBackgroundNotification || isFromForegroundNotification) {
                 goToParentActivity();
             } else {
@@ -1097,8 +916,7 @@ public class MessageListActivity extends AppCompatActivity implements
                     Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener " +
                             ".onChanged: conversWithLastOnline == " + conversWithLastOnline);
                 } else {
-                    // TODO: 28/12/17 show offline label
-                    mSubTitleTextView.setText("");
+                    mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_offline));
                 }
             }
         }
@@ -1120,5 +938,4 @@ public class MessageListActivity extends AppCompatActivity implements
                     ".onError == " + e.getMessage());
         }
     };
-
 }
