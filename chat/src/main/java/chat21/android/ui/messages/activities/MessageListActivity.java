@@ -532,6 +532,7 @@ public class MessageListActivity extends AppCompatActivity implements
         toggleTelegramPanelVisibility();
     }
 
+    //TODO chiama firebase per i gruppi una soltanto volta all'interno dell'activity
     private void toggleTelegramPanelVisibility() {
         if (conversation != null && conversation.isGroupChannel()) {
             // group conversation
@@ -663,6 +664,7 @@ public class MessageListActivity extends AppCompatActivity implements
             data) {
 
         // comes from admin panel activity
+        //TODO da ristrutturare con il GroupHandler
         if (requestCode == ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY) {
 
             if (resultCode == RESULT_OK) {
@@ -731,8 +733,17 @@ public class MessageListActivity extends AppCompatActivity implements
 
                 progressDialog.dismiss(); // bugfix Issue #45
 
-                ChatManager.getInstance().sendTextMessage(conversation.getConvers_with(),
-                        downloadUrl.toString(), null, null);
+//                if (StringUtils.isValid((conversation.getGroup_id()))) {
+//                    mMessageDAO.sendGroupMessage(downloadUrl.toString(), type,
+//                            conversation);
+//                } else {
+                // update firebase references and send notification
+
+                ChatManager.getInstance().sendImageMessage(conversation.getConvers_with(), conversation.getConvers_with_fullname(), downloadUrl.toString(), null, null);
+
+//                    ChatManager.getInstance().sendMessage(downloadUrl.toString(), type,
+//                            conversation, extras);
+//                }
             }
 
             @Override
