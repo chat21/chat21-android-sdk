@@ -208,19 +208,21 @@ public class CreateGroupActivity extends AppCompatActivity {
     private void startAddMembersActivity(Group group) {
         Log.d(TAG, "startAddMembersActivity");
 
-        try {
+//        try {
             // targetClass MUST NOT BE NULL
-            Class<?> targetClass = Class.forName(getString(R.string.target_add_members_activity_class));
-            Intent intent = new Intent(this, targetClass);
+//            Class<?> targetClass = Class.forName(getString(R.string.target_add_members_activity_class));
+//            Intent intent = new Intent(this, targetClass);
+            Intent intent = new Intent(this, AddMembersActivity.class);
+
             intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, group);
             intent.putExtra(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY,
                     CreateGroupActivity.class.getName());
             startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
-        } catch (ClassNotFoundException e) {
-            String errorMessage = "cannot retrieve the add group activity target class. \n" + e.getMessage();
-            Log.e(TAG, errorMessage);
-            FirebaseCrash.report(new Exception(errorMessage));
-        }
+//        } catch (ClassNotFoundException e) {
+//            String errorMessage = "cannot retrieve the add group activity target class. \n" + e.getMessage();
+//            Log.e(TAG, errorMessage);
+//            FirebaseCrash.report(new Exception(errorMessage));
+//        }
 
 //        Intent intent = new Intent(this, AddMembersActivity.class);
 //        intent.putExtra(Chat.INTENT_BUNDLE_GROUP, group);

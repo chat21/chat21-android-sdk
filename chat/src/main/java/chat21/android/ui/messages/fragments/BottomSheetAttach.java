@@ -29,17 +29,17 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
     private static final String _BOTTOM_SHEET_ATTACH_CONVERSATION =
             "_BOTTOM_SHEET_ATTACH_CONVERSATION";
 
-    private Conversation mConversation;
+//    private Conversation mConversation;
 //    private IChatUser mLoggedUser;
 
     private Button mAttachImagesView;
     private Button mAttachDocumentsView;
 
-    public static BottomSheetAttach newInstance(Conversation conversation) {
+    public static BottomSheetAttach newInstance() {
         BottomSheetAttach f = new BottomSheetAttach();
-        Bundle args = new Bundle();
-        args.putSerializable(_BOTTOM_SHEET_ATTACH_CONVERSATION, conversation);
-        f.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putSerializable(_BOTTOM_SHEET_ATTACH_CONVERSATION, conversation);
+//        f.setArguments(args);
         return f;
     }
 
@@ -47,9 +47,9 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mConversation = (Conversation) getArguments()
-                .getSerializable(_BOTTOM_SHEET_ATTACH_CONVERSATION);
-        Log.d(DEBUG_TAG, "BottomSheetAttach.onCreate: mConversationId == " + mConversation.toString());
+//        mConversation = (Conversation) getArguments()
+//                .getSerializable(_BOTTOM_SHEET_ATTACH_CONVERSATION);
+//        Log.d(DEBUG_TAG, "BottomSheetAttach.onCreate: mConversationId == " + mConversation.toString());
 
 //        mLoggedUser = Chat.Configuration.getLoggedUser();
 //        Log.d(DEBUG_TAG, "BottomSheetAttach.onCreate:  mLoggedUser == " + mLoggedUser.toString());
@@ -115,7 +115,7 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
 
                 ChatUI.getInstance().getOnAttachDocumentsClickListener();
         if (onAttachDocumentsClickListener != null) {
-            onAttachDocumentsClickListener.onAttachDocumentsClicked(mConversation);
+            onAttachDocumentsClickListener.onAttachDocumentsClicked(null);
         }
 
         // dismiss the bottomsheet

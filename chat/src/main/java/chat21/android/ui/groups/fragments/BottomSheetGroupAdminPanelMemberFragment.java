@@ -24,8 +24,6 @@ import chat21.android.groups.utils.GroupUtils;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.messages.activities.MessageListActivity;
 
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_RECIPIENT_ID;
-
 /**
  * Created by frontiere21 on 25/11/16.
  */
@@ -191,7 +189,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
 //            onSeeProfileClickListener();
 //        }
         else if (view.getId() == mBtnSendMessage.getId()) {
-            onSendMessageClickListener();
+//            onSendMessageClickListener();
         } else if (view.getId() == mBtnCancel.getId()) {
             onCancelClickListener();
         } else {
@@ -211,28 +209,28 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
 //        Toast.makeText(getActivity(), "onSeeProfileClickListener", Toast.LENGTH_SHORT).show();
 //    }
 
-    private void onSendMessageClickListener() {
-        Log.d(TAG, "onSendMessageClickListener");
+//    private void onSendMessageClickListener() {
+//        Log.d(TAG, "onSendMessageClickListener");
+//
+//        String conversationId =  username;
+////        String conversationId = ConversationUtils.getConversationId(ChatManager.getInstance()
+////                .getLoggedUser()
+////                .getId(), username);
+//
+//        startMessageActivity(conversationId);
+//
+//        // dismiss the bottomsheet
+//        getDialog().dismiss();
+//    }
 
-        String conversationId =  username;
-//        String conversationId = ConversationUtils.getConversationId(ChatManager.getInstance()
-//                .getLoggedUser()
-//                .getId(), username);
-
-        startMessageActivity(conversationId);
-
-        // dismiss the bottomsheet
-        getDialog().dismiss();
-    }
-
-    private void startMessageActivity(String conversationId) {
-        Log.d(TAG, "startMessageActivity");
-
-        Intent intent = new Intent(getActivity(), MessageListActivity.class);
-        intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversationId);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
-        getActivity().startActivity(intent);
-    }
+//    private void startMessageActivity(String conversationId) {
+//        Log.d(TAG, "startMessageActivity");
+//
+//        Intent intent = new Intent(getActivity(), MessageListActivity.class);
+//        intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversationId);
+//        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
+//        getActivity().startActivity(intent);
+//    }
 
     private void onCancelClickListener() {
         Log.d(TAG, "onCancelClickListener");

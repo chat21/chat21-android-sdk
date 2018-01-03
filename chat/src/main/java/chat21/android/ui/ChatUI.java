@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.io.Serializable;
 
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.ui.conversations.activities.ConversationListActivity;
 import chat21.android.ui.conversations.fragments.ConversationListFragment;
@@ -26,8 +27,8 @@ public class ChatUI implements Serializable {
     private static final String TAG = ChatUI.class.getName();
 
     public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
-    public static final String INTENT_BUNDLE_CONVERSATION = "INTENT_BUNDLE_CONVERSATION";
-    public static final String INTENT_BUNDLE_RECIPIENT_ID = "INTENT_BUNDLE_RECIPIENT_ID";
+//    public static final String INTENT_BUNDLE_CONVERSATION = "INTENT_BUNDLE_CONVERSATION";
+    public static final String INTENT_BUNDLE_RECIPIENT = "INTENT_BUNDLE_RECIPIENT";
     public static final String INTENT_BUNDLE_CONTACT_FULL_NAME = "INTENT_BUNDLE_CONTACT_FULL_NAME";
     // target class to be called in listeners (such as OnProfileClickListener)
     public static final String INTENT_BUNDLE_CALLING_ACTIVITY = "INTENT_BUNDLE_CALLING_ACTIVITY";
@@ -136,7 +137,7 @@ public class ChatUI implements Serializable {
 
     // TODO: 24/11/17 showChatWith(user)
     // TODO: 24/11/17 add extras here
-    public void showDirectConversationActivity(String recipientId) {
+    public void showDirectConversationActivity(IChatUser recipient) {
 
 //        IChatUser iChatUser = ChatManager.getInstance().getLoggedUser();
 //        // generate the conversationId
@@ -144,7 +145,7 @@ public class ChatUI implements Serializable {
 
         // launch the chat
         Intent intent = new Intent(mContext, MessageListActivity.class);
-        intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, recipientId);
+        intent.putExtra(INTENT_BUNDLE_RECIPIENT, recipient);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         // extras to be sent in messages or in the conversation
 //        intent.putExtra(Chat.INTENT_BUNDLE_EXTRAS, (Serializable) mConfiguration.getExtras());

@@ -15,6 +15,7 @@ import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.presence.PresenceManger;
 import chat21.android.core.presence.listeners.OnPresenceListener;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
@@ -30,6 +31,7 @@ import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 public class PublicProfileActivity extends AppCompatActivity {
     private static final String TAG = PublicProfileActivity.class.getName();
 
+    private IChatUser contact;
     private TextView mPresenceTextView;
     private boolean isOnline = false;
     private long mlastOnline = 0;
@@ -87,15 +89,16 @@ public class PublicProfileActivity extends AppCompatActivity {
 
         mPresenceTextView = (TextView) findViewById(R.id.presence);
 
+        contact = (IChatUser) getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT);
         // init user display name
-        initDisplayName(getUserDisplayName());
+        initDisplayName(contact.getFullName());
 
         // init user profile picture
         initProfilePicture();
 
         // subscribe for convers with user presence changes
         // bugfix Issue #16
-        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getAppId(), getUserId(), onPresenceListener);
+        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getAppId(), contact.getId(), onPresenceListener);
     }
 
     private void initToolbar() {
@@ -103,27 +106,27 @@ public class PublicProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private String getUserId() {
-        Log.d(TAG, "getUserId");
-
-        String userId = getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_RECIPIENT_ID);
-        Log.d(TAG, "userId: " + userId);
-        return userId;
-    }
-
-    private String getUserDisplayName() {
-        Log.d(TAG, "getUserDisplayName");
-
-        String displayName = "";
-        if (getIntent().getExtras() != null) {
-            if (StringUtils.isValid(getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME))) {
-                displayName = StringUtils.isValid(getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME)) ?
-                        getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME) :
-                        getUserId();
-            }
-        }
-        return displayName;
-    }
+//    private String getUserId() {
+//        Log.d(TAG, "getUserId");
+//
+//        String userId = getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_RECIPIENT);
+//        Log.d(TAG, "userId: " + userId);
+//        return userId;
+//    }
+//
+//    private String getUserDisplayName() {
+//        Log.d(TAG, "getUserDisplayName");
+//
+//        String displayName = "";
+//        if (getIntent().getExtras() != null) {
+//            if (StringUtils.isValid(getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME))) {
+//                displayName = StringUtils.isValid(getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME)) ?
+//                        getIntent().getExtras().getString(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME) :
+//                        getUserId();
+//            }
+//        }
+//        return displayName;
+//    }
 
     private void initDisplayName(String displayName) {
         Log.d(TAG, "initDisplayName");
@@ -131,7 +134,7 @@ public class PublicProfileActivity extends AppCompatActivity {
         if (StringUtils.isValid(displayName)) {
             getSupportActionBar().setTitle(displayName);
         } else {
-            getSupportActionBar().setTitle(getUserId());
+            getSupportActionBar().setTitle(contact.getId());
         }
     }
 

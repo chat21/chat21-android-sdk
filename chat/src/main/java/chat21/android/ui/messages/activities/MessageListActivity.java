@@ -56,6 +56,7 @@ import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.presence.PresenceManger;
 import chat21.android.core.presence.listeners.OnPresenceListener;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.groups.utils.GroupUtils;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
@@ -64,13 +65,14 @@ import chat21.android.ui.groups.activities.GroupAdminPanelActivity;
 import chat21.android.ui.messages.adapters.MessageListAdapter;
 import chat21.android.ui.messages.fragments.BottomSheetAttach;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
-import chat21.android.ui.messages.listeners.OnProfilePictureClickListener;
+import chat21.android.ui.users.activities.PublicProfileActivity;
 import chat21.android.utils.ChatUtils;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CONVERSATION;
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CALLING_ACTIVITY;
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME;
 import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
 /**
@@ -112,7 +114,7 @@ public class MessageListActivity extends AppCompatActivity implements
     private LinearLayout mEmojiBar;
 
     // retrieved data
-    private Conversation conversation;
+    private IChatUser recipient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +125,10 @@ public class MessageListActivity extends AppCompatActivity implements
         registerViews();
 
         // retrieve the conversation
-        conversation = (Conversation) getIntent().getSerializableExtra(INTENT_BUNDLE_CONVERSATION);
+        recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT);
 
         conversationMessagesHandler = ChatManager.getInstance()
-                .getConversationMessagesHandler(conversation.getConvers_with());
+                .getConversationMessagesHandler(recipient.getId());
         conversationMessagesHandler.upsertConversationMessagesListener(this);
         conversationMessagesHandler.connect();
 
@@ -135,7 +137,7 @@ public class MessageListActivity extends AppCompatActivity implements
         // panel which contains the edittext, the emoji button and the attach button
         initInputPanel();
 
-        initToolbar(conversation);
+        initToolbar(recipient);
 
         // create a conversation object
 //        if (isFromBackgroundNotification) {
@@ -229,29 +231,38 @@ public class MessageListActivity extends AppCompatActivity implements
         mEmojiBar = (LinearLayout) findViewById(R.id.main_activity_emoji_bar);
     }
 
-    private void initToolbar(Conversation conversation) {
+    private void initToolbar(IChatUser recipient) {
         Log.d(TAG, "initToolbar");
 
         // setup the toolbar with conversations data
-        if (conversation != null) {
-            if (conversation.isDirectChannel()) {
-                // its a one to one conversation
-                initDirectToolbar("", conversation.getConvers_with(), conversation.getConvers_with_fullname());
-            } else if (conversation.isGroupChannel()) {
-                // its a group conversation
-                initGroupToolbar("", conversation.getRecipient(), conversation.getRecipientFullName());
-            } else {
-                Toast.makeText(this, "channel type is undefined", Toast.LENGTH_SHORT).show();
-            }
-        }
+        if (recipient != null) {
 
-        // minimal settings
+            initDirectToolbar("", recipient.getId(), recipient.getFullName());
+        }
+//        else
+            //TODO for group
+
+
+//            if (conversation.isDirectChannel()) {
+//                // its a one to one conversation
+//                initDirectToolbar("", conversation.getConvers_with(), conversation.getConvers_with_fullname());
+//            } else if (conversation.isGroupChannel()) {
+//                // its a group conversation
+//                initGroupToolbar("", conversation.getRecipient(), conversation.getRecipientFullName());
+//            } else {
+//                Toast.makeText(this, "channel type is undefined", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+
+
+
+            // minimal settings
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void observeUserPresence() {
-        String userToObserve = conversation.getConvers_with();
+        String userToObserve = recipient.getId();
         PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getAppId(),
                 userToObserve, onConversWithPresenceListener);
     }
@@ -269,10 +280,21 @@ public class MessageListActivity extends AppCompatActivity implements
         mTitleTextView.setText(recipientDisplayName);
 
         // toolbar click listener
-        OnProfilePictureClickListener onProfilePictureClickListener =
-                new OnProfilePictureClickListener(this, conversWith);
-        onProfilePictureClickListener.setContactDisplayName(conversWithFullName);
-        toolbar.setOnClickListener(onProfilePictureClickListener); // shows user information
+//        OnProfilePictureClickListener onProfilePictureClickListener =
+//                new OnProfilePictureClickListener(this, conversWith);
+//        onProfilePictureClickListener.setContactDisplayName(conversWithFullName);
+
+
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MessageListActivity.this, PublicProfileActivity.class);
+
+                intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, recipient);
+//                intent.putExtra(INTENT_BUNDLE_CALLING_ACTIVITY, targetClass);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initGroupToolbar(String pictureUrl, String recipient, String recipientFullName) {
@@ -306,7 +328,7 @@ public class MessageListActivity extends AppCompatActivity implements
     private void displayGroupMembersInSubtitle() {
         mSubTitleTextView.setText(getString(R.string.activity_message_list_group_info_label));
 
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), conversation.getConvers_with(),
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(),
                 new GroupUtils.OnGroupsChangeListener() {
                     @Override
                     public void onGroupChanged(Group group, String groupId) {
@@ -331,9 +353,9 @@ public class MessageListActivity extends AppCompatActivity implements
     }
 
     private void setPicture(String pictureUrl, @DrawableRes int placeholder) {
-        if (conversation == null) {
-            return;
-        }
+//        if (recipient == null) {
+//            return;
+//        }
 
         Glide.with(getApplicationContext())
                 .load(pictureUrl)
@@ -345,12 +367,12 @@ public class MessageListActivity extends AppCompatActivity implements
     private void starGroupDetailsActivity() {
         Log.d(TAG, "starGroupDetailsActivity");
 
-        if (conversation == null)
-            return;
+//        if (recipient == null)
+//            return;
 
         Intent intent = new Intent(this, GroupAdminPanelActivity.class);
-        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_NAME, conversation.getRecipientFullName());
-        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_ID, conversation.getRecipient());
+        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_NAME, recipient.getFullName());
+        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_ID, recipient.getId());
         startActivityForResult(intent, ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
     }
 
@@ -447,10 +469,7 @@ public class MessageListActivity extends AppCompatActivity implements
             public void onClick(final View v) {
                 Log.d(TAG, "MessageListActivity.onAttachClicked");
 
-                if (conversation == null)
-                    return;
-
-                showAttachBottomSheet(conversation);
+                showAttachBottomSheet();
             }
         });
 
@@ -469,7 +488,7 @@ public class MessageListActivity extends AppCompatActivity implements
                 }
 
                 ChatManager.getInstance()
-                        .sendTextMessage(conversation.getConvers_with(), conversation.getConvers_with_fullname(), text, null,
+                        .sendTextMessage(recipient.getId(), recipient.getFullName(), text, null,
                                 new SendMessageListener() {
                                     @Override
                                     public void onBeforeMessageSent(Message message, ChatRuntimeException chatException) {
@@ -510,44 +529,44 @@ public class MessageListActivity extends AppCompatActivity implements
         });
         setUpEmojiPopup();
 
-        toggleTelegramPanelVisibility();
+//        toggleTelegramPanelVisibility();
     }
 
     //TODO chiama firebase per i gruppi una soltanto volta all'interno dell'activity
-    private void toggleTelegramPanelVisibility() {
-        if (conversation != null && conversation.isGroupChannel()) {
-            // group conversation
-            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), conversation.getConvers_with(),
-                    new GroupUtils.OnGroupsChangeListener() {
-                        @Override
-                        public void onGroupChanged(Group group, String groupId) {
-                            // the logged user is a member of the group
-                            if (group != null && group.getMembers() != null) {
-                                if (group.getMembers().containsKey(
-                                        ChatManager.getInstance().getLoggedUser().getId())) {
-                                    mEmojiBar.setVisibility(View.VISIBLE);
-                                    // hides a placeholder message layout
-                                    mNoMessageLayout.setVisibility(View.GONE);
-                                } else {
-                                    // TODO implement this
-                                    // mMessageDAO.detachObserveMessageTree(onDetachObserveMessageTree);
-                                }
-                            } else {
-                                Log.e(TAG, "toggleTelegramPanelVisibility" +
-                                        ".subscribeOnGroupsChanges.onGroupChanged: group is null.");
-                            }
-                        }
-
-                        @Override
-                        public void onGroupCancelled(String errorMessage) {
-                            Log.e(TAG, errorMessage);
-                        }
-                    });
-        } else {
-            // one to one conversation
-            mEmojiBar.setVisibility(View.VISIBLE);
-        }
-    }
+//    private void toggleTelegramPanelVisibility() {
+//        if (conversation != null && conversation.isGroupChannel()) {
+//            // group conversation
+//            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), conversation.getConvers_with(),
+//                    new GroupUtils.OnGroupsChangeListener() {
+//                        @Override
+//                        public void onGroupChanged(Group group, String groupId) {
+//                            // the logged user is a member of the group
+//                            if (group != null && group.getMembers() != null) {
+//                                if (group.getMembers().containsKey(
+//                                        ChatManager.getInstance().getLoggedUser().getId())) {
+//                                    mEmojiBar.setVisibility(View.VISIBLE);
+//                                    // hides a placeholder message layout
+//                                    mNoMessageLayout.setVisibility(View.GONE);
+//                                } else {
+//                                    // TODO implement this
+//                                    // mMessageDAO.detachObserveMessageTree(onDetachObserveMessageTree);
+//                                }
+//                            } else {
+//                                Log.e(TAG, "toggleTelegramPanelVisibility" +
+//                                        ".subscribeOnGroupsChanges.onGroupChanged: group is null.");
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onGroupCancelled(String errorMessage) {
+//                            Log.e(TAG, errorMessage);
+//                        }
+//                    });
+//        } else {
+//            // one to one conversation
+//            mEmojiBar.setVisibility(View.VISIBLE);
+//        }
+//    }
 
 //    // callback called when the message listener is removed
 //    private OnDetachObserveMessageTree onDetachObserveMessageTree
@@ -596,11 +615,11 @@ public class MessageListActivity extends AppCompatActivity implements
         }
     }
 
-    private void showAttachBottomSheet(Conversation conversation) {
+    private void showAttachBottomSheet() {
         Log.d(TAG, "MessageListActivity.onAttachClicked");
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        BottomSheetAttach dialog = BottomSheetAttach.newInstance(conversation);
+        BottomSheetAttach dialog = BottomSheetAttach.newInstance();
         dialog.show(ft, BottomSheetAttach.class.getName());
     }
 //
@@ -648,26 +667,26 @@ public class MessageListActivity extends AppCompatActivity implements
         //TODO da ristrutturare con il GroupHandler
         if (requestCode == ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY) {
 
-            if (resultCode == RESULT_OK) {
-                toggleTelegramPanelVisibility(); // update the input panel ui
-            }
+//            if (resultCode == RESULT_OK) {
+//                toggleTelegramPanelVisibility(); // update the input panel ui
+//            }
 
-            // bugfix Issue #33
-            if (conversation != null)
-                initToolbar(conversation);
+//            // bugfix Issue #33
+//            if (conversation != null)
+//                initToolbar(conversation);
 
             // bugfix Issue #15
         } else if (requestCode == _INTENT_ACTION_GET_PICTURE) {
             if (data != null && data.getData() != null && resultCode == RESULT_OK) {
 
-                if (conversation == null)
-                    return;
+//                if (conversation == null)
+//                    return;
 
                 Uri uri = data.getData();
 
                 // convert the stream to a file
                 File fileToUpload = new File(StorageHandler.getFilePathFromUri(this, uri));
-                showConfirmUploadDialog(conversation, fileToUpload);
+                showConfirmUploadDialog(fileToUpload);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -675,7 +694,7 @@ public class MessageListActivity extends AppCompatActivity implements
     }
 
     // bugfix Issue #64
-    private void showConfirmUploadDialog(final Conversation conversation,
+    private void showConfirmUploadDialog(
                                          final File file) {
         Log.d(TAG, "uploadFile");
 
@@ -686,7 +705,7 @@ public class MessageListActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // upload the file
-                        uploadFile(conversation, file);
+                        uploadFile(file);
                     }
                 })
                 .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
@@ -698,7 +717,7 @@ public class MessageListActivity extends AppCompatActivity implements
     }
 
     // bugfix Issue #15
-    private void uploadFile(final Conversation conversation, File file) {
+    private void uploadFile( File file) {
         Log.d(TAG, "uploadFile");
 
         // bugfix Issue #45
@@ -720,7 +739,7 @@ public class MessageListActivity extends AppCompatActivity implements
 //                } else {
                 // update firebase references and send notification
 
-                ChatManager.getInstance().sendImageMessage(conversation.getConvers_with(), conversation.getConvers_with_fullname(), downloadUrl.toString(), null, null);
+                ChatManager.getInstance().sendImageMessage(recipient.getId(), recipient.getFullName(), downloadUrl.toString(), null, null);
 
 //                    ChatManager.getInstance().sendMessage(downloadUrl.toString(), type,
 //                            conversation, extras);

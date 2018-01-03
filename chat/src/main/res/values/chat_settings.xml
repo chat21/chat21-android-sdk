@@ -19,17 +19,17 @@
     <!--false per disabilitare l'icona-->
     <string name="enable_group_icon" translatable="false">false</string>
 
-    <!--contact profile activity class.-->
-    <!--it must be the  fully-qualified class name-->
-    <string name="target_contact_profile_activity_class" translatable="false">chat21.android.ui.users.activities.PublicProfileActivity</string>
+    <!--&lt;!&ndash;contact profile activity class.&ndash;&gt;-->
+    <!--&lt;!&ndash;it must be the  fully-qualified class name&ndash;&gt;-->
+    <!--<string name="target_contact_profile_activity_class" translatable="false">chat21.android.ui.users.activities.PublicProfileActivity</string>-->
 
-    <!--contact list activity class.-->
-    <!--it must be the  fully-qualified class name-->
-    <string name="target_contact_list_activity_class" translatable="false">chat21.android.ui.contacts.activites.ContactListActivity</string>
+    <!--&lt;!&ndash;contact list activity class.&ndash;&gt;-->
+    <!--&lt;!&ndash;it must be the  fully-qualified class name&ndash;&gt;-->
+    <!--<string name="target_contact_list_activity_class" translatable="false">chat21.android.ui.contacts.activites.ContactListActivity</string>-->
 
-    <!--add members to group activity class.-->
-    <!--it must be the  fully-qualified class name-->
-    <string name="target_add_members_activity_class" translatable="false">chat21.android.groups.activities.AddMembersActivity</string>
+    <!--&lt;!&ndash;add members to group activity class.&ndash;&gt;-->
+    <!--&lt;!&ndash;it must be the  fully-qualified class name&ndash;&gt;-->
+    <!--<string name="target_add_members_activity_class" translatable="false">chat21.android.groups.activities.AddMembersActivity</string>-->
 
     <string name="custom_auth_verify_token_url" translatable="false">https://chat21-custom-firebase-auth.appspot.com/verifyToken?username=</string>
 

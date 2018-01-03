@@ -329,11 +329,13 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private void startAddMemberActivity() {
         Log.d(TAG, "startAddMemberActivity");
 
-        try {
+//        try {
             // targetClass MUST NOT BE NULL
-            Class<?> targetClass = Class
-                    .forName(getString(R.string.target_add_members_activity_class));
-            final Intent intent = new Intent(this, targetClass);
+//            Class<?> targetClass = Class
+//                    .forName(getString(R.string.target_add_members_activity_class));
+//            final Intent intent = new Intent(this, targetClass);
+
+            final Intent intent = new Intent(this, AddMembersActivity.class);
 
             if (mGroup != null) {
                 intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, mGroup);
@@ -363,10 +365,10 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
                         });
             }
 
-        } catch (ClassNotFoundException e) {
-            Log.e(TAG, "cannot retrieve the user list activity target class. " +
-                    "Message: " + e.getMessage());
-        }
+//        } catch (ClassNotFoundException e) {
+//            Log.e(TAG, "cannot retrieve the user list activity target class. " +
+//                    "Message: " + e.getMessage());
+//        }
     }
 
     // handles the click on a member

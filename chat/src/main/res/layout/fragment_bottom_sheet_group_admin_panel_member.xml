@@ -68,6 +68,7 @@
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:text="@string/fragment_bottom_sheet_group_admin_panel_member_send_message_btn_label"
+                android:visibility="gone"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <!--line separator-->

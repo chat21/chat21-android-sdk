@@ -19,13 +19,13 @@ import java.util.Date;
 import java.util.Map;
 
 import chat21.android.R;
+import chat21.android.core.users.models.ChatUser;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.conversations.activities.ConversationListActivity;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
-
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_RECIPIENT_ID;
 
 /**
  * Created by andrea on 28/03/17.
@@ -65,19 +65,20 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "formattedTimestamp: " + formattedTimestamp);
 
             // resolve Issue #22
-            if (StringUtils.isValid(getGroupId(remoteMessage.getData()))) {
-                Log.i(TAG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
-                        "is group conversation with groupId: " + getGroupId(remoteMessage.getData()));
-
-                // group notification
-                String title = getGroupName(remoteMessage.getData());
-                String senderFullName = StringUtils.isValid(remoteMessage.getData().get("sender_fullname")) ?
-                        remoteMessage.getData().get("sender_fullname")
-                        : remoteMessage.getData().get("sender");
-                body = senderFullName + ": " + body;
-
-                sendGroupNotification(title, body, getGroupId(remoteMessage.getData()), formattedTimestamp);
-            } else {
+//            TODO implement for group
+//            if (StringUtils.isValid(getGroupId(remoteMessage.getData()))) {
+//                Log.i(TAG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
+//                        "is group conversation with groupId: " + getGroupId(remoteMessage.getData()));
+//
+//                // group notification
+//                String title = getGroupName(remoteMessage.getData());
+//                String senderFullName = StringUtils.isValid(remoteMessage.getData().get("sender_fullname")) ?
+//                        remoteMessage.getData().get("sender_fullname")
+//                        : remoteMessage.getData().get("sender");
+//                body = senderFullName + ": " + body;
+//
+//                sendGroupNotification(title, body, getGroupId(remoteMessage.getData()), formattedTimestamp);
+//            } else {
                 Log.i(TAG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
                         "is one to one conversation.");
 
@@ -86,7 +87,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
                 Log.d(TAG, "title == " + title);
 
                 sendNotification(title, body, remoteMessage.getData().get("conversationId"), formattedTimestamp);
-            }
+//            }
         } else {
             Log.i(TAG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
                     "remoteMessage.getData().size() < 0");
@@ -206,8 +207,10 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 
         int notificationId = (int) new Date().getTime();
 
+        IChatUser recipient = new ChatUser(conversationId, title);
+
         Intent resultIntent = new Intent(this, MessageListActivity.class);
-        resultIntent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversationId);
+        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, recipient);
         resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(ConversationListActivity.class);
@@ -225,32 +228,32 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     // resolve Issue #22
-    private void sendGroupNotification(String title, String message,
-                                       String conversationId, String timestamp) {
-        Log.d(TAG, "sendGroupNotification");
-
-        // FIXME: 24/11/17 
-//        Chat.Configuration.setContext(getApplicationContext());
-
-        int notificationId = (int) new Date().getTime();
-
-        Intent resultIntent = new Intent(this, MessageListActivity.class);
-        resultIntent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversationId);
-        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(ConversationListActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-//        showGroupSummaryNotification(conversation);
-
-        Notification notification = createNotificationObject(resultPendingIntent, title, message, timestamp);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationId, notification);
-    }
+//    private void sendGroupNotification(String title, String message,
+//                                       String conversationId, String timestamp) {
+//        Log.d(TAG, "sendGroupNotification");
+//
+//        // FIXME: 24/11/17
+////        Chat.Configuration.setContext(getApplicationContext());
+//
+//        int notificationId = (int) new Date().getTime();
+//
+//        Intent resultIntent = new Intent(this, MessageListActivity.class);
+//        resultIntent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversationId);
+//        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
+//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//        stackBuilder.addParentStack(ConversationListActivity.class);
+//        stackBuilder.addNextIntent(resultIntent);
+//        PendingIntent resultPendingIntent =
+//                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+////        showGroupSummaryNotification(conversation);
+//
+//        Notification notification = createNotificationObject(resultPendingIntent, title, message, timestamp);
+//
+//        NotificationManager notificationManager =
+//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        notificationManager.notify(notificationId, notification);
+//    }
 
     // retrieve the group_id
     private String getGroupId(Map<String, String> pushData) {

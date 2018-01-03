@@ -191,27 +191,26 @@ public class ContactListActivity extends AppCompatActivity
             ChatUI.getInstance().getOnContactClickListener().onContactClicked(contact, position);
         }
 
-        Conversation conversation = new Conversation();
-        conversation.setSender(ChatManager.getInstance().getLoggedUser().getId());
-        conversation.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
-        conversation.setConvers_with(contact.getId());
-        conversation.setConvers_with_fullname(contact.getFullName());
-        conversation.setRecipient(contact.getId());
-        conversation.setRecipientFullName(contact.getFullName());
-        conversation.setChannelType(Message.DIRECT_CHANNEL_TYPE);
+//        Conversation conversation = new Conversation();
+//        conversation.setSender(ChatManager.getInstance().getLoggedUser().getId());
+//        conversation.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
+//        conversation.setConvers_with(contact.getId());
+//        conversation.setConvers_with_fullname(contact.getFullName());
+//        conversation.setRecipient(contact.getId());
+//        conversation.setRecipientFullName(contact.getFullName());
+//        conversation.setChannelType(Message.DIRECT_CHANNEL_TYPE);
 
-        String conversationId = contact.getId();
+//        String conversationId = contact.getId();
 
         // start the conversation activity
-        startMessageListActivity(conversationId, conversation, contact.getFullName());
+        startMessageListActivity(contact);
     }
 
-    private void startMessageListActivity(String conversationId, Conversation conversation, String contactFullName) {
+    private void startMessageListActivity(IChatUser contact) {
         Log.d(TAG, "startMessageListActivity");
 
         Intent intent = new Intent(this, MessageListActivity.class);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT_ID, conversationId);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_CONVERSATION, conversation);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, contact);
 //        intent.putExtra(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME, contactFullName);
         intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
 

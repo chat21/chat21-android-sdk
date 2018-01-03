@@ -21,18 +21,15 @@ import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
+import chat21.android.core.users.models.ChatUser;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.conversations.adapters.ConversationsListAdapter;
-import chat21.android.ui.conversations.listeners.OnContactListClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
-import chat21.android.ui.conversations.listeners.OnSupportContactListClickListener;
 import chat21.android.ui.groups.activities.MyGroupsListActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.ChatUtils;
-
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CONVERSATION;
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_RECIPIENT_ID;
 
 /**
  * Created by stefano on 15/10/2016.
@@ -157,9 +154,15 @@ public class ConversationListFragment extends Fragment implements
     private void setAddNewConversationClickBehaviour() {
         Log.d(TAG, "ConversationListFragment.setAddNewConversationClickBehaviour");
 
-        if(ChatUI.getInstance().getOnNewConversationClickListener() != null) {
-            ChatUI.getInstance().getOnNewConversationClickListener().onNewConversationClicked(addNewConversation);
-        }
+        addNewConversation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(ChatUI.getInstance().getOnNewConversationClickListener() != null) {
+                    ChatUI.getInstance().getOnNewConversationClickListener().onNewConversationClicked();
+                }
+            }
+        });
+
 
 //        if (!ChatUtils.isChatSupportAccountEnabled(getContext())) {
 //            // enable contact list button action
@@ -283,8 +286,8 @@ public class ConversationListFragment extends Fragment implements
         Log.d(TAG, "ConversationListFragment.startMessageActivity");
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
-        intent.putExtra(INTENT_BUNDLE_CONVERSATION, conversation);
-        intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversation.getConversationId());
+        IChatUser recipient = new ChatUser(conversation.getRecipient(), conversation.getRecipientFullName());
+        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, recipient);
 //        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }
