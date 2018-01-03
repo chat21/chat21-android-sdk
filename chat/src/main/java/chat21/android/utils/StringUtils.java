@@ -26,7 +26,7 @@ public class StringUtils {
 
     public static boolean isValid(String string) {
         Log.d(TAG, "isValid");
-        return (string != null && !string.isEmpty()) ? true : false;
+        return (string != null && !string.trim().isEmpty()) ? true : false;
     }
 
     /**
