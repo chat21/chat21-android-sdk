@@ -5,6 +5,7 @@
     android:id="@+id/row_recipient"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="0dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -46,13 +47,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="0dp">
 
             <!--bugfix Issue #52 -->
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/chat_margin_x_small">
+                android:layout_height="wrap_content">
 
                 <!--bugfix Issue #42-->
                 <ImageView
@@ -86,7 +87,7 @@
                     android:linksClickable="true"
                     android:textColor="@color/background_bubble_text_recipient"
                     android:textColorLink="@color/color_clickable_link_recipient"
-                    app:emojiSize="23dip" />
+                    app:emojiSize="15dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -94,6 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|bottom"
+                android:layout_margin="0dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -101,7 +103,8 @@
                     style="@style/Base.TextAppearance.AppCompat.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/background_bubble_timestamp_recipient" />
+                    android:textColor="@color/background_bubble_timestamp_recipient"
+                    android:textSize="12dp" />
             </LinearLayout>
         </LinearLayout>
 

@@ -5,6 +5,7 @@
     android:id="@+id/row_sender"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="0dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -37,13 +38,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="0dp">
 
             <!--bugfix Issue #52 -->
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/chat_margin_x_small">
+                android:layout_height="wrap_content">
 
                 <!--bugfix Issue #42-->
                 <ImageView
@@ -76,10 +77,11 @@
                     android:linksClickable="true"
                     android:textColor="@color/background_bubble_text_sender"
                     android:textColorLink="@color/color_clickable_link_sender"
-                    app:emojiSize="23dip" />
+                    app:emojiSize="15dp" />
             </LinearLayout>
 
             <LinearLayout
+                android:layout_margin="0dp"
                 android:id="@+id/message_metadata"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -91,7 +93,8 @@
                     style="@style/Base.TextAppearance.AppCompat.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/background_bubble_timestamp_sender" />
+                    android:textColor="@color/background_bubble_timestamp_sender"
+                    android:textSize="12dp" />
 
                 <ImageView
                     android:id="@+id/status_sent"
@@ -103,14 +106,12 @@
                     android:id="@+id/status_received"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2.5dp"
                     android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/status_read"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2.5dp"
                     android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
