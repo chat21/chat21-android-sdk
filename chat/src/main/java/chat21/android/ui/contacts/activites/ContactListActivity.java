@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -154,14 +153,6 @@ public class ContactListActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "onCreateOptionsMenu");
-
-        inflateGroupCreationToolbarMenu(menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d(TAG, "onOptionsItemSelected");
 
@@ -170,22 +161,9 @@ public class ContactListActivity extends AppCompatActivity
         if (id == android.R.id.home) {
             onBackPressed();
             return true;
-        } else if (id == R.id.menu_contact_list_create_group) {
-            startCreateGroupActivity();
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    // check if the creation menu settings is enabled
-    // if is enabled inflate the creation menu
-    private void inflateGroupCreationToolbarMenu(Menu menu) {
-        Log.d(TAG, "inflateGroupCreationToolbarMenu");
-
-        if (ChatUtils.areGroupsEnabled(this)) {
-            Log.d(TAG, "groups enabled");
-            getMenuInflater().inflate(R.menu.menu_activity_contact_list, menu);
-        }
     }
 
     private void startCreateGroupActivity() {
