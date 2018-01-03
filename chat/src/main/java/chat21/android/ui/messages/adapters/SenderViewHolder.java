@@ -5,12 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.style.ClickableSpan;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -201,7 +197,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
     private void setBubble() {
         // set bubble color and background
         Drawable bubble = ImageUtils.changeDrawableColor(itemView.getContext(),
-                R.color.background_bubble_sender, R.drawable.balloon_out);
+                R.color.background_bubble_sender, R.drawable.balloon_sender);
         mBackgroundBubble.setBackground(bubble);
     }
 

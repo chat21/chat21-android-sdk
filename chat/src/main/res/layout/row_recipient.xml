@@ -22,27 +22,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/blue_grey_900" />
 
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/message_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/chat_margin_xx_big">
+        android:orientation="vertical"
+        android:layout_marginRight="@dimen/chat_margin_xx_big"
+        android:padding="0dp">
 
         <TextView
             android:id="@+id/sender_display_name"
-            style="@style/TextAppearance.AppCompat.Title"
+            style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/background_bubble_text_recipient"
-            android:textSize="18dp"
+            android:textSize="15dp"
+            android:padding="0dp"
+            android:layout_margin="0dp"
             android:visibility="gone" />
 
         <LinearLayout
+            android:layout_below="@id/sender_display_name"
             android:id="@+id/message_group_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,5 +113,5 @@
             </LinearLayout>
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

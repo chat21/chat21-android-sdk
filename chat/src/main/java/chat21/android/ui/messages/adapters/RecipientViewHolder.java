@@ -7,8 +7,8 @@ import android.text.Html;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -20,14 +20,14 @@ import com.vanniktech.emoji.EmojiTextView;
 import java.util.Date;
 
 import chat21.android.R;
+import chat21.android.core.messages.models.Message;
+import chat21.android.ui.ChatUI;
 import chat21.android.ui.messages.activities.ImageDetailsActivity;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
-import chat21.android.core.messages.models.Message;
-import chat21.android.utils.views.TextViewLinkHandler;
-import chat21.android.ui.ChatUI;
-import chat21.android.utils.image.ImageUtils;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
+import chat21.android.utils.image.ImageUtils;
+import chat21.android.utils.views.TextViewLinkHandler;
 
 /**
  * Created by stefano on 25/11/2016.
@@ -38,7 +38,7 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
     private final EmojiTextView mMessage;
     private final TextView mDate;
     private final TextView mTimestamp;
-    private final RelativeLayout mBackgroundBubble;
+    private final LinearLayout mBackgroundBubble;
     private final TextView mSenderDisplayName;
     private final ImageView mPreview; // Resolve Issue #32
     private final ProgressBar mProgressBar;   // Resolve Issue #52
@@ -48,7 +48,7 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
         mMessage = (EmojiTextView) itemView.findViewById(R.id.message);
         mDate = (TextView) itemView.findViewById(R.id.date);
         mTimestamp = (TextView) itemView.findViewById(R.id.timestamp);
-        mBackgroundBubble = (RelativeLayout) itemView.findViewById(R.id.message_group);
+        mBackgroundBubble = (LinearLayout) itemView.findViewById(R.id.message_group);
         mSenderDisplayName = (TextView) itemView.findViewById(R.id.sender_display_name);
         mPreview = (ImageView) itemView.findViewById(R.id.preview); // Resolve Issue #32
         mProgressBar = (ProgressBar) itemView.findViewById(R.id.progress);  // Resolve Issue #52
@@ -196,21 +196,24 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
     private void setBubble() {
         // set bubble color and background
         Drawable drawable = ImageUtils.changeDrawableColor(itemView.getContext(),
-                R.color.background_bubble_recipient, R.drawable.balloon_in);
+                R.color.background_bubble_recipient, R.drawable.balloon_recipient);
         mBackgroundBubble.setBackground(drawable);
     }
 
     private void setSenderDisplayName(Message message) {
 
-//        if (StringUtils.isValid(message.getRecipientGroupId())) {
+        if (message.isGroupChannel()) {
             mSenderDisplayName.setVisibility(View.VISIBLE);
 
             String senderDisplayName = StringUtils.isValid(message.getSenderFullname()) ?
                     message.getSenderFullname() : message.getSender();
             mSenderDisplayName.setText(senderDisplayName);
-//        } else {
-//            mSenderDisplayName.setVisibility(View.GONE);
-//        }
+        } else if (message.isDirectChannel()) {
+            mSenderDisplayName.setVisibility(View.GONE);
+        } else {
+            // default case: consider it as direct message
+            mSenderDisplayName.setVisibility(View.GONE);
+        }
     }
 
     private void setOnMessageClickListener(final OnMessageClickListener callback) {
