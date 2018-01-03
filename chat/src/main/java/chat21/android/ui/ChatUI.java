@@ -12,6 +12,7 @@ import java.io.Serializable;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.ui.conversations.activities.ConversationListActivity;
 import chat21.android.ui.conversations.fragments.ConversationListFragment;
+import chat21.android.ui.conversations.listeners.OnNewConversationClickListener;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
@@ -38,12 +39,6 @@ public class ChatUI implements Serializable {
     // request constants
     public static final int _REQUEST_CODE_CREATE_GROUP = 100;
     public static final int _REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY = 200;
-
-    // public static final String _INTENT_BUNDLE_CONVERSATION_ID = "_INTENT_BUNDLE_CONVERSATION_ID";
-    // public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
-    // public static final String INTENT_BUNDLE_EXTRAS = "INTENT_BUNDLE_EXTRAS";
-    // public static final String INTENT_BUNDLE_CONTACT_ID = "username"; // FIXME: 17/10/16 NOT EDIT
-    // public static final String _INTENT_BUNDLE_CONTACT = "_INTENT_BUNDLE_CONTACT";
 
     // singleton
     // source : https://android.jlelse.eu/how-to-make-the-perfect-singleton-de6b951dfdb0
@@ -77,6 +72,7 @@ public class ChatUI implements Serializable {
 
     private Context mContext;
 
+    private OnNewConversationClickListener onNewConversationClickListener;
     private OnMessageClickListener onMessageClickListener;
     private OnAttachDocumentsClickListener onAttachDocumentsClickListener;
     private OnContactClickListener onContactClickListener;
@@ -112,6 +108,15 @@ public class ChatUI implements Serializable {
         this.onContactClickListener = onContactClickListener;
     }
 
+    public void setOnNewConversationClickListener(OnNewConversationClickListener onNewConversationClickListener) {
+        Log.d(TAG, "setOnNewConversationClickListener");
+        this.onNewConversationClickListener = onNewConversationClickListener;
+    }
+
+    public OnNewConversationClickListener getOnNewConversationClickListener() {
+        Log.d(TAG, "getOnNewConversationClickListener");
+        return onNewConversationClickListener;
+    }
 
     public void showConversationsListFragment(FragmentManager fragmentManager,
                                               @IdRes int containerId) {

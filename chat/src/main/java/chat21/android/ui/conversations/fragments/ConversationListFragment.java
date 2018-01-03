@@ -31,8 +31,8 @@ import chat21.android.ui.groups.activities.MyGroupsListActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.ChatUtils;
 
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_RECIPIENT_ID;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CONVERSATION;
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_RECIPIENT_ID;
 
 /**
  * Created by stefano on 15/10/2016.
@@ -157,13 +157,17 @@ public class ConversationListFragment extends Fragment implements
     private void setAddNewConversationClickBehaviour() {
         Log.d(TAG, "ConversationListFragment.setAddNewConversationClickBehaviour");
 
-        if (!ChatUtils.isChatSupportAccountEnabled(getContext())) {
-            // enable contact list button action
-            addNewConversation.setOnClickListener(new OnContactListClickListener(getContext()));
-        } else {
-            // enable support account button action
-            addNewConversation.setOnClickListener(new OnSupportContactListClickListener(getContext()));
+        if(ChatUI.getInstance().getOnNewConversationClickListener() != null) {
+            ChatUI.getInstance().getOnNewConversationClickListener().onNewConversationClicked(addNewConversation);
         }
+
+//        if (!ChatUtils.isChatSupportAccountEnabled(getContext())) {
+//            // enable contact list button action
+//            addNewConversation.setOnClickListener(new OnContactListClickListener(getContext()));
+//        } else {
+//            // enable support account button action
+//            addNewConversation.setOnClickListener(new OnSupportContactListClickListener(getContext()));
+//        }
     }
 
     // toggle the no conversation layout visibilty.

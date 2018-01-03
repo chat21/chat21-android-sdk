@@ -7,17 +7,6 @@
     <!--tenant in which it is messaging-->
     <string name="tenant" translatable="false">tilechat</string>
 
-    <!--abilita o disabilita l'email di supporto per la chat-->
-    <!--se l'opzione è abilitata, il pulsante per una nuova chat funzionerà come segue:-->
-    <!--* se si è connessi come "support" allora il pulsante "nuova conversazione" mostrerà l'elenco dei contatti-->
-    <!--* se si è connessi come "altro utente" il pulsante "nuova conversazione" aprirà direttamente la conversazione con il supporto-->
-    <!--valori ammessi:-->
-    <!--true per abilitare il support-->
-    <!--false per disabilitare il supporto-->
-    <string name="enable_chat_support_account" translatable="false">false</string>
-    <string name="chat_support_account_id" translatable="false">support</string>
-
-
     <!--abilita o disabilita il pulsante per la creazione dei gruppi-->
     <!--valori ammessi:-->
     <!--true per abilitare la creazione dei gruppi -->

@@ -21,18 +21,6 @@ import chat21.android.R;
 public class ChatUtils {
     private static final String TAG = ChatUtils.class.getName();
 
-    // check if the support account is enabled or disabled
-    public static boolean isChatSupportAccountEnabled(Context context) {
-        Log.d(TAG, "isChatSupportAccountEnabled");
-        boolean isEnabled = false;
-        if (context.getString(R.string.enable_chat_support_account).trim().compareToIgnoreCase("true") == 0) {
-            isEnabled = true;
-        } else if (context.getString(R.string.enable_chat_support_account).trim().compareToIgnoreCase("false") == 0) {
-            isEnabled = false;
-        }
-        return isEnabled;
-    }
-
     // check if the group creation enabled or disabled
     public static boolean areGroupsEnabled(Context context) {
         Log.d(TAG, "areGroupsEnabled");
