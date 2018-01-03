@@ -250,14 +250,14 @@ public class ChatManager {
 //        messageHandler.connect(conversationMessagesListener);
 //    }
 
-    public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener) {
-
-        Log.d(TAG, "sending text message to recipientId : " + recipient_id + " with text : " + text + " and customAttributes : " + customAttributes);
-
-        getConversationMessagesHandler(recipient_id).sendMessage(
-                "fullnameDAELIMINAREANDROID",
-                Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
-    }
+//    public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener) {
+//
+//        Log.d(TAG, "sending text message to recipientId : " + recipient_id + " with text : " + text + " and customAttributes : " + customAttributes);
+//
+//        getConversationMessagesHandler(recipient_id).sendMessage(
+//                "fullnameDAELIMINAREANDROID",
+//                Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
+//    }
 
     public void sendTextMessage(String recipient_id, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 
@@ -266,6 +266,15 @@ public class ChatManager {
         getConversationMessagesHandler(recipient_id).sendMessage(
                 recipientFullName,
                 Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
+    }
+
+    public void sendImageMessage(String recipient_id, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
+
+        Log.d(TAG, "sending image message to recipientId : " + recipient_id + " with text : " + text + " and customAttributes : " + customAttributes);
+
+        getConversationMessagesHandler(recipient_id).sendMessage(
+                recipientFullName,
+                Message.TYPE_IMAGE, text, customAttributes, sendMessageListener);
     }
 
     public void sendFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener) {
