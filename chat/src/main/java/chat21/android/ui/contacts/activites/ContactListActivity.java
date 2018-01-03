@@ -191,7 +191,6 @@ public class ContactListActivity extends AppCompatActivity
             ChatUI.getInstance().getOnContactClickListener().onContactClicked(contact, position);
         }
 
-        // TODO: 27/12/17 check
         Conversation conversation = new Conversation();
         conversation.setSender(ChatManager.getInstance().getLoggedUser().getId());
         conversation.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
