@@ -7,6 +7,7 @@ package chat21.android.utils;
 public class DebugConstants {
     public static final String DEBUG_CORE = "CHAT21_D_CORE";
     public static final String DEBUG_LOGIN = "CHAT21_D_LOGIN";
+    public static final String DEBUG_SIGNUP = "CHAT21_D_SIGNUP";
     public static final String DEBUG_SESSION = "CHAT21_DEBUG_SESSION";
 
 

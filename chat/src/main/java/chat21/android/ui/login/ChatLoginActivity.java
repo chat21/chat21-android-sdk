@@ -2,11 +2,13 @@ package chat21.android.ui.login;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,6 +31,9 @@ import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD;
+import static chat21.android.ui.ChatUI.REQUEST_CODE_SIGNUP_ACTIVITY;
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
 /**
@@ -39,9 +44,11 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
 
     private static final String TAG = "ChatLoginActivity";
 
+    private Toolbar toolbar;
     private EditText vEmail;
     private EditText vPassword;
     private Button vLogin;
+    private Button vSignUp;
     private FirebaseAuth mAuth;
 
     private String email, username, password;
@@ -62,12 +69,19 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
 
 //        Log.d(DEBUG_LOGIN, "ChatLoginActivity.onCreate: auth state listener created ");
 
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
         vLogin = (Button) findViewById(R.id.login);
+        vLogin.setOnClickListener(this);
+
+        vSignUp = (Button) findViewById(R.id.signup);
+        vSignUp.setOnClickListener(this);
+
         vEmail = (EditText) findViewById(R.id.email);
         vPassword = (EditText) findViewById(R.id.password);
-
         initPasswordIMEAction();
-        vLogin.setOnClickListener(this);
     }
 
     @Override
@@ -102,6 +116,8 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
         if (viewId == R.id.login) {
             signIn(vEmail.getText().toString(), vPassword.getText().toString());
 //            performLogin();
+        } else if (viewId == R.id.signup) {
+            startSignUpActivity();
         }
     }
 
@@ -193,6 +209,11 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
         // [END sign_in_with_email]
     }
 
+    private void startSignUpActivity() {
+        Intent intent = new Intent(this, ChatSignUpActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_SIGNUP_ACTIVITY);
+    }
+
     private boolean validateForm() {
         boolean valid = true;
 
@@ -280,4 +301,23 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_SIGNUP_ACTIVITY) {
+            if (resultCode == RESULT_OK) {
+
+                // set username
+                String email = data.getStringExtra(INTENT_BUNDLE_SIGNED_UP_USER_EMAIL);
+//                vEmail.setText(email);
+
+                // set password
+                String password = data.getStringExtra(INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD);
+//                vPassword.setText(password);
+
+                signIn(email, password);
+            }
+        }
+    }
 }
