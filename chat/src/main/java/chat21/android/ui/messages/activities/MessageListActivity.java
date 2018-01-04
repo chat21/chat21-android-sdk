@@ -469,6 +469,10 @@ public class MessageListActivity extends AppCompatActivity implements
             public void onClick(final View v) {
                 Log.d(TAG, "MessageListActivity.onAttachClicked");
 
+                if(ChatUI.getInstance().getOnAttachClickListener() != null) {
+                    ChatUI.getInstance().getOnAttachClickListener().onAttachClicked(null);
+                }
+
                 showAttachBottomSheet();
             }
         });

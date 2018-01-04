@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide;
 import chat21.android.R;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.groups.listeners.OnRemoveClickListener;
+import chat21.android.utils.image.CropCircleTransformation;
 
 /**
  * Created by stefanodp91 on 07/12/17.
@@ -44,6 +45,7 @@ class SelectedContactViewHolder extends RecyclerView.ViewHolder {
         Glide.with(itemView.getContext())
                 .load(url)
                 .placeholder(R.drawable.ic_person_avatar)
+                .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
                 .into(profilePicture);
     }
 

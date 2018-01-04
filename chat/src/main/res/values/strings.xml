@@ -22,7 +22,7 @@
     <!--create_group_activity-->
     <string name="create_group_activity_add_group_icon_label">Add\nphoto</string>
     <string name="create_group_activity_add_group_message_with_image_label">Set the group name and its icon (optional)</string>
-    <string name="create_group_activity_add_group_message_label">Set the group name</string>
+    <!--<string name="create_group_activity_add_group_message_label">Set the group name</string>-->
     <string name="create_group_activity_add_group_group_name_hint_label">Set a group name</string>
     <string name="menu_create_group_action_next">Next</string>
 

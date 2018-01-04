@@ -61,6 +61,7 @@
                         android:layout_gravity="center_horizontal"
                         android:orientation="vertical">
 
+                        <!--todo-->
                         <ImageView
                             android:id="@+id/group_icon"
                             style="@style/Base.TextAppearance.AppCompat.Small"

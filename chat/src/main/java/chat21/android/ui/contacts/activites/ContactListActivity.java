@@ -24,15 +24,12 @@ import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
 import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
-import chat21.android.core.conversations.models.Conversation;
-import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.ui.groups.activities.CreateGroupActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
-import chat21.android.utils.ChatUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
 
@@ -103,7 +100,7 @@ public class ContactListActivity extends AppCompatActivity
     private void initBoxCreateGroup() {
         Log.d(TAG, "initBoxCreateGroup");
 
-        if (ChatUtils.areGroupsEnabled(this)) {
+        if (ChatUI.getInstance().areGroupsEnabled()) {
             Glide.with(getApplicationContext())
                     .load("")
                     .placeholder(R.drawable.ic_group_avatar)
@@ -115,6 +112,11 @@ public class ContactListActivity extends AppCompatActivity
                 @Override
                 public void onClick(View view) {
                     if (AbstractNetworkReceiver.isConnected(getApplicationContext())) {
+
+                        if (ChatUI.getInstance().getOnCreateGroupClickListener() != null) {
+                            ChatUI.getInstance().getOnCreateGroupClickListener().onCreateGroupClicked();
+                        }
+
                         startCreateGroupActivity();
                     } else {
                         Toast.makeText(getApplicationContext(),

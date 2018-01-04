@@ -377,7 +377,6 @@ public class ConversationMessagesHandler {
             Log.i(TAG, "  conversationMessagesListener with hashCode: "+ conversationMessagesListener.hashCode() + " added");
 
         }
-
     }
 
     public void removeConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {

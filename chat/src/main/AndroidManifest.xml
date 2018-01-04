@@ -8,6 +8,8 @@
 
         <activity android:name="chat21.android.ui.login.ChatLoginActivity"></activity>
 
+        <activity android:name="chat21.android.ui.login.ChatSignUpActivity"></activity>
+
         <!--display the contact list-->
         <activity
             android:name="chat21.android.ui.contacts.activites.ContactListActivity"

@@ -14,7 +14,6 @@ import java.util.Map;
 
 import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
 import chat21.android.core.conversations.ConversationsHandler;
-import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
@@ -178,6 +177,8 @@ public class ChatManager {
             conversationMessagesHandler.disconnect();
             Log.d(TAG, "conversationMessagesHandler for recipientId: " + recipientId + " disposed");
         }
+
+        // TODO: 04/01/18 contacts handler disconnect
 
     }
 

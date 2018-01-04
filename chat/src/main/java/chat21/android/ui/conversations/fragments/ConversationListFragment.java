@@ -29,7 +29,6 @@ import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
 import chat21.android.ui.groups.activities.MyGroupsListActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
-import chat21.android.utils.ChatUtils;
 
 /**
  * Created by stefano on 15/10/2016.
@@ -157,7 +156,7 @@ public class ConversationListFragment extends Fragment implements
         addNewConversation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ChatUI.getInstance().getOnNewConversationClickListener() != null) {
+                if (ChatUI.getInstance().getOnNewConversationClickListener() != null) {
                     ChatUI.getInstance().getOnNewConversationClickListener().onNewConversationClicked();
                 }
             }
@@ -189,7 +188,7 @@ public class ConversationListFragment extends Fragment implements
 
     // show current user groups
     private void showCurrentUserGroups() {
-        if (ChatUtils.areGroupsEnabled(getActivity())) {
+        if (ChatUI.getInstance().areGroupsEnabled()) {
             // groups enabled
             currentUserGroups.setOnClickListener(new View.OnClickListener() {
                 @Override
