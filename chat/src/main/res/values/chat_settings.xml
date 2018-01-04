@@ -13,11 +13,11 @@
     <!--&lt;!&ndash;false per disabilitare la creazione dei gruppi&ndash;&gt;-->
     <!--<string name="enable_groups" translatable="false">true</string>-->
 
-    <!--abilita o disabilita il pulsante per il caricamento dell'icona del gruppo-->
-    <!--valori ammessi:-->
-    <!--true per abilitare l'icona  -->
-    <!--false per disabilitare l'icona-->
-    <string name="enable_group_icon" translatable="false">false</string>
+    <!--&lt;!&ndash;abilita o disabilita il pulsante per il caricamento dell'icona del gruppo&ndash;&gt;-->
+    <!--&lt;!&ndash;valori ammessi:&ndash;&gt;-->
+    <!--&lt;!&ndash;true per abilitare l'icona  &ndash;&gt;-->
+    <!--&lt;!&ndash;false per disabilitare l'icona&ndash;&gt;-->
+    <!--<string name="enable_group_icon" translatable="false">false</string>-->
 
     <!--&lt;!&ndash;contact profile activity class.&ndash;&gt;-->
     <!--&lt;!&ndash;it must be the  fully-qualified class name&ndash;&gt;-->
