@@ -23,6 +23,7 @@ import java.util.List;
 import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
+import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
@@ -48,10 +49,15 @@ public class ContactListActivity extends AppCompatActivity
     private LinearLayout mBoxCreateGroup; // bugfix Issue #17
     private ImageView mGroupIcon;
     private RelativeLayout mEmptyLayout;
+    private ContactsSynchronizer contactsSynchronizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
+        this.contactsSynchronizer.connect();
+
         setContentView(R.layout.activity_contact_list);
 
         registerViews();
@@ -91,7 +97,7 @@ public class ContactListActivity extends AppCompatActivity
         DividerItemDecoration itemDecorator = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         itemDecorator.setDrawable(getResources().getDrawable(R.drawable.decorator_contact_list));
         recyclerView.addItemDecoration(itemDecorator);
-        updateAdapter(ChatManager.getInstance().getContacts());
+        updateAdapter(this.contactsSynchronizer.getContacts());
     }
 
     private void initBoxCreateGroup() {

@@ -70,13 +70,17 @@ public class ConversationsHandler {
                         saveOrUpdateConversationInMemory(conversation);
                         sortConversationsInMemory();
 
-                        for (ConversationsListener conversationsListener : conversationsListeners) {
-                            conversationsListener.onConversationAdded(conversation, null);
+                        if (conversationsListeners!=null) {
+                            for (ConversationsListener conversationsListener : conversationsListeners) {
+                                conversationsListener.onConversationAdded(conversation, null);
+                            }
                         }
 
                     } catch (Exception e) {
-                        for (ConversationsListener conversationsListener : conversationsListeners) {
-                            conversationsListener.onConversationAdded(null, new ChatRuntimeException(e));
+                        if (conversationsListeners!=null) {
+                            for (ConversationsListener conversationsListener : conversationsListeners) {
+                                conversationsListener.onConversationAdded(null, new ChatRuntimeException(e));
+                            }
                         }
                     }
                 }
@@ -92,13 +96,17 @@ public class ConversationsHandler {
                         saveOrUpdateConversationInMemory(conversation);
                         sortConversationsInMemory();
 
-                        for (ConversationsListener conversationsListener : conversationsListeners) {
-                            conversationsListener.onConversationChanged(conversation, null);
+                        if (conversationsListeners!=null) {
+                            for (ConversationsListener conversationsListener : conversationsListeners) {
+                                conversationsListener.onConversationChanged(conversation, null);
+                            }
                         }
 
                     } catch (Exception e) {
-                        for (ConversationsListener conversationsListener : conversationsListeners) {
-                            conversationsListener.onConversationChanged(null, new ChatRuntimeException(e));
+                        if (conversationsListeners!=null) {
+                            for (ConversationsListener conversationsListener : conversationsListeners) {
+                                conversationsListener.onConversationChanged(null, new ChatRuntimeException(e));
+                            }
                         }
                     }
                 }

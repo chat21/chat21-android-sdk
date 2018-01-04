@@ -3,6 +3,7 @@ package chat21.android.core;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
 import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
@@ -46,11 +48,13 @@ public class ChatManager {
 
     private Context mContext;
 
-    private List<IChatUser> mContacts;
+//    private List<IChatUser> mContacts;
 
     private Map<String, ConversationMessagesHandler> conversationMessagesHandlerMap;
 
     private ConversationsHandler conversationsHandler;
+
+    private ContactsSynchronizer contactsSynchronizer;
 
 
     // private constructor
@@ -153,6 +157,12 @@ public class ChatManager {
 
         // serialize the appId
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
+
+        //enable persistence
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+
+
     }
 
 
@@ -185,17 +195,17 @@ public class ChatManager {
         return mInstance;
     }
 
-    public void setContacts(List<IChatUser> contacts) {
-        mContacts = contacts;
-    }
-
-    public List<IChatUser> getContacts() {
-        return mContacts;
-    }
-
-    public void addContact(IChatUser contact) {
-        mContacts.add(contact);
-    }
+//    public void setContacts(List<IChatUser> contacts) {
+//        mContacts = contacts;
+//    }
+//
+//    public List<IChatUser> getContacts() {
+//        return mContacts;
+//    }
+//
+//    public void addContact(IChatUser contact) {
+//        mContacts.add(contact);
+//    }
 
 
 //
@@ -237,6 +247,15 @@ public class ChatManager {
             this.conversationsHandler =
                     new ConversationsHandler(Configuration.firebaseUrl, this.getAppId(), this.getLoggedUser().getId());
             return conversationsHandler;
+        }
+    }
+
+    public ContactsSynchronizer getContactsSynchronizer() {
+        if (this.contactsSynchronizer != null) {
+            return this.contactsSynchronizer;
+        }else {
+            this.contactsSynchronizer = new ContactsSynchronizer(Configuration.firebaseUrl, this.getAppId());
+            return this.contactsSynchronizer;
         }
     }
 

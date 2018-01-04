@@ -210,8 +210,10 @@ public class ConversationMessagesHandler {
 
                         saveOrUpdateMessageInMemory(message);
 
-                        for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                            conversationMessagesListener.onConversationMessageReceived(message, null);
+                        if (conversationMessagesListeners!=null) {
+                            for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                                conversationMessagesListener.onConversationMessageReceived(message, null);
+                            }
                         }
 
                         //TODO settare status a 200 qui
@@ -219,8 +221,10 @@ public class ConversationMessagesHandler {
                     }catch (ChatFieldNotFoundException cfnfe) {
                         Log.w(TAG, "Error decoding message on onChildAdded " + cfnfe.getMessage());
                     } catch (Exception e) {
-                        for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                            conversationMessagesListener.onConversationMessageReceived(null, new ChatRuntimeException(e));
+                        if (conversationMessagesListeners!=null) {
+                            for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                                conversationMessagesListener.onConversationMessageReceived(null, new ChatRuntimeException(e));
+                            }
                         }
                     }
                 }
@@ -237,15 +241,19 @@ public class ConversationMessagesHandler {
 
                         saveOrUpdateMessageInMemory(message);
 
-                        for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                            conversationMessagesListener.onConversationMessageChanged(message, null);
+                        if (conversationMessagesListeners!=null) {
+                            for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                                conversationMessagesListener.onConversationMessageChanged(message, null);
+                            }
                         }
 
                     } catch (ChatFieldNotFoundException cfnfe) {
-                        Log.w(TAG, "Error decoding message on onChildAdded " + cfnfe.getMessage());
+                        Log.w(TAG, "Error decoding message on onChildChanged " + cfnfe.getMessage());
                     }  catch (Exception e) {
-                        for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                            conversationMessagesListener.onConversationMessageChanged(null, new ChatRuntimeException(e));
+                        if (conversationMessagesListeners!=null) {
+                            for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                                conversationMessagesListener.onConversationMessageChanged(null, new ChatRuntimeException(e));
+                            }
                         }
                     }
                 }

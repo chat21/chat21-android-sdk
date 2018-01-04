@@ -26,6 +26,7 @@ import java.util.Map;
 import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
+import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
 import chat21.android.core.groups.models.Group;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
@@ -61,10 +62,14 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private Group mGroup;
 
     private MenuItem mAddMemberMenuItem;
+    private ContactsSynchronizer contactsSynchronizer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
+
         setContentView(R.layout.activity_group_admin_panel);
 
         registerViews();
@@ -203,7 +208,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         String createdBy = group.getOwner();
 
         try {
-            for (IChatUser mUser : ChatManager.getInstance().getContacts()) {
+            for (IChatUser mUser : this.contactsSynchronizer.getContacts()) {
                 if (group != null && group.getMembers() != null) {
                     if (group.getOwner().equals(mUser.getId())) {
                         createdBy = mUser.getFullName();

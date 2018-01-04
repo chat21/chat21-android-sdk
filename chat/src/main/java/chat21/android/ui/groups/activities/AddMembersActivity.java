@@ -38,6 +38,7 @@ import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
+import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
 import chat21.android.core.groups.models.Group;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.groups.utils.GroupUtils;
@@ -83,9 +84,14 @@ public class AddMembersActivity extends AppCompatActivity implements
     private MenuItem mAddMemberMenuItem;
     private SearchView searchView;
 
+    private ContactsSynchronizer contactsSynchronizer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
+
         setContentView(R.layout.activity_add_members);
 
         initData();
@@ -296,8 +302,8 @@ public class AddMembersActivity extends AppCompatActivity implements
         IChatUser currentUser = ChatManager.getInstance()
                 .getLoggedUser();
 
-        if (ChatManager.getInstance().getContacts() != null)
-            for (IChatUser chatUser : ChatManager.getInstance().getContacts()) {
+        if (this.contactsSynchronizer.getContacts() != null)
+            for (IChatUser chatUser : this.contactsSynchronizer.getContacts()) {
                 if (!chatUser.getId().equals(currentUser.getId())) {
                     list.add(chatUser);
                 }
