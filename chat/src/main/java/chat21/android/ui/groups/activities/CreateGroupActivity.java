@@ -80,33 +80,24 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
 
     private void initMessage() {
-        if (getString(R.string.enable_group_icon).compareToIgnoreCase("false") == 0) {
-            // icona disabilitata
-            mMessage.setText(getString(R.string.create_group_activity_add_group_message_label));
-        } else {
-            // icona abilitata
+//        if (getString(R.string.enable_group_icon).compareToIgnoreCase("false") == 0) {
+//            // icona disabilitata
+//            mMessage.setText(getString(R.string.create_group_activity_add_group_message_label));
+//        } else {
+//            // icona abilitata
             mMessage.setText(getString(R.string.create_group_activity_add_group_message_with_image_label));
-        }
+//        }
     }
 
     private void initBoxGroupIcon() {
         Log.d(TAG, "initBoxGroupIcon");
 
-
-        if (getString(R.string.enable_group_icon).compareToIgnoreCase("false") == 0) {
-            // icona disabilitata
-            mGroupIconBox.setVisibility(View.GONE);
-        } else {
-            // icona abilitata
-            mGroupIconBox.setVisibility(View.VISIBLE);
-
-            // TODO: 16/01/17
-            // se la foto è visibile visualizzala e nascondi la label "aggiungi foto"
-            // se la foto non è visible (o non è settata) allora visualizza la label "aggiungi foto"
+        // TODO: 16/01/17
+        // se la foto è visibile visualizzala e nascondi la label "aggiungi foto"
+        // se la foto non è visible (o non è settata) allora visualizza la label "aggiungi foto"
 
 //        mGroupIcon.setOnClickListener(onPhotoClickListener);
-            mGroupIconLabel.setOnClickListener(onGroupIconClickListener);
-        }
+        mGroupIconLabel.setOnClickListener(onGroupIconClickListener);
     }
 
     // listener called when the group icon is clicked
@@ -115,7 +106,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         public void onClick(View v) {
             Log.d(TAG, "onGroupIconClickListener.onClick");
 
-            Toast.makeText(CreateGroupActivity.this, "onGroupIconClickListener",
+            Toast.makeText(CreateGroupActivity.this, "coming soon",
                     Toast.LENGTH_SHORT).show();
         }
     };
@@ -209,15 +200,15 @@ public class CreateGroupActivity extends AppCompatActivity {
         Log.d(TAG, "startAddMembersActivity");
 
 //        try {
-            // targetClass MUST NOT BE NULL
+        // targetClass MUST NOT BE NULL
 //            Class<?> targetClass = Class.forName(getString(R.string.target_add_members_activity_class));
 //            Intent intent = new Intent(this, targetClass);
-            Intent intent = new Intent(this, AddMembersActivity.class);
+        Intent intent = new Intent(this, AddMembersActivity.class);
 
-            intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, group);
-            intent.putExtra(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY,
-                    CreateGroupActivity.class.getName());
-            startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, group);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY,
+                CreateGroupActivity.class.getName());
+        startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
 //        } catch (ClassNotFoundException e) {
 //            String errorMessage = "cannot retrieve the add group activity target class. \n" + e.getMessage();
 //            Log.e(TAG, errorMessage);

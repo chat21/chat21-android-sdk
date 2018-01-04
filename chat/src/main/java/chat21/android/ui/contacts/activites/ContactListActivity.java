@@ -97,7 +97,7 @@ public class ContactListActivity extends AppCompatActivity
     private void initBoxCreateGroup() {
         Log.d(TAG, "initBoxCreateGroup");
 
-        if (ChatUtils.areGroupsEnabled(this)) {
+        if (ChatUI.getInstance().areGroupsEnabled()) {
             Glide.with(getApplicationContext())
                     .load("")
                     .placeholder(R.drawable.ic_group_avatar)

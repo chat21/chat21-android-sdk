@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--root of firebase database-->
-    <string name="root" translatable="false">https://chat21-sdk-demo.firebaseio.com</string>
+    <!--<string name="root" translatable="false">https://chat21-sdk-demo.firebaseio.com</string>-->
     <string name="firebase_storage_reference" translatable="false">gs://chat21-sdk-demo.appspot.com</string>
 
     <!--tenant in which it is messaging-->
     <string name="tenant" translatable="false">tilechat</string>
 
-    <!--abilita o disabilita il pulsante per la creazione dei gruppi-->
-    <!--valori ammessi:-->
-    <!--true per abilitare la creazione dei gruppi -->
-    <!--false per disabilitare la creazione dei gruppi-->
-    <string name="enable_groups" translatable="false">true</string>
+    <!--&lt;!&ndash;abilita o disabilita il pulsante per la creazione dei gruppi&ndash;&gt;-->
+    <!--&lt;!&ndash;valori ammessi:&ndash;&gt;-->
+    <!--&lt;!&ndash;true per abilitare la creazione dei gruppi &ndash;&gt;-->
+    <!--&lt;!&ndash;false per disabilitare la creazione dei gruppi&ndash;&gt;-->
+    <!--<string name="enable_groups" translatable="false">true</string>-->
 
     <!--abilita o disabilita il pulsante per il caricamento dell'icona del gruppo-->
     <!--valori ammessi:-->

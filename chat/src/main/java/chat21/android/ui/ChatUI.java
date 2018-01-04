@@ -27,7 +27,7 @@ public class ChatUI implements Serializable {
     private static final String TAG = ChatUI.class.getName();
 
     public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
-//    public static final String INTENT_BUNDLE_CONVERSATION = "INTENT_BUNDLE_CONVERSATION";
+    //    public static final String INTENT_BUNDLE_CONVERSATION = "INTENT_BUNDLE_CONVERSATION";
     public static final String INTENT_BUNDLE_RECIPIENT = "INTENT_BUNDLE_RECIPIENT";
     public static final String INTENT_BUNDLE_CONTACT_FULL_NAME = "INTENT_BUNDLE_CONTACT_FULL_NAME";
     // target class to be called in listeners (such as OnProfileClickListener)
@@ -40,6 +40,13 @@ public class ChatUI implements Serializable {
     // request constants
     public static final int _REQUEST_CODE_CREATE_GROUP = 100;
     public static final int _REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY = 200;
+
+    private Context mContext;
+    private OnNewConversationClickListener onNewConversationClickListener;
+    private OnMessageClickListener onMessageClickListener;
+    private OnAttachDocumentsClickListener onAttachDocumentsClickListener;
+    private OnContactClickListener onContactClickListener;
+    private boolean groupsEnabled = false;
 
     // singleton
     // source : https://android.jlelse.eu/how-to-make-the-perfect-singleton-de6b951dfdb0
@@ -69,15 +76,6 @@ public class ChatUI implements Serializable {
         return getInstance();
     }
     // end singleton
-
-
-    private Context mContext;
-
-    private OnNewConversationClickListener onNewConversationClickListener;
-    private OnMessageClickListener onMessageClickListener;
-    private OnAttachDocumentsClickListener onAttachDocumentsClickListener;
-    private OnContactClickListener onContactClickListener;
-
 
     public OnMessageClickListener getOnMessageClickListener() {
         Log.d(TAG, "getOnMessageClickListener");
@@ -117,6 +115,14 @@ public class ChatUI implements Serializable {
     public OnNewConversationClickListener getOnNewConversationClickListener() {
         Log.d(TAG, "getOnNewConversationClickListener");
         return onNewConversationClickListener;
+    }
+
+    public void enableGroups(boolean groupsEnabled) {
+        this.groupsEnabled = groupsEnabled;
+    }
+
+    public boolean areGroupsEnabled() {
+        return groupsEnabled;
     }
 
     public void showConversationsListFragment(FragmentManager fragmentManager,
