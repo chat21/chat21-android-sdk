@@ -15,6 +15,7 @@ import chat21.android.ui.conversations.activities.ConversationListActivity;
 import chat21.android.ui.conversations.fragments.ConversationListFragment;
 import chat21.android.ui.conversations.listeners.OnNewConversationClickListener;
 import chat21.android.ui.messages.activities.MessageListActivity;
+import chat21.android.ui.messages.listeners.OnAttachClickListener;
 import chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
 
@@ -45,6 +46,7 @@ public class ChatUI implements Serializable {
     private OnNewConversationClickListener onNewConversationClickListener;
     private OnMessageClickListener onMessageClickListener;
     private OnAttachDocumentsClickListener onAttachDocumentsClickListener;
+    private OnAttachClickListener onAttachClickListener;
     private OnContactClickListener onContactClickListener;
     private boolean groupsEnabled = false;
 
@@ -96,6 +98,17 @@ public class ChatUI implements Serializable {
         Log.d(TAG, "setOnAttachDocumentsClickListener");
         this.onAttachDocumentsClickListener = onAttachDocumentsClickListener;
     }
+
+    public OnAttachClickListener getOnAttachClickListener() {
+        Log.d(TAG, "getOnAttachClickListener");
+        return onAttachClickListener;
+    }
+
+    public void setOnAttachClickListener(OnAttachClickListener onAttachClickListener) {
+        Log.d(TAG, "setOnAttachClickListener");
+        this.onAttachClickListener = onAttachClickListener;
+    }
+
 
     public OnContactClickListener getOnContactClickListener() {
         Log.d(TAG, "getOnContactClickListener");
