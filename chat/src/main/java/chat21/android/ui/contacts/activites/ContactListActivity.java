@@ -61,6 +61,10 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
 
         this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
 
+        // contacts
+        contactList = contactsSynchronizer.getContacts();
+
+        // toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -70,19 +74,22 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         TextView mSubTitle = (TextView) mEmptyLayout.findViewById(R.id.error_subtitle);
         mSubTitle.setVisibility(View.GONE);
 
-        recyclerView = findViewById(R.id.user_list);
-        contactList = contactsSynchronizer.getContacts();
+        // contacts list adapter
         toggleEmptyLayout(contactList); // show or hide the empty layout
         mAdapter = new ContactListAdapter(this, contactList);
         mAdapter.setOnContactClickListener(this);
 
+        // recyclerview
+        recyclerView = findViewById(R.id.user_list);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
+        // create group box
         mBoxCreateGroup = (LinearLayout) findViewById(R.id.box_create_group);
         mGroupIcon = (ImageView) findViewById(R.id.group_icon);
+        initBoxCreateGroup();
 
         this.contactsSynchronizer.upsertContactsListener(this);
         this.contactsSynchronizer.connect();
