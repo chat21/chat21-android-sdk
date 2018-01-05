@@ -13,7 +13,23 @@
         <!--display the contact list-->
         <activity
             android:name="chat21.android.ui.contacts.activites.ContactListActivity"
-            android:label="@string/string_contact_list_activity_title" />
+            android:label="@string/string_contact_list_activity_title">
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable_contacts" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
 
         <!--display the list of all active conversation-->
         <activity

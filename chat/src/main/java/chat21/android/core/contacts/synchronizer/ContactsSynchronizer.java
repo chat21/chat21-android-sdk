@@ -15,8 +15,6 @@ import java.util.Map;
 import chat21.android.core.contacts.listeners.ContactListener;
 import chat21.android.core.exception.ChatFieldNotFoundException;
 import chat21.android.core.exception.ChatRuntimeException;
-import chat21.android.core.messages.listeners.ConversationMessagesListener;
-import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 
@@ -38,19 +36,18 @@ public class ContactsSynchronizer {
 
     public ContactsSynchronizer(String firebaseUrl, String appId) {
 
+        contactListeners = new ArrayList<>();
+
         this.contactsNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/contacts/");
         this.contactsNode.keepSynced(true);
 
         Log.d(TAG, "contactsNode : " + contactsNode.toString());
-
     }
 
     public ChildEventListener connect() {
         Log.d(TAG, "connecting  for contacts ");
 
-
-
-        if (contactsChildEventListener==null) {
+        if (contactsChildEventListener == null) {
 
             Log.d(TAG, "creating a new contactsChildEventListener");
 
@@ -61,21 +58,20 @@ public class ContactsSynchronizer {
 
                     try {
                         IChatUser contact = decodeContactSnapShop(dataSnapshot);
-                        Log.d(TAG, "ContactsSynchronizer.connect.onChildAdded.contact : "+ contact);
-
+                        Log.d(TAG, "ContactsSynchronizer.connect.onChildAdded.contact : " + contact);
 
                         saveOrUpdateContactInMemory(contact);
 
-                        if (contactListeners!=null) {
+                        if (contactListeners != null) {
                             for (ContactListener contactListener : contactListeners) {
                                 contactListener.onContactReceived(contact, null);
                             }
                         }
 
-                    }catch (ChatFieldNotFoundException cfnfe) {
+                    } catch (ChatFieldNotFoundException cfnfe) {
                         Log.w(TAG, "Error decoding contact on onChildAdded " + cfnfe.getMessage());
                     } catch (Exception e) {
-                        if (contactListeners!=null) {
+                        if (contactListeners != null) {
                             for (ContactListener contactListener : contactListeners) {
                                 contactListener.onContactReceived(null, new ChatRuntimeException(e));
                             }
@@ -86,25 +82,25 @@ public class ContactsSynchronizer {
                 //for return recepit
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.v(TAG, "ConversationMessagesHandler.connect.onChildChanged");
+                    Log.v(TAG, "ContactsSynchronizer.connect.onChildChanged");
 
                     try {
                         IChatUser contact = decodeContactSnapShop(dataSnapshot);
 
-                        Log.d(TAG, "ContactsSynchronizer.connect.onChildChanged.contact : "+ contact);
+                        Log.d(TAG, "ContactsSynchronizer.connect.onChildChanged.contact : " + contact);
 
                         saveOrUpdateContactInMemory(contact);
 
-                        if (contactListeners!=null) {
+                        if (contactListeners != null) {
                             for (ContactListener contactListener : contactListeners) {
                                 contactListener.onContactChanged(contact, null);
                             }
                         }
 
-                    }catch (ChatFieldNotFoundException cfnfe) {
+                    } catch (ChatFieldNotFoundException cfnfe) {
                         Log.w(TAG, "Error decoding contact on onChildChanged " + cfnfe.getMessage());
                     } catch (Exception e) {
-                        if (contactListeners!=null) {
+                        if (contactListeners != null) {
                             for (ContactListener contactListener : contactListeners) {
                                 contactListener.onContactChanged(null, new ChatRuntimeException(e));
                             }
@@ -114,25 +110,25 @@ public class ContactsSynchronizer {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.v(TAG, "ConversationMessagesHandler.connect.onChildRemoved");
+                    Log.v(TAG, "ContactsSynchronizer.connect.onChildRemoved");
 
                     try {
                         IChatUser contact = decodeContactSnapShop(dataSnapshot);
 
-                        Log.d(TAG, "ContactsSynchronizer.connect.onChildRemoved.contact : "+ contact);
+                        Log.d(TAG, "ContactsSynchronizer.connect.onChildRemoved.contact : " + contact);
 
                         contacts.remove(contact);
 
-                        if (contactListeners!=null) {
+                        if (contactListeners != null) {
                             for (ContactListener contactListener : contactListeners) {
                                 contactListener.onContactRemoved(contact, null);
                             }
                         }
 
-                    }catch (ChatFieldNotFoundException cfnfe) {
+                    } catch (ChatFieldNotFoundException cfnfe) {
                         Log.w(TAG, "Error decoding contact on onContactRemoved " + cfnfe.getMessage());
                     } catch (Exception e) {
-                        if (contactListeners!=null) {
+                        if (contactListeners != null) {
                             for (ContactListener contactListener : contactListeners) {
                                 contactListener.onContactRemoved(null, new ChatRuntimeException(e));
                             }
@@ -154,32 +150,27 @@ public class ContactsSynchronizer {
 
             Log.i(TAG, "connected for contacts ");
 
-
-        }else {
+        } else {
             Log.i(TAG, "already connected to contacts ");
         }
 
         return contactsChildEventListener;
     }
 
-
     private void saveOrUpdateContactInMemory(IChatUser contact) {
         Log.d(TAG, "saveOrUpdateContactInMemory  for contact : " + contact);
 
         int index = contacts.indexOf(contact);
 
-        if (index>-1) {
+        if (index > -1) {
             contacts.set(index, contact);
             Log.v(TAG, "contact " + contact + "updated into contacts at position " + index);
 
-        }else {
-           contacts.add(contact);
+        } else {
+            contacts.add(contact);
             Log.v(TAG, "contact " + contact + "is not found into contacts. The contact was added at the end of the list");
         }
-
-
     }
-
 
     public List<IChatUser> getContacts() {
         return contacts;
@@ -197,6 +188,36 @@ public class ContactsSynchronizer {
         this.contactListeners = contactListeners;
     }
 
+    public void upsertContactsListener(ContactListener contactListener) {
+        Log.v(TAG, "  upsertContactsListener called");
+
+        if (contactListeners.contains(contactListener)) {
+            this.removeContactsListener(contactListener);
+            this.addContactsListener(contactListener);
+            Log.i(TAG, "  contactListener with hashCode: " + contactListener.hashCode() + " updated");
+
+        } else {
+            this.addContactsListener(contactListener);
+            Log.i(TAG, "  contactListener with hashCode: " + contactListener.hashCode() + " added");
+        }
+    }
+
+    public void addContactsListener(ContactListener contactListener) {
+        Log.v(TAG, "  addContactsListener called");
+
+        this.contactListeners.add(contactListener);
+
+        Log.i(TAG, "  contactListener with hashCode: " + contactListener.hashCode() + " added");
+    }
+
+    public void removeContactsListener(ContactListener contactListener) {
+        Log.v(TAG, "  removeContactsListener called");
+
+        this.contactListeners.remove(contactListener);
+
+        Log.i(TAG, "  contactListener with hashCode: " + contactListener.hashCode() + " removed");
+    }
+
     public void addContact(IChatUser contact) {
         this.contacts.add(contact);
     }
@@ -206,12 +227,11 @@ public class ContactsSynchronizer {
 
         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
-
         String contactId = dataSnapshot.getKey();
 
         String uid = (String) map.get("uid");
-        if (uid ==null) {
-            throw new ChatFieldNotFoundException("Required uid field is null for contact id : "+ contactId);
+        if (uid == null) {
+            throw new ChatFieldNotFoundException("Required uid field is null for contact id : " + contactId);
         }
 
         String firstName = (String) map.get("firstname");
@@ -229,13 +249,24 @@ public class ContactsSynchronizer {
         contact.setFullName(firstName + " " + lastName);
         contact.setProfilePictureUrl(imageUrl);
 
-        Log.v(TAG, "decodeContactSnapShop.contact : "+ contact);
-
+        Log.v(TAG, "decodeContactSnapShop.contact : " + contact);
 
         return contact;
     }
 
-
-
-
+//    public List<IChatUser> search(String keyWord) {
+//        List<IChatUser> filteredList = new ArrayList<>();
+//
+//        if (contacts == null || !StringUtils.isValid(keyWord))
+//            return filteredList;
+//
+//        for (IChatUser row : contacts) {
+//            // search on the user fullname
+//            if (row.getFullName().toLowerCase().contains(keyWord.toLowerCase())) {
+//                filteredList.add(row);
+//            }
+//        }
+//
+//        return filteredList;
+//    }
 }

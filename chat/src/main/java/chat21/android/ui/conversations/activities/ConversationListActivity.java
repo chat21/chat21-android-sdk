@@ -23,7 +23,7 @@ public class ConversationListActivity extends AppCompatActivity {
     }
 
     private void registerViews() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
     }
 
     private void initViews() {

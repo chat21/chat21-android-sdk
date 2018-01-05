@@ -1,13 +1,17 @@
 package chat21.android.ui.contacts.activites;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,7 +27,9 @@ import java.util.List;
 import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
+import chat21.android.core.contacts.listeners.ContactListener;
 import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
+import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
@@ -32,69 +38,172 @@ import chat21.android.ui.groups.activities.CreateGroupActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.image.CropCircleTransformation;
 
-
 /**
  * Created by stefano on 25/08/2015.
  */
-public class ContactListActivity extends AppCompatActivity
-        implements OnContactClickListener {
-    private static final String TAG = ContactListActivity.class.getName();
+public class ContactListActivity extends AppCompatActivity implements OnContactClickListener, ContactListener {
+    private static final String TAG = ContactListActivity.class.getSimpleName();
 
-    private ContactListAdapter contactListAdapter;
     private RecyclerView recyclerView;
-    private Toolbar toolbar;
-    private LinearLayout mBoxCreateGroup; // bugfix Issue #17
-    private ImageView mGroupIcon;
+    private List<IChatUser> contactList;
+    private ContactListAdapter mAdapter;
+    private SearchView searchView;
     private RelativeLayout mEmptyLayout;
+    private ImageView mGroupIcon;
+    private LinearLayout mBoxCreateGroup;
+
     private ContactsSynchronizer contactsSynchronizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
-        this.contactsSynchronizer.connect();
-
         setContentView(R.layout.activity_contact_list);
 
-        registerViews();
-        initViews();
-    }
+        this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
 
-    private void registerViews() {
-        Log.d(TAG, "registerViews");
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        recyclerView = (RecyclerView) findViewById(R.id.user_list);
-        mBoxCreateGroup = (LinearLayout) findViewById(R.id.box_create_group);// bugfix Issue #17
-        mGroupIcon = (ImageView) findViewById(R.id.group_icon);
-        mEmptyLayout = (RelativeLayout) findViewById(R.id.layout_no_contacts);
-    }
-
-    private void initViews() {
-        Log.d(TAG, "initViews");
-
-        initToolbar();
-        initContactRecyclerView();
-        initBoxCreateGroup();
-        initEmptyLayout();
-    }
-
-    private void initToolbar() {
-        Log.d(TAG, "initToolbar");
-
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // empty layout
+        mEmptyLayout = (RelativeLayout) findViewById(R.id.layout_no_contacts);
+        TextView mSubTitle = (TextView) mEmptyLayout.findViewById(R.id.error_subtitle);
+        mSubTitle.setVisibility(View.GONE);
+
+        recyclerView = findViewById(R.id.user_list);
+        contactList = contactsSynchronizer.getContacts();
+        toggleEmptyLayout(contactList); // show or hide the empty layout
+        mAdapter = new ContactListAdapter(this, contactList);
+        mAdapter.setOnContactClickListener(this);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
+
+        mBoxCreateGroup = (LinearLayout) findViewById(R.id.box_create_group);
+        mGroupIcon = (ImageView) findViewById(R.id.group_icon);
+
+        this.contactsSynchronizer.upsertContactsListener(this);
+        this.contactsSynchronizer.connect();
     }
 
-    private void initContactRecyclerView() {
-        Log.d(TAG, "initContactRecyclerView");
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_contacts_list, menu);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        DividerItemDecoration itemDecorator = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(getResources().getDrawable(R.drawable.decorator_contact_list));
-        recyclerView.addItemDecoration(itemDecorator);
-        updateAdapter(this.contactsSynchronizer.getContacts());
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.action_search)
+                .getActionView();
+        searchView.setSearchableInfo(searchManager
+                .getSearchableInfo(getComponentName()));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        // listening to search query text change
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // filter recycler view when query submitted
+                mAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                // filter recycler view when text is changed
+                mAdapter.getFilter().filter(query);
+                return false;
+            }
+        });
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected");
+
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (id == R.id.action_search) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // close search view on back button pressed
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onContactClicked(IChatUser contact, int position) {
+        Log.d(TAG, "onRecyclerItemClicked");
+        Log.d(TAG, "contact: " + contact.toString() + ", position: " + position);
+
+        if (ChatUI.getInstance().getOnContactClickListener() != null) {
+            ChatUI.getInstance().getOnContactClickListener().onContactClicked(contact, position);
+        }
+
+        // start the conversation activity
+        startMessageListActivity(contact);
+    }
+
+    private void startMessageListActivity(IChatUser contact) {
+        Log.d(TAG, "startMessageListActivity");
+
+        Intent intent = new Intent(this, MessageListActivity.class);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, contact);
+        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
+
+        startActivity(intent);
+
+        // finish the contact list activity when it start a new conversation
+        finish();
+    }
+
+    private void toggleEmptyLayout(List<IChatUser> contacts) {
+        if (contacts != null && contacts.size() > 0) {
+            mEmptyLayout.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyLayout.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onContactReceived(IChatUser contact, ChatRuntimeException e) {
+        if (e == null) {
+            toggleEmptyLayout(contactList);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onContactChanged(IChatUser contact, ChatRuntimeException e) {
+        if (e == null) {
+            toggleEmptyLayout(contactList);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onContactRemoved(IChatUser contact, ChatRuntimeException e) {
+        if (e == null) {
+            toggleEmptyLayout(contactList);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private void initBoxCreateGroup() {
@@ -131,49 +240,6 @@ public class ContactListActivity extends AppCompatActivity
         }
     }
 
-    private void initEmptyLayout() {
-        TextView mSubTitle = (TextView) mEmptyLayout.findViewById(R.id.error_subtitle);
-        mSubTitle.setVisibility(View.GONE);
-    }
-
-    private void updateAdapter(List<IChatUser> contacts) {
-        Log.d(TAG, "updateAdapter");
-
-        toggleEmptyLayout(contacts);
-
-        if (contactListAdapter == null) {
-            contactListAdapter = new ContactListAdapter(this, contacts);
-            contactListAdapter.setOnContactClickListener(this);
-            recyclerView.setAdapter(contactListAdapter);
-        } else {
-            contactListAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void toggleEmptyLayout(List<IChatUser> contacts) {
-        if (contacts != null && contacts.size() > 0) {
-            mEmptyLayout.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-        } else {
-            mEmptyLayout.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected");
-
-        int id = item.getItemId();
-
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void startCreateGroupActivity() {
         Log.d(TAG, "startCreateGroupActivity");
 
@@ -188,46 +254,5 @@ public class ContactListActivity extends AppCompatActivity
                 finish();
             }
         }
-    }
-
-    @Override
-    public void onContactClicked(IChatUser contact, int position) {
-        Log.d(TAG, "onRecyclerItemClicked");
-        Log.d(TAG, "contact: " + contact.toString() + ", position: " + position);
-
-        if (ChatUI.getInstance().getOnContactClickListener() != null) {
-            ChatUI.getInstance().getOnContactClickListener().onContactClicked(contact, position);
-        }
-
-//        Conversation conversation = new Conversation();
-//        conversation.setSender(ChatManager.getInstance().getLoggedUser().getId());
-//        conversation.setSender_fullname(ChatManager.getInstance().getLoggedUser().getFullName());
-//        conversation.setConvers_with(contact.getId());
-//        conversation.setConvers_with_fullname(contact.getFullName());
-//        conversation.setRecipient(contact.getId());
-//        conversation.setRecipientFullName(contact.getFullName());
-//        conversation.setChannelType(Message.DIRECT_CHANNEL_TYPE);
-
-//        String conversationId = contact.getId();
-
-        // start the conversation activity
-        startMessageListActivity(contact);
-    }
-
-    private void startMessageListActivity(IChatUser contact) {
-        Log.d(TAG, "startMessageListActivity");
-
-        Intent intent = new Intent(this, MessageListActivity.class);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, contact);
-//        intent.putExtra(ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME, contactFullName);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
-
-        // put this flag to start activity without an activity (using context instead of activity)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        startActivity(intent);
-
-        // finish the contact list activity when it start a new conversation
-        finish();
     }
 }
