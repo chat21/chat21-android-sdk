@@ -31,6 +31,7 @@ import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD;
 import static chat21.android.ui.ChatUI.REQUEST_CODE_SIGNUP_ACTIVITY;
@@ -166,12 +167,13 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
 
 
                             ChatManager.Configuration mChatConfiguration =
-                                    new ChatManager.Configuration.Builder(getString(R.string.tenant)).firebaseUrl("https://chat-v2-dev.firebaseio.com/").build();
+                                    new ChatManager.Configuration.Builder(ChatManager.Configuration.appId).firebaseUrl(ChatManager.Configuration.firebaseUrl).build();
 
 
                             IChatUser iChatUser = new ChatUser();
                             iChatUser.setId(user.getUid());
                             iChatUser.setEmail(user.getEmail());
+
 
                             ChatManager.start(ChatLoginActivity.this, mChatConfiguration, iChatUser);
                             Log.i(TAG, "chat has been initialized with success");
@@ -315,6 +317,11 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                 // set password
                 String password = data.getStringExtra(INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD);
 //                vPassword.setText(password);
+
+                // it retrieves the signed up user
+                IChatUser signedUpUser = (IChatUser) data.getSerializableExtra(INTENT_BUNDLE_SIGNED_UP_USER);
+                // TODO: 05/01/18 what to do with this user???
+
 
                 signIn(email, password);
             }

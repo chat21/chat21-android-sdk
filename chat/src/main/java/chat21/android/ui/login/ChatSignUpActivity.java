@@ -27,8 +27,11 @@ import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
+import chat21.android.core.users.models.ChatUser;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.StringUtils;
 
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD;
 
@@ -124,23 +127,31 @@ public class ChatSignUpActivity extends AppCompatActivity {
                     createUserOnFirebaseAuthentication(email, password, new OnUserCreatedOnFirebaseCallback() {
 
                         @Override
-                        public void onUserCreatedSuccess(String userUID) {
+                        public void onUserCreatedSuccess(final String userUID) {
 
-                            Map<String, Object> user = new HashMap<>();
-                            user.put("email", email);
-                            user.put("firstname", firstName);
-                            user.put("imageurl", "");
-                            user.put("lastname", lastName);
-                            user.put("timestamp", new Date().getTime());
-                            user.put("uid", userUID);
+                            final Map<String, Object> userMap = new HashMap<>();
+                            userMap.put(email, email);
+                            userMap.put("firstname", firstName);
+                            userMap.put("imageurl", "");
+                            userMap.put("lastname", lastName);
+                            userMap.put("timestamp", new Date().getTime());
+                            userMap.put("uid", userUID);
 
-                            createUserOnContacts(userUID, user, new OnUserCreatedOnContactsCallback() {
+                            createUserOnContacts(userUID, userMap, new OnUserCreatedOnContactsCallback() {
 
                                 @Override
                                 public void onUserCreatedSuccess() {
+                                    // it generates the user fullName from the user firstname and the user lastname
+                                    String fullName = userMap.get("firstname") + " " + userMap.get("lastname");
+                                    IChatUser signedUpUser = new ChatUser((String) userMap.get("uid"), fullName);
+                                    signedUpUser.setEmail((String) userMap.get("email"));
+                                    signedUpUser.setProfilePictureUrl((String) userMap.get("imageurl"));
+
+
                                     Intent intent = getIntent();
                                     intent.putExtra(INTENT_BUNDLE_SIGNED_UP_USER_EMAIL, email);
                                     intent.putExtra(INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD, password);
+                                    intent.putExtra(INTENT_BUNDLE_SIGNED_UP_USER, signedUpUser);
                                     setResult(RESULT_OK, intent);
                                     finish();
                                 }
@@ -268,7 +279,7 @@ public class ChatSignUpActivity extends AppCompatActivity {
                                       final OnUserCreatedOnContactsCallback onUserCreatedOnContactsCallback) {
         // TODO: 04/01/18  check  ChatManager.Configuration.firebaseUrl
         DatabaseReference contactsNode = FirebaseDatabase.getInstance()
-                .getReferenceFromUrl("https://chat-v2-dev.firebaseio.com/")
+                .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
                 .child("/apps/" + ChatManager.Configuration.appId + "/contacts");
 
         // save the user on contacts node

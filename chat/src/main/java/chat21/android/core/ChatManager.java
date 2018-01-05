@@ -17,6 +17,7 @@ import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
+import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.IOUtils;
 
@@ -162,10 +163,13 @@ public class ChatManager {
     }
 
 
-    public void stop() {
+    public void dispose() {
 
+        //dispose conversationsHandler
         this.conversationsHandler.disconnect();
+        this.conversationsHandler = null;
 
+        //dispose all conversationMessagesHandlerMap
         for (Map.Entry<String, ConversationMessagesHandler> entry : conversationMessagesHandlerMap.entrySet()) {
 
             String recipientId = entry.getKey();
@@ -175,7 +179,9 @@ public class ChatManager {
             Log.d(TAG, "conversationMessagesHandler for recipientId: " + recipientId + " disposed");
         }
 
-        // TODO: 04/01/18 contacts handler disconnect
+        //dispose contactsSynchonizer
+        this.contactsSynchronizer.removeAllContactsListeners();
+        this.contactsSynchronizer = null;
 
     }
 
@@ -219,7 +225,16 @@ public class ChatManager {
 //        return conversationsHandler;
 //    }
 
-    public ConversationMessagesHandler getConversationMessagesHandler(String recipientId) {
+    public ConversationMessagesHandler getConversationMessagesHandler(String recipientId, String recipientFullName) {
+
+        IChatUser chatUser = new ChatUser(recipientId, recipientFullName);
+
+        return getConversationMessagesHandler(chatUser);
+    }
+
+
+    public ConversationMessagesHandler getConversationMessagesHandler(IChatUser recipient) {
+        String recipientId = recipient.getId();
         Log.d(TAG, "Getting ConversationMessagesHandler for recipientId " + recipientId);
 
         if (conversationMessagesHandlerMap.containsKey(recipientId)) {
@@ -228,7 +243,7 @@ public class ChatManager {
             return conversationMessagesHandlerMap.get(recipientId);
         } else {
             ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
-                    Configuration.firebaseUrl, recipientId, this.getAppId(), this.getLoggedUser());
+                    Configuration.firebaseUrl, this.getAppId(), this.getLoggedUser(), recipient);
 
             conversationMessagesHandlerMap.put(recipientId, messageHandler);
 
@@ -276,21 +291,28 @@ public class ChatManager {
 //                Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
 //    }
 
-    public void sendTextMessage(String recipient_id, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
+    public void sendTextMessage(String recipientId, String recipientFullName, String text) {
+        sendTextMessage(recipientId, recipientFullName, text, null, null);
+    }
 
-        Log.d(TAG, "sending text message to recipientId : " + recipient_id + " with text : " + text + " and customAttributes : " + customAttributes);
+    public void sendTextMessage(String recipientId, String recipientFullName, String text, SendMessageListener sendMessageListener) {
+        sendTextMessage(recipientId, recipientFullName, text, null, sendMessageListener);
+    }
 
-        getConversationMessagesHandler(recipient_id).sendMessage(
-                recipientFullName,
+    public void sendTextMessage(String recipientId, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
+
+        Log.d(TAG, "sending text message to recipientId : " + recipientId + ", recipientFullName: " + recipientFullName +" with text : " + text + " and customAttributes : " + customAttributes);
+
+
+        getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
                 Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 
-    public void sendImageMessage(String recipient_id, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
+    public void sendImageMessage(String recipientId, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 
-        Log.d(TAG, "sending image message to recipientId : " + recipient_id + " with text : " + text + " and customAttributes : " + customAttributes);
+        Log.d(TAG, "sending image message to recipientId : " + recipientId + ", recipientFullName: " + recipientFullName +" with text : " + text + " and customAttributes : " + customAttributes);
 
-        getConversationMessagesHandler(recipient_id).sendMessage(
-                recipientFullName,
+        getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
                 Message.TYPE_IMAGE, text, customAttributes, sendMessageListener);
     }
 

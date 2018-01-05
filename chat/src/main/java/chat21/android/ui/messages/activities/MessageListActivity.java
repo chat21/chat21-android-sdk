@@ -128,7 +128,7 @@ public class MessageListActivity extends AppCompatActivity implements
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT);
 
         conversationMessagesHandler = ChatManager.getInstance()
-                .getConversationMessagesHandler(recipient.getId());
+                .getConversationMessagesHandler(recipient);
         conversationMessagesHandler.upsertConversationMessagesListener(this);
         conversationMessagesHandler.connect();
 

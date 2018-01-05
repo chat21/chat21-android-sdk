@@ -31,7 +31,7 @@ public class ConversationMessagesHandler {
     private List<Message> messages = new ArrayList<Message>(); // messages in memory
 
     IChatUser currentUser;
-    String recipientId;
+    IChatUser recipient;
 
     DatabaseReference conversationMessagesNode;
 
@@ -39,16 +39,15 @@ public class ConversationMessagesHandler {
 
     List<ConversationMessagesListener> conversationMessagesListeners;
 
-    public ConversationMessagesHandler(String firebaseUrl, String recipientId, String appId, IChatUser currentUser
-//            , ConversationsListener conversationMessagesListener
-    ) {
+    public ConversationMessagesHandler(String firebaseUrl, String appId, IChatUser currentUser, IChatUser recipient) {
 
         conversationMessagesListeners = new ArrayList<>();
 
-        this.recipientId = recipientId;
         this.currentUser = currentUser;
 
-        this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipientId);
+        this.recipient = recipient;
+
+        this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
         this.conversationMessagesNode.keepSynced(true);
         Log.d(TAG, "conversationMessagesNode : " + conversationMessagesNode.toString());
 
@@ -59,9 +58,7 @@ public class ConversationMessagesHandler {
 
     }
 
-    public void sendMessage(
-            String recipientFullname,
-            String type, String text,
+    public void sendMessage(String type, String text,
             final Map<String, Object> customAttributes, final SendMessageListener sendMessageListener) {
         Log.v(TAG, "sendMessage called");
 
@@ -69,13 +66,17 @@ public class ConversationMessagesHandler {
         final Message message = new Message();
 
         message.setSender(currentUser.getId());
-        message.setRecipient(this.recipientId);
+        message.setSenderFullname(currentUser.getFullName());
+
+        message.setRecipient(this.recipient.getId());
+        message.setRecipientFullname(this.recipient.getFullName());
+
         message.setStatus(Message.STATUS_SENDING);
 
         message.setText(text);
         message.setType(type);
-        message.setSenderFullname(currentUser.getFullName());
-        message.setRecipientFullname(recipientFullname);
+
+
 //        message.setStatus(Message.STATUS_SENDING);
         message.setTimestamp(new Date().getTime());
         message.setCustomAttributes(customAttributes);
@@ -179,8 +180,16 @@ public class ConversationMessagesHandler {
         return messages;
     }
 
+
+    public ChildEventListener connect(ConversationMessagesListener conversationMessagesListener) {
+
+        this.upsertConversationMessagesListener(conversationMessagesListener);
+
+        return connect();
+    }
+
     public ChildEventListener connect() {
-        Log.d(TAG, "connecting  for recipientId : " + this.recipientId);
+        Log.d(TAG, "connecting  for recipientId : " + this.recipient.getId());
 
 
 //        final List<ConversationMessagesListener> conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
@@ -275,11 +284,11 @@ public class ConversationMessagesHandler {
                 }
             });
 
-            Log.i(TAG, "connected for recipientId: " + recipientId );
+            Log.i(TAG, "connected for recipientId: " + recipient.getId() );
 
 
         }else {
-            Log.i(TAG, "already connected form recipientId : " + recipientId);
+            Log.i(TAG, "already connected form recipientId : " + recipient.getId());
         }
 
         return conversationMessagesChildEventListener;
