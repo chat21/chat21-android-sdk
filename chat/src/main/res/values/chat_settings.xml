@@ -5,7 +5,7 @@
     <string name="firebase_storage_reference" translatable="false">gs://chat21-sdk-demo.appspot.com</string>
 
     <!--tenant in which it is messaging-->
-    <string name="tenant" translatable="false">tilechat</string>
+    <string name="tenant" translatable="false">tilechat2</string>
 
     <!--&lt;!&ndash;abilita o disabilita il pulsante per la creazione dei gruppi&ndash;&gt;-->
     <!--&lt;!&ndash;valori ammessi:&ndash;&gt;-->

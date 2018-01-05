@@ -75,7 +75,6 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         mSubTitle.setVisibility(View.GONE);
 
         // contacts list adapter
-        toggleEmptyLayout(contactList); // show or hide the empty layout
         mAdapter = new ContactListAdapter(this, contactList);
         mAdapter.setOnContactClickListener(this);
 
@@ -85,6 +84,9 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+
+        toggleEmptyLayout(contactList); // show or hide the empty layout
+
 
         // create group box
         mBoxCreateGroup = (LinearLayout) findViewById(R.id.box_create_group);

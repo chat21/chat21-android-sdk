@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import chat21.android.R;
+import chat21.android.core.ChatManager;
 import chat21.android.utils.StringUtils;
 
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
@@ -127,7 +128,7 @@ public class ChatSignUpActivity extends AppCompatActivity {
 
                             Map<String, Object> user = new HashMap<>();
                             user.put("email", email);
-                            user.put("firstName", firstName);
+                            user.put("firstname", firstName);
                             user.put("imageurl", "");
                             user.put("lastname", lastName);
                             user.put("timestamp", new Date().getTime());
@@ -268,7 +269,7 @@ public class ChatSignUpActivity extends AppCompatActivity {
         // TODO: 04/01/18  check  ChatManager.Configuration.firebaseUrl
         DatabaseReference contactsNode = FirebaseDatabase.getInstance()
                 .getReferenceFromUrl("https://chat-v2-dev.firebaseio.com/")
-                .child("/apps/" + "tilechat" + "/contacts");
+                .child("/apps/" + ChatManager.Configuration.appId + "/contacts");
 
         // save the user on contacts node
         contactsNode.child(key)
