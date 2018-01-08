@@ -24,11 +24,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
+import chat21.android.core.exception.ChatFieldNotFoundException;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
@@ -37,7 +44,6 @@ import chat21.android.ui.contacts.listeners.OnCreateGroupClickListener;
 import chat21.android.ui.conversations.listeners.OnNewConversationClickListener;
 import chat21.android.ui.messages.listeners.OnAttachClickListener;
 
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD;
 import static chat21.android.ui.ChatUI.REQUEST_CODE_SIGNUP_ACTIVITY;
@@ -60,9 +66,14 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
 
     private String email, username, password;
 
+    private interface OnUserLookUpComplete {
+        void onUserRetrievedSuccess(IChatUser loggedUser);
+
+        void onUserRetrievedError(Exception e);
+    }
+
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -171,6 +182,76 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
+                            lookUpContactById(user.getUid(), new OnUserLookUpComplete() {
+                                @Override
+                                public void onUserRetrievedSuccess(IChatUser loggedUser) {
+                                    Log.d(TAG, "ChatLoginActivity.signInWithEmail.onUserRetrievedSuccess: loggedUser == " + loggedUser.toString());
+
+                                    ChatManager.Configuration mChatConfiguration =
+                                            new ChatManager.Configuration.Builder(ChatManager.Configuration.appId)
+                                                    .firebaseUrl(ChatManager.Configuration.firebaseUrl).build();
+
+//                                    IChatUser iChatUser = new ChatUser();
+//                                    iChatUser.setId(user.getUid());
+//                                    iChatUser.setEmail(user.getEmail());
+
+                                    ChatManager.start(ChatLoginActivity.this, mChatConfiguration, loggedUser);
+                                    Log.i(TAG, "chat has been initialized with success");
+
+                                    ChatUI.getInstance().setContext(ChatLoginActivity.this);
+                                    Log.i(TAG, "ChatUI has been initialized with success");
+
+                                    ChatUI.getInstance().enableGroups(true);
+
+                                    // set on new conversation click listener
+                                    // final IChatUser support = new ChatUser("support", "Chat21 Support");
+                                    final IChatUser support = null;
+                                    ChatUI.getInstance().setOnNewConversationClickListener(new OnNewConversationClickListener() {
+                                        @Override
+                                        public void onNewConversationClicked() {
+                                            if (support != null) {
+                                                ChatUI.getInstance().showDirectConversationActivity(support);
+                                            } else {
+                                                Intent intent = new Intent(getApplicationContext(),
+                                                        ContactListActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // start activity from context
+
+                                                startActivity(intent);
+                                            }
+                                        }
+                                    });
+
+                                    // on attach button click listener
+                                    ChatUI.getInstance().setOnAttachClickListener(new OnAttachClickListener() {
+                                        @Override
+                                        public void onAttachClicked(Object object) {
+                                            Toast.makeText(getApplicationContext(),
+                                                    "onAttachClickListener", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                                    // on create group button click listener
+                                    ChatUI.getInstance().setOnCreateGroupClickListener(new OnCreateGroupClickListener() {
+                                        @Override
+                                        public void onCreateGroupClicked() {
+                                            Toast.makeText(getApplicationContext(),
+                                                    "setOnCreateGroupClickListener", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    Log.i(TAG, "ChatUI has been initialized with success");
+
+                                    setResult(Activity.RESULT_OK);
+                                    finish();
+
+//                            updateUI(user);
+                                }
+
+                                @Override
+                                public void onUserRetrievedError(Exception e) {
+                                    Log.d(TAG, "ChatLoginActivity.signInWithEmail.onUserRetrievedError: " + e.toString());
+                                }
+                            });
+
                             // enable persistence must be made before any other usage of FirebaseDatabase instance.
                             try {
                                 FirebaseDatabase.getInstance().setPersistenceEnabled(true);
@@ -179,64 +260,6 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                             } catch (Exception e) {
                                 Log.e(TAG, e.toString());
                             }
-
-                            ChatManager.Configuration mChatConfiguration =
-                                    new ChatManager.Configuration.Builder(ChatManager.Configuration.appId)
-                                            .firebaseUrl(ChatManager.Configuration.firebaseUrl).build();
-
-                            IChatUser iChatUser = new ChatUser();
-                            iChatUser.setId(user.getUid());
-                            iChatUser.setEmail(user.getEmail());
-
-                            ChatManager.start(ChatLoginActivity.this, mChatConfiguration, iChatUser);
-                            Log.i(TAG, "chat has been initialized with success");
-
-                            ChatUI.getInstance().setContext(ChatLoginActivity.this);
-                            Log.i(TAG, "ChatUI has been initialized with success");
-
-                            ChatUI.getInstance().enableGroups(true);
-
-                            // set on new conversation click listener
-                            // final IChatUser support = new ChatUser("support", "Chat21 Support");
-                            final IChatUser support = null;
-                            ChatUI.getInstance().setOnNewConversationClickListener(new OnNewConversationClickListener() {
-                                @Override
-                                public void onNewConversationClicked() {
-                                    if (support != null) {
-                                        ChatUI.getInstance().showDirectConversationActivity(support);
-                                    } else {
-                                        Intent intent = new Intent(getApplicationContext(),
-                                                ContactListActivity.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // start activity from context
-
-                                        startActivity(intent);
-                                    }
-                                }
-                            });
-
-                            // on attach button click listener
-                            ChatUI.getInstance().setOnAttachClickListener(new OnAttachClickListener() {
-                                @Override
-                                public void onAttachClicked(Object object) {
-                                    Toast.makeText(getApplicationContext(),
-                                            "onAttachClickListener", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            // on create group button click listener
-                            ChatUI.getInstance().setOnCreateGroupClickListener(new OnCreateGroupClickListener() {
-                                @Override
-                                public void onCreateGroupClicked() {
-                                    Toast.makeText(getApplicationContext(),
-                                            "setOnCreateGroupClickListener", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            Log.i(TAG, "ChatUI has been initialized with success");
-
-                            setResult(Activity.RESULT_OK);
-                            finish();
-
-//                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -369,13 +392,66 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                 String password = data.getStringExtra(INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD);
 //                vPassword.setText(password);
 
-                // it retrieves the signed up user
-                IChatUser signedUpUser = (IChatUser) data.getSerializableExtra(INTENT_BUNDLE_SIGNED_UP_USER);
-                // TODO: 05/01/18 what to do with this user???
-
-
                 signIn(email, password);
             }
         }
+    }
+
+    private void lookUpContactById(String userId, final OnUserLookUpComplete onUserLookUpComplete) {
+        DatabaseReference contactsNode = FirebaseDatabase.getInstance()
+                .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+                .child("/apps/" + ChatManager.Configuration.appId + "/contacts/" + userId);
+
+        contactsNode.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(DEBUG_LOGIN, "ChatLoginActivity.lookUpContactById: dataSnapshot == " + dataSnapshot.toString());
+
+                if (dataSnapshot.getValue() != null) {
+                    try {
+                        IChatUser loggedUser = decodeContactSnapShop(dataSnapshot);
+                        Log.d(DEBUG_LOGIN, "ChatLoginActivity.lookUpContactById.onDataChange: loggedUser == " + loggedUser.toString());
+                        onUserLookUpComplete.onUserRetrievedSuccess(loggedUser);
+                    } catch (ChatFieldNotFoundException e) {
+                        Log.e(DEBUG_LOGIN, "ChatLoginActivity.lookUpContactById.onDataChange: " + e.toString());
+                        onUserLookUpComplete.onUserRetrievedError(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(DEBUG_LOGIN, "ChatLoginActivity.lookUpContactById: " + databaseError.toString());
+                onUserLookUpComplete.onUserRetrievedError(databaseError.toException());
+            }
+        });
+    }
+
+    private static IChatUser decodeContactSnapShop(DataSnapshot dataSnapshot) throws ChatFieldNotFoundException {
+        Log.v(TAG, "decodeContactSnapShop called");
+
+        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+
+//        String contactId = dataSnapshot.getKey();
+
+        String uid = (String) map.get("uid");
+        if (uid == null) {
+            throw new ChatFieldNotFoundException("Required uid field is null for contact id : " + uid);
+        }
+
+        String email = (String) map.get("email");
+        String fullName = (String) map.get("fullName");
+        String imageUrl = (String) map.get("profilePictureUrl");
+
+
+        IChatUser contact = new ChatUser();
+        contact.setId(uid);
+        contact.setEmail(email);
+        contact.setFullName(fullName);
+        contact.setProfilePictureUrl(imageUrl);
+
+        Log.v(TAG, "decodeContactSnapShop.contact : " + contact);
+
+        return contact;
     }
 }

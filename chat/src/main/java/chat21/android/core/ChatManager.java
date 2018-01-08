@@ -33,7 +33,7 @@ public class ChatManager {
     private static final String _SERIALIZED_CHAT_CONFIGURATION_TENANT =
             "_SERIALIZED_CHAT_CONFIGURATION_TENANT";
 
-    private static final String _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER =
+    public static final String _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER =
             "_SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER";
 
 
@@ -149,15 +149,15 @@ public class ChatManager {
         // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.
         EmojiManager.install(new IosEmojiProvider());
 
-        chat.loggedUser = currentUser;
+//        chat.loggedUser = currentUser;
         // serialize the current user
-        IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, currentUser);
+//        IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, currentUser);
+        chat.setLoggedUser(currentUser);
 
         chat.appId = configuration.appId;
 
         // serialize the appId
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
-
 
 
     }
@@ -180,9 +180,35 @@ public class ChatManager {
         }
 
         //dispose contactsSynchonizer
-        this.contactsSynchronizer.removeAllContactsListeners();
+        if (contactsSynchronizer != null)
+            this.contactsSynchronizer.removeAllContactsListeners();
         this.contactsSynchronizer = null;
 
+        deleteInstanceId();
+
+        removeLoggedUser();
+    }
+
+    private void deleteInstanceId() {
+//                // TODO: 08/01/18 uncomment
+//        // remove the instanceId for the logged user
+//        DatabaseReference firebaseUsersPath = FirebaseDatabase.getInstance().getReference()
+//                .child("apps/" + ChatManager.Configuration.appId + "/users/" + loggedUser.getId() + "/instanceId");
+//        firebaseUsersPath.removeValue();
+//
+//        try {
+//            FirebaseInstanceId.getInstance().deleteInstanceId();
+//        } catch (IOException e) {
+//            Log.e(DEBUG_LOGIN, "cannot delete instanceId. " + e.getMessage());
+//            Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+    }
+
+
+    private void removeLoggedUser() {
+        // clear all logged user data
+        IOUtils.deleteObject(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
     }
 
 
@@ -266,7 +292,7 @@ public class ChatManager {
     public ContactsSynchronizer getContactsSynchronizer() {
         if (this.contactsSynchronizer != null) {
             return this.contactsSynchronizer;
-        }else {
+        } else {
             this.contactsSynchronizer = new ContactsSynchronizer(Configuration.firebaseUrl, this.getAppId());
             return this.contactsSynchronizer;
         }
@@ -301,7 +327,7 @@ public class ChatManager {
 
     public void sendTextMessage(String recipientId, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 
-        Log.d(TAG, "sending text message to recipientId : " + recipientId + ", recipientFullName: " + recipientFullName +" with text : " + text + " and customAttributes : " + customAttributes);
+        Log.d(TAG, "sending text message to recipientId : " + recipientId + ", recipientFullName: " + recipientFullName + " with text : " + text + " and customAttributes : " + customAttributes);
 
 
         getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
@@ -310,7 +336,7 @@ public class ChatManager {
 
     public void sendImageMessage(String recipientId, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 
-        Log.d(TAG, "sending image message to recipientId : " + recipientId + ", recipientFullName: " + recipientFullName +" with text : " + text + " and customAttributes : " + customAttributes);
+        Log.d(TAG, "sending image message to recipientId : " + recipientId + ", recipientFullName: " + recipientFullName + " with text : " + text + " and customAttributes : " + customAttributes);
 
         getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
                 Message.TYPE_IMAGE, text, customAttributes, sendMessageListener);

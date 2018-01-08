@@ -27,11 +27,8 @@ import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.users.models.ChatUser;
-import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.StringUtils;
 
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD;
 
@@ -141,17 +138,9 @@ public class ChatSignUpActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onUserCreatedSuccess() {
-                                    // it generates the user fullName from the user firstname and the user lastname
-                                    String fullName = userMap.get("firstname") + " " + userMap.get("lastname");
-                                    IChatUser signedUpUser = new ChatUser((String) userMap.get("uid"), fullName);
-                                    signedUpUser.setEmail((String) userMap.get("email"));
-                                    signedUpUser.setProfilePictureUrl((String) userMap.get("imageurl"));
-
-
                                     Intent intent = getIntent();
                                     intent.putExtra(INTENT_BUNDLE_SIGNED_UP_USER_EMAIL, email);
                                     intent.putExtra(INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD, password);
-                                    intent.putExtra(INTENT_BUNDLE_SIGNED_UP_USER, signedUpUser);
                                     setResult(RESULT_OK, intent);
                                     finish();
                                 }

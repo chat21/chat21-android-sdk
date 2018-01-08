@@ -57,7 +57,7 @@ public class ConversationsHandler {
 
     public ChildEventListener connect() {
 
-        if (this.conversationsChildEventListener==null) {
+        if (this.conversationsChildEventListener == null) {
 
             this.conversationsChildEventListener = conversationsNode.addChildEventListener(new ChildEventListener() {
                 @Override
@@ -75,14 +75,14 @@ public class ConversationsHandler {
                         saveOrUpdateConversationInMemory(conversation);
                         sortConversationsInMemory();
 
-                        if (conversationsListeners!=null) {
+                        if (conversationsListeners != null) {
                             for (ConversationsListener conversationsListener : conversationsListeners) {
                                 conversationsListener.onConversationAdded(conversation, null);
                             }
                         }
 
                     } catch (Exception e) {
-                        if (conversationsListeners!=null) {
+                        if (conversationsListeners != null) {
                             for (ConversationsListener conversationsListener : conversationsListeners) {
                                 conversationsListener.onConversationAdded(null, new ChatRuntimeException(e));
                             }
@@ -101,14 +101,14 @@ public class ConversationsHandler {
                         saveOrUpdateConversationInMemory(conversation);
                         sortConversationsInMemory();
 
-                        if (conversationsListeners!=null) {
+                        if (conversationsListeners != null) {
                             for (ConversationsListener conversationsListener : conversationsListeners) {
                                 conversationsListener.onConversationChanged(conversation, null);
                             }
                         }
 
                     } catch (Exception e) {
-                        if (conversationsListeners!=null) {
+                        if (conversationsListeners != null) {
                             for (ConversationsListener conversationsListener : conversationsListeners) {
                                 conversationsListener.onConversationChanged(null, new ChatRuntimeException(e));
                             }
@@ -150,8 +150,8 @@ public class ConversationsHandler {
 
                 }
             });
-        }else {
-            Log.i(TAG, "already connected : " );
+        } else {
+            Log.i(TAG, "already connected : ");
         }
 
         return conversationsChildEventListener;
@@ -354,16 +354,17 @@ public class ConversationsHandler {
 
         this.conversationsListeners.add(conversationsListener);
 
-        Log.i(TAG, "  conversationsListener with hashCode: "+ conversationsListener.hashCode() + " added");
+        Log.i(TAG, "  conversationsListener with hashCode: " + conversationsListener.hashCode() + " added");
 
     }
 
     public void removeConversationsListener(ConversationsListener conversationsListener) {
         Log.v(TAG, "  removeConversationsListener called");
 
-        this.conversationsListeners.remove(conversationsListener);
+        if (conversationsListeners != null)
+            this.conversationsListeners.remove(conversationsListener);
 
-        Log.i(TAG, "  conversationsListener with hashCode: "+ conversationsListener.hashCode() + " removed");
+        Log.i(TAG, "  conversationsListener with hashCode: " + conversationsListener.hashCode() + " removed");
 
     }
 
@@ -373,11 +374,11 @@ public class ConversationsHandler {
         if (conversations.contains(conversationsListener)) {
             this.removeConversationsListener(conversationsListener);
             this.addConversationsListener(conversationsListener);
-            Log.i(TAG, "  conversationsListener with hashCode: "+ conversationsListener.hashCode() + " updated");
+            Log.i(TAG, "  conversationsListener with hashCode: " + conversationsListener.hashCode() + " updated");
 
         } else {
             this.addConversationsListener(conversationsListener);
-            Log.i(TAG, "  conversationsListener with hashCode: "+ conversationsListener.hashCode() + " added");
+            Log.i(TAG, "  conversationsListener with hashCode: " + conversationsListener.hashCode() + " added");
 
         }
     }
@@ -387,8 +388,6 @@ public class ConversationsHandler {
         Log.i(TAG, "Removed all ConversationsListeners");
 
     }
-
-
 
 
     public ChildEventListener getConversationsChildEventListener() {
