@@ -439,16 +439,19 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
             throw new ChatFieldNotFoundException("Required uid field is null for contact id : " + uid);
         }
 
+//        String timestamp = (String) map.get("timestamp");
+
+        String lastname = (String) map.get("lastname");
+        String firstname = (String) map.get("firstname");
+        String imageurl = (String) map.get("imageurl");
         String email = (String) map.get("email");
-        String fullName = (String) map.get("fullName");
-        String imageUrl = (String) map.get("profilePictureUrl");
 
 
         IChatUser contact = new ChatUser();
         contact.setId(uid);
         contact.setEmail(email);
-        contact.setFullName(fullName);
-        contact.setProfilePictureUrl(imageUrl);
+        contact.setFullName(firstname + " " + lastname);
+        contact.setProfilePictureUrl(imageurl);
 
         Log.v(TAG, "decodeContactSnapShop.contact : " + contact);
 
