@@ -130,7 +130,7 @@ public class ChatSignUpActivity extends AppCompatActivity {
                         public void onUserCreatedSuccess(final String userUID) {
 
                             final Map<String, Object> userMap = new HashMap<>();
-                            userMap.put(email, email);
+                            userMap.put("email", email);
                             userMap.put("firstname", firstName);
                             userMap.put("imageurl", "");
                             userMap.put("lastname", lastName);
