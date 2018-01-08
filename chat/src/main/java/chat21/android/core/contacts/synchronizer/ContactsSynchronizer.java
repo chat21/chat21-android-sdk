@@ -218,6 +218,12 @@ public class ContactsSynchronizer {
         Log.i(TAG, "  contactListener with hashCode: " + contactListener.hashCode() + " removed");
     }
 
+    public void removeAllContactsListeners() {
+        this.contactListeners = null;
+        Log.i(TAG, "Removed all contactListeners");
+
+    }
+
     public void addContact(IChatUser contact) {
         this.contacts.add(contact);
     }
@@ -252,6 +258,11 @@ public class ContactsSynchronizer {
         Log.v(TAG, "decodeContactSnapShop.contact : " + contact);
 
         return contact;
+    }
+
+    public void disconnect() {
+        this.contactsNode.removeEventListener(this.contactsChildEventListener);
+        this.removeAllContactsListeners();
     }
 
 //    public List<IChatUser> search(String keyWord) {

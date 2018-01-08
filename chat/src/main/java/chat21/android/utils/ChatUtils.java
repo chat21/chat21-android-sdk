@@ -3,16 +3,9 @@ package chat21.android.utils;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-
-import com.google.firebase.database.DataSnapshot;
 
 import java.util.Locale;
-
-import chat21.android.R;
 
 
 /**
@@ -36,12 +29,27 @@ public class ChatUtils {
     /**
      * @return Application's version code from the {@code PackageManager}.
      */
-    public static int getAppVersion(Context context) {
-        Log.d(TAG, "getAppVersion");
+    public static int getVersionCode(Context context) {
+        Log.d(TAG, "getVersionCode");
         try {
             PackageInfo packageInfo = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0);
             return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
+        }
+    }
+
+    /**
+     * @return Application's version name from the {@code PackageManager}.
+     */
+    public static String getVersionName(Context context) {
+        Log.d(TAG, "getVersionName");
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             // should never happen
             throw new RuntimeException("Could not get package name: " + e);

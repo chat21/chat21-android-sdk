@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.FirebaseDatabase;
 
 import chat21.android.R;
@@ -36,6 +37,7 @@ import chat21.android.ui.contacts.listeners.OnCreateGroupClickListener;
 import chat21.android.ui.conversations.listeners.OnNewConversationClickListener;
 import chat21.android.ui.messages.listeners.OnAttachClickListener;
 
+import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD;
 import static chat21.android.ui.ChatUI.REQUEST_CODE_SIGNUP_ACTIVITY;
@@ -169,12 +171,18 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            //enable persistence must be made before any other usage of FirebaseDatabase instance.
-                            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+                            // enable persistence must be made before any other usage of FirebaseDatabase instance.
+                            try {
+                                FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+                            } catch (DatabaseException databaseException) {
+                                Log.e(TAG, databaseException.toString());
+                            } catch (Exception e) {
+                                Log.e(TAG, e.toString());
+                            }
 
                             ChatManager.Configuration mChatConfiguration =
-                                    new ChatManager.Configuration.Builder(getString(R.string.tenant))
-                                            .firebaseUrl("https://chat-v2-dev.firebaseio.com/").build();
+                                    new ChatManager.Configuration.Builder(ChatManager.Configuration.appId)
+                                            .firebaseUrl(ChatManager.Configuration.firebaseUrl).build();
 
                             IChatUser iChatUser = new ChatUser();
                             iChatUser.setId(user.getUid());
@@ -197,7 +205,8 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                                     if (support != null) {
                                         ChatUI.getInstance().showDirectConversationActivity(support);
                                     } else {
-                                        Intent intent = new Intent(getApplicationContext(), ContactListActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(),
+                                                ContactListActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // start activity from context
 
                                         startActivity(intent);
@@ -223,7 +232,6 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                                 }
                             });
                             Log.i(TAG, "ChatUI has been initialized with success");
-
 
                             setResult(Activity.RESULT_OK);
                             finish();
@@ -360,6 +368,11 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                 // set password
                 String password = data.getStringExtra(INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD);
 //                vPassword.setText(password);
+
+                // it retrieves the signed up user
+                IChatUser signedUpUser = (IChatUser) data.getSerializableExtra(INTENT_BUNDLE_SIGNED_UP_USER);
+                // TODO: 05/01/18 what to do with this user???
+
 
                 signIn(email, password);
             }

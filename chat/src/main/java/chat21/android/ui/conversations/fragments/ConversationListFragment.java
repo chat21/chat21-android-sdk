@@ -91,7 +91,6 @@ public class ConversationListFragment extends Fragment implements
 //                + conversationsHandler.getConversationsNode().toString());
 
         conversationsHandler = ChatManager.getInstance().getConversationsHandler();
-        conversationsHandler.connect();
     }
 
 
@@ -101,8 +100,6 @@ public class ConversationListFragment extends Fragment implements
         Log.d(TAG, "ConversationListFragment.onCreateView");
         View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
 
-        conversationsHandler.upsertConversationsListener(this);
-        Log.d(TAG, "  ConversationListFragment.onCreateView: conversationMessagesHandler attached");
 
         // init RecyclerView
         recyclerViewConversations = view.findViewById(R.id.conversations_list);
@@ -133,6 +130,12 @@ public class ConversationListFragment extends Fragment implements
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "ConversationListFragment.onViewCreated");
+
+        conversationsHandler.upsertConversationsListener(this);
+        Log.d(TAG, "  ConversationListFragment.onCreateView: conversationMessagesHandler attached");
+
+        conversationsHandler.connect();
+
 
 //        // subscribe for current user presence changes
 //        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
@@ -285,7 +288,7 @@ public class ConversationListFragment extends Fragment implements
         Log.d(TAG, "ConversationListFragment.startMessageActivity");
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
-        IChatUser recipient = new ChatUser(conversation.getRecipient(), conversation.getRecipientFullName());
+        IChatUser recipient = new ChatUser(conversation.getConvers_with(), conversation.getConvers_with_fullname());
         intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, recipient);
 //        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);

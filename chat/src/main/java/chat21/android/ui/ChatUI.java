@@ -39,6 +39,7 @@ public class ChatUI implements Serializable {
     public static final String INTENT_BUNDLE_GROUP_ID = "INTENT_BUNDLE_GROUP_ID";
     public static final String INTENT_BUNDLE_PARENT_ACTIVITY = "INTENT_BUNDLE_PARENT_ACTIVITY";
 
+    public static final String INTENT_BUNDLE_SIGNED_UP_USER = "INTENT_BUNDLE_SIGNED_UP_USER";
     public static final String INTENT_BUNDLE_SIGNED_UP_USER_EMAIL = "INTENT_BUNDLE_SIGNED_UP_USER_EMAIL";
     public static final String INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD = "INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD";
 

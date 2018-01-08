@@ -50,6 +50,11 @@ public class ConversationsHandler {
 //        Log.d(TAG, "ConversationsHandler.conversationsNode == " + conversationsNode.toString());
     }
 
+    public ChildEventListener connect(ConversationsListener conversationsListener) {
+        this.upsertConversationsListener(conversationsListener);
+        return connect();
+    }
+
     public ChildEventListener connect() {
 
         if (this.conversationsChildEventListener==null) {
