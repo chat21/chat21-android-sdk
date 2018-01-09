@@ -35,9 +35,9 @@
         android:id="@+id/main_activity_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/chat_padding_x_small"
         android:layout_above="@+id/main_activity_emoji_bar"
-        android:layout_below="@+id/appbar" />
+        android:layout_below="@+id/appbar"
+        android:paddingBottom="@dimen/chat_padding_x_small" />
 
     <LinearLayout
         android:id="@+id/main_activity_emoji_bar"
