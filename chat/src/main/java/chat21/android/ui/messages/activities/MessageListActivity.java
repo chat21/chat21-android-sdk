@@ -237,7 +237,7 @@ public class MessageListActivity extends AppCompatActivity implements
         // setup the toolbar with conversations data
         if (recipient != null) {
 
-            initDirectToolbar("", recipient.getId(), recipient.getFullName());
+            initDirectToolbar(recipient.getProfilePictureUrl(), recipient.getId(), recipient.getFullName());
         }
 //        else
             //TODO for group
