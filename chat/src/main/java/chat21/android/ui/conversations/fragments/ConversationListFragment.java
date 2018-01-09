@@ -100,7 +100,6 @@ public class ConversationListFragment extends Fragment implements
         Log.d(TAG, "ConversationListFragment.onCreateView");
         View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
 
-
         // init RecyclerView
         recyclerViewConversations = view.findViewById(R.id.conversations_list);
         rvConversationsLayoutManager = new LinearLayoutManager(getActivity());

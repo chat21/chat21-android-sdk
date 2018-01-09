@@ -87,7 +87,6 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
 
         toggleEmptyLayout(contactList); // show or hide the empty layout
 
-
         // create group box
         mBoxCreateGroup = (LinearLayout) findViewById(R.id.box_create_group);
         mGroupIcon = (ImageView) findViewById(R.id.group_icon);

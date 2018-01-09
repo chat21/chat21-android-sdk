@@ -243,6 +243,7 @@ public class ContactsSynchronizer {
         String firstName = (String) map.get("firstname");
         String lastName = (String) map.get("lastname");
         String imageUrl = (String) map.get("imageurl");
+        String email = (String) map.get("email");
 
 
         Long timestamp = null;
@@ -254,6 +255,7 @@ public class ContactsSynchronizer {
         contact.setId(uid);
         contact.setFullName(firstName + " " + lastName);
         contact.setProfilePictureUrl(imageUrl);
+        contact.setEmail(email);
 
         Log.v(TAG, "decodeContactSnapShop.contact : " + contact);
 
