@@ -1,4 +1,4 @@
-package chat21.android.ui.login;
+package chat21.android.ui.login.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -221,29 +221,27 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                                         }
                                     });
 
-                                    // on attach button click listener
-                                    ChatUI.getInstance().setOnAttachClickListener(new OnAttachClickListener() {
-                                        @Override
-                                        public void onAttachClicked(Object object) {
-                                            Toast.makeText(getApplicationContext(),
-                                                    "onAttachClickListener", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-
-                                    // on create group button click listener
-                                    ChatUI.getInstance().setOnCreateGroupClickListener(new OnCreateGroupClickListener() {
-                                        @Override
-                                        public void onCreateGroupClicked() {
-                                            Toast.makeText(getApplicationContext(),
-                                                    "setOnCreateGroupClickListener", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+//                                    // on attach button click listener
+//                                    ChatUI.getInstance().setOnAttachClickListener(new OnAttachClickListener() {
+//                                        @Override
+//                                        public void onAttachClicked(Object object) {
+//                                            Toast.makeText(getApplicationContext(),
+//                                                    "onAttachClickListener", Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    });
+//
+//                                    // on create group button click listener
+//                                    ChatUI.getInstance().setOnCreateGroupClickListener(new OnCreateGroupClickListener() {
+//                                        @Override
+//                                        public void onCreateGroupClicked() {
+//                                            Toast.makeText(getApplicationContext(),
+//                                                    "setOnCreateGroupClickListener", Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    });
                                     Log.i(TAG, "ChatUI has been initialized with success");
 
                                     setResult(Activity.RESULT_OK);
                                     finish();
-
-//                            updateUI(user);
                                 }
 
                                 @Override

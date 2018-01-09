@@ -1,4 +1,4 @@
-package chat21.android.ui.login;
+package chat21.android.ui.login.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import chat21.android.core.ChatManager;
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
 /**

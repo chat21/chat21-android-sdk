@@ -6,9 +6,9 @@
         android:allowBackup="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="chat21.android.ui.login.ChatLoginActivity"></activity>
+        <activity android:name="chat21.android.ui.login.activities.ChatLoginActivity"></activity>
 
-        <activity android:name="chat21.android.ui.login.ChatSignUpActivity"></activity>
+        <activity android:name="chat21.android.ui.login.activities.ChatSignUpActivity"></activity>
 
         <!--display the contact list-->
         <activity

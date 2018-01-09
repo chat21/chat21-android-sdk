@@ -1,4 +1,4 @@
-package chat21.android.ui.login;
+package chat21.android.ui.login.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
