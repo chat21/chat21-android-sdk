@@ -21,6 +21,8 @@ import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
+import chat21.android.core.presence.MyPresenceHandler;
+import chat21.android.core.presence.listeners.MyPresenceListener;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
@@ -30,17 +32,21 @@ import chat21.android.ui.conversations.listeners.OnConversationLongClickListener
 import chat21.android.ui.groups.activities.MyGroupsListActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 
+import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
+
 /**
  * Created by stefano on 15/10/2016.
  */
 public class ConversationListFragment extends Fragment implements
         ConversationsListener,
         OnConversationClickListener,
-        OnConversationLongClickListener {
+        OnConversationLongClickListener,
+        MyPresenceListener {
 
     private static final String TAG = ConversationListFragment.class.getName();
 
     private ConversationsHandler conversationsHandler;
+    private MyPresenceHandler myPresenceHandler;
 
     // conversation list recyclerview
     private RecyclerView recyclerViewConversations;
@@ -70,9 +76,9 @@ public class ConversationListFragment extends Fragment implements
 //        }
 //
 //        @Override
-//        public void onError(Exception e) {
+//        public void onMyPresenceError(Exception e) {
 //            Log.e(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceChange" +
-//                    ".onError: " + e.getMessage());
+//                    ".onMyPresenceError: " + e.getMessage());
 //        }
 //    };
 
@@ -91,6 +97,7 @@ public class ConversationListFragment extends Fragment implements
 //                + conversationsHandler.getConversationsNode().toString());
 
         conversationsHandler = ChatManager.getInstance().getConversationsHandler();
+        myPresenceHandler = ChatManager.getInstance().getMyPresenceHandler();
     }
 
 
@@ -131,9 +138,12 @@ public class ConversationListFragment extends Fragment implements
         Log.d(TAG, "ConversationListFragment.onViewCreated");
 
         conversationsHandler.upsertConversationsListener(this);
-        Log.d(TAG, "  ConversationListFragment.onCreateView: conversationMessagesHandler attached");
-
+        Log.d(TAG, "ConversationListFragment.onCreateView: conversationMessagesHandler attached");
         conversationsHandler.connect();
+
+        myPresenceHandler.upsertPresenceListener(this);
+        Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.onCreateView: myPresenceHandler attached");
+        myPresenceHandler.connect();
 
 
 //        // subscribe for current user presence changes
@@ -145,11 +155,13 @@ public class ConversationListFragment extends Fragment implements
     public void onDestroy() {
 
         conversationsHandler.removeConversationsListener(this);
-        Log.d(TAG, "  ConversationListFragment.onDestroy: conversationMessagesHandler detached");
+        Log.d(TAG, "ConversationListFragment.onDestroy: conversationMessagesHandler detached");
+
+        myPresenceHandler.removePresenceListener(this);
+        Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.onDestroy: myPresenceHandler detached");
 
         super.onDestroy();
     }
-
 
     // check if the support account is enabled or not and assign the listener
     private void setAddNewConversationClickBehaviour() {
@@ -291,5 +303,18 @@ public class ConversationListFragment extends Fragment implements
         intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, recipient);
 //        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
+    }
+
+    @Override
+    public void isLoggedUserOnline(boolean isConnected, String deviceId) {
+        // TODO: 09/01/18
+        Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.isUserOnline: " +
+                "isConnected == " + isConnected + ", deviceId == " + deviceId);
+    }
+
+    @Override
+    public void onMyPresenceError(Exception e) {
+        // TODO: 09/01/18
+        Log.e(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceError: " + e.toString());
     }
 }

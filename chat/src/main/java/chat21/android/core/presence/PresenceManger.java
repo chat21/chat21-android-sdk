@@ -17,7 +17,7 @@ import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 /**
  * Created by stefanodp91 on 07/12/17.
  */
-
+@Deprecated
 public class PresenceManger {
 
 

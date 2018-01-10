@@ -47,15 +47,14 @@ import java.io.File;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.groups.models.Group;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
-import chat21.android.core.presence.PresenceManger;
-import chat21.android.core.presence.listeners.OnPresenceListener;
+import chat21.android.core.presence.PresenceHandler;
+import chat21.android.core.presence.listeners.PresenceListener;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.groups.utils.GroupUtils;
 import chat21.android.storage.OnUploadedCallback;
@@ -71,24 +70,23 @@ import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CALLING_ACTIVITY;
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_CONTACT_FULL_NAME;
+import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
 import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
 /**
  * Created by stefano on 31/08/2015.
  */
-public class MessageListActivity extends AppCompatActivity implements
-        ConversationMessagesListener {
+public class MessageListActivity extends AppCompatActivity implements ConversationMessagesListener, PresenceListener {
     private static final String TAG = MessageListActivity.class.getName();
 
 //    private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
 
+    private PresenceHandler presenceHandler;
     private ConversationMessagesHandler conversationMessagesHandler;
     private boolean conversWithOnline = false;
-    private long conversWithLastOnline = 0;
+    private long conversWithLastOnline = -1;
 
     // check if this activity is called from a background notification
     private boolean isFromBackgroundNotification = false;
@@ -132,6 +130,10 @@ public class MessageListActivity extends AppCompatActivity implements
         conversationMessagesHandler.upsertConversationMessagesListener(this);
         conversationMessagesHandler.connect();
 
+        presenceHandler = ChatManager.getInstance().getPresenceHandler(recipient.getId());
+        presenceHandler.upsertPresenceListener(this);
+        presenceHandler.connect();
+
         initRecyclerView();
 
         // panel which contains the edittext, the emoji button and the attach button
@@ -147,14 +149,16 @@ public class MessageListActivity extends AppCompatActivity implements
 //                    ChatManager.getInstance().getLoggedUser().getId(),
 //                    recipientId, this);
 //        }
-
-        observeUserPresence();
+//        observeUserPresence();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "  MessageListActivity.onDestroy");
+
+        presenceHandler.removePresenceListener(this);
+        Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy: presenceHandler detached");
 
         conversationMessagesHandler.removeConversationMessagesListener(this);
     }
@@ -240,7 +244,7 @@ public class MessageListActivity extends AppCompatActivity implements
             initDirectToolbar(recipient.getProfilePictureUrl(), recipient.getId(), recipient.getFullName());
         }
 //        else
-            //TODO for group
+        //TODO for group
 
 
 //            if (conversation.isDirectChannel()) {
@@ -255,16 +259,9 @@ public class MessageListActivity extends AppCompatActivity implements
 //        }
 
 
-
-            // minimal settings
+        // minimal settings
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    private void observeUserPresence() {
-        String userToObserve = recipient.getId();
-        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getAppId(),
-                userToObserve, onConversWithPresenceListener);
     }
 
     private void initDirectToolbar(String pictureUrl, String conversWith, String conversWithFullName) {
@@ -469,7 +466,7 @@ public class MessageListActivity extends AppCompatActivity implements
             public void onClick(final View v) {
                 Log.d(TAG, "MessageListActivity.onAttachClicked");
 
-                if(ChatUI.getInstance().getOnAttachClickListener() != null) {
+                if (ChatUI.getInstance().getOnAttachClickListener() != null) {
                     ChatUI.getInstance().getOnAttachClickListener().onAttachClicked(null);
                 }
 
@@ -699,7 +696,7 @@ public class MessageListActivity extends AppCompatActivity implements
 
     // bugfix Issue #64
     private void showConfirmUploadDialog(
-                                         final File file) {
+            final File file) {
         Log.d(TAG, "uploadFile");
 
         new AlertDialog.Builder(this)
@@ -721,7 +718,7 @@ public class MessageListActivity extends AppCompatActivity implements
     }
 
     // bugfix Issue #15
-    private void uploadFile( File file) {
+    private void uploadFile(File file) {
         Log.d(TAG, "uploadFile");
 
         // bugfix Issue #45
@@ -893,43 +890,42 @@ public class MessageListActivity extends AppCompatActivity implements
                 .build(editText);
     }
 
-    private OnPresenceListener onConversWithPresenceListener = new OnPresenceListener() {
-        @Override
-        public void onChanged(boolean isConnected) {
-            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
-                    ".onChanged: imConnected ==  " + isConnected);
+    @Override
+    public void isUserOnline(boolean isConnected) {
+        Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.isUserOnline: " +
+                "isConnected == " + isConnected);
 
-            if (isConnected) {
-                conversWithOnline = true;
-                mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_online));
+        if (isConnected) {
+            conversWithOnline = true;
+            mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_online));
+        } else {
+            conversWithOnline = false;
+
+            if (conversWithLastOnline != 0) {
+                mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
+                Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.isUserOnline: " +
+                        "conversWithLastOnline == " + conversWithLastOnline);
             } else {
-                conversWithOnline = false;
-
-                if (conversWithLastOnline != 0) {
-                    mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
-                    Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener " +
-                            ".onChanged: conversWithLastOnline == " + conversWithLastOnline);
-                } else {
-                    mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_offline));
-                }
+                mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_offline));
             }
         }
+    }
 
-        @Override
-        public void onLastOnlineChanged(long lastOnline) {
-            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
-                    ".onLastOnlineChanged: lastOnline ==  " + lastOnline);
+    @Override
+    public void userLastOnline(long lastOnline) {
+        Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.userLastOnline: " +
+                "lastOnline == " + lastOnline);
 
-            conversWithLastOnline = lastOnline;
+        conversWithLastOnline = lastOnline;
 
-            if (!conversWithOnline)
-                mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
-        }
+        if (!conversWithOnline)
+            mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
+    }
 
-        @Override
-        public void onError(Exception e) {
-            Log.e(DEBUG_USER_PRESENCE, "MessageListActivity.onConversWithPresenceListener" +
-                    ".onError == " + e.getMessage());
-        }
-    };
+    @Override
+    public void onPresenceError(Exception e) {
+        Log.e(DEBUG_USER_PRESENCE, "MessageListActivity.onMyPresenceError: " + e.toString());
+
+        mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_offline));
+    }
 }

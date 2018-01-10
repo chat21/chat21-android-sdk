@@ -65,8 +65,8 @@ public class PublicProfileActivity extends AppCompatActivity {
 //        }
 //
 //        @Override
-//        public void onError(Exception e) {
-//            Log.e(DEBUG_USER_PRESENCE, "PublicProfileActivity.onPresenceListener.onError: " + e.getMessage());
+//        public void onMyPresenceError(Exception e) {
+//            Log.e(DEBUG_USER_PRESENCE, "PublicProfileActivity.onPresenceListener.onMyPresenceError: " + e.getMessage());
 //
 //            if (mPresenceTextView != null)
 //                mPresenceTextView.setText(R.string.activity_public_profile_presence_not_available);

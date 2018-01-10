@@ -3,13 +3,11 @@ package chat21.android.core;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.firebase.database.FirebaseDatabase;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
@@ -17,6 +15,8 @@ import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
+import chat21.android.core.presence.MyPresenceHandler;
+import chat21.android.core.presence.PresenceHandler;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.IOUtils;
@@ -56,19 +56,25 @@ public class ChatManager {
 
     private ContactsSynchronizer contactsSynchronizer;
 
+    private MyPresenceHandler myPresenceHandler;
+
+    private Map<String, PresenceHandler> presenceHandlerMap;
 
     // private constructor
     private ChatManager() {
         conversationMessagesHandlerMap = new HashMap<String, ConversationMessagesHandler>();
+
+        presenceHandlerMap = new HashMap<>();
     }
 
-    // bugfix Issue #16
-    public static void setPresenceDeviceInstance(String presenceDeviceInstance) {
-        mPresenceDeviceInstance = presenceDeviceInstance;
-        Log.i(DEBUG_MY_PRESENCE, "Chat.setPresenceDeviceInstance");
-    }
+//    // bugfix Issue #16
+//    public static void setPresenceDeviceInstance(String presenceDeviceInstance) {
+//        mPresenceDeviceInstance = presenceDeviceInstance;
+//        Log.i(DEBUG_MY_PRESENCE, "Chat.setPresenceDeviceInstance");
+//    }
 
     // bugfix Issue #16
+    @Deprecated
     public static String getPresenceDeviceInstance() {
         Log.i(DEBUG_MY_PRESENCE, "Chat.getPresenceDeviceInstance");
         return mPresenceDeviceInstance;
@@ -164,6 +170,20 @@ public class ChatManager {
 
 
     public void dispose() {
+
+        // dispose myPresenceHandler
+        myPresenceHandler.disconnect(); // disconnect all listeners
+        myPresenceHandler = null; // destroy it
+
+        // dispose all presenceHandlerMap
+        for (Map.Entry<String, PresenceHandler> entry : presenceHandlerMap.entrySet()) {
+
+            String recipientId = entry.getKey();
+            PresenceHandler presenceHandler = entry.getValue();
+
+            presenceHandler.disconnect();
+            Log.d(TAG, "presenceHandler for recipientId: " + recipientId + " disposed");
+        }
 
         //dispose conversationsHandler
         this.conversationsHandler.disconnect();
@@ -279,6 +299,25 @@ public class ChatManager {
         }
     }
 
+
+    public PresenceHandler getPresenceHandler(String recipientId) {
+        Log.d(TAG, "Getting PresenceHandler for recipientId " + recipientId);
+
+        if (presenceHandlerMap.containsKey(recipientId)) {
+            Log.i(TAG, "PresenceHandler for recipientId " + recipientId + " already inizialized. Return it");
+
+            return presenceHandlerMap.get(recipientId);
+        } else {
+            PresenceHandler presenceHandler = new PresenceHandler(Configuration.firebaseUrl, this.getAppId(), recipientId);
+
+            presenceHandlerMap.put(recipientId, presenceHandler);
+
+            Log.i(TAG, "PresenceHandler for recipientId " + recipientId + " created.");
+
+            return presenceHandler;
+        }
+    }
+
     public ConversationsHandler getConversationsHandler() {
         if (this.conversationsHandler != null) {
             return this.conversationsHandler;
@@ -297,6 +336,17 @@ public class ChatManager {
             return this.contactsSynchronizer;
         }
     }
+
+
+    public MyPresenceHandler getMyPresenceHandler() {
+        if (this.myPresenceHandler != null) {
+            return this.myPresenceHandler;
+        } else {
+            this.myPresenceHandler = new MyPresenceHandler(Configuration.firebaseUrl, getAppId(), getLoggedUser().getId());
+            return myPresenceHandler;
+        }
+    }
+
 
 //    public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
 //
