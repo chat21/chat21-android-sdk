@@ -53,11 +53,11 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
 
         sender = message.getSender();
 
-        if(loggedUser != null) {
-            Log.d(TAG, "loggedUser: " + loggedUser.toString());
-        } else {
-            Log.d(TAG, "loggedUser is null");
-        }
+//        if(loggedUser != null) {
+//            Log.d(TAG, "loggedUser: " + loggedUser.toString());
+//        } else {
+//            Log.d(TAG, "loggedUser is null");
+//        }
 
 
         if (sender.compareTo(loggedUser.getId()) == 0) {
