@@ -27,6 +27,8 @@ import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.groups.models.Group;
+import chat21.android.core.users.models.ChatUser;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.dao.groups.GroupsDAO;
 import chat21.android.dao.groups.OnGroupsRetrievedCallback;
 import chat21.android.ui.ChatUI;
@@ -174,10 +176,10 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
         nodeConversation.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
-//                        ".addValueEventListener.onDataChange: " +
-//                        "dataSnapshot == " + dataSnapshot.toString());
-//
+                Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
+                        ".addValueEventListener.onDataChange: " +
+                        "dataSnapshot == " + dataSnapshot.toString());
+
 //                if (dataSnapshot.getValue() != null) {
 //                    // decode conversation
 //                    mConversation = ConversationsHandler.decodeConversationFromSnapshot(dataSnapshot);
@@ -188,17 +190,19 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 //                    mConversation.setRecipient(group.getGroupId());
 //                    mConversation.setConversationId(group.getGroupId());
 //                }
-//
+
+                IChatUser groupRecipient = new ChatUser(group.getGroupId(), group.getName());
+
 //                Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
 //                        ".addValueEventListener.onDataChange: " +
 //                        "mConversation == " + mConversation.toString());
 
-//                // start the message list activity
-//                Intent intent = new Intent(MyGroupsListActivity.this, MessageListActivity.class);
-//                intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, mConversation.getConversationId());
-//                intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
-//                startActivity(intent);
-//                finish();
+                // start the message list activity
+                Intent intent = new Intent(MyGroupsListActivity.this, MessageListActivity.class);
+                intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, groupRecipient);
+                intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
+                startActivity(intent);
+                finish();
             }
 
             @Override
