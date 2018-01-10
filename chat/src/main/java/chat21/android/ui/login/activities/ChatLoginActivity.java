@@ -188,7 +188,8 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
 
                                     ChatManager.Configuration mChatConfiguration =
                                             new ChatManager.Configuration.Builder(ChatManager.Configuration.appId)
-                                                    .firebaseUrl(ChatManager.Configuration.firebaseUrl).build();
+//                                                    .firebaseUrl(ChatManager.Configuration.firebaseUrl)
+                                                    .build();
 
 //                                    IChatUser iChatUser = new ChatUser();
 //                                    iChatUser.setId(user.getUid());

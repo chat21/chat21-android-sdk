@@ -21,7 +21,6 @@ import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.IOUtils;
 
-import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
 import static chat21.android.utils.DebugConstants.DEBUG_SESSION;
 
 /**
@@ -36,28 +35,15 @@ public class ChatManager {
     public static final String _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER =
             "_SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER";
 
-
     private static ChatManager mInstance;
-
     private IChatUser loggedUser;
-
     private String appId;
-
-    // bugfix Issue #16
-    private static String mPresenceDeviceInstance;
-
     private Context mContext;
 
-//    private List<IChatUser> mContacts;
-
     private Map<String, ConversationMessagesHandler> conversationMessagesHandlerMap;
-
     private ConversationsHandler conversationsHandler;
-
     private ContactsSynchronizer contactsSynchronizer;
-
     private MyPresenceHandler myPresenceHandler;
-
     private Map<String, PresenceHandler> presenceHandlerMap;
 
     // private constructor
@@ -67,46 +53,15 @@ public class ChatManager {
         presenceHandlerMap = new HashMap<>();
     }
 
-//    // bugfix Issue #16
-//    public static void setPresenceDeviceInstance(String presenceDeviceInstance) {
-//        mPresenceDeviceInstance = presenceDeviceInstance;
-//        Log.i(DEBUG_MY_PRESENCE, "Chat.setPresenceDeviceInstance");
-//    }
-
-    // bugfix Issue #16
-    @Deprecated
-    public static String getPresenceDeviceInstance() {
-        Log.i(DEBUG_MY_PRESENCE, "Chat.getPresenceDeviceInstance");
-        return mPresenceDeviceInstance;
-    }
-
-//    public IChatUser getLoggedUser() {
-//        IChatUser loggedUser = (IChatUser) IOUtils.getObjectFromFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
-//
-//        if (loggedUser != null)
-//            Log.d(TAG, "serialized_logged_user: " + loggedUser.toString());
-//        else
-//            Log.d(TAG, "serialized_logged_user is null");
-//
-//        return loggedUser;
-//    }
-
     public void setLoggedUser(IChatUser loggedUser) {
         this.loggedUser = loggedUser;
         Log.d(DEBUG_SESSION, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
         IOUtils.saveObjectToFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, loggedUser); // serialize on disk
-
     }
 
     public IChatUser getLoggedUser() {
         Log.v(DEBUG_SESSION, "ChatManager.getloggedUser");
-        // retrieve from disk
-//        if (loggedUser!=null) {
         return loggedUser;
-//        }else {
-//            loggedUser = (IChatUser) IOUtils.getObjectFromFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
-//            return loggedUser;
-//        }
     }
 
     public boolean isUserLogged() {
@@ -122,11 +77,9 @@ public class ChatManager {
         return this.appId;
     }
 
-
     private void setContext(Context context) {
         mContext = context;
     }
-
 
     /**
      * It initializes the SDK.
@@ -164,10 +117,7 @@ public class ChatManager {
 
         // serialize the appId
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
-
-
     }
-
 
     public void dispose() {
 
@@ -225,12 +175,10 @@ public class ChatManager {
 //        }
     }
 
-
     private void removeLoggedUser() {
         // clear all logged user data
         IOUtils.deleteObject(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER);
     }
-
 
     /**
      * Return the instance of the Chat
@@ -244,19 +192,6 @@ public class ChatManager {
         }
         return mInstance;
     }
-
-//    public void setContacts(List<IChatUser> contacts) {
-//        mContacts = contacts;
-//    }
-//
-//    public List<IChatUser> getContacts() {
-//        return mContacts;
-//    }
-//
-//    public void addContact(IChatUser contact) {
-//        mContacts.add(contact);
-//    }
-
 
 //
 //    public ConversationsHandler addConversationsListener(ConversationsListener conversationsListener) {
@@ -278,7 +213,6 @@ public class ChatManager {
         return getConversationMessagesHandler(chatUser);
     }
 
-
     public ConversationMessagesHandler getConversationMessagesHandler(IChatUser recipient) {
         String recipientId = recipient.getId();
         Log.d(TAG, "Getting ConversationMessagesHandler for recipientId " + recipientId);
@@ -298,7 +232,6 @@ public class ChatManager {
             return messageHandler;
         }
     }
-
 
     public PresenceHandler getPresenceHandler(String recipientId) {
         Log.d(TAG, "Getting PresenceHandler for recipientId " + recipientId);
@@ -337,7 +270,6 @@ public class ChatManager {
         }
     }
 
-
     public MyPresenceHandler getMyPresenceHandler() {
         if (this.myPresenceHandler != null) {
             return this.myPresenceHandler;
@@ -346,7 +278,6 @@ public class ChatManager {
             return myPresenceHandler;
         }
     }
-
 
 //    public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
 //
@@ -357,7 +288,7 @@ public class ChatManager {
 //
 //        messageHandler.connect(conversationMessagesListener);
 //    }
-
+//
 //    public void sendTextMessage(String recipient_id, String text, Map customAttributes, SendMessageListener sendMessageListener) {
 //
 //        Log.d(TAG, "sending text message to recipientId : " + recipient_id + " with text : " + text + " and customAttributes : " + customAttributes);
@@ -368,31 +299,39 @@ public class ChatManager {
 //    }
 
     public void sendTextMessage(String recipientId, String recipientFullName, String text) {
-        sendTextMessage(recipientId, recipientFullName, text, null, null);
+        sendTextMessage(recipientId, recipientFullName, text,
+                null, null);
     }
 
-    public void sendTextMessage(String recipientId, String recipientFullName, String text, SendMessageListener sendMessageListener) {
+    public void sendTextMessage(String recipientId, String recipientFullName,
+                                String text, SendMessageListener sendMessageListener) {
         sendTextMessage(recipientId, recipientFullName, text, null, sendMessageListener);
     }
 
-    public void sendTextMessage(String recipientId, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
+    public void sendTextMessage(String recipientId, String recipientFullName, String text,
+                                Map customAttributes, SendMessageListener sendMessageListener) {
 
-        Log.d(TAG, "sending text message to recipientId : " + recipientId + ", recipientFullName: " + recipientFullName + " with text : " + text + " and customAttributes : " + customAttributes);
-
+        Log.d(TAG, "sending text message to recipientId : " + recipientId +
+                ", recipientFullName: " + recipientFullName + " with text : " +
+                text + " and customAttributes : " + customAttributes);
 
         getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
                 Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
     }
 
-    public void sendImageMessage(String recipientId, String recipientFullName, String text, Map customAttributes, SendMessageListener sendMessageListener) {
+    public void sendImageMessage(String recipientId, String recipientFullName, String text,
+                                 Map customAttributes, SendMessageListener sendMessageListener) {
 
-        Log.d(TAG, "sending image message to recipientId : " + recipientId + ", recipientFullName: " + recipientFullName + " with text : " + text + " and customAttributes : " + customAttributes);
+        Log.d(TAG, "sending image message to recipientId : " + recipientId +
+                ", recipientFullName: " + recipientFullName + " with text : " +
+                text + " and customAttributes : " + customAttributes);
 
         getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
                 Message.TYPE_IMAGE, text, customAttributes, sendMessageListener);
     }
 
-    public void sendFileMessage(String recipient_id, String text, URL url, String fileName, Map customAttributes, SendMessageListener sendMessageListener) {
+    public void sendFileMessage(String recipient_id, String text, URL url, String fileName,
+                                Map customAttributes, SendMessageListener sendMessageListener) {
 
     }
 
@@ -455,6 +394,4 @@ public class ChatManager {
         }
     }
 //end configuration
-
-
 }

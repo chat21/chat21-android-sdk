@@ -4,32 +4,8 @@
     <!--<string name="root" translatable="false">https://chat21-sdk-demo.firebaseio.com</string>-->
     <string name="firebase_storage_reference" translatable="false">gs://chat21-sdk-demo.appspot.com</string>
 
-    <!--tenant in which it is messaging-->
-    <!--<string name="tenant" translatable="false">tilechat2</string>-->
-
-    <!--&lt;!&ndash;abilita o disabilita il pulsante per la creazione dei gruppi&ndash;&gt;-->
-    <!--&lt;!&ndash;valori ammessi:&ndash;&gt;-->
-    <!--&lt;!&ndash;true per abilitare la creazione dei gruppi &ndash;&gt;-->
-    <!--&lt;!&ndash;false per disabilitare la creazione dei gruppi&ndash;&gt;-->
-    <!--<string name="enable_groups" translatable="false">true</string>-->
-
-    <!--&lt;!&ndash;abilita o disabilita il pulsante per il caricamento dell'icona del gruppo&ndash;&gt;-->
-    <!--&lt;!&ndash;valori ammessi:&ndash;&gt;-->
-    <!--&lt;!&ndash;true per abilitare l'icona  &ndash;&gt;-->
-    <!--&lt;!&ndash;false per disabilitare l'icona&ndash;&gt;-->
-    <!--<string name="enable_group_icon" translatable="false">false</string>-->
-
-    <!--&lt;!&ndash;contact profile activity class.&ndash;&gt;-->
-    <!--&lt;!&ndash;it must be the  fully-qualified class name&ndash;&gt;-->
-    <!--<string name="target_contact_profile_activity_class" translatable="false">chat21.android.ui.users.activities.PublicProfileActivity</string>-->
-
-    <!--&lt;!&ndash;contact list activity class.&ndash;&gt;-->
-    <!--&lt;!&ndash;it must be the  fully-qualified class name&ndash;&gt;-->
-    <!--<string name="target_contact_list_activity_class" translatable="false">chat21.android.ui.contacts.activites.ContactListActivity</string>-->
-
-    <!--&lt;!&ndash;add members to group activity class.&ndash;&gt;-->
-    <!--&lt;!&ndash;it must be the  fully-qualified class name&ndash;&gt;-->
-    <!--<string name="target_add_members_activity_class" translatable="false">chat21.android.groups.activities.AddMembersActivity</string>-->
+    <!--appid in which it is messaging-->
+    <string name="appId" translatable="false">tilechat</string>
 
     <string name="custom_auth_verify_token_url" translatable="false">https://chat21-custom-firebase-auth.appspot.com/verifyToken?username=</string>
 
