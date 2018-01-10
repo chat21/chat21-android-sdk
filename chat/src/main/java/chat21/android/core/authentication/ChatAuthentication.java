@@ -28,8 +28,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.io.IOException;
 
 import chat21.android.R;
-import chat21.android.core.ChatManager;
-import chat21.android.core.presence.PresenceManger;
 import chat21.android.core.presence.listeners.OnPresenceListener;
 import chat21.android.instanceid.receiver.TokenBroadcastReceiver;
 import chat21.android.core.authentication.task.GetCustomTokenTask;
@@ -398,11 +396,11 @@ public final class ChatAuthentication {
 
                 if (logoutException == null) {
                     // bugfix Issue #16
-                    if (StringUtils.isValid(ChatManager.getPresenceDeviceInstance())) {
-                        PresenceManger.logout(ChatManager.getInstance().getAppId(),
-                                ChatManager.getPresenceDeviceInstance(),
-                                ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
-                    }
+//                    if (StringUtils.isValid(ChatManager.getPresenceDeviceInstance())) {
+//                        PresenceManger.logout(ChatManager.getInstance().getAppId(),
+//                                ChatManager.getPresenceDeviceInstance(),
+//                                ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
+//                    }
 
                 } else {
                     Log.e(DEBUG_LOGIN, "cannot sign outfrom firebase. " + logoutException.getMessage());
