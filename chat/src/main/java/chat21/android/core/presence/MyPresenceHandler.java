@@ -42,7 +42,7 @@ public class MyPresenceHandler {
     // the device that is currently connected
     String deviceId = null;
 
-    public MyPresenceHandler(String firebase, String appId, String userId) {
+    public MyPresenceHandler(String firebaseUrl, String appId, String userId) {
 //        this.firebase = firebase;
 //        this.appId = appId;
         myPresenceListeners = new ArrayList<>();
@@ -50,10 +50,18 @@ public class MyPresenceHandler {
         // since I can connect from multiple devices, we store each connection instance separately
         // any time that connectionsRef's value is null (i.e. has no children) I am offline
         database = FirebaseDatabase.getInstance();
-        connectionsRef = database.getReferenceFromUrl(firebase).child("/apps/" + appId + "/presence/" + userId + "/connections");
+        if(StringUtils.isValid(firebaseUrl)) {
+            connectionsRef = database.getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/presence/" + userId + "/connections");
+        } else {
+            connectionsRef = database.getReference().child("/apps/" + appId + "/presence/" + userId + "/connections");
+        }
 
         // stores the timestamp of my last disconnect (the last time I was seen online)
-        lastOnlineRef = database.getReferenceFromUrl(firebase).child("/apps/" + appId + "/presence/" + userId + "/lastOnline");
+        if(StringUtils.isValid(firebaseUrl)) {
+            lastOnlineRef = database.getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/presence/" + userId + "/lastOnline");
+        } else {
+            lastOnlineRef = database.getReference().child("/apps/" + appId + "/presence/" + userId + "/lastOnline");
+        }
 
         // /.info/connected is a boolean value which is not synchronized between clients because
         // the value is dependent on the state of the client.

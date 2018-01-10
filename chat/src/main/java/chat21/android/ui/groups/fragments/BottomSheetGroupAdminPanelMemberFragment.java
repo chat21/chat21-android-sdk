@@ -1,7 +1,6 @@
 package chat21.android.ui.groups.fragments;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -21,8 +20,7 @@ import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.groups.models.Group;
 import chat21.android.groups.utils.GroupUtils;
-import chat21.android.ui.ChatUI;
-import chat21.android.ui.messages.activities.MessageListActivity;
+import chat21.android.utils.StringUtils;
 
 /**
  * Created by frontiere21 on 25/11/16.
@@ -283,8 +281,16 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void removeMemberFromGroup(String appId, final String groupId, final String userId) {
         Log.d(TAG, "removeMemberFromGroup");
 
-        DatabaseReference nodeMembers = FirebaseDatabase.getInstance().getReference()
-                .child("apps/" + appId + "/groups/" + groupId + "/members/" + userId);
+        DatabaseReference nodeMembers;
+
+        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+            nodeMembers = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+                    .child("apps/" + appId + "/groups/" + groupId + "/members/" + userId);
+        } else {
+            nodeMembers = FirebaseDatabase.getInstance().getReference()
+                    .child("apps/" + appId + "/groups/" + groupId + "/members/" + userId);
+        }
 
         nodeMembers.removeValue();
     }

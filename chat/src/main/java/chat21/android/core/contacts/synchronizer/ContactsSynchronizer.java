@@ -17,6 +17,7 @@ import chat21.android.core.exception.ChatFieldNotFoundException;
 import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.utils.StringUtils;
 
 /**
  * Created by andrealeo on 04/01/18.
@@ -38,7 +39,11 @@ public class ContactsSynchronizer {
 
         contactListeners = new ArrayList<>();
 
-        this.contactsNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/contacts/");
+        if(StringUtils.isValid(firebaseUrl)) {
+            this.contactsNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/contacts/");
+        } else {
+            this.contactsNode = FirebaseDatabase.getInstance().getReference().child("/apps/" + appId + "/contacts/");
+        }
         this.contactsNode.keepSynced(true);
 
         Log.d(TAG, "contactsNode : " + contactsNode.toString());

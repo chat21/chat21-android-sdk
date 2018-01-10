@@ -40,9 +40,8 @@ import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.activites.ContactListActivity;
-import chat21.android.ui.contacts.listeners.OnCreateGroupClickListener;
 import chat21.android.ui.conversations.listeners.OnNewConversationClickListener;
-import chat21.android.ui.messages.listeners.OnAttachClickListener;
+import chat21.android.utils.StringUtils;
 
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
 import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD;
@@ -396,9 +395,18 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void lookUpContactById(String userId, final OnUserLookUpComplete onUserLookUpComplete) {
-        DatabaseReference contactsNode = FirebaseDatabase.getInstance()
-                .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
-                .child("/apps/" + ChatManager.Configuration.appId + "/contacts/" + userId);
+
+
+        DatabaseReference contactsNode;
+        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+            contactsNode = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+                    .child("/apps/" + ChatManager.Configuration.appId + "/contacts/" + userId);
+        } else {
+            contactsNode = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("/apps/" + ChatManager.Configuration.appId + "/contacts/" + userId);
+        }
 
         contactsNode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

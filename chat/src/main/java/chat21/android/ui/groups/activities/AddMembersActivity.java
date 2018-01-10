@@ -680,8 +680,16 @@ public class AddMembersActivity extends AppCompatActivity implements
         if (group.getMembers().size() > 0) {
             if (!StringUtils.isValid(groupId)) {
 
-                DatabaseReference nodeGroups = FirebaseDatabase.getInstance().getReference()
-                        .child("apps/" + ChatManager.getInstance().getAppId() + "/groups");
+                DatabaseReference nodeGroups;
+
+                if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+                    nodeGroups = FirebaseDatabase.getInstance()
+                            .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+                            .child("apps/" + ChatManager.getInstance().getAppId() + "/groups");
+                } else {
+                    nodeGroups = FirebaseDatabase.getInstance().getReference()
+                            .child("apps/" + ChatManager.getInstance().getAppId() + "/groups");
+                }
 
                 nodeGroups.push().setValue(group, new DatabaseReference.CompletionListener() {
                     @Override
@@ -705,29 +713,37 @@ public class AddMembersActivity extends AppCompatActivity implements
                     }
                 });
             } else {
-                FirebaseDatabase.getInstance().getReference()
-                        .child("apps/" + appId + "/groups/" + groupId + "/members")
-                        .setValue(group.getMembers(),
-                                new DatabaseReference.CompletionListener() {
-                                    @Override
-                                    public void onComplete(DatabaseError databaseError,
-                                                           DatabaseReference databaseReference) {
-                                        Log.d(TAG, "uploadGroup.onComplete");
+                DatabaseReference nodeMembers;
+                if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+                    nodeMembers = FirebaseDatabase.getInstance()
+                            .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+                            .child("apps/" + appId + "/groups/" + groupId + "/members");
+                } else {
+                    nodeMembers = FirebaseDatabase.getInstance().getReference()
+                            .child("apps/" + appId + "/groups/" + groupId + "/members");
+                }
 
-                                        if (databaseError != null) {
-                                            String errorMessage = "uploadGroup.onComplete: " +
-                                                    "group not uploaded. " + databaseError.getMessage();
-                                            onGroupUpdatedError(errorMessage);
-                                        } else {
-                                            Log.d(TAG, "group uploaded with success");
+                nodeMembers.setValue(group.getMembers(),
+                        new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError,
+                                                   DatabaseReference databaseReference) {
+                                Log.d(TAG, "uploadGroup.onComplete");
 
-                                            DatabaseReference membersKey = databaseReference.getParent();
-                                            String groupId = membersKey.getKey();
+                                if (databaseError != null) {
+                                    String errorMessage = "uploadGroup.onComplete: " +
+                                            "group not uploaded. " + databaseError.getMessage();
+                                    onGroupUpdatedError(errorMessage);
+                                } else {
+                                    Log.d(TAG, "group uploaded with success");
 
-                                            onGroupUpdatedSuccess(groupId, group);
-                                        }
-                                    }
-                                });
+                                    DatabaseReference membersKey = databaseReference.getParent();
+                                    String groupId = membersKey.getKey();
+
+                                    onGroupUpdatedSuccess(groupId, group);
+                                }
+                            }
+                        });
             }
         } else {
             String errorMessage = "uploadGroup: group not uploaded. " +

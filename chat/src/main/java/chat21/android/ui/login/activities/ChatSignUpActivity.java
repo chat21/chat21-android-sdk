@@ -266,10 +266,16 @@ public class ChatSignUpActivity extends AppCompatActivity {
 
     private void createUserOnContacts(String key, Map<String, Object> user,
                                       final OnUserCreatedOnContactsCallback onUserCreatedOnContactsCallback) {
-        // TODO: 04/01/18  check  ChatManager.Configuration.firebaseUrl
-        DatabaseReference contactsNode = FirebaseDatabase.getInstance()
-                .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
-                .child("/apps/" + ChatManager.Configuration.appId + "/contacts");
+        DatabaseReference contactsNode;
+        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+            contactsNode = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+                    .child("/apps/" + ChatManager.Configuration.appId + "/contacts");
+        } else {
+            contactsNode = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("/apps/" + ChatManager.Configuration.appId + "/contacts");
+        }
 
         // save the user on contacts node
         contactsNode.child(key)

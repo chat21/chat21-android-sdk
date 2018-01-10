@@ -20,6 +20,7 @@ import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.utils.StringUtils;
 
 /**
  * Created by andrealeo on 05/12/17.
@@ -47,7 +48,13 @@ public class ConversationMessagesHandler {
 
         this.recipient = recipient;
 
-        this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
+        if(StringUtils.isValid(firebaseUrl)) {
+            this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
+        } else {
+            this.conversationMessagesNode = FirebaseDatabase.getInstance().getReference().child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
+
+        }
+
         this.conversationMessagesNode.keepSynced(true);
         Log.d(TAG, "conversationMessagesNode : " + conversationMessagesNode.toString());
 

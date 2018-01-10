@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.core.presence.listeners.PresenceListener;
+import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
@@ -40,7 +41,7 @@ public class PresenceHandler {
 //    private String firebase;
 //    private String appId;
 
-    public PresenceHandler(String firebase, String appId, String userId) {
+    public PresenceHandler(String firebaseUrl, String appId, String userId) {
 //        this.firebase = firebase;
 //        this.appId = appId;
         presenceListeners = new ArrayList<>();
@@ -49,7 +50,11 @@ public class PresenceHandler {
         // any time that connectionsRef's value is null (i.e. has no children) I am offline
         database = FirebaseDatabase.getInstance();
 
-        userPresenceRef = database.getReferenceFromUrl(firebase).child("/apps/" + appId + "/presence/" + userId);
+        if(StringUtils.isValid(firebaseUrl)) {
+            userPresenceRef = database.getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/presence/" + userId);
+        } else {
+            userPresenceRef = database.getReference().child("/apps/" + appId + "/presence/" + userId);
+        }
 //        connectionsRef = userPresenceRef.child("/connections");
 
 //        // stores the timestamp of last disconnect (the last time I was seen online)

@@ -1,6 +1,5 @@
 package chat21.android.ui.groups.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -24,15 +23,13 @@ import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.groups.models.Group;
 import chat21.android.dao.groups.GroupsDAO;
 import chat21.android.dao.groups.OnGroupsRetrievedCallback;
-import chat21.android.ui.ChatUI;
 import chat21.android.ui.groups.adapters.MyGroupsListAdapter;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
-import chat21.android.ui.messages.activities.MessageListActivity;
+import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
 
@@ -161,10 +158,20 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
         Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupClicked: " +
                 "group == " + group.toString() + ", position == " + position);
 
-        DatabaseReference nodeConversation = FirebaseDatabase.getInstance().getReference()
-                .child("apps/" + ChatManager.getInstance().getAppId()
-                        + "/users/" + ChatManager.getInstance().getLoggedUser().getId()
-                        + "/conversations/" + group.getGroupId());
+        DatabaseReference nodeConversation;
+
+        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+            nodeConversation = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+                    .child("apps/" + ChatManager.getInstance().getAppId()
+                            + "/users/" + ChatManager.getInstance().getLoggedUser().getId()
+                            + "/conversations/" + group.getGroupId());
+        } else {
+            nodeConversation = FirebaseDatabase.getInstance().getReference()
+                    .child("apps/" + ChatManager.getInstance().getAppId()
+                            + "/users/" + ChatManager.getInstance().getLoggedUser().getId()
+                            + "/conversations/" + group.getGroupId());
+        }
 
         Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
                 ".addValueEventListener.onDataChange: " +

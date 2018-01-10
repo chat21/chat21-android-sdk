@@ -20,6 +20,7 @@ import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
+import chat21.android.utils.StringUtils;
 
 /**
  * Created by andrealeo on 18/12/17.
@@ -44,7 +45,12 @@ public class ConversationsHandler {
 
         this.appId = appId;
         this.currentUserId = currentUserId;
-        this.conversationsNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
+
+        if (StringUtils.isValid(firebaseUrl)) {
+            this.conversationsNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
+        } else {
+            this.conversationsNode = FirebaseDatabase.getInstance().getReference().child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
+        }
         this.conversationsNode.keepSynced(true);
 
 //        Log.d(TAG, "ConversationsHandler.conversationsNode == " + conversationsNode.toString());

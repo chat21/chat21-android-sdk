@@ -20,11 +20,13 @@ import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.utils.StringUtils;
 
 /**
  * Created by stefanodp91 on 28/09/17.
  */
-public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDialogFragment implements View.OnClickListener /**, ConversationsListener */ {
+public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDialogFragment implements View.OnClickListener /**, ConversationsListener */
+{
 
     private static final String DEBUG_TAG = BottomSheetConversationsListFragmentLongPress.class.getName();
 
@@ -145,8 +147,14 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
                 ".perfomDeleteConversation: conversationId == " + conversationId);
 
-        DatabaseReference nodeConversation = FirebaseDatabase.getInstance().getReference()
-                .child("apps/" + ChatManager.getInstance().getAppId() + "/users/" + mLoggedUser.getId() + "/conversations/" + conversationId);
+        DatabaseReference nodeConversation;
+        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+            nodeConversation = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+                    .child("apps/" + ChatManager.getInstance().getAppId() + "/users/" + mLoggedUser.getId() + "/conversations/" + conversationId);
+        } else {
+            nodeConversation = FirebaseDatabase.getInstance().getReference()
+                    .child("apps/" + ChatManager.getInstance().getAppId() + "/users/" + mLoggedUser.getId() + "/conversations/" + conversationId);
+        }
 
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
                 ".perfomDeleteConversation: nodeConversation == " + nodeConversation.toString());

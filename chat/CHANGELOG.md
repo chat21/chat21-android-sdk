@@ -1,5 +1,8 @@
 ﻿# CHANGELOG
 
+## 2.0
+- full refactoring
+
 ## 0.10.2
 - rimosso supporto MultiDex - 59f1003
 - fix Glide context - 13a13c9
