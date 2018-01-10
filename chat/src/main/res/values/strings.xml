@@ -97,7 +97,7 @@
 
     <!--activity_public_profile-->
     <string name="activity_public_profile_presence_online">Online</string>
-    <string name="activity_public_profile_presence_not_available">Offline</string>
+    <string name="activity_public_profile_presence_offline">Offline</string>
 
     <!--activity_group_list-->
     <string name="activity_group_list_activity_title">My groups</string>
