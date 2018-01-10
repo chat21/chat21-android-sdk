@@ -12,66 +12,29 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import chat21.android.R;
+import chat21.android.core.ChatManager;
+import chat21.android.core.presence.PresenceHandler;
+import chat21.android.core.presence.listeners.PresenceListener;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
-import chat21.android.utils.image.CropCircleTransformation;
+import chat21.android.utils.TimeUtils;
+
+import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
 /**
  * Created by stefanodp91 on 04/08/17.
  * <p>
  * bugfix Issue #30
  */
-public class PublicProfileActivity extends AppCompatActivity {
+public class PublicProfileActivity extends AppCompatActivity implements PresenceListener {
     private static final String TAG = PublicProfileActivity.class.getName();
 
     private IChatUser contact;
-//    private TextView mPresenceTextView;
-//    private boolean isOnline = false;
-//    private long mlastOnline = 0;
+    private PresenceHandler presenceHandler;
+    private boolean conversWithOnline = false;
+    private long conversWithLastOnline = -1;
 
-//    private OnPresenceListener onPresenceListener = new OnPresenceListener() {
-//        @Override
-//        public void onChanged(boolean imConnected) {
-//            Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.onPresenceListener.onChanged:" +
-//                    " imConnected == " + imConnected);
-//
-//            if (imConnected) {
-//                isOnline = true;
-//
-//                if (mPresenceTextView != null)
-//                    mPresenceTextView.setText(getString(R.string.activity_public_profile_presence_online));
-//            } else {
-//                isOnline = false;
-//
-//                if (mlastOnline != 0) {
-//                    if (mPresenceTextView != null)
-//                        mPresenceTextView.setText(TimeUtils.getFormattedTimestamp(mlastOnline));
-//                } else {
-//                    if (mPresenceTextView != null)
-//                        mPresenceTextView.setText("");
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public void onLastOnlineChanged(long lastOnline) {
-//            Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.onPresenceListener.onLastOnlineChanged:" +
-//                    " lastOnline == " + lastOnline);
-//
-//            mlastOnline = lastOnline;
-//
-//            if (!isOnline)
-//                mPresenceTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
-//        }
-//
-//        @Override
-//        public void onMyPresenceError(Exception e) {
-//            Log.e(DEBUG_USER_PRESENCE, "PublicProfileActivity.onPresenceListener.onMyPresenceError: " + e.getMessage());
-//
-//            if (mPresenceTextView != null)
-//                mPresenceTextView.setText(R.string.activity_public_profile_presence_not_available);
-//        }
-//    };
+    private TextView mToolbarSubTitle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +42,8 @@ public class PublicProfileActivity extends AppCompatActivity {
         setContentView(R.layout.acticvity_public_profile);
 
         contact = (IChatUser) getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT);
+
+        presenceHandler = ChatManager.getInstance().getPresenceHandler(contact.getId());
 
         // set toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -90,7 +55,7 @@ public class PublicProfileActivity extends AppCompatActivity {
         mToolbarTitle.setText(contact.getFullName());
 
         // connection status (online/offline) as subtitle
-        TextView mToolbarSubTitle = findViewById(R.id.toolbar_subtitle);
+        mToolbarSubTitle = findViewById(R.id.toolbar_subtitle);
         mToolbarSubTitle.setText("connection status will be here");
 
         // set user email
@@ -104,10 +69,17 @@ public class PublicProfileActivity extends AppCompatActivity {
         // init user profile picture
         initProfilePicture();
 
-//        // subscribe for convers with user presence changes
-//        // bugfix Issue #16
-//        mPresenceTextView = (TextView) findViewById(R.id.presence);
-//        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getAppId(), contact.getId(), onPresenceListener);
+        presenceHandler.upsertPresenceListener(this);
+        presenceHandler.connect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "  PublicProfileActivity.onDestroy");
+
+        presenceHandler.removePresenceListener(this);
+        Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.onDestroy: presenceHandler detached");
     }
 
     private void initProfilePicture() {
@@ -130,5 +102,44 @@ public class PublicProfileActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void isUserOnline(boolean isConnected) {
+        Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.isUserOnline: " +
+                "isConnected == " + isConnected);
+
+        if (isConnected) {
+            conversWithOnline = true;
+            mToolbarSubTitle.setText(getString(R.string.activity_public_profile_presence_online));
+        } else {
+            conversWithOnline = false;
+
+            if (conversWithLastOnline != 0) {
+                mToolbarSubTitle.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
+                Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.isUserOnline: " +
+                        "conversWithLastOnline == " + conversWithLastOnline);
+            } else {
+                mToolbarSubTitle.setText(getString(R.string.activity_public_profile_presence_offline));
+            }
+        }
+    }
+
+    @Override
+    public void userLastOnline(long lastOnline) {
+        Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.userLastOnline: " +
+                "lastOnline == " + lastOnline);
+
+        conversWithLastOnline = lastOnline;
+
+        if (!conversWithOnline)
+            mToolbarSubTitle.setText(TimeUtils.getFormattedTimestamp(lastOnline));
+    }
+
+    @Override
+    public void onPresenceError(Exception e) {
+        Log.e(DEBUG_USER_PRESENCE, "PublicProfileActivity.onMyPresenceError: " + e.toString());
+
+        mToolbarSubTitle.setText(getString(R.string.activity_public_profile_presence_offline));
     }
 }
