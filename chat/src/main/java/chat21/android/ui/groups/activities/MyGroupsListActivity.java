@@ -1,5 +1,6 @@
 package chat21.android.ui.groups.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -29,8 +30,10 @@ import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.dao.groups.GroupsDAO;
 import chat21.android.dao.groups.OnGroupsRetrievedCallback;
+import chat21.android.ui.ChatUI;
 import chat21.android.ui.groups.adapters.MyGroupsListAdapter;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
