@@ -5,7 +5,10 @@
     android:id="@+id/row_sender"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="0dp"
+    android:layout_marginBottom="@dimen/chat_margin_xx_small"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+    android:layout_marginTop="@dimen/chat_margin_xx_small"
     android:orientation="vertical">
 
     <LinearLayout
