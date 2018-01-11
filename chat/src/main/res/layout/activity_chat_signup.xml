@@ -46,10 +46,10 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:singleLine="true"
+                    android:hint="@string/chat_signup_activity_email_hint_label"
                     android:inputType="textEmailAddress"
-                    android:hint="@string/chat_signup_activity_email_hint_label" />
+                    android:maxLines="1"
+                    android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <!--first name-->
@@ -61,10 +61,10 @@
                     android:id="@+id/first_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/chat_signup_activity_first_name_hint_label"
                     android:inputType="textPersonName|textCapWords"
                     android:maxLines="1"
-                    android:singleLine="true"
-                    android:hint="@string/chat_signup_activity_first_name_hint_label" />
+                    android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <!--last name-->
@@ -76,40 +76,44 @@
                     android:id="@+id/last_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/chat_signup_activity_last_name_hint_label"
                     android:inputType="textPersonName|textCapWords"
                     android:maxLines="1"
-                    android:singleLine="true"
-                    android:hint="@string/chat_signup_activity_last_name_hint_label" />
+                    android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <!--password-->
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/colorAccent">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/chat_signup_activity_password_hint_label"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true"
-                    android:hint="@string/chat_signup_activity_password_hint_label" />
+                    android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <!--repeat password-->
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/colorAccent">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/repeat_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/chat_signup_activity_repeat_password_hint_label"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true"
-                    android:hint="@string/chat_signup_activity_repeat_password_hint_label" />
+                    android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <Button
