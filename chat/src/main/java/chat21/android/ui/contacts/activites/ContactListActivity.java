@@ -38,6 +38,8 @@ import chat21.android.ui.groups.activities.CreateGroupActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.image.CropCircleTransformation;
 
+import static chat21.android.utils.DebugConstants.DEBUG_CONTACTS_SYNC;
+
 /**
  * Created by stefano on 25/08/2015.
  */
@@ -93,7 +95,17 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         initBoxCreateGroup();
 
         this.contactsSynchronizer.upsertContactsListener(this);
-        this.contactsSynchronizer.connect();
+        Log.d(DEBUG_CONTACTS_SYNC, "ContactListActivity.onCreate: contactsSynchronizer attached");
+//        this.contactsSynchronizer.connect();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        contactsSynchronizer.removeContactsListener(this);
+        Log.d(DEBUG_CONTACTS_SYNC, "ContactListActivity.onDestroy: contactsSynchronizer detached");
+
+        super.onDestroy();
     }
 
     @Override

@@ -10,7 +10,7 @@ public class DebugConstants {
     public static final String DEBUG_SIGNUP = "CHAT21_D_SIGNUP";
     public static final String DEBUG_SESSION = "CHAT21_DEBUG_SESSION";
 
-
+    public static final String DEBUG_CONTACTS_SYNC = "CHAT21_D_CONTACTS_SYNC";
     public static final String DEBUG_NODE_GROUPS = "CHAT21_D_NODE_GROUPS";
     public static final String DEBUG_USER_PRESENCE = "CHAT21_D_USER_PRESENCE";
     public static final String DEBUG_MY_PRESENCE = "CHAT21_D_MY_PRESENCE";

@@ -119,6 +119,11 @@ public class ChatManager {
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
     }
 
+    public void initContactsSynchronizer() {
+        this.contactsSynchronizer = getContactsSynchronizer();
+        this.contactsSynchronizer.connect();
+    }
+
     public void dispose() {
 
         // dispose myPresenceHandler
