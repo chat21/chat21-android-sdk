@@ -30,7 +30,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import chat21.android.R;
+import chat21.android.core.ChatManager;
+import chat21.android.utils.StringUtils;
 import chat21.android.utils.image.ImageCompressor;
 
 /**
@@ -73,9 +74,16 @@ public class StorageHandler {
     private static void performUpload(Context context, Uri file, final String type,
                                       final OnUploadedCallback callback) {
         // public storage folder
-        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(
-                context.getString(R.string.firebase_storage_reference))
-                .child("public");
+        StorageReference storageReference;
+        if (StringUtils.isValid(ChatManager.Configuration.storageBucket)) {
+            storageReference = FirebaseStorage.getInstance()
+                    .getReferenceFromUrl(ChatManager.Configuration.storageBucket)
+                    .child("public");
+        } else {
+            storageReference = FirebaseStorage.getInstance()
+                    .getReference()
+                    .child("public");
+        }
 
         // random uid.
         // this is used to generate an unique folder in which
@@ -83,7 +91,7 @@ public class StorageHandler {
         String uuid = UUID.randomUUID().toString();
 
         // upload to /public/images/uuid/file.ext
-        StorageReference riversRef = storageRef.child(type.toString() + "/" + uuid + "/" +
+        StorageReference riversRef = storageReference.child(type.toString() + "/" + uuid + "/" +
                 file.getLastPathSegment());
         UploadTask uploadTask = riversRef.putFile(file);
 
