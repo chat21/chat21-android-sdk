@@ -200,6 +200,8 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                                     ChatManager.start(ChatLoginActivity.this, mChatConfiguration, loggedUser);
                                     Log.i(TAG, "chat has been initialized with success");
 
+                                    ChatManager.getInstance().initContactsSyncronizer();
+
                                     // get device token
                                     new RefreshFirebaseInstanceIdTask().execute();
 
