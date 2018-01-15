@@ -499,6 +499,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                                             Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.recipient: " + message.getRecipient());
 
                                             messageListAdapter.updateMessage(message);
+                                            scrollToBottom();
                                         } else {
 
                                             Toast.makeText(MessageListActivity.this,
