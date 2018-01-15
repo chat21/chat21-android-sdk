@@ -35,6 +35,7 @@ import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
+import chat21.android.core.authentication.task.RefreshFirebaseInstanceIdTask;
 import chat21.android.core.exception.ChatFieldNotFoundException;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
@@ -198,6 +199,9 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
 
                                     ChatManager.start(ChatLoginActivity.this, mChatConfiguration, loggedUser);
                                     Log.i(TAG, "chat has been initialized with success");
+
+                                    // get device token
+                                    new RefreshFirebaseInstanceIdTask().execute();
 
                                     ChatUI.getInstance().setContext(ChatLoginActivity.this);
                                     Log.i(TAG, "ChatUI has been initialized with success");
