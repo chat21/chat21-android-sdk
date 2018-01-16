@@ -160,7 +160,8 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
     public void onBackPressed() {
         // close search view on back button pressed
         if (!searchView.isIconified()) {
-            searchView.setIconified(true);
+//            searchView.setIconified(true);
+            searchView.onActionViewCollapsed();
             return;
         }
         super.onBackPressed();
