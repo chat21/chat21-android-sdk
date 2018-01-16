@@ -22,6 +22,8 @@ import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.StringUtils;
 
+import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
+
 /**
  * Created by andrealeo on 05/12/17.
  */
@@ -57,6 +59,7 @@ public class ConversationMessagesHandler {
 
         this.conversationMessagesNode.keepSynced(true);
         Log.d(TAG, "conversationMessagesNode : " + conversationMessagesNode.toString());
+        Log.d(DEBUG_NOTIFICATION, "ConversationMessagesHandler.upsertConversationMessagesListener: conversationMessagesNode ==  " + conversationMessagesNode.toString());
 
 
 //        this.conversationMessagesListeners = new ArrayList<ConversationsListener>();
@@ -197,7 +200,7 @@ public class ConversationMessagesHandler {
 
     public ChildEventListener connect() {
         Log.d(TAG, "connecting  for recipientId : " + this.recipient.getId());
-
+        Log.d(DEBUG_NOTIFICATION, "ConversationMessagesHandler.upsertConversationMessagesListener: connecting  for recipientId : " + this.recipient.getId());
 
 //        final List<ConversationMessagesListener> conversationMessagesListeners = new ArrayList<ConversationMessagesListener>();
 //        conversationMessagesListeners.add(conversationMessagesListener);
@@ -205,11 +208,13 @@ public class ConversationMessagesHandler {
         if (conversationMessagesChildEventListener==null) {
 
             Log.d(TAG, "creating a new conversationMessagesChildEventListener");
+            Log.d(DEBUG_NOTIFICATION, "ConversationMessagesHandler.upsertConversationMessagesListener: creating a new conversationMessagesChildEventListener");
 
             conversationMessagesChildEventListener = conversationMessagesNode.orderByChild(Message.TIMESTAMP_FIELD_KEY).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                     Log.v(TAG, "ConversationMessagesHandler.connect.onChildAdded");
+                    Log.d(DEBUG_NOTIFICATION, "ConversationMessagesHandler.upsertConversationMessagesListener: ConversationMessagesHandler.connect.onChildAdded");
 
                     try {
                         Message message = decodeMessageSnapShop(dataSnapshot);
@@ -249,6 +254,7 @@ public class ConversationMessagesHandler {
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
                     Log.v(TAG, "ConversationMessagesHandler.connect.onChildChanged");
+                    Log.d(DEBUG_NOTIFICATION, "ConversationMessagesHandler.upsertConversationMessagesListener: ConversationMessagesHandler.connect.onChildChanged");
 
                     try {
                         Message message = decodeMessageSnapShop(dataSnapshot);
@@ -292,10 +298,12 @@ public class ConversationMessagesHandler {
             });
 
             Log.i(TAG, "connected for recipientId: " + recipient.getId() );
+            Log.i(DEBUG_NOTIFICATION, "ConversationMessagesHandler.upsertConversationMessagesListener: connected for recipientId: " + recipient.getId() );
 
 
         }else {
             Log.i(TAG, "already connected form recipientId : " + recipient.getId());
+            Log.d(DEBUG_NOTIFICATION, "ConversationMessagesHandler.upsertConversationMessagesListener: already connected form recipientId : " + recipient.getId());
         }
 
         return conversationMessagesChildEventListener;
@@ -388,10 +396,11 @@ public class ConversationMessagesHandler {
             this.conversationMessagesListeners.remove(conversationMessagesListener);
             this.conversationMessagesListeners.add(conversationMessagesListener);
             Log.i(TAG, "  conversationMessagesListener with hashCode: "+ conversationMessagesListener.hashCode() + " updated");
+            Log.d(DEBUG_NOTIFICATION, "ConversationMessagesHandler.upsertConversationMessagesListener: conversationMessagesListener with hashCode: "+ conversationMessagesListener.hashCode() + " updated");
         } else {
             this.conversationMessagesListeners.add(conversationMessagesListener);
             Log.i(TAG, "  conversationMessagesListener with hashCode: "+ conversationMessagesListener.hashCode() + " added");
-
+            Log.d(DEBUG_NOTIFICATION, "ConversationMessagesHandler.upsertConversationMessagesListener: conversationMessagesListener with hashCode: "+ conversationMessagesListener.hashCode() + " added");
         }
     }
 

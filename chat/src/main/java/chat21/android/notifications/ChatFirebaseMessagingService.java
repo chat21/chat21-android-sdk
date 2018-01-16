@@ -16,9 +16,9 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Date;
+import java.util.Map;
 
 import chat21.android.R;
-import chat21.android.core.ChatManager;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
@@ -37,29 +37,21 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d(DEBUG_NOTIFICATION, "onMessageReceived");
-        Log.d(DEBUG_NOTIFICATION, "From: " + remoteMessage.getFrom());
-
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived from: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.i(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
-                    "remoteMessage.getData().size() > 0 == > data: "
-                    + remoteMessage.getData().toString());
-            Log.d(DEBUG_NOTIFICATION, "Message data payload: " + remoteMessage.getData());
-
-//            String title = getApplicationContext().getString(R.string.app_name);
-//            Log.d(TAG, "title == " + title);
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: payload == " + remoteMessage.getData());
 
             String body = remoteMessage.getData().get("text");
-            Log.d(DEBUG_NOTIFICATION, "body == " + body);
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: text == " + body);
 
             // resolve Issue #38
             // retrieve timestamp
             String timestamp = remoteMessage.getData().get("timestamp");
-            Log.d(DEBUG_NOTIFICATION, "timestamp: " + timestamp);
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: timestamp == " + timestamp);
             String formattedTimestamp = TimeUtils.timestampToHour(Long.parseLong(timestamp));
-            Log.d(DEBUG_NOTIFICATION, "formattedTimestamp: " + formattedTimestamp);
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: formattedTimestamp == " + formattedTimestamp);
 
             // resolve Issue #22
 //            TODO implement for group
@@ -76,14 +68,14 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //
 //                sendGroupNotification(title, body, getGroupId(remoteMessage.getData()), formattedTimestamp);
 //            } else {
-            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
-                    "is one to one conversation.");
+//            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
+//                    "is one to one conversation.");
 
             // one to one notification
             String title = remoteMessage.getData().get("sender_fullname");
-            Log.d(DEBUG_NOTIFICATION, "title == " + title);
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: title == " + title);
 
-            sendNotification(title, body, remoteMessage.getData().get("recipient"), formattedTimestamp);
+            sendNotification(title, body, remoteMessage.getData(), formattedTimestamp);
 //            }
         } else {
             Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
@@ -194,20 +186,16 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 //    }
 
-    private void sendNotification(String title, String message, String conversationId, String timestamp) {
-        Log.d(DEBUG_NOTIFICATION, "sendNotification");
-
-        // FIXME: 24/11/17 
-//        Chat.Configuration.setContext(getApplicationContext());
+    private void sendNotification(String title, String message, Map<String, String> data, String timestamp) {
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification");
 
         int notificationId = (int) new Date().getTime();
 
-
-        IChatUser recipient = new ChatUser(conversationId, ""); // TODO: 15/01/18 pass recipient fullname to notification
-        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: recipient == " + recipient);
+        IChatUser sender = new ChatUser(data.get("sender"), data.get("sender_fullname"));
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: sender == " + sender.toString());
 
         Intent resultIntent = new Intent(this, MessageListActivity.class);
-        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, recipient);
+        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, sender);
         resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(ConversationListActivity.class);
@@ -218,10 +206,14 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //        showGroupSummaryNotification(conversation);
 
         Notification notification = createNotificationObject(resultPendingIntent, title, message, timestamp);
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification created");
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification manager got");
+
         notificationManager.notify(notificationId, notification);
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification notified");
     }
 
     // resolve Issue #22

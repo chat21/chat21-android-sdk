@@ -27,6 +27,7 @@ import chat21.android.utils.IOUtils;
 import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
+import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 import static chat21.android.utils.DebugConstants.DEBUG_SESSION;
 
 /**
@@ -236,18 +237,20 @@ public class ChatManager {
     public ConversationMessagesHandler getConversationMessagesHandler(IChatUser recipient) {
         String recipientId = recipient.getId();
         Log.d(TAG, "Getting ConversationMessagesHandler for recipientId " + recipientId);
+        Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: Getting ConversationMessagesHandler for recipientId " + recipientId);
 
         if (conversationMessagesHandlerMap.containsKey(recipientId)) {
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
+            Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
 
             return conversationMessagesHandlerMap.get(recipientId);
         } else {
             ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
                     Configuration.firebaseUrl, this.getAppId(), this.getLoggedUser(), recipient);
-
             conversationMessagesHandlerMap.put(recipientId, messageHandler);
 
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " created.");
+            Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: ConversationMessagesHandler for recipientId " + recipientId + " created with hash " + messageHandler.hashCode());
 
             return messageHandler;
         }

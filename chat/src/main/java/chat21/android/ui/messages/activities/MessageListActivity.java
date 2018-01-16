@@ -115,6 +115,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate");
 
         setContentView(R.layout.activity_message_list);
 
@@ -122,21 +123,22 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
         // it comes from other activities or from a foreground notification
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT);
-        Log.d(TAG, "MessageListActivity.onCreate: recipient == " + recipient);
 
         if (recipient == null) {
             // it comes from background notification
             recipient = getRecipientFromBackgroundNotification();
-        } else {
-            Log.e(TAG, "MessageListActivity.onCreate: recipient is null");
+            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipient == " + recipient.toString());
         }
 
         conversationMessagesHandler = ChatManager.getInstance()
                 .getConversationMessagesHandler(recipient);
+        Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: conversationMessagesHandler got with hash == " + conversationMessagesHandler.hashCode());
         conversationMessagesHandler.upsertConversationMessagesListener(this);
         Log.d(TAG, "MessageListActivity.onCreate: conversationMessagesHandler attached");
+        Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: conversationMessagesHandler attached");
         conversationMessagesHandler.connect();
         Log.d(TAG, "MessageListActivity.onCreate: conversationMessagesHandler connected");
+        Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: conversationMessagesHandler connected");
 
         presenceHandler = ChatManager.getInstance().getPresenceHandler(recipient.getId());
         presenceHandler.upsertPresenceListener(this);
@@ -246,9 +248,9 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
     private IChatUser getRecipientFromBackgroundNotification() {
         IChatUser recipient = null;
-        if (StringUtils.isValid(getIntent().getStringExtra("recipient")) &&
+        if (StringUtils.isValid(getIntent().getStringExtra("sender")) &&
                 StringUtils.isValid(getIntent().getStringExtra("sender_fullname"))) {
-            String contactId = getIntent().getStringExtra("recipient");
+            String contactId = getIntent().getStringExtra("sender");
             Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate.fromNotification: contactId == " + contactId);
 
             String contactFullName = getIntent().getStringExtra("sender_fullname");
