@@ -891,10 +891,17 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                         Log.d(TAG, "Opened soft keyboard");
                     }
                 })
+//                .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
+//                    @Override
+//                    public void onEmojiPopupDismiss() {
+//                        emojiButton.setImageResource(R.drawable.emoji_ios_category_people);
+//                    }
+//                })
+
                 .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
                     @Override
                     public void onEmojiPopupDismiss() {
-                        emojiButton.setImageResource(R.drawable.emoji_ios_category_people);
+                        emojiButton.setImageResource(R.drawable.emoji_google_category_people);
                     }
                 })
                 .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {

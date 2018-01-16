@@ -7,7 +7,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.ios.IosEmojiProvider;
+import com.vanniktech.emoji.google.GoogleEmojiProvider;
 
 import java.io.IOException;
 import java.net.URL;
@@ -114,7 +114,8 @@ public class ChatManager {
         mInstance = chat;
 
         // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.
-        EmojiManager.install(new IosEmojiProvider());
+//        EmojiManager.install(new IosEmojiProvider());
+        EmojiManager.install(new GoogleEmojiProvider());
 
 //        chat.loggedUser = currentUser;
         // serialize the current user

@@ -50,6 +50,16 @@
         android:orientation="horizontal"
         android:padding="4dp">
 
+        <!--<ImageButton-->
+        <!--android:id="@+id/main_activity_emoji"-->
+        <!--android:layout_width="48dp"-->
+        <!--android:layout_height="48dp"-->
+        <!--android:background="?attr/selectableItemBackgroundBorderless"-->
+        <!--android:padding="12dp"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--app:srcCompat="@drawable/emoji_ios_category_people"-->
+        <!--tools:ignore="ContentDescription" />-->
+
         <ImageButton
             android:id="@+id/main_activity_emoji"
             android:layout_width="48dp"
@@ -57,7 +67,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/emoji_ios_category_people"
+            app:srcCompat="@drawable/emoji_google_category_people"
             tools:ignore="ContentDescription" />
 
 
