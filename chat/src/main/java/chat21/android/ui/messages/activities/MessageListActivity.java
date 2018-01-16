@@ -77,8 +77,6 @@ import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 public class MessageListActivity extends AppCompatActivity implements ConversationMessagesListener, PresenceListener {
     private static final String TAG = MessageListActivity.class.getName();
 
-//    private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
-
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
 
     private PresenceHandler presenceHandler;
