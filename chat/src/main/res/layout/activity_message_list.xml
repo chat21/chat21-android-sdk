@@ -37,7 +37,8 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/main_activity_emoji_bar"
         android:layout_below="@+id/appbar"
-        android:paddingBottom="@dimen/chat_padding_x_small" />
+        android:paddingBottom="@dimen/chat_padding_x_small"
+        android:scrollbars="vertical" />
 
     <LinearLayout
         android:id="@+id/main_activity_emoji_bar"
