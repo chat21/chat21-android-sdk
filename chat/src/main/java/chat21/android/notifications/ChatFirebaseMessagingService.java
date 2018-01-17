@@ -21,11 +21,12 @@ import java.util.Map;
 import chat21.android.R;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.conversations.activities.ConversationListActivity;
-import chat21.android.utils.StringUtils;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.TimeUtils;
+
+import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 
 /**
  * Created by andrea on 28/03/17.
@@ -34,35 +35,23 @@ import chat21.android.utils.TimeUtils;
 //https://github.com/firebase/quickstart-android/blob/master/messaging/app/src/main/java/com/google/firebase/quickstart/fcm/MyFirebaseMessagingService.java
 public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String TAG = ChatFirebaseMessagingService.class.getName();
-    private static final String TAG_NOTIFICATION = "TAG_NOTIFICATION";
-
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d(TAG, "onMessageReceived");
-        Log.i(TAG_NOTIFICATION, "onMessageReceived");
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
-
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived from: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.i(TAG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
-                    "remoteMessage.getData().size() > 0 == > data: "
-                    + remoteMessage.getData().toString());
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
-//            String title = getApplicationContext().getString(R.string.app_name);
-//            Log.d(TAG, "title == " + title);
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: payload == " + remoteMessage.getData());
 
             String body = remoteMessage.getData().get("text");
-            Log.d(TAG, "body == " + body);
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: text == " + body);
 
             // resolve Issue #38
             // retrieve timestamp
             String timestamp = remoteMessage.getData().get("timestamp");
-            Log.d(TAG, "timestamp: " + timestamp);
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: timestamp == " + timestamp);
             String formattedTimestamp = TimeUtils.timestampToHour(Long.parseLong(timestamp));
-            Log.d(TAG, "formattedTimestamp: " + formattedTimestamp);
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: formattedTimestamp == " + formattedTimestamp);
 
             // resolve Issue #22
 //            TODO implement for group
@@ -79,24 +68,24 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //
 //                sendGroupNotification(title, body, getGroupId(remoteMessage.getData()), formattedTimestamp);
 //            } else {
-                Log.i(TAG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
-                        "is one to one conversation.");
+//            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
+//                    "is one to one conversation.");
 
-                // one to one notification
-                String title = remoteMessage.getData().get("sender_fullname");
-                Log.d(TAG, "title == " + title);
+            // one to one notification
+            String title = remoteMessage.getData().get("sender_fullname");
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: title == " + title);
 
-                sendNotification(title, body, remoteMessage.getData().get("conversationId"), formattedTimestamp);
+            sendNotification(title, body, remoteMessage.getData(), formattedTimestamp);
 //            }
         } else {
-            Log.i(TAG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
+            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
                     "remoteMessage.getData().size() < 0");
         }
     }
 
     private Notification createNotificationObject(PendingIntent pendingIntent,
                                                   String title, String message, String timestamp) {
-        Log.d(TAG, "createNotificationObject");
+        Log.d(DEBUG_NOTIFICATION, "createNotificationObject");
 
         // resolve Issue #38
         RemoteViews contentView = new RemoteViews(getPackageName(),
@@ -120,8 +109,6 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //        notification.flags |= Notification.FLAG_AUTO_CANCEL;
 //        notification.defaults |= Notification.DEFAULT_SOUND;
 //        notification.defaults |= Notification.DEFAULT_VIBRATE;
-
-
 //
 //        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 //
@@ -175,7 +162,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //        Notification notification = builder.build();
 //        notificationManager.notify(NOTIFICATION_ID, notification);
 //    }
-
+//
 //    @Override
 //    public void handleIntent(Intent intent) {
 //        Intent launchIntent = new Intent(this, MessageListActivity.class); // TODO: 19/06/17
@@ -199,18 +186,16 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 //    }
 
-    private void sendNotification(String title, String message, String conversationId, String timestamp) {
-        Log.d(TAG, "sendNotification");
-
-        // FIXME: 24/11/17 
-//        Chat.Configuration.setContext(getApplicationContext());
+    private void sendNotification(String title, String message, Map<String, String> data, String timestamp) {
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification");
 
         int notificationId = (int) new Date().getTime();
 
-        IChatUser recipient = new ChatUser(conversationId, title);
+        IChatUser sender = new ChatUser(data.get("sender"), data.get("sender_fullname"));
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: sender == " + sender.toString());
 
         Intent resultIntent = new Intent(this, MessageListActivity.class);
-        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, recipient);
+        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, sender);
         resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(ConversationListActivity.class);
@@ -221,10 +206,14 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //        showGroupSummaryNotification(conversation);
 
         Notification notification = createNotificationObject(resultPendingIntent, title, message, timestamp);
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification created");
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification manager got");
+
         notificationManager.notify(notificationId, notification);
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification notified");
     }
 
     // resolve Issue #22
@@ -254,35 +243,35 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 //        notificationManager.notify(notificationId, notification);
 //    }
-
-    // retrieve the group_id
-    private String getGroupId(Map<String, String> pushData) {
-        try {
-            String groupId = (String) pushData.get("group_id");
-            if (StringUtils.isValid(groupId)) {
-                return groupId;
-            } else {
-                Log.w(TAG, "group_id is empty or null. ");
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "cannot retrieve group_id. it may not exist" + e.getMessage());
-        }
-        return null;
-    }
-
-    // retrieve the group_name
-    private String getGroupName(Map<String, String> pushData) {
-        try {
-            String groupName = (String) pushData.get("group_name");
-            if (StringUtils.isValid(groupName)) {
-                return groupName;
-            } else {
-                Log.w(TAG, "group_name is empty or null. ");
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "cannot retrieve group_name. it may not exist" + e.getMessage());
-        }
-
-        return null;
-    }
+//
+//    // retrieve the group_id
+//    private String getGroupId(Map<String, String> pushData) {
+//        try {
+//            String groupId = (String) pushData.get("group_id");
+//            if (StringUtils.isValid(groupId)) {
+//                return groupId;
+//            } else {
+//                Log.w(DEBUG_NOTIFICATION, "group_id is empty or null. ");
+//            }
+//        } catch (Exception e) {
+//            Log.w(DEBUG_NOTIFICATION, "cannot retrieve group_id. it may not exist" + e.getMessage());
+//        }
+//        return null;
+//    }
+//
+//    // retrieve the group_name
+//    private String getGroupName(Map<String, String> pushData) {
+//        try {
+//            String groupName = (String) pushData.get("group_name");
+//            if (StringUtils.isValid(groupName)) {
+//                return groupName;
+//            } else {
+//                Log.w(DEBUG_NOTIFICATION, "group_name is empty or null. ");
+//            }
+//        } catch (Exception e) {
+//            Log.w(DEBUG_NOTIFICATION, "cannot retrieve group_name. it may not exist" + e.getMessage());
+//        }
+//
+//        return null;
+//    }
 }

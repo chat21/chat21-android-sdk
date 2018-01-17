@@ -64,7 +64,6 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
     }
 
 
-
     private static int compare(String x, String y) {
         return x.compareTo(y) < 0 ? -1 : x.compareTo(y) > 0 ? 1 : 0;
     }
@@ -90,7 +89,7 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
     @Override
     public String toString() {
         return "ChatUser{" +
-                ", id='" + id + '\'' +
+                "id='" + id + '\'' +
                 ", email='" + email + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", profilePictureUrl='" + profilePictureUrl + '\'' +

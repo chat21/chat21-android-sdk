@@ -7,29 +7,29 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
 
+import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
+
 /**
  * Created by andrealeo
  */
 public class RefreshFirebaseInstanceIdTask extends AsyncTask<Object, Object, Void> {
-    private static final String TAG = "LOGIN";
 
     public RefreshFirebaseInstanceIdTask() {
-
+        Log.d(DEBUG_LOGIN, "RefreshFirebaseInstanceIdTask");
     }
 
     @Override
     protected Void doInBackground(Object... params) {
         try {
             FirebaseInstanceId.getInstance().deleteInstanceId();
-            Log.i(TAG, "instanceId deleted with success." );
+            Log.i(DEBUG_LOGIN, "RefreshFirebaseInstanceIdTask.doInBackground: instanceId deleted with success.");
 
             // Now manually call onTokenRefresh()
-            Log.d(TAG, "Getting new token");
+            Log.d(DEBUG_LOGIN, "RefreshFirebaseInstanceIdTask.doInBackground: Getting new token");
             FirebaseInstanceId.getInstance().getToken();
 
-
         } catch (IOException e) {
-            Log.e(TAG, "deleteInstanceIdCatch: " + e.getMessage());
+            Log.e(DEBUG_LOGIN, "RefreshFirebaseInstanceIdTask.doInBackground: deleteInstanceIdCatch: " + e.getMessage());
         }
 
         return null;

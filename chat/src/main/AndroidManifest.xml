@@ -114,7 +114,9 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <!--A service that extends FirebaseInstanceIdService to handle the creation, rotation, and updating of registration tokens. This is required for sending to specific devices or for creating device groups.-->
+        <!--A service that extends FirebaseInstanceIdService to handle the creation, rotation,
+        and updating of registration tokens.
+         This is required for sending to specific devices or for creating device groups.-->
         <service
             android:name="chat21.android.instanceid.service.SaveFirebaseInstanceIdService"
             tools:ignore="ExportedService">

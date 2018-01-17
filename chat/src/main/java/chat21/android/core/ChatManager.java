@@ -3,9 +3,13 @@ package chat21.android.core;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.ios.IosEmojiProvider;
+import com.vanniktech.emoji.google.GoogleEmojiProvider;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +24,10 @@ import chat21.android.core.presence.PresenceHandler;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.IOUtils;
+import chat21.android.utils.StringUtils;
 
+import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
+import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 import static chat21.android.utils.DebugConstants.DEBUG_SESSION;
 
 /**
@@ -42,9 +49,10 @@ public class ChatManager {
 
     private Map<String, ConversationMessagesHandler> conversationMessagesHandlerMap;
     private ConversationsHandler conversationsHandler;
-    private ContactsSynchronizer contactsSynchronizer;
     private MyPresenceHandler myPresenceHandler;
     private Map<String, PresenceHandler> presenceHandlerMap;
+
+    private ContactsSynchronizer contactsSynchronizer;
 
     // private constructor
     private ChatManager() {
@@ -106,7 +114,8 @@ public class ChatManager {
         mInstance = chat;
 
         // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.
-        EmojiManager.install(new IosEmojiProvider());
+//        EmojiManager.install(new IosEmojiProvider());
+        EmojiManager.install(new GoogleEmojiProvider());
 
 //        chat.loggedUser = currentUser;
         // serialize the current user
@@ -119,7 +128,7 @@ public class ChatManager {
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
     }
 
-    public void initContactsSynchronizer() {
+    public void initContactsSyncronizer() {
         this.contactsSynchronizer = getContactsSynchronizer();
         this.contactsSynchronizer.connect();
     }
@@ -154,9 +163,11 @@ public class ChatManager {
             Log.d(TAG, "conversationMessagesHandler for recipientId: " + recipientId + " disposed");
         }
 
-        //dispose contactsSynchonizer
-        if (contactsSynchronizer != null)
+        // dispose contactsSynchonizer
+        if (contactsSynchronizer != null) {
             this.contactsSynchronizer.removeAllContactsListeners();
+            this.contactsSynchronizer.disconnect();
+        }
         this.contactsSynchronizer = null;
 
         deleteInstanceId();
@@ -165,19 +176,25 @@ public class ChatManager {
     }
 
     private void deleteInstanceId() {
-//                // TODO: 08/01/18 uncomment
-//        // remove the instanceId for the logged user
-//        DatabaseReference firebaseUsersPath = FirebaseDatabase.getInstance().getReference()
-//                .child("apps/" + ChatManager.Configuration.appId + "/users/" + loggedUser.getId() + "/instanceId");
-//        firebaseUsersPath.removeValue();
-//
-//        try {
-//            FirebaseInstanceId.getInstance().deleteInstanceId();
-//        } catch (IOException e) {
-//            Log.e(DEBUG_LOGIN, "cannot delete instanceId. " + e.getMessage());
-//            Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-//            return;
-//        }
+
+        DatabaseReference root;
+        if (StringUtils.isValid(Configuration.firebaseUrl)) {
+            root = FirebaseDatabase.getInstance().getReferenceFromUrl(Configuration.firebaseUrl);
+        } else {
+            root = FirebaseDatabase.getInstance().getReference();
+        }
+
+        // remove the instanceId for the logged user
+        DatabaseReference firebaseUsersPath = root
+                .child("apps/" + ChatManager.Configuration.appId + "/users/" + loggedUser.getId() + "/instanceId");
+        firebaseUsersPath.removeValue();
+
+        try {
+            FirebaseInstanceId.getInstance().deleteInstanceId();
+        } catch (IOException e) {
+            Log.e(DEBUG_LOGIN, "cannot delete instanceId. " + e.getMessage());
+            return;
+        }
     }
 
     private void removeLoggedUser() {
@@ -221,18 +238,20 @@ public class ChatManager {
     public ConversationMessagesHandler getConversationMessagesHandler(IChatUser recipient) {
         String recipientId = recipient.getId();
         Log.d(TAG, "Getting ConversationMessagesHandler for recipientId " + recipientId);
+        Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: Getting ConversationMessagesHandler for recipientId " + recipientId);
 
         if (conversationMessagesHandlerMap.containsKey(recipientId)) {
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
+            Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
 
             return conversationMessagesHandlerMap.get(recipientId);
         } else {
             ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
                     Configuration.firebaseUrl, this.getAppId(), this.getLoggedUser(), recipient);
-
             conversationMessagesHandlerMap.put(recipientId, messageHandler);
 
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " created.");
+            Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: ConversationMessagesHandler for recipientId " + recipientId + " created with hash " + messageHandler.hashCode());
 
             return messageHandler;
         }

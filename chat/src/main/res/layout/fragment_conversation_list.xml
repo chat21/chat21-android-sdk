@@ -7,11 +7,11 @@
     android:layout_height="match_parent">
 
     <!--<ProgressBar-->
-        <!--android:id="@+id/progress_bar"-->
-        <!--android:layout_width="@dimen/chat_progress_bar_size"-->
-        <!--android:layout_height="@dimen/chat_progress_bar_size"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:visibility="gone" />-->
+    <!--android:id="@+id/progress_bar"-->
+    <!--android:layout_width="@dimen/chat_progress_bar_size"-->
+    <!--android:layout_height="@dimen/chat_progress_bar_size"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:visibility="gone" />-->
 
     <include
         android:id="@+id/layout_no_conversations"
@@ -52,7 +52,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/conversations_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
 
     </LinearLayout>
 
