@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.io.Serializable;
 
+import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.ui.contacts.listeners.OnCreateGroupClickListener;
@@ -154,7 +155,7 @@ public class ChatUI implements Serializable {
         return groupsEnabled;
     }
 
-    public void showConversationsListFragment(FragmentManager fragmentManager,
+    public void openConversationsListFragment(FragmentManager fragmentManager,
                                               @IdRes int containerId) {
         Fragment fragment = ConversationListFragment.newInstance();
         if (fragment != null) {
@@ -164,15 +165,21 @@ public class ChatUI implements Serializable {
         }
     }
 
-    public void showConversationsListActivity() {
+    public void openConversationsListActivity() {
         Intent intent = new Intent(mContext, ConversationListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
 
+
+    public void openConversationMessagesActivity(String recipientId, String recipientFullName) {
+        this.openConversationMessagesActivity(new ChatUser(recipientId, recipientFullName));
+
+    }
+
     // TODO: 24/11/17 showChatWith(user)
     // TODO: 24/11/17 add extras here
-    public void showDirectConversationActivity(IChatUser recipient) {
+    public void openConversationMessagesActivity(IChatUser recipient) {
 
 //        IChatUser iChatUser = ChatManager.getInstance().getLoggedUser();
 //        // generate the conversationId

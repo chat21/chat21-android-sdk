@@ -211,7 +211,7 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                                         @Override
                                         public void onNewConversationClicked() {
                                             if (support != null) {
-                                                ChatUI.getInstance().showDirectConversationActivity(support);
+                                                ChatUI.getInstance().openConversationMessagesActivity(support);
                                             } else {
                                                 Intent intent = new Intent(getApplicationContext(),
                                                         ContactListActivity.class);
