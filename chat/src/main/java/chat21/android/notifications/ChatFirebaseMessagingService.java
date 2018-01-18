@@ -1,16 +1,12 @@
 package chat21.android.notifications;
 
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -18,12 +14,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.Date;
 import java.util.Map;
 
-import chat21.android.R;
+import chat21.android.core.ChatManager;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.ui.ChatUI;
-import chat21.android.ui.conversations.activities.ConversationListActivity;
-import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.TimeUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
@@ -81,59 +74,6 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: " +
                     "remoteMessage.getData().size() < 0");
         }
-    }
-
-    private Notification createNotificationObject(PendingIntent pendingIntent,
-                                                  String title, String message, String timestamp) {
-        Log.d(DEBUG_NOTIFICATION, "createNotificationObject");
-
-        // resolve Issue #38
-        RemoteViews contentView = new RemoteViews(getPackageName(),
-                R.layout.layout_custom_notification);
-        contentView.setImageViewResource(R.id.image, R.drawable.ic_notification_foreground);
-        contentView.setTextViewText(R.id.title, title);
-        contentView.setTextViewText(R.id.text, message);
-        contentView.setTextViewText(R.id.time, timestamp);
-
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_notification_small)
-                .setContent(contentView)
-
-                .setTicker(title)
-                .setWhen(0)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-
-        Notification notification = mBuilder.build();
-//        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-//        notification.defaults |= Notification.DEFAULT_SOUND;
-//        notification.defaults |= Notification.DEFAULT_VIBRATE;
-//
-//        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-//
-//        Notification notification = mBuilder
-//                .setSmallIcon(R.drawable.ic_notification_small)
-//                .setTicker(title)
-//                .setContentText(message)
-//                .setWhen(0)
-//                .setAutoCancel(true)
-//                .setContentTitle(title)
-//                .setStyle(new NotificationCompat.InboxStyle())
-//                .setContentIntent(pendingIntent)
-//                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-//                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_notification_foreground))
-//                .build();
-//
-//        // hides the small icon at the bottom
-//        // source: https://stackoverflow.com/questions/30887078/notificationcompat-android-how-to-show-only-large-icon-without-small
-//        int smallIconId = getApplicationContext().getResources().getIdentifier("right_icon", "id", android.R.class.getPackage().getName());
-//        if (smallIconId != 0) {
-//            if (notification.contentView!=null)
-//                notification.contentView.setViewVisibility(smallIconId, View.GONE);
-//        }
-
-        return notification;
     }
 
     // TODO: 19/06/17 raggruppamento notifiche come gmail
@@ -194,25 +134,73 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         IChatUser sender = new ChatUser(data.get("sender"), data.get("sender_fullname"));
         Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: sender == " + sender.toString());
 
-        Intent resultIntent = new Intent(this, MessageListActivity.class);
-        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, sender);
-        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(ConversationListActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+//        Intent resultIntent = new Intent(this, MessageListActivity.class);
+//        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, sender);
+//        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
+//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//        stackBuilder.addParentStack(ConversationListActivity.class);
+//        stackBuilder.addNextIntent(resultIntent);
+//        PendingIntent resultPendingIntent =
+//                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
 
 //        showGroupSummaryNotification(conversation);
 
-        Notification notification = createNotificationObject(resultPendingIntent, title, message, timestamp);
-        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification created");
+        String conversationId = sender.getId();
+
+//        // prevent start the conversation with 'conversationId'
+//        // if it is the current active conversation
+//        NotificationCompat.Builder notificationBuilder;
+//        if (StringUtils.isValid(ChatManager.getInstance().activeConversation)) {
+//            if (!ChatManager.getInstance().activeConversation.equals(conversationId)) {
+//                // not the active conversation
+//                Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: activeConversation == " + conversationId);
+//                notificationBuilder = NotificationUtils.createNotification(this, conversationId, title, message, timestamp);
+//                notificationBuilder.setContentIntent(resultPendingIntent);
+//                Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification created");
+//            } else {
+//                // active conversation
+//                notificationBuilder = NotificationUtils.createNotification(this, conversationId, title, message, timestamp);
+//                // heads up notification
+////                notificationBuilder = NotificationUtils.createHeadsUpNotification(this, conversationId, title, message, timestamp);
+////                PendingIntent dismissIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, 0);
+////                notificationBuilder.addAction(R.drawable.ic_clear_all_white_24dp, "Dismiss", dismissIntent);
+//                Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: heads up notification created");
+//            }
+//        } else {
+//            // activeConversation never set
+//            notificationBuilder = NotificationUtils.createNotification(this, conversationId, title, message, timestamp);
+//            notificationBuilder.setContentIntent(resultPendingIntent);
+//            Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification created");
+//        }
+
+        Intent notificationIntent = NotificationUtils.createNotificationIntent(this, sender);
+
+        PendingIntent resultPendingIntent = NotificationUtils.createPendingIntent(this, notificationIntent);
+
+        // prevent start the conversation with 'conversationId'
+        // if it is the current active conversation
+        NotificationCompat.Builder notificationBuilder = NotificationUtils
+                .createNotification(this, conversationId, title, message, timestamp);
+        notificationBuilder.setContentIntent(resultPendingIntent);
+
+        if (ChatManager.getInstance().getActiveConversation(conversationId)) {
+            // the active conversation
+            return;
+        }
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification manager got");
 
-        notificationManager.notify(notificationId, notification);
+        // required from heads up notification
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            NotificationChannel mChannel = new NotificationChannel(conversationId, conversationId, NotificationManager.IMPORTANCE_HIGH);
+//            notificationManager.createNotificationChannel(mChannel);
+//        }
+
+        notificationManager.notify(notificationId, notificationBuilder.build());
         Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: notification notified");
     }
 

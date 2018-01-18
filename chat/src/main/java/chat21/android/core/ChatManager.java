@@ -54,17 +54,36 @@ public class ChatManager {
 
     private ContactsSynchronizer contactsSynchronizer;
 
+    // Map<Conversation, isActive> used to check if a conversation with an user with unique
+    // userId is the active conversation
+    private Map<String, Boolean> activeConversation;
+
+    public void setActiveConversation(String conversationId, boolean isActive) {
+        this.activeConversation.put(conversationId, isActive);
+    }
+
+    public boolean getActiveConversation(String conversationId) {
+        if (activeConversation.get(conversationId) != null) {
+            return activeConversation.get(conversationId);
+        } else {
+            return false;
+        }
+    }
+
     // private constructor
     private ChatManager() {
         conversationMessagesHandlerMap = new HashMap<String, ConversationMessagesHandler>();
 
         presenceHandlerMap = new HashMap<>();
+
+        activeConversation = new HashMap<>();
     }
 
     public void setLoggedUser(IChatUser loggedUser) {
         this.loggedUser = loggedUser;
         Log.d(DEBUG_SESSION, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
-        IOUtils.saveObjectToFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, loggedUser); // serialize on disk
+        // serialize on disk
+        IOUtils.saveObjectToFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, loggedUser);
     }
 
     public IChatUser getLoggedUser() {
@@ -113,6 +132,7 @@ public class ChatManager {
 
         mInstance = chat;
 
+        // TODO: 16/01/18 move the emoji provider to chatUI
         // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.
 //        EmojiManager.install(new IosEmojiProvider());
         EmojiManager.install(new GoogleEmojiProvider());
@@ -186,7 +206,8 @@ public class ChatManager {
 
         // remove the instanceId for the logged user
         DatabaseReference firebaseUsersPath = root
-                .child("apps/" + ChatManager.Configuration.appId + "/users/" + loggedUser.getId() + "/instanceId");
+                .child("apps/" + ChatManager.Configuration.appId + "/users/" +
+                        loggedUser.getId() + "/instanceId");
         firebaseUsersPath.removeValue();
 
         try {
@@ -265,7 +286,8 @@ public class ChatManager {
 
             return presenceHandlerMap.get(recipientId);
         } else {
-            PresenceHandler presenceHandler = new PresenceHandler(Configuration.firebaseUrl, this.getAppId(), recipientId);
+            PresenceHandler presenceHandler =
+                    new PresenceHandler(Configuration.firebaseUrl, this.getAppId(), recipientId);
 
             presenceHandlerMap.put(recipientId, presenceHandler);
 
@@ -279,8 +301,8 @@ public class ChatManager {
         if (this.conversationsHandler != null) {
             return this.conversationsHandler;
         } else {
-            this.conversationsHandler =
-                    new ConversationsHandler(Configuration.firebaseUrl, this.getAppId(), this.getLoggedUser().getId());
+            this.conversationsHandler = new ConversationsHandler(Configuration.firebaseUrl,
+                    this.getAppId(), this.getLoggedUser().getId());
             return conversationsHandler;
         }
     }
@@ -289,7 +311,8 @@ public class ChatManager {
         if (this.contactsSynchronizer != null) {
             return this.contactsSynchronizer;
         } else {
-            this.contactsSynchronizer = new ContactsSynchronizer(Configuration.firebaseUrl, this.getAppId());
+            this.contactsSynchronizer =
+                    new ContactsSynchronizer(Configuration.firebaseUrl, this.getAppId());
             return this.contactsSynchronizer;
         }
     }
@@ -298,7 +321,8 @@ public class ChatManager {
         if (this.myPresenceHandler != null) {
             return this.myPresenceHandler;
         } else {
-            this.myPresenceHandler = new MyPresenceHandler(Configuration.firebaseUrl, getAppId(), getLoggedUser().getId());
+            this.myPresenceHandler = new MyPresenceHandler(Configuration.firebaseUrl,
+                    getAppId(), getLoggedUser().getId());
             return myPresenceHandler;
         }
     }
@@ -329,7 +353,8 @@ public class ChatManager {
 
     public void sendTextMessage(String recipientId, String recipientFullName,
                                 String text, SendMessageListener sendMessageListener) {
-        sendTextMessage(recipientId, recipientFullName, text, null, sendMessageListener);
+        sendTextMessage(recipientId, recipientFullName,
+                text, null, sendMessageListener);
     }
 
     public void sendTextMessage(String recipientId, String recipientFullName, String text,

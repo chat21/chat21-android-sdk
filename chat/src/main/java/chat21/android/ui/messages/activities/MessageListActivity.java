@@ -11,7 +11,6 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Px;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -84,10 +83,10 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     private boolean conversWithOnline = false;
     private long conversWithLastOnline = -1;
 
-    // check if this activity is called from a background notification
-    private boolean isFromBackgroundNotification = false;
-    // check if this activity is called from a foreground notification
-    private boolean isFromForegroundNotification = false;
+//    // check if this activity is called from a background notification
+//    private boolean isFromBackgroundNotification = false;
+//    // check if this activity is called from a foreground notification
+//    private boolean isFromForegroundNotification = false;
 
     private RecyclerView recyclerView;
     private LinearLayoutManager mLinearLayoutManager;
@@ -128,6 +127,8 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipient == " + recipient.toString());
         }
 
+        ChatManager.getInstance().setActiveConversation(recipient.getId(), true);
+
         conversationMessagesHandler = ChatManager.getInstance()
                 .getConversationMessagesHandler(recipient);
         Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: conversationMessagesHandler got with hash == " + conversationMessagesHandler.hashCode());
@@ -160,11 +161,34 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 //        observeUserPresence();
     }
 
+    @Override
+    protected void onPause() {
+        ChatManager.getInstance().setActiveConversation(recipient.getId(), false);
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "  MessageListActivity.onStop");
+
+        // dismiss the emoji panel
+        if (emojiPopup != null) {
+            emojiPopup.dismiss();
+        }
+
+        ChatManager.getInstance().setActiveConversation(recipient.getId(), false);
+
+        // detach the conversation messages listener
+        super.onStop();
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "  MessageListActivity.onDestroy");
+
+        ChatManager.getInstance().setActiveConversation(recipient.getId(), false);
 
         presenceHandler.removePresenceListener(this);
         Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy: presenceHandler detached");
@@ -180,20 +204,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 ////        conversationMessagesHandler.upsertConversationMessagesListener(this);
 ////        Log.d(TAG, "  MessageListActivity.onStart: conversationMessagesHandler attached");
 //    }
-
-    @Override
-    protected void onStop() {
-        Log.d(TAG, "  MessageListActivity.onStop");
-
-        // dismiss the emoji panel
-        if (emojiPopup != null) {
-            emojiPopup.dismiss();
-        }
-
-        // detach the conversation messages listener
-        super.onStop();
-    }
-
+//
 //    private String getRecipientId() {
 //        Log.d(TAG, "getRecipientId");
 //
@@ -805,47 +816,51 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         if (emojiPopup != null && emojiPopup.isShowing()) {
             emojiPopup.dismiss();
         } else {
-            if (isFromBackgroundNotification || isFromForegroundNotification) {
-                goToParentActivity();
-            } else {
-                finish();
-            }
-        }
-    }
-
-    // bugfix Issue #4
-    public void goToParentActivity() {
-        Log.d(TAG, "goToParentActivity");
-        Intent upIntent = getNotificationParentActivityIntent();
-        Log.d(TAG, "upIntent: " + upIntent.toString());
-
-        // This activity is NOT part of this app's task, so create a new task
-        // when navigating up, with a synthesized back stack.
-        TaskStackBuilder.create(this)
-                // Add all of this activity's parents to the back stack
-                .addNextIntentWithParentStack(upIntent)
-                // Navigate up to the closest parent
-                .startActivities();
-        finish();
-    }
-
-    // bugfix Issue #4
-    private Intent getNotificationParentActivityIntent() {
-        Intent intent = null;
-        try {
-            // targetClass MUST NOT BE NULL
-            // targetClass MUST NOT BE NULL
-            Class<?> targetClass = Class.forName(getString(R.string.target_notification_parent_activity));
-            intent = new Intent(this, targetClass);
-        } catch (ClassNotFoundException e) {
-            String errorMessage = "cannot retrieve notification target acticity class. " + e.getMessage();
-            Log.e(TAG, errorMessage);
+            super.onBackPressed();
         }
 
-        return intent;
+//        else {
+//            if (isFromBackgroundNotification || isFromForegroundNotification) {
+//                goToParentActivity();
+//            } else {
+//                finish();
+//            }
+//        }
     }
 
-    //    private String getRecipientIdFromPushNotification(Intent pushData) {
+//    // bugfix Issue #4
+//    public void goToParentActivity() {
+//        Log.d(TAG, "goToParentActivity");
+//        Intent upIntent = getNotificationParentActivityIntent();
+//        Log.d(TAG, "upIntent: " + upIntent.toString());
+//
+//        // This activity is NOT part of this app's task, so create a new task
+//        // when navigating up, with a synthesized back stack.
+//        TaskStackBuilder.create(this)
+//                // Add all of this activity's parents to the back stack
+//                .addNextIntentWithParentStack(upIntent)
+//                // Navigate up to the closest parent
+//                .startActivities();
+//        finish();
+//    }
+//
+//    // bugfix Issue #4
+//    private Intent getNotificationParentActivityIntent() {
+//        Intent intent = null;
+//        try {
+//            // targetClass MUST NOT BE NULL
+//            // targetClass MUST NOT BE NULL
+//            Class<?> targetClass = Class.forName(getString(R.string.target_notification_parent_activity));
+//            intent = new Intent(this, targetClass);
+//        } catch (ClassNotFoundException e) {
+//            String errorMessage = "cannot retrieve notification target acticity class. " + e.getMessage();
+//            Log.e(TAG, errorMessage);
+//        }
+//
+//        return intent;
+//    }
+//
+//    private String getRecipientIdFromPushNotification(Intent pushData) {
 //        String recipientId = pushData.getStringExtra("recipient");
 ////        isGroupConversation = false;
 ////
