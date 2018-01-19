@@ -246,41 +246,6 @@ In your `<application></application>` :
     ***this is a mandatory step***. You have to create your own application class in which we'll 
      initialize and add extra customization for the Chat21 SDK
 
-- add the ` tools:replace="android:label"` to override the Chat21 SDK app name and default icon:
-  
-    ```
-    <application
-        android:name=".AppContext"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:replace="android:label, android:icon"> <!-- add this -->
-        
-        . . . 
-                
-    </application>
-    ```
-    
-   It prevents the error: 
-    
-    ```
-    /android/MyApp/app/src/main/AndroidManifest.xml:30:9 Error:
-    Attribute application@label value=(@string/application_name) from AndroidManifest.xml:30:9
-    is also present at {Library Name} value=(@string/app_name)
-    Suggestion: add 'tools:replace="android:label"' to <application> element at AndroidManifest.xml:26:5 to override
-   ```
-   
-    <div style="text-align:right">
-          <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/AndroidManifest.xml">AndroidManifest.xml
-              <span>
-                  <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-              </span>
-          </a>
-      </div>
-
 ### Chat21 SDK initialization
 
 #### ChatManager
@@ -400,14 +365,6 @@ to
 ```
  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
  ```
- 
- to prevent the exception:
-
-
-```
-java.lang.RuntimeException: Unable to start activity ComponentInfo{android.chat21.customeroverview/chat21.android.conversations.activities.ConversationListActivity}: java.lang.IllegalStateException: This Activity already has an action bar supplied by the window decor. Do not request Window.FEATURE_SUPPORT_ACTION_BAR and set windowActionBar to false in your theme to use a Toolbar instead.
-Caused by: java.lang.IllegalStateException: This Activity already has an action bar supplied by the window decor. Do not request Window.FEATURE_SUPPORT_ACTION_BAR and set windowActionBar to false in your theme to use a Toolbar instead.
- ```
 
 <div style="text-align:right">
     <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/res/values/styles.xml">styles.xml
@@ -420,12 +377,15 @@ Caused by: java.lang.IllegalStateException: This Activity already has an action 
 ### Common Issues
 
 - Conflicts within `com.android.support`
+
+    Error:
     ```
     * What went wrong:
     Execution failed for task ':app:processDebugResources'.
     > Failed to execute aapt
     ```
-    It can be solved by adding this block at the bottom of your file **/project/app/build.gradle**
+    Solution:
+    Copy this block at the bottom of your file **/project/app/build.gradle**
     ```
     configurations.all {
         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
@@ -439,12 +399,70 @@ Caused by: java.lang.IllegalStateException: This Activity already has an action 
     }
     ```
 
-    <div style="text-align:right">
-        <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/build.gradle">/app/build.gradle
-            <span>
-                <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-            </span>
-        </a>
-    </div>
+- MultiDex
 
+    Error:
+    ```
+    Error:Execution failed for task ':app:transformDexArchiveWithExternalLibsDexMergerForDebug'.
+    > java.lang.RuntimeException: java.lang.RuntimeException: com.android.builder.dexing.DexArchiveMergerException: Unable to merge dex
+    ```
+    Solution:
+    Make sure you have added `multiDexEnabled true ` inside of **/project/app/build.gradle**
 
+    Copy this block inside of your custom Application class
+     ```
+      @Override
+      protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+      }
+     ```
+
+- Theme
+
+    Error:
+    ```
+        RuntimeException: Unable to start activity ComponentInfo{my.sample.package.myapplication/chat21.android.ui.conversations.activities.ConversationListActivity}: java.lang.IllegalStateException:
+        This Activity already has an action bar supplied by the window decor. Do not request Window.FEATURE_SUPPORT_ACTION_BAR and set windowActionBar to false in your theme to use a Toolbar instead.
+    ```
+
+    Solution:
+    See the [Style Chapter](#Style.xml)
+
+- Application name exceptions:
+
+    Error:
+
+    ```
+        /android/MyApp/app/src/main/AndroidManifest.xml:30:9 Error:
+        Attribute application@label value=(@string/application_name) from AndroidManifest.xml:30:9
+        is also present at {Library Name} value=(@string/app_name)
+        Suggestion: add 'tools:replace="android:label"' to <application> element at AndroidManifest.xml:26:5 to override
+    ```
+
+    Solution:
+    Add the ` tools:replace="android:label"` to override the Chat21 SDK app name and default icon:
+
+        ```
+        <application
+            android:name=".AppContext"
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            tools:replace="android:label, android:icon"> <!-- add this -->
+            
+            . . .
+
+        </application>
+        ```
+
+        <div style="text-align:right">
+              <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/AndroidManifest.xml">AndroidManifest.xml
+                  <span>
+                      <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
+                  </span>
+              </a>
+          </div>
