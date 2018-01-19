@@ -35,12 +35,45 @@ if it was not done, follow the [Firebase Documentation](https://firebase.google.
 Set the firebase database permissions rules to :
 
 ```
- {
-   "rules": {
-     ".read": true,
-     ".write": true
-   }
- }
+
+{
+    "rules": {
+      "apps": {
+        "$app_id": {
+          "contacts": {
+            ".read": "auth != null",
+            "$uid":{
+                ".write": "$uid === auth.uid"
+            }
+          },
+          "groups":{
+            ".read": false,
+            ".write": "auth != null",
+            "$group_id":{
+                ".validate":"newData.hasChildren(['name','members', 'owner'])"
+            }
+          },
+          "presence": {
+            ".read": "auth != null",
+            "$uid":{
+                ".write": "$uid === auth.uid"
+            }
+        },
+          "users":{
+            "$uid":{
+                ".read": "$uid === auth.uid",
+                ".write": "$uid === auth.uid",
+                "messages" : {
+                  "$message_id":{
+                    ".validate": "(!newData.hasChildren(['status']) || ( newData.hasChildren(['status']) && newData.child('status').isNumber() && newData.child('status').val()==200) )"
+                  }
+                }
+            }
+          }
+        }
+      }
+    }
+  }
 ```
 
 ## Add Chat21 SDK dependencies
@@ -59,21 +92,19 @@ buildscript {
 
     repositories {
         jcenter()
+        google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.google.gms:google-services:3.1.1'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
-
-        maven {
-            url "https://maven.google.com" // Google's Maven repository
-        }
+        google()
 
         maven {
             url 'https://maven.fabric.io/public'
@@ -149,13 +180,13 @@ android {
     dependencies {
     
         // multidex
-        compile 'com.android.support:multidex:1.0.1' 
+        implementation 'com.android.support:multidex:1.0.1'
 
         // google play service
-        compile 'com.google.android.gms:play-services:11.6.0'
+        implementation 'com.google.android.gms:play-services:11.8.0'
    
         // chat
-        compile project(':chat')
+        implementation project(':chat')
         
         . . . 
     }
@@ -169,37 +200,14 @@ android {
     </a>
 </div>
 
-##### Other configurations
-
-paste this block at the bottom of your file
-
-```
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        def requested = details.requested
-        if (requested.group == 'com.android.support') {
-            if (!requested.name.startsWith("multidex")) {
-                details.useVersion '25.3.0'
-            }
-        }
-    }
-}
-```
-<div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/build.gradle">/app/build.gradle
-        <span>
-            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-        </span>
-    </a>
-</div>
-
 ##### Google Play Services plugin
 
-Contrary to what is described in the Firebase documentation, you do ***not*** need to 
+Finally, as described in the [Firebase documentation](https://firebase.google.com/docs/android/setup#manually_add_firebase), paste this statement as the last line of the file:
 
-`apply plugin: 'com.google.gms.google-services'` 
+`apply plugin: 'com.google.gms.google-services'`
 
-because it has already been applied in the chat module.
+At the end, you'll download a `google-services.json` file. For more informations refer to the relative [Firebase documentation](https://support.google.com/firebase/answer/7015592)
+
 
 ### AndroidManifest.xml
 
@@ -238,7 +246,7 @@ In your `<application></application>` :
     ***this is a mandatory step***. You have to create your own application class in which we'll 
      initialize and add extra customization for the Chat21 SDK
 
-- add the ` tools:replace="android:label, android:icon"` to override the Chat21 SDK app name and default icon:
+- add the ` tools:replace="android:label"` to override the Chat21 SDK app name and default icon:
   
     ```
     <application
@@ -275,6 +283,8 @@ In your `<application></application>` :
 
 ### Chat21 SDK initialization
 
+#### ChatManager
+
 The Chat21 SDK provide a ***Chat.Configuration*** object which allows to set some custom behaviour 
 and settings for your chat.
 
@@ -282,12 +292,19 @@ To create a new instance of Chat21 SDK you have to create your own configuration
 Chat21 SDK Chat.Configuration.Builder) and use it as paramater for the method `Chat.initialize(configuration);` 
 
 ```
-// create a chat configurations object
- ChatManager.Configuration mChatConfiguration =
-                new ChatManager.Configuration.Builder(<APP_ID>).build();
+    // optional
+    //enable persistence must be made before any other usage of FirebaseDatabase instance.
+    FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
-// init and start the chat
- ChatManager.start(<CONTEXT>, mChatConfiguration, <LOGGED_USER>);
+    // mandatory
+    // it creates the chat configurations
+    ChatManager.Configuration mChatConfiguration =
+            new ChatManager.Configuration.Builder(<APP_ID>).build();
+    ChatManager.start(<CONTEXT>, mChatConfiguration, <LOGGED_USER>);
+
+    // init the contacts list
+    ChatManager.getInstance().initContactsSyncronizer();
+
 ```
 
 Replace:
@@ -304,17 +321,24 @@ Replace:
    </a>
 </div>
 
+#### ChatUI
 
-### Launch your chat
+ChatUI allows you to quickly connect common UI elements to Chat21 SDK APIs.
 
-The Chat21 SDK lets you start your chat with both an activity and a inside a fragment.
+ChatUI lets you start your chat with both an activity and a inside a fragment.
 
-#### Launch with an activity
+Initialize the ChatUI component with the following instruction
+
+```
+ChatUI.getInstance().setContext(this);
+ ```
+
+##### Launch with an activity
 
 It starts a new activity that contains the list of conversations.
 
 ```
- ChatManager.getInstance().showConversationsListActivity();
+ ChatUI.getInstance().showConversationsListActivity();
 
 ```
 
@@ -326,7 +350,7 @@ It starts a new activity that contains the list of conversations.
     </a>
 </div>
 
-#### Launch with a fragment
+##### Launch with a fragment
 
 You have to create a fragment with a container inside.
 
@@ -349,7 +373,7 @@ The chat will start inside this container where the list of conversations is sho
 Now you can show your chat with the following method:
 
 ```
-  ChatManager.getInstance().showConversationsListFragment(getChildFragmentManager(), R.id.container);
+  ChatUI.getInstance().showConversationsListFragment(getChildFragmentManager(), R.id.container);
 
 ```
 
@@ -392,3 +416,35 @@ Caused by: java.lang.IllegalStateException: This Activity already has an action 
         </span>
     </a>
 </div>
+
+### Common Issues
+
+- Conflicts within `com.android.support`
+    ```
+    * What went wrong:
+    Execution failed for task ':app:processDebugResources'.
+    > Failed to execute aapt
+    ```
+    It can be solved by adding this block at the bottom of your file **/project/app/build.gradle**
+    ```
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '25.3.0'
+                }
+            }
+        }
+    }
+    ```
+
+    <div style="text-align:right">
+        <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/build.gradle">/app/build.gradle
+            <span>
+                <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
+            </span>
+        </a>
+    </div>
+
+
