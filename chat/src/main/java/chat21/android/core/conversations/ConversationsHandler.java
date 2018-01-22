@@ -30,14 +30,12 @@ public class ConversationsHandler {
     private static final String TAG = ConversationsHandler.class.getName();
 
     private List<Conversation> conversations;
-
-    DatabaseReference conversationsNode;
-    String appId;
-    String currentUserId;
-
-    List<ConversationsListener> conversationsListeners;
-
-    ChildEventListener conversationsChildEventListener;
+    private DatabaseReference conversationsNode;
+    private String appId;
+    private String currentUserId;
+    private List<ConversationsListener> conversationsListeners;
+    private ChildEventListener conversationsChildEventListener;
+    private Comparator<Conversation> conversationComparator;
 
     public ConversationsHandler(String firebaseUrl, String appId, String currentUserId) {
         conversationsListeners = new ArrayList<ConversationsListener>();
@@ -52,6 +50,18 @@ public class ConversationsHandler {
             this.conversationsNode = FirebaseDatabase.getInstance().getReference().child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
         }
         this.conversationsNode.keepSynced(true);
+
+        conversationComparator = new Comparator<Conversation>() {
+            @Override
+            public int compare(Conversation o1, Conversation o2) {
+                try {
+                    return o2.getTimestampLong().compareTo(o1.getTimestampLong());
+                } catch (Exception e) {
+                    Log.e(TAG, "ConversationHandler.sortConversationsInMemory: cannot compare conversations timestamp", e);
+                    return 0;
+                }
+            }
+        };
 
 //        Log.d(TAG, "ConversationsHandler.conversationsNode == " + conversationsNode.toString());
     }
@@ -209,24 +219,12 @@ public class ConversationsHandler {
     }
 
     private void sortConversationsInMemory() {
-
-        // TODO: 20/12/17 study if is better to create the comparator in the ConversationHandler constructor
         Log.d(TAG, "ConversationHandler.sortConversationsInMemory");
 
+        // check if the list has al least 1 item.
+        // 1 item is already sorted
         if (conversations.size() > 1) {
-            Collections.sort(conversations, new Comparator<Conversation>() {
-                @Override
-                public int compare(Conversation o1, Conversation o2) {
-                    try {
-                        return o2.getTimestampLong().compareTo(o1.getTimestampLong());
-                    } catch (Exception e) {
-                        Log.e(TAG, "ConversationHandler.sortConversationsInMemory: cannot compare conversations timestamp", e);
-                        return 0;
-                    }
-                }
-            });
-        } else {
-            // 1 item is already sorted
+            Collections.sort(conversations, conversationComparator);
         }
     }
 
