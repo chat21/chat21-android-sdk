@@ -93,10 +93,10 @@
             <!--http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification-->
             <!--from notification-->
             <!--bugfix Issue #39-->
-            <intent-filter>
-                <action android:name="OPEN_MESSAGE_LIST_ACTIVITY" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="OPEN_MESSAGE_LIST_ACTIVITY" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--</intent-filter>-->
         </activity>
 
         <activity android:name="chat21.android.ui.messages.activities.ImageDetailsActivity" />
@@ -138,7 +138,7 @@
         notification message. See README(https://goo.gl/6BKBk7) for more. -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorAccent" />
+            android:resource="@color/blue_500" />
 
         <!--A service that extends FirebaseInstanceIdService to handle the creation, rotation,
         and updating of registration tokens.

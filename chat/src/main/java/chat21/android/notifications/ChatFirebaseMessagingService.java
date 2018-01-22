@@ -14,9 +14,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.Date;
 import java.util.Map;
 
-import chat21.android.core.ChatManager;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.ChatUI;
 import chat21.android.utils.TimeUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
@@ -185,7 +185,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
                 .createNotification(this, conversationId, title, message, timestamp);
         notificationBuilder.setContentIntent(resultPendingIntent);
 
-        if (ChatManager.getInstance().getActiveConversation(conversationId)) {
+        if (ChatUI.getInstance().getActiveConversation(conversationId)) {
             // the active conversation
             return;
         }

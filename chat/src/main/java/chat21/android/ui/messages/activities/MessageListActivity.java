@@ -53,7 +53,6 @@ import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.presence.PresenceHandler;
 import chat21.android.core.presence.listeners.PresenceListener;
-import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
@@ -67,7 +66,6 @@ import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
-import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
 /**
@@ -112,7 +110,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate");
 
         setContentView(R.layout.activity_message_list);
 
@@ -121,24 +118,14 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         // it comes from other activities or from a foreground notification
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT);
 
-        if (recipient == null) {
-            // it comes from background notification
-            recipient = getRecipientFromBackgroundNotification();
-            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipient == " + recipient.toString());
-        }
-
-        ChatManager.getInstance().setActiveConversation(recipient.getId(), true);
+        ChatUI.getInstance().setActiveConversation(recipient.getId(), true);
 
         conversationMessagesHandler = ChatManager.getInstance()
                 .getConversationMessagesHandler(recipient);
-        Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: conversationMessagesHandler got with hash == " + conversationMessagesHandler.hashCode());
         conversationMessagesHandler.upsertConversationMessagesListener(this);
         Log.d(TAG, "MessageListActivity.onCreate: conversationMessagesHandler attached");
-        Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: conversationMessagesHandler attached");
         conversationMessagesHandler.connect();
         Log.d(TAG, "MessageListActivity.onCreate: conversationMessagesHandler connected");
-        Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: conversationMessagesHandler connected");
-
         presenceHandler = ChatManager.getInstance().getPresenceHandler(recipient.getId());
         presenceHandler.upsertPresenceListener(this);
         presenceHandler.connect();
@@ -163,7 +150,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
     @Override
     protected void onPause() {
-        ChatManager.getInstance().setActiveConversation(recipient.getId(), false);
+        ChatUI.getInstance().setActiveConversation(recipient.getId(), false);
 
         super.onPause();
     }
@@ -177,7 +164,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             emojiPopup.dismiss();
         }
 
-        ChatManager.getInstance().setActiveConversation(recipient.getId(), false);
+        ChatUI.getInstance().setActiveConversation(recipient.getId(), false);
 
         // detach the conversation messages listener
         super.onStop();
@@ -188,7 +175,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         super.onDestroy();
         Log.d(TAG, "  MessageListActivity.onDestroy");
 
-        ChatManager.getInstance().setActiveConversation(recipient.getId(), false);
+        ChatUI.getInstance().setActiveConversation(recipient.getId(), false);
 
         presenceHandler.removePresenceListener(this);
         Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy: presenceHandler detached");
@@ -253,22 +240,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         sendButton = (ImageView) findViewById(R.id.main_activity_send);
         recyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmojiBar = (LinearLayout) findViewById(R.id.main_activity_emoji_bar);
-    }
-
-    private IChatUser getRecipientFromBackgroundNotification() {
-        IChatUser recipient = null;
-        if (StringUtils.isValid(getIntent().getStringExtra("sender")) &&
-                StringUtils.isValid(getIntent().getStringExtra("sender_fullname"))) {
-            String contactId = getIntent().getStringExtra("sender");
-            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate.fromNotification: contactId == " + contactId);
-
-            String contactFullName = getIntent().getStringExtra("sender_fullname");
-            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate.fromNotification: contactFullName == " + contactFullName);
-
-            // create the recipient from background notification data
-            recipient = new ChatUser(contactId, contactFullName);
-        }
-        return recipient;
     }
 
     private void initToolbar(IChatUser recipient) {

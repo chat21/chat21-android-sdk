@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
@@ -20,6 +22,9 @@ import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.messages.listeners.OnAttachClickListener;
 import chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
+import chat21.android.utils.StringUtils;
+
+import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 
 /**
  * Created by andrealeo on 04/12/17.
@@ -30,11 +35,8 @@ public class ChatUI implements Serializable {
     private static final String TAG = ChatUI.class.getName();
 
     public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
-    //    public static final String INTENT_BUNDLE_CONVERSATION = "INTENT_BUNDLE_CONVERSATION";
     public static final String INTENT_BUNDLE_RECIPIENT = "INTENT_BUNDLE_RECIPIENT";
-    public static final String INTENT_BUNDLE_CONTACT_FULL_NAME = "INTENT_BUNDLE_CONTACT_FULL_NAME";
     // target class to be called in listeners (such as OnProfileClickListener)
-    public static final String INTENT_BUNDLE_CALLING_ACTIVITY = "INTENT_BUNDLE_CALLING_ACTIVITY";
     public static final String INTENT_BUNDLE_MESSAGE = "INTENT_BUNDLE_MESSAGE";
     public static final String INTENT_BUNDLE_GROUP = "INTENT_BUNDLE_GROUP";
     public static final String INTENT_BUNDLE_GROUP_ID = "INTENT_BUNDLE_GROUP_ID";
@@ -57,6 +59,10 @@ public class ChatUI implements Serializable {
     private OnCreateGroupClickListener onCreateGroupClickListener;
     private boolean groupsEnabled = false;
 
+    // Map<Conversation, isActive> used to check if a conversation with an user with unique
+    // userId is the active conversation
+    private Map<String, Boolean> activeConversation = new HashMap<>();
+
     // singleton
     // source : https://android.jlelse.eu/how-to-make-the-perfect-singleton-de6b951dfdb0
     private static volatile ChatUI instance;
@@ -78,6 +84,18 @@ public class ChatUI implements Serializable {
         }
 
         return instance;
+    }
+
+    public void setActiveConversation(String conversationId, boolean isActive) {
+        this.activeConversation.put(conversationId, isActive);
+    }
+
+    public boolean getActiveConversation(String conversationId) {
+        if (activeConversation.get(conversationId) != null) {
+            return activeConversation.get(conversationId);
+        } else {
+            return false;
+        }
     }
 
     // Make singleton from serialize and deserialize operation.
@@ -201,5 +219,32 @@ public class ChatUI implements Serializable {
 
     public void setContext(Context context) {
         this.mContext = context;
+    }
+
+    public void processRemoteNotification(Intent notificationIntent) {
+        Log.d(DEBUG_NOTIFICATION, "ChatUI.processRemoteNotification: notificationIntent == " + notificationIntent.toString());
+
+        if (StringUtils.isValid(notificationIntent.getStringExtra("sender")) &&
+                StringUtils.isValid(notificationIntent.getStringExtra("sender_fullname"))) {
+            String contactId = notificationIntent.getStringExtra("sender");
+            Log.d(DEBUG_NOTIFICATION, "ChatUI.processRemoteNotification: contactId == " + contactId);
+
+            String contactFullName = notificationIntent.getStringExtra("sender_fullname");
+            Log.d(DEBUG_NOTIFICATION, "ChatUI.processRemoteNotification: contactFullName == " + contactFullName);
+
+            // create the recipient from background notification data
+            IChatUser recipient = new ChatUser(contactId, contactFullName);
+
+            Intent intent = new Intent(mContext, MessageListActivity.class);
+            intent.putExtra(INTENT_BUNDLE_RECIPIENT, recipient);
+            intent.putExtra(INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
+            // start from outside of an activity context
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            // clear activity stack
+//            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            mContext.startActivity(intent);
+
+        }
     }
 }

@@ -54,29 +54,11 @@ public class ChatManager {
 
     private ContactsSynchronizer contactsSynchronizer;
 
-    // Map<Conversation, isActive> used to check if a conversation with an user with unique
-    // userId is the active conversation
-    private Map<String, Boolean> activeConversation;
-
-    public void setActiveConversation(String conversationId, boolean isActive) {
-        this.activeConversation.put(conversationId, isActive);
-    }
-
-    public boolean getActiveConversation(String conversationId) {
-        if (activeConversation.get(conversationId) != null) {
-            return activeConversation.get(conversationId);
-        } else {
-            return false;
-        }
-    }
-
     // private constructor
     private ChatManager() {
         conversationMessagesHandlerMap = new HashMap<String, ConversationMessagesHandler>();
 
         presenceHandlerMap = new HashMap<>();
-
-        activeConversation = new HashMap<>();
     }
 
     public void setLoggedUser(IChatUser loggedUser) {

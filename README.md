@@ -453,7 +453,7 @@ to
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:replace="android:label, android:icon"> <!-- add this -->
-            
+
             . . .
 
         </application>
