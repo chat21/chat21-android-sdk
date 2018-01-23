@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import chat21.android.core.ChatManager;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.contacts.activites.ContactListActivity;
@@ -67,6 +68,10 @@ public class ChatUI implements Serializable {
 
     //private constructor.
     private ChatUI() {
+
+        //set the default mContext value equals to ChatManager.getInstance(). Use ChatUI.getIntance().setContext to use another context
+        mContext = ChatManager.getInstance().getContext();
+
 
         //default init for onNewConversationClickListener
         setDefaultOnNewConversationClickListener();

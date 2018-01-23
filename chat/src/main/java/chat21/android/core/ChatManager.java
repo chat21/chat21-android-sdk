@@ -94,6 +94,9 @@ public class ChatManager {
         mContext = context;
     }
 
+    public Context getContext() {
+        return mContext;
+    }
 
     /**
      * It initializes the SDK.
