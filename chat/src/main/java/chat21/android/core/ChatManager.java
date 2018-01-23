@@ -128,6 +128,9 @@ public class ChatManager {
 
         // serialize the appId
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
+
+
+        chat.initContactsSyncronizer();
     }
 
     public void initContactsSyncronizer() {
