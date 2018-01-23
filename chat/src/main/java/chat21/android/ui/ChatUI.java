@@ -84,9 +84,10 @@ public class ChatUI implements Serializable {
     }
 
     // Make singleton from serialize and deserialize operation.
-    protected ChatUI readResolve() {
-        return getInstance();
-    }
+    // What is???
+//    protected ChatUI readResolve() {
+//        return getInstance();
+//    }
     // end singleton
 
     public OnMessageClickListener getOnMessageClickListener() {
