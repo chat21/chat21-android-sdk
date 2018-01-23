@@ -28,53 +28,9 @@ See the sample app [source code](https://github.com/chat21/chat21-android-demo)
 
 
 ## Pre requisites
-It is assumed that you are using an existing Firebase project or that you have created a new one 
-on the Firebase console.
-if it was not done, follow the [Firebase Documentation](https://firebase.google.com/docs/android/setup) to create a new app on the Firebase console
 
-Set the firebase database permissions rules to :
+Build and deploy chat21-cloud-functions project on Firebase as described here: [chat21-cloud-functions Readme](https://github.com/chat21/chat21-cloud-functions)
 
-```
-
-{
-    "rules": {
-      "apps": {
-        "$app_id": {
-          "contacts": {
-            ".read": "auth != null",
-            "$uid":{
-                ".write": "$uid === auth.uid"
-            }
-          },
-          "groups":{
-            ".read": false,
-            ".write": "auth != null",
-            "$group_id":{
-                ".validate":"newData.hasChildren(['name','members', 'owner'])"
-            }
-          },
-          "presence": {
-            ".read": "auth != null",
-            "$uid":{
-                ".write": "$uid === auth.uid"
-            }
-        },
-          "users":{
-            "$uid":{
-                ".read": "$uid === auth.uid",
-                ".write": "$uid === auth.uid",
-                "messages" : {
-                  "$message_id":{
-                    ".validate": "(!newData.hasChildren(['status']) || ( newData.hasChildren(['status']) && newData.child('status').isNumber() && newData.child('status').val()==200) )"
-                  }
-                }
-            }
-          }
-        }
-      }
-    }
-  }
-```
 
 ## Add Chat21 SDK dependencies
 
