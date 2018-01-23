@@ -38,6 +38,8 @@ import chat21.android.ui.groups.listeners.OnGroupMemberClickListener;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
+import static chat21.android.ui.ChatUI.BUNDLE_RECIPIENT;
+
 /**
  * Created by stefanodp91 on 29/06/17.
  */
@@ -46,9 +48,6 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         GroupUtils.OnNodeMembersChangeListener,
         GroupUtils.OnGroupsChangeListener {
     private static final String TAG = GroupAdminPanelActivity.class.getName();
-
-    public static final String EXTRAS_GROUP_NAME = "EXTRAS_GROUP_NAME";
-    public static final String EXTRAS_GROUP_ID = "EXTRAS_GROUP_ID";
 
     private Toolbar mToolbar;
     private RecyclerView mMemberList;
@@ -64,11 +63,15 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private MenuItem mAddMemberMenuItem;
     private ContactsSynchronizer contactsSynchronizer;
 
+    private IChatUser recipient;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
+
+        recipient = (IChatUser) getIntent().getExtras().get(BUNDLE_RECIPIENT);
 
         setContentView(R.layout.activity_group_admin_panel);
 
@@ -76,16 +79,17 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         initViews();
     }
 
-    @Override
-    protected void onResume() {
-        // observes for group changes
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), getGroupId(), this);
+//    @Override
+//    protected void onResume() {
+//        // observes for group changes
+//        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(), this);
+//
+//        // observes for members change
+//        GroupUtils.subscribeOnNodeMembersChanges(ChatManager.getInstance().getAppId(), recipient.getId(), this);
+//
+//        super.onResume();
+//    }
 
-        // observes for members change
-        GroupUtils.subscribeOnNodeMembersChanges(ChatManager.getInstance().getAppId(), getGroupId(), this);
-
-        super.onResume();
-    }
 
     private void registerViews() {
         Log.d(TAG, "registerViews");
@@ -111,7 +115,9 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private void intiToolbar() {
         Log.d(TAG, "intiToolbar");
 
-        mToolbar.setTitle(getGroupName());
+        mToolbar.setTitle(recipient.getFullName());
+
+        initGroupImage(recipient.getProfilePictureUrl());
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -137,7 +143,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
                 hideAddMember();
             }
         } else {
-            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), getGroupId(),
+            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(),
                     new GroupUtils.OnGroupsChangeListener() {
                         @Override
                         public void onGroupChanged(Group group, String groupId) {
@@ -268,7 +274,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
 
         Glide.with(getApplicationContext())
                 .load(iconURL)
-                .placeholder(R.drawable.ic_group_banner_gray)
+                .placeholder(R.drawable.ic_group_avatar)
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(mGroupImage);
     }
@@ -286,17 +292,6 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         }
     }
 
-    private String getGroupName() {
-        Log.d(TAG, "getGroupName");
-
-        return getIntent().getExtras().getString(EXTRAS_GROUP_NAME);
-    }
-
-    private String getGroupId() {
-        Log.d(TAG, "getGroupId");
-
-        return getIntent().getExtras().getString(EXTRAS_GROUP_ID);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -335,40 +330,40 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         Log.d(TAG, "startAddMemberActivity");
 
 //        try {
-            // targetClass MUST NOT BE NULL
+        // targetClass MUST NOT BE NULL
 //            Class<?> targetClass = Class
 //                    .forName(getString(R.string.target_add_members_activity_class));
 //            final Intent intent = new Intent(this, targetClass);
 
-            final Intent intent = new Intent(this, AddMembersActivity.class);
+        final Intent intent = new Intent(this, AddMembersActivity.class);
 
-            if (mGroup != null) {
-                intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, mGroup);
-                intent.putExtra(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY,
-                        GroupAdminPanelActivity.class.getName());
-                intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP_ID, getGroupId());
+        if (mGroup != null) {
+            intent.putExtra(ChatUI.BUNDLE_GROUP, mGroup);
+            intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
+                    GroupAdminPanelActivity.class.getName());
+            intent.putExtra(ChatUI.BUNDLE_GROUP_ID, recipient.getId());
 //                startActivityForResult(intent, Chat.INTENT_ADD_MEMBERS_ACTIVITY);
-                startActivity(intent);
-            } else {
-                GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), getGroupId(),
-                        new GroupUtils.OnGroupsChangeListener() {
-                            @Override
-                            public void onGroupChanged(Group group, String groupId) {
-                                mGroup = group;
-                                intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, group);
-                                intent.putExtra(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY,
-                                        GroupAdminPanelActivity.class.getName());
-                                intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP_ID, groupId);
+            startActivity(intent);
+        } else {
+            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(),
+                    new GroupUtils.OnGroupsChangeListener() {
+                        @Override
+                        public void onGroupChanged(Group group, String groupId) {
+                            mGroup = group;
+                            intent.putExtra(ChatUI.BUNDLE_GROUP, group);
+                            intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
+                                    GroupAdminPanelActivity.class.getName());
+                            intent.putExtra(ChatUI.BUNDLE_GROUP_ID, groupId);
 //                                startActivityForResult(intent, Chat.INTENT_ADD_MEMBERS_ACTIVITY);
-                                startActivity(intent);
-                            }
+                            startActivity(intent);
+                        }
 
-                            @Override
-                            public void onGroupCancelled(String errorMessage) {
-                                Log.e(TAG, "onGroupCancelled. " + errorMessage);
-                            }
-                        });
-            }
+                        @Override
+                        public void onGroupCancelled(String errorMessage) {
+                            Log.e(TAG, "onGroupCancelled. " + errorMessage);
+                        }
+                    });
+        }
 
 //        } catch (ClassNotFoundException e) {
 //            Log.e(TAG, "cannot retrieve the user list activity target class. " +
@@ -381,7 +376,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     public void onGroupMemberClicked(IChatUser item, int position) {
         Log.i(TAG, "onGroupMemberClicked");
 
-        showMemberBottomSheetFragment(item.getId(), getGroupId());
+        showMemberBottomSheetFragment(item.getId(), recipient.getId());
     }
 
     private void showMemberBottomSheetFragment(String username, String groupId) {

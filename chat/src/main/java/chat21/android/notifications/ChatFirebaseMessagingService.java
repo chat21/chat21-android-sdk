@@ -19,6 +19,7 @@ import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.utils.TimeUtils;
 
+import static chat21.android.ui.ChatUI.BUNDLE_CHANNEL_TYPE;
 import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 
 /**
@@ -134,10 +135,12 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         IChatUser sender = new ChatUser(data.get("sender"), data.get("sender_fullname"));
         Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.sendNotification: sender == " + sender.toString());
 
+        String channelType = data.get("channel_type");
+        Log.d(DEBUG_NOTIFICATION, "ChatFirebaseMessagingService.onMessageReceived: channelType == " + channelType);
 
 //        Intent resultIntent = new Intent(this, MessageListActivity.class);
-//        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, sender);
-//        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
+//        resultIntent.putExtra(ChatUI.BUNDLE_RECIPIENT, sender);
+//        resultIntent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, true);
 //        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 //        stackBuilder.addParentStack(ConversationListActivity.class);
 //        stackBuilder.addNextIntent(resultIntent);
@@ -176,6 +179,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //        }
 
         Intent notificationIntent = NotificationUtils.createNotificationIntent(this, sender);
+        notificationIntent.putExtra(BUNDLE_CHANNEL_TYPE, channelType);
 
         PendingIntent resultPendingIntent = NotificationUtils.createPendingIntent(this, notificationIntent);
 
@@ -184,11 +188,6 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder = NotificationUtils
                 .createNotification(this, conversationId, title, message, timestamp);
         notificationBuilder.setContentIntent(resultPendingIntent);
-
-        if (ChatUI.getInstance().getActiveConversation(conversationId)) {
-            // the active conversation
-            return;
-        }
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -216,7 +215,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //
 //        Intent resultIntent = new Intent(this, MessageListActivity.class);
 //        resultIntent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversationId);
-//        resultIntent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
+//        resultIntent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, true);
 //        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 //        stackBuilder.addParentStack(ConversationListActivity.class);
 //        stackBuilder.addNextIntent(resultIntent);

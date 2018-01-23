@@ -44,8 +44,8 @@ import chat21.android.ui.contacts.activites.ContactListActivity;
 import chat21.android.ui.conversations.listeners.OnNewConversationClickListener;
 import chat21.android.utils.StringUtils;
 
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD;
+import static chat21.android.ui.ChatUI.BUNDLE_SIGNED_UP_USER_EMAIL;
+import static chat21.android.ui.ChatUI.BUNDLE_SIGNED_UP_USER_PASSWORD;
 import static chat21.android.ui.ChatUI.REQUEST_CODE_SIGNUP_ACTIVITY;
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
@@ -390,11 +390,11 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
             if (resultCode == RESULT_OK) {
 
                 // set username
-                String email = data.getStringExtra(INTENT_BUNDLE_SIGNED_UP_USER_EMAIL);
+                String email = data.getStringExtra(BUNDLE_SIGNED_UP_USER_EMAIL);
 //                vEmail.setText(email);
 
                 // set password
-                String password = data.getStringExtra(INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD);
+                String password = data.getStringExtra(BUNDLE_SIGNED_UP_USER_PASSWORD);
 //                vPassword.setText(password);
 
                 signIn(email, password);

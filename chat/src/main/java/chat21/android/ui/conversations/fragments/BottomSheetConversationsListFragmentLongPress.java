@@ -73,7 +73,7 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bottom_sheet_conversation_list_long_press, container, false);
 
-//        conversationsHandler.addConversationsListener(this);
+//        conversationsHandler.addGroupsListener(this);
 //        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onCreateView: conversationsHandler attached");
 
         mDeleteConversationView = view.findViewById(R.id.btn_delete_conversation);
@@ -85,7 +85,7 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
 //    @Override
 //    public void onDestroy() {
 //
-//        conversationsHandler.removeConversationsListener(this);
+//        conversationsHandler.removeGroupsListener(this);
 //        Log.d(DEBUG_TAG, "  BottomSheetConversationsListFragmentLongPress.onDestroy: conversationMessagesHandler detached");
 //
 //        super.onDestroy();

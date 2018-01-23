@@ -30,6 +30,7 @@ import chat21.android.core.ChatManager;
 import chat21.android.core.contacts.listeners.ContactListener;
 import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
 import chat21.android.core.exception.ChatRuntimeException;
+import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
@@ -184,8 +185,9 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         Log.d(TAG, "startMessageListActivity");
 
         Intent intent = new Intent(this, MessageListActivity.class);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, contact);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
+        intent.putExtra(ChatUI.BUNDLE_RECIPIENT, contact);
+        intent.putExtra(ChatUI.BUNDLE_CHANNEL_TYPE, Message.DIRECT_CHANNEL_TYPE);
+        intent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, false);
 
         startActivity(intent);
 

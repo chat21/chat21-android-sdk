@@ -53,7 +53,6 @@ public class ConversationMessagesHandler {
             this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
         } else {
             this.conversationMessagesNode = FirebaseDatabase.getInstance().getReference().child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
-
         }
 
         this.conversationMessagesNode.keepSynced(true);
@@ -61,11 +60,9 @@ public class ConversationMessagesHandler {
 
 //        this.conversationMessagesListeners = new ArrayList<ConversationsListener>();
 //        this.conversationMessagesListeners.add(conversationMessagesListener);
-
-
     }
 
-    public void sendMessage(String type, String text,
+    public void sendMessage(String type, String text, String channelType,
                             final Map<String, Object> customAttributes, final SendMessageListener sendMessageListener) {
         Log.v(TAG, "sendMessage called");
 
@@ -82,6 +79,8 @@ public class ConversationMessagesHandler {
 
         message.setText(text);
         message.setType(type);
+
+        message.setChannelType(channelType);
 
 
 //        message.setStatus(Message.STATUS_SENDING);

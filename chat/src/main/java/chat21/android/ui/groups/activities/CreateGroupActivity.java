@@ -205,8 +205,8 @@ public class CreateGroupActivity extends AppCompatActivity {
 //            Intent intent = new Intent(this, targetClass);
         Intent intent = new Intent(this, AddMembersActivity.class);
 
-        intent.putExtra(ChatUI.INTENT_BUNDLE_GROUP, group);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_PARENT_ACTIVITY,
+        intent.putExtra(ChatUI.BUNDLE_GROUP, group);
+        intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
                 CreateGroupActivity.class.getName());
         startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
 //        } catch (ClassNotFoundException e) {
@@ -216,7 +216,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 //        }
 
 //        Intent intent = new Intent(this, AddMembersActivity.class);
-//        intent.putExtra(Chat.INTENT_BUNDLE_GROUP, group);
+//        intent.putExtra(Chat.BUNDLE_GROUP, group);
 //        startActivityForResult(intent, Chat.REQUEST_CREATE_GROUP);
     }
 

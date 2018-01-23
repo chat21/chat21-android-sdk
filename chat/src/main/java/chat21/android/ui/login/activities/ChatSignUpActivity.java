@@ -29,8 +29,8 @@ import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.utils.StringUtils;
 
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_EMAIL;
-import static chat21.android.ui.ChatUI.INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD;
+import static chat21.android.ui.ChatUI.BUNDLE_SIGNED_UP_USER_EMAIL;
+import static chat21.android.ui.ChatUI.BUNDLE_SIGNED_UP_USER_PASSWORD;
 
 /**
  * Created by stefanodp91 on 04/01/18.
@@ -139,8 +139,8 @@ public class ChatSignUpActivity extends AppCompatActivity {
                                 @Override
                                 public void onUserCreatedSuccess() {
                                     Intent intent = getIntent();
-                                    intent.putExtra(INTENT_BUNDLE_SIGNED_UP_USER_EMAIL, email);
-                                    intent.putExtra(INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD, password);
+                                    intent.putExtra(BUNDLE_SIGNED_UP_USER_EMAIL, email);
+                                    intent.putExtra(BUNDLE_SIGNED_UP_USER_PASSWORD, password);
                                     setResult(RESULT_OK, intent);
                                     finish();
                                 }

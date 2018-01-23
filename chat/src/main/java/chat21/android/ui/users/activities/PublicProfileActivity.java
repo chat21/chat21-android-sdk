@@ -41,7 +41,7 @@ public class PublicProfileActivity extends AppCompatActivity implements Presence
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acticvity_public_profile);
 
-        contact = (IChatUser) getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT);
+        contact = (IChatUser) getIntent().getSerializableExtra(ChatUI.BUNDLE_RECIPIENT);
 
         presenceHandler = ChatManager.getInstance().getPresenceHandler(contact.getId());
 

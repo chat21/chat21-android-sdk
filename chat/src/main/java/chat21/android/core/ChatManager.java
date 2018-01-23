@@ -219,7 +219,7 @@ public class ChatManager {
     }
 
 //
-//    public ConversationsHandler addConversationsListener(ConversationsListener conversationsListener) {
+//    public ConversationsHandler addGroupsListener(ConversationsListener conversationsListener) {
 ////        ConversationsHandler conversationsHandler = new ConversationsHandler(
 //        conversationsHandler = new ConversationsHandler(
 //                Configuration.firebaseUrl, this.getTenant(), this.getLoggedUser().getId()
@@ -328,18 +328,18 @@ public class ChatManager {
 //                Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
 //    }
 
-    public void sendTextMessage(String recipientId, String recipientFullName, String text) {
+    public void sendTextMessage(String recipientId, String recipientFullName, String text, String typeChannel) {
         sendTextMessage(recipientId, recipientFullName, text,
                 null, null);
     }
 
-    public void sendTextMessage(String recipientId, String recipientFullName,
-                                String text, SendMessageListener sendMessageListener) {
+    public void sendTextMessage(String recipientId, String recipientFullName, String text, String channelType,
+                                SendMessageListener sendMessageListener) {
         sendTextMessage(recipientId, recipientFullName,
                 text, null, sendMessageListener);
     }
 
-    public void sendTextMessage(String recipientId, String recipientFullName, String text,
+    public void sendTextMessage(String recipientId, String recipientFullName, String text, String channelType,
                                 Map customAttributes, SendMessageListener sendMessageListener) {
 
         Log.d(TAG, "sending text message to recipientId : " + recipientId +
@@ -347,10 +347,10 @@ public class ChatManager {
                 text + " and customAttributes : " + customAttributes);
 
         getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
-                Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
+                Message.TYPE_TEXT, text, channelType, customAttributes, sendMessageListener);
     }
 
-    public void sendImageMessage(String recipientId, String recipientFullName, String text,
+    public void sendImageMessage(String recipientId, String recipientFullName, String text, String channelType,
                                  Map customAttributes, SendMessageListener sendMessageListener) {
 
         Log.d(TAG, "sending image message to recipientId : " + recipientId +
@@ -358,10 +358,10 @@ public class ChatManager {
                 text + " and customAttributes : " + customAttributes);
 
         getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
-                Message.TYPE_IMAGE, text, customAttributes, sendMessageListener);
+                Message.TYPE_IMAGE, text, channelType, customAttributes, sendMessageListener);
     }
 
-    public void sendFileMessage(String recipient_id, String text, URL url, String fileName,
+    public void sendFileMessage(String recipient_id, String text, String channelType, URL url, String fileName,
                                 Map customAttributes, SendMessageListener sendMessageListener) {
 
     }

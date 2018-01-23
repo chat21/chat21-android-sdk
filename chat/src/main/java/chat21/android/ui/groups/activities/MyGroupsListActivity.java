@@ -209,8 +209,8 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 
                 // start the message list activity
                 Intent intent = new Intent(MyGroupsListActivity.this, MessageListActivity.class);
-                intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, groupRecipient);
-                intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
+                intent.putExtra(ChatUI.BUNDLE_RECIPIENT, groupRecipient);
+                intent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, false);
                 startActivity(intent);
                 finish();
             }

@@ -34,16 +34,17 @@ public class ChatUI implements Serializable {
 
     private static final String TAG = ChatUI.class.getName();
 
-    public static final String INTENT_BUNDLE_IS_FROM_NOTIFICATION = "INTENT_BUNDLE_IS_FROM_NOTIFICATION";
-    public static final String INTENT_BUNDLE_RECIPIENT = "INTENT_BUNDLE_RECIPIENT";
+    public static final String BUNDLE_IS_FROM_NOTIFICATION = "BUNDLE_IS_FROM_NOTIFICATION";
+    public static final String BUNDLE_RECIPIENT = "BUNDLE_RECIPIENT";
     // target class to be called in listeners (such as OnProfileClickListener)
-    public static final String INTENT_BUNDLE_MESSAGE = "INTENT_BUNDLE_MESSAGE";
-    public static final String INTENT_BUNDLE_GROUP = "INTENT_BUNDLE_GROUP";
-    public static final String INTENT_BUNDLE_GROUP_ID = "INTENT_BUNDLE_GROUP_ID";
-    public static final String INTENT_BUNDLE_PARENT_ACTIVITY = "INTENT_BUNDLE_PARENT_ACTIVITY";
+    public static final String BUNDLE_MESSAGE = "BUNDLE_MESSAGE";
+    public static final String BUNDLE_GROUP = "BUNDLE_GROUP";
+    public static final String BUNDLE_GROUP_ID = "BUNDLE_GROUP_ID";
+    public static final String BUNDLE_PARENT_ACTIVITY = "BUNDLE_PARENT_ACTIVITY";
+    public static final String BUNDLE_CHANNEL_TYPE = "BUNDLE_CHANNEL_TYPE";
 
-    public static final String INTENT_BUNDLE_SIGNED_UP_USER_EMAIL = "INTENT_BUNDLE_SIGNED_UP_USER_EMAIL";
-    public static final String INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD = "INTENT_BUNDLE_SIGNED_UP_USER_PASSWORD";
+    public static final String BUNDLE_SIGNED_UP_USER_EMAIL = "BUNDLE_SIGNED_UP_USER_EMAIL";
+    public static final String BUNDLE_SIGNED_UP_USER_PASSWORD = "BUNDLE_SIGNED_UP_USER_PASSWORD";
 
     // request constants
     public static final int _REQUEST_CODE_CREATE_GROUP = 100;
@@ -58,10 +59,6 @@ public class ChatUI implements Serializable {
     private OnContactClickListener onContactClickListener;
     private OnCreateGroupClickListener onCreateGroupClickListener;
     private boolean groupsEnabled = false;
-
-    // Map<Conversation, isActive> used to check if a conversation with an user with unique
-    // userId is the active conversation
-    private Map<String, Boolean> activeConversation = new HashMap<>();
 
     // singleton
     // source : https://android.jlelse.eu/how-to-make-the-perfect-singleton-de6b951dfdb0
@@ -84,18 +81,6 @@ public class ChatUI implements Serializable {
         }
 
         return instance;
-    }
-
-    public void setActiveConversation(String conversationId, boolean isActive) {
-        this.activeConversation.put(conversationId, isActive);
-    }
-
-    public boolean getActiveConversation(String conversationId) {
-        if (activeConversation.get(conversationId) != null) {
-            return activeConversation.get(conversationId);
-        } else {
-            return false;
-        }
     }
 
     // Make singleton from serialize and deserialize operation.
@@ -192,7 +177,6 @@ public class ChatUI implements Serializable {
 
     public void openConversationMessagesActivity(String recipientId, String recipientFullName) {
         this.openConversationMessagesActivity(new ChatUser(recipientId, recipientFullName));
-
     }
 
     // TODO: 24/11/17 showChatWith(user)
@@ -205,8 +189,8 @@ public class ChatUI implements Serializable {
 
         // launch the chat
         Intent intent = new Intent(mContext, MessageListActivity.class);
-        intent.putExtra(INTENT_BUNDLE_RECIPIENT, recipient);
-        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
+        intent.putExtra(BUNDLE_RECIPIENT, recipient);
+        intent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, false);
         // extras to be sent in messages or in the conversation
 //        intent.putExtra(Chat.INTENT_BUNDLE_EXTRAS, (Serializable) mConfiguration.getExtras());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -232,12 +216,15 @@ public class ChatUI implements Serializable {
             String contactFullName = notificationIntent.getStringExtra("sender_fullname");
             Log.d(DEBUG_NOTIFICATION, "ChatUI.processRemoteNotification: contactFullName == " + contactFullName);
 
+            String channelType = notificationIntent.getStringExtra("channel_type");
+
             // create the recipient from background notification data
             IChatUser recipient = new ChatUser(contactId, contactFullName);
 
             Intent intent = new Intent(mContext, MessageListActivity.class);
-            intent.putExtra(INTENT_BUNDLE_RECIPIENT, recipient);
-            intent.putExtra(INTENT_BUNDLE_IS_FROM_NOTIFICATION, true);
+            intent.putExtra(BUNDLE_RECIPIENT, recipient);
+            intent.putExtra(BUNDLE_IS_FROM_NOTIFICATION, true);
+            intent.putExtra(BUNDLE_CHANNEL_TYPE, channelType);
             // start from outside of an activity context
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            // clear activity stack

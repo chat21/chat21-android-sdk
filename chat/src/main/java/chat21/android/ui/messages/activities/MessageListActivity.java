@@ -58,15 +58,16 @@ import chat21.android.core.users.models.IChatUser;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
 import chat21.android.ui.ChatUI;
+import chat21.android.ui.groups.activities.GroupAdminPanelActivity;
 import chat21.android.ui.messages.adapters.MessageListAdapter;
 import chat21.android.ui.messages.fragments.BottomSheetAttach;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
 import chat21.android.ui.users.activities.PublicProfileActivity;
-import chat21.android.utils.ChatUtils;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
+import static chat21.android.ui.ChatUI.BUNDLE_CHANNEL_TYPE;
 import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
@@ -109,6 +110,8 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     // retrieved data
     private IChatUser recipient;
 
+    private String channelType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +121,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         registerViews();
 
         // it comes from other activities or from a foreground notification
-        recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT);
+        recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.BUNDLE_RECIPIENT);
 
         if (recipient == null) {
             // it comes from background notification
@@ -126,7 +129,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipient == " + recipient.toString());
         }
 
-        ChatUI.getInstance().setActiveConversation(recipient.getId(), true);
+        channelType = getIntent().getStringExtra(BUNDLE_CHANNEL_TYPE);
 
         conversationMessagesHandler = ChatManager.getInstance()
                 .getConversationMessagesHandler(recipient);
@@ -147,13 +150,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     }
 
     @Override
-    protected void onPause() {
-        ChatUI.getInstance().setActiveConversation(recipient.getId(), false);
-
-        super.onPause();
-    }
-
-    @Override
     protected void onStop() {
         Log.d(TAG, "  MessageListActivity.onStop");
 
@@ -161,8 +157,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         if (emojiPopup != null) {
             emojiPopup.dismiss();
         }
-
-        ChatUI.getInstance().setActiveConversation(recipient.getId(), false);
 
         // detach the conversation messages listener
         super.onStop();
@@ -172,8 +166,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "  MessageListActivity.onDestroy");
-
-        ChatUI.getInstance().setActiveConversation(recipient.getId(), false);
 
         presenceHandler.removePresenceListener(this);
         Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy: presenceHandler detached");
@@ -220,58 +212,59 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     private void initToolbar(IChatUser recipient) {
         Log.d(TAG, "initToolbar");
 
-        // setup the toolbar with conversations data
-        if (recipient != null) {
-            initDirectToolbar(recipient.getProfilePictureUrl(), recipient.getId(), recipient.getFullName());
+
+        if (channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
+            if (recipient != null) {
+                initDirectToolbar(recipient);
+            }
+        } else if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+            if (recipient != null) {
+                initGroupToolbar(recipient);
+            }
         }
-//        else
-        //TODO for group
-
-//            if (conversation.isDirectChannel()) {
-//                // its a one to one conversation
-//                initDirectToolbar("", conversation.getConvers_with(), conversation.getConvers_with_fullname());
-//            } else if (conversation.isGroupChannel()) {
-//                // its a group conversation
-//                initGroupToolbar("", conversation.getRecipient(), conversation.getRecipientFullName());
-//            } else {
-//                Toast.makeText(this, "channel type is undefined", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-
 
         // minimal settings
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void initDirectToolbar(String pictureUrl, String conversWith, String conversWithFullName) {
-        Log.d(TAG, "initDirectToolbar");
 
+    private void initDirectToolbar(final IChatUser recipient) {
         // toolbar picture
-        setPicture(pictureUrl, R.drawable.ic_person_avatar);
+        setPicture(recipient.getProfilePictureUrl(), R.drawable.ic_person_avatar);
 
         // toolbar recipient display name
-        String deNormalizedUsername = ChatUtils.deNormalizeUsername(conversWith);
-        String recipientDisplayName = StringUtils.isValid(conversWithFullName) ?
-                conversWithFullName : deNormalizedUsername;
-        mTitleTextView.setText(recipientDisplayName);
-
-        // toolbar click listener
-//        OnProfilePictureClickListener onProfilePictureClickListener =
-//                new OnProfilePictureClickListener(this, conversWith);
-//        onProfilePictureClickListener.setContactDisplayName(conversWithFullName);
+        mTitleTextView.setText(recipient.getFullName());
 
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MessageListActivity.this, PublicProfileActivity.class);
 
-                intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, recipient);
+                intent.putExtra(ChatUI.BUNDLE_RECIPIENT, recipient);
 //                intent.putExtra(INTENT_BUNDLE_CALLING_ACTIVITY, targetClass);
                 startActivity(intent);
             }
         });
     }
+
+    private void initGroupToolbar(final IChatUser recipient) {
+        // toolbar picture
+        setPicture(recipient.getProfilePictureUrl(), R.drawable.ic_group_avatar);
+
+        // toolbar recipient display name
+        mTitleTextView.setText(recipient.getFullName());
+
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MessageListActivity.this, GroupAdminPanelActivity.class);
+                intent.putExtra(ChatUI.BUNDLE_RECIPIENT, recipient);
+                startActivityForResult(intent, ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
+            }
+        });
+    }
+
 
 //    private void initGroupToolbar(String pictureUrl, String recipient, String recipientFullName) {
 //        Log.d(TAG, "initGroupToolbar");
@@ -463,40 +456,39 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                 }
 
                 ChatManager.getInstance()
-                        .sendTextMessage(recipient.getId(), recipient.getFullName(), text, null,
-                                new SendMessageListener() {
-                                    @Override
-                                    public void onBeforeMessageSent(Message message, ChatRuntimeException chatException) {
-                                        if (chatException == null) {
-                                            // if the message exists update it, else add it
-                                            Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.id: " + message.getId());
-                                            Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.recipient: " + message.getRecipient());
+                        .sendTextMessage(recipient.getId(), recipient.getFullName(), text, channelType, null, new SendMessageListener() {
+                            @Override
+                            public void onBeforeMessageSent(Message message, ChatRuntimeException chatException) {
+                                if (chatException == null) {
+                                    // if the message exists update it, else add it
+                                    Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.id: " + message.getId());
+                                    Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.recipient: " + message.getRecipient());
 
-                                            messageListAdapter.updateMessage(message);
-                                            scrollToBottom();
-                                        } else {
+                                    messageListAdapter.updateMessage(message);
+                                    scrollToBottom();
+                                } else {
 
-                                            Toast.makeText(MessageListActivity.this,
-                                                    "Failed to send message",
-                                                    Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MessageListActivity.this,
+                                            "Failed to send message",
+                                            Toast.LENGTH_SHORT).show();
 
-                                            Log.e(TAG, "sendTextMessage.onBeforeMessageSent: ", chatException);
-                                        }
-                                    }
+                                    Log.e(TAG, "sendTextMessage.onBeforeMessageSent: ", chatException);
+                                }
+                            }
 
-                                    @Override
-                                    public void onMessageSentComplete(Message message, ChatRuntimeException chatException) {
-                                        if (chatException == null) {
+                            @Override
+                            public void onMessageSentComplete(Message message, ChatRuntimeException chatException) {
+                                if (chatException == null) {
 
-                                            Log.d(TAG, "message sent: " + message.toString());
-                                        } else {
-                                            Toast.makeText(MessageListActivity.this,
-                                                    "Failed to send message",
-                                                    Toast.LENGTH_SHORT).show();
-                                            Log.e(TAG, "error sending message : ", chatException);
-                                        }
-                                    }
-                                });
+                                    Log.d(TAG, "message sent: " + message.toString());
+                                } else {
+                                    Toast.makeText(MessageListActivity.this,
+                                            "Failed to send message",
+                                            Toast.LENGTH_SHORT).show();
+                                    Log.e(TAG, "error sending message : ", chatException);
+                                }
+                            }
+                        });
 
                 // clear the edittext
                 editText.setText("");
@@ -713,7 +705,9 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 //                } else {
                 // update firebase references and send notification
 
-                ChatManager.getInstance().sendImageMessage(recipient.getId(), recipient.getFullName(), downloadUrl.toString(), null, null);
+                ChatManager.getInstance().sendImageMessage(recipient.getId(),
+                        recipient.getFullName(), downloadUrl.toString(), channelType,
+                        null, null);
 
 //                    ChatManager.getInstance().sendMessage(downloadUrl.toString(), type,
 //                            conversation, extras);

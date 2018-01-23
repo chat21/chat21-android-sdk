@@ -91,11 +91,6 @@ public class ConversationListFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // attach listener for conversations change
-//        conversationsHandler = ChatManager.getInstance().addConversationsListener(this);
-//        Log.d(TAG, "ConversationListFragment.onCreate.conversationsHandler.getConversationsNode(): "
-//                + conversationsHandler.getConversationsNode().toString());
-
         conversationsHandler = ChatManager.getInstance().getConversationsHandler();
         myPresenceHandler = ChatManager.getInstance().getMyPresenceHandler();
     }
@@ -175,15 +170,6 @@ public class ConversationListFragment extends Fragment implements
                 }
             }
         });
-
-
-//        if (!ChatUtils.isChatSupportAccountEnabled(getContext())) {
-//            // enable contact list button action
-//            addNewConversation.setOnClickListener(new OnContactListClickListener(getContext()));
-//        } else {
-//            // enable support account button action
-//            addNewConversation.setOnClickListener(new OnSupportContactListClickListener(getContext()));
-//        }
     }
 
     // toggle the no conversation layout visibilty.
@@ -226,18 +212,6 @@ public class ConversationListFragment extends Fragment implements
 
         Log.d(TAG, "ConversationListFragment.onConversationAdded");
 
-//        if (e == null) {
-//            conversationsListAdapter.insertTop(conversation);
-//        } else {
-//            Log.w(TAG, "ConversationListFragment.onConversationAdded: Error onConversationAdded ", e);
-//        }
-
-//        if (e == null) {
-//            conversationsListAdapter.update(conversation);
-//        } else {
-//            Log.w(TAG, "ConversationListFragment.onConversationChanged: Error onConversationMessageReceived ", e);
-//        }
-
         conversationsListAdapter.notifyDataSetChanged();
 
         toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
@@ -248,12 +222,6 @@ public class ConversationListFragment extends Fragment implements
         // existing conversation updated
 
         Log.d(TAG, "ConversationListFragment.onConversationChanged");
-
-//        if (e == null) {
-//            conversationsListAdapter.update(conversation);
-//        } else {
-//            Log.w(TAG, "ConversationListFragment.onConversationChanged: Error onConversationMessageReceived ", e);
-//        }
 
         conversationsListAdapter.notifyDataSetChanged();
 
@@ -270,19 +238,11 @@ public class ConversationListFragment extends Fragment implements
     public void onConversationClicked(Conversation conversation, int position) {
         // click on conversation
 
-//        try {
         // set the conversation as read
         conversationsHandler.setConversationRead(conversation.getConversationId());
 
         // start the message list activity of the corresponding conversation
         startMessageActivity(conversation);
-//        } catch (Exception e) {
-//            Log.e(TAG, "cannot start messageActivity. " + e.getMessage());
-//
-//            Toast.makeText(getActivity(),
-//                    getString(R.string.fragment_conversation_list_cannot_open_conversation_label),
-//                    Toast.LENGTH_SHORT).show();
-//        }
     }
 
     @Override
@@ -300,8 +260,9 @@ public class ConversationListFragment extends Fragment implements
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
         IChatUser recipient = new ChatUser(conversation.getConvers_with(), conversation.getConvers_with_fullname());
-        intent.putExtra(ChatUI.INTENT_BUNDLE_RECIPIENT, recipient);
-//        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
+        intent.putExtra(ChatUI.BUNDLE_RECIPIENT, recipient);
+        intent.putExtra(ChatUI.BUNDLE_CHANNEL_TYPE, conversation.getChannelType());
+//        intent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }
 

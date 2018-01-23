@@ -139,7 +139,7 @@ public class ConversationsHandler {
 //                Log.d(TAG, "observeMessages.onChildRemoved: dataSnapshot == " + dataSnapshot.toString());
 
 //                try {
-//                    Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
+//                    Conversation conversation = decodeGroupFromSnapshot(dataSnapshot);
 //
 //                    deleteConversationFromMemory(conversation);
 //                    sortConversationsInMemory();
@@ -236,7 +236,7 @@ public class ConversationsHandler {
 
         // conversationId
         conversation.setConversationId(dataSnapshot.getKey());
-        Log.d(TAG, "ConversationUtils.decodeConversationSnapshop: conversationId = " + conversation.getConversationId());
+        Log.d(TAG, "ConversationsHandler.decodeConversationSnapshop: conversationId = " + conversation.getConversationId());
 
         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
@@ -245,7 +245,7 @@ public class ConversationsHandler {
             boolean is_new = (boolean) map.get("is_new");
             conversation.setIs_new(is_new);
         } catch (Exception e) {
-            Log.e(TAG, "cannot retrieve is_new");
+            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop: cannot retrieve is_new");
         }
 
         // last_message_text
@@ -253,7 +253,7 @@ public class ConversationsHandler {
             String last_message_text = (String) map.get("last_message_text");
             conversation.setLast_message_text(last_message_text);
         } catch (Exception e) {
-            Log.e(TAG, "cannot retrieve last_message_text");
+            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop: cannot retrieve last_message_text");
         }
 
         // recipient
@@ -261,7 +261,7 @@ public class ConversationsHandler {
             String recipient = (String) map.get("recipient");
             conversation.setRecipient(recipient);
         } catch (Exception e) {
-            Log.e(TAG, "cannot retrieve recipient");
+            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop: cannot retrieve recipient");
         }
 
         // rrecipient_fullname
@@ -302,6 +302,13 @@ public class ConversationsHandler {
             conversation.setTimestamp(timestamp);
         } catch (Exception e) {
             Log.e(TAG, "cannot retrieve timestamp");
+        }
+
+        try {
+            String channelType = (String) map.get("channel_type");
+            conversation.setChannelType(channelType);
+        } catch (Exception e) {
+            Log.e(TAG, "cannot retrieve channel_type");
         }
 
 
@@ -354,7 +361,7 @@ public class ConversationsHandler {
 //    }
 
     public void addConversationsListener(ConversationsListener conversationsListener) {
-        Log.v(TAG, "  addConversationsListener called");
+        Log.v(TAG, "  addGroupsListener called");
 
         this.conversationsListeners.add(conversationsListener);
 
@@ -363,7 +370,7 @@ public class ConversationsHandler {
     }
 
     public void removeConversationsListener(ConversationsListener conversationsListener) {
-        Log.v(TAG, "  removeConversationsListener called");
+        Log.v(TAG, "  removeGroupsListener called");
 
         if (conversationsListeners != null)
             this.conversationsListeners.remove(conversationsListener);
@@ -373,7 +380,7 @@ public class ConversationsHandler {
     }
 
     public void upsertConversationsListener(ConversationsListener conversationsListener) {
-        Log.v(TAG, "  upsertConversationsListener called");
+        Log.v(TAG, "  upsertGroupsListener called");
 
         if (conversations.contains(conversationsListener)) {
             this.removeConversationsListener(conversationsListener);
