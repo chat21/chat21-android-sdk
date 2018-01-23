@@ -53,6 +53,7 @@ import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.presence.PresenceHandler;
 import chat21.android.core.presence.listeners.PresenceListener;
+import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
@@ -66,6 +67,7 @@ import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
+import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
 /**
@@ -118,6 +120,12 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         // it comes from other activities or from a foreground notification
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.INTENT_BUNDLE_RECIPIENT);
 
+        if (recipient == null) {
+            // it comes from background notification
+            recipient = getRecipientFromBackgroundNotification();
+            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipient == " + recipient.toString());
+        }
+
         ChatUI.getInstance().setActiveConversation(recipient.getId(), true);
 
         conversationMessagesHandler = ChatManager.getInstance()
@@ -136,16 +144,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         initInputPanel();
 
         initToolbar(recipient);
-
-        // create a conversation object
-//        if (isFromBackgroundNotification) {
-//            onConversationRetrievedSuccess(ConversationUtils.createConversationFromBackgroundPush(getIntent()));
-//        } else {
-//            ConversationUtils.getConversationFromId(ChatManager.getInstance().getTenant(),
-//                    ChatManager.getInstance().getLoggedUser().getId(),
-//                    recipientId, this);
-//        }
-//        observeUserPresence();
     }
 
     @Override
@@ -183,45 +181,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         conversationMessagesHandler.removeConversationMessagesListener(this);
     }
 
-//    @Override
-//    protected void onStart() {
-//        Log.d(TAG, "  MessageListActivity.onStart");
-//        super.onStart();
-//
-////        conversationMessagesHandler.upsertConversationMessagesListener(this);
-////        Log.d(TAG, "  MessageListActivity.onStart: conversationMessagesHandler attached");
-//    }
-//
-//    private String getRecipientId() {
-//        Log.d(TAG, "getRecipientId");
-//
-//        String recipientId;
-//
-//        if (getIntent().getSerializableExtra(INTENT_BUNDLE_RECIPIENT_ID) != null) {
-//            // retrieve conversationId
-//            isFromBackgroundNotification = false;
-//            isFromForegroundNotification = false;
-//            recipientId = getIntent().getStringExtra(INTENT_BUNDLE_RECIPIENT_ID);
-//            // check if the activity has been called from foreground notification
-//            try {
-//                isFromForegroundNotification = getIntent().getExtras().getBoolean(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION);
-//
-//            } catch (Exception e) {
-//                Log.e(TAG, "MessageListActivity.getConversationId: cannot retrieve 'is from notification extra' " + e.getMessage());
-//                isFromForegroundNotification = false;
-//            }
-//        } else {
-//            //from background notification
-//            isFromBackgroundNotification = true;
-//            recipientId = getIntent().getStringExtra("recipient");
-//
-//        }
-//
-//        Log.d(TAG_NOTIFICATION, "MessageListActivity.recipientId: recipientId: " + recipientId);
-//
-//        return recipientId;
-//    }
-
     private void registerViews() {
         Log.d(TAG, "registerViews");
 
@@ -240,6 +199,22 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         sendButton = (ImageView) findViewById(R.id.main_activity_send);
         recyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmojiBar = (LinearLayout) findViewById(R.id.main_activity_emoji_bar);
+    }
+
+    private IChatUser getRecipientFromBackgroundNotification() {
+        IChatUser recipient = null;
+        if (StringUtils.isValid(getIntent().getStringExtra("sender")) &&
+                StringUtils.isValid(getIntent().getStringExtra("sender_fullname"))) {
+            String contactId = getIntent().getStringExtra("sender");
+            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate.fromNotification: contactId == " + contactId);
+
+            String contactFullName = getIntent().getStringExtra("sender_fullname");
+            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate.fromNotification: contactFullName == " + contactFullName);
+
+            // create the recipient from background notification data
+            recipient = new ChatUser(contactId, contactFullName);
+        }
+        return recipient;
     }
 
     private void initToolbar(IChatUser recipient) {
@@ -522,7 +497,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                                         }
                                     }
                                 });
-
 
                 // clear the edittext
                 editText.setText("");
@@ -829,26 +803,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 //        }
 //
 //        return intent;
-//    }
-//
-//    private String getRecipientIdFromPushNotification(Intent pushData) {
-//        String recipientId = pushData.getStringExtra("recipient");
-////        isGroupConversation = false;
-////
-////        // retrieve the group_id
-////        try {
-////            String groupId = pushData.getStringExtra("group_id");
-////            if (StringUtils.isValid(groupId)) {
-////                conversationId = groupId;
-////                isGroupConversation = true;
-////            } else {
-////                Log.w(TAG, "group_id is empty or null. ");
-////            }
-////        } catch (Exception e) {
-////            Log.w(TAG, "cannot retrieve group_id. it may not exist" + e.getMessage());
-////        }
-//
-//        return recipientId;
 //    }
 
     private void setUpEmojiPopup() {
