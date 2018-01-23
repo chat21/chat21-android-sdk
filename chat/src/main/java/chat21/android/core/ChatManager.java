@@ -42,7 +42,11 @@ public class ChatManager {
     public static final String _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER =
             "_SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER";
 
+    public static final String _DEFAULT_APP_ID_VALUE = "default";
+
     private static ChatManager mInstance;
+
+
     private IChatUser loggedUser;
     private String appId;
     private Context mContext;
@@ -88,6 +92,36 @@ public class ChatManager {
 
     private void setContext(Context context) {
         mContext = context;
+    }
+
+
+    /**
+     * It initializes the SDK.
+     * It serializes the current user.
+     * It serializes the configurations.
+     *
+     * @param context
+     * @param currentUser
+     */
+    public static void start(Context context, IChatUser currentUser) {
+        start(context, _DEFAULT_APP_ID_VALUE, currentUser);
+    }
+
+    /**
+     * It initializes the SDK.
+     * It serializes the current user.
+     * It serializes the configurations.
+     *
+     * @param context
+     * @param appId
+     * @param currentUser
+     */
+    public static void start(Context context, String appId, IChatUser currentUser) {
+
+        ChatManager.Configuration mChatConfiguration =
+                new ChatManager.Configuration.Builder(appId).build();
+
+        start(context, mChatConfiguration, currentUser);
     }
 
     /**
