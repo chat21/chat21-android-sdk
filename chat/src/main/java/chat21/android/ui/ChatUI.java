@@ -13,6 +13,7 @@ import java.util.Map;
 
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.contacts.activites.ContactListActivity;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.ui.contacts.listeners.OnCreateGroupClickListener;
 import chat21.android.ui.conversations.activities.ConversationListActivity;
@@ -66,6 +67,9 @@ public class ChatUI implements Serializable {
 
     //private constructor.
     private ChatUI() {
+
+        //default init for onNewConversationClickListener
+        setDefaultOnNewConversationClickListener();
 
         // Prevent form the reflection api.
         if (instance != null) {
@@ -134,6 +138,20 @@ public class ChatUI implements Serializable {
     public void setOnNewConversationClickListener(OnNewConversationClickListener onNewConversationClickListener) {
         Log.d(TAG, "setOnNewConversationClickListener");
         this.onNewConversationClickListener = onNewConversationClickListener;
+    }
+
+    public void setDefaultOnNewConversationClickListener() {
+        this.onNewConversationClickListener = new OnNewConversationClickListener() {
+            @Override
+            public void onNewConversationClicked() {
+
+                Intent intent = new Intent(mContext, ContactListActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // start activity from context
+
+                mContext.startActivity(intent);
+
+            }
+        };
     }
 
     public OnNewConversationClickListener getOnNewConversationClickListener() {
