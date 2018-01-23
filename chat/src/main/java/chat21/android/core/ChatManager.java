@@ -328,9 +328,14 @@ public class ChatManager {
 //                Message.TYPE_TEXT, text, customAttributes, sendMessageListener);
 //    }
 
-    public void sendTextMessage(String recipientId, String recipientFullName, String text, String typeChannel) {
+    public void sendTextMessage(String recipientId, String recipientFullName, String text) {
         sendTextMessage(recipientId, recipientFullName, text,
                 null, null);
+    }
+
+    public void sendTextMessage(String recipientId, String recipientFullName, String text, String typeChannel) {
+        sendTextMessage(recipientId, recipientFullName, text,
+                typeChannel, null);
     }
 
     public void sendTextMessage(String recipientId, String recipientFullName, String text, String channelType,
