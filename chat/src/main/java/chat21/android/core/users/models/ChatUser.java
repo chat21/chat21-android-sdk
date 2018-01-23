@@ -2,6 +2,8 @@ package chat21.android.core.users.models;
 
 import java.io.Serializable;
 
+import chat21.android.core.users.models.exception.ChatUserIdException;
+
 /**
  * Created by stefano on 21/09/2015.
  */
@@ -19,6 +21,11 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
     }
 
     public ChatUser(String id, String fullname) {
+
+        if (id.contains(".")){
+            throw new ChatUserIdException("Id Field contains invalid char");
+        }
+
         this.id = id;
         this.fullName = fullname;
     }
@@ -50,6 +57,9 @@ public class ChatUser implements IChatUser, Serializable, Comparable<IChatUser> 
 
     @Override
     public void setId(String id) {
+        if (id.contains(".")){
+            throw new ChatUserIdException("Id Field contains invalid char");
+        }
         this.id = id;
     }
 
