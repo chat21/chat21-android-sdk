@@ -14,8 +14,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
+import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import chat21.android.core.conversations.ConversationsHandler;
+import chat21.android.core.groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
@@ -57,6 +58,7 @@ public class ChatManager {
     private Map<String, PresenceHandler> presenceHandlerMap;
 
     private ContactsSynchronizer contactsSynchronizer;
+    private GroupsSyncronizer groupsSyncronizer;
 
     // private constructor
     private ChatManager() {
@@ -166,13 +168,19 @@ public class ChatManager {
         // serialize the appId
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
 
-
         chat.initContactsSyncronizer();
+
+        chat.initGroupsSyncronizer();
     }
 
-    public void initContactsSyncronizer() {
+    private void initContactsSyncronizer() {
         this.contactsSynchronizer = getContactsSynchronizer();
         this.contactsSynchronizer.connect();
+    }
+
+    private void initGroupsSyncronizer() {
+        this.groupsSyncronizer = getGroupsSyncronizer();
+        this.groupsSyncronizer.connect();
     }
 
     public void dispose() {
@@ -211,6 +219,13 @@ public class ChatManager {
             this.contactsSynchronizer.disconnect();
         }
         this.contactsSynchronizer = null;
+
+        // dispose groupsSyncronizer
+        if (groupsSyncronizer != null) {
+            this.groupsSyncronizer.removeAllGroupsListeners();
+            this.groupsSyncronizer.disconnect();
+        }
+        this.groupsSyncronizer = null;
 
         deleteInstanceId();
 
@@ -336,6 +351,16 @@ public class ChatManager {
             this.contactsSynchronizer =
                     new ContactsSynchronizer(Configuration.firebaseUrl, this.getAppId());
             return this.contactsSynchronizer;
+        }
+    }
+
+    public GroupsSyncronizer getGroupsSyncronizer() {
+        if (this.groupsSyncronizer != null) {
+            return this.groupsSyncronizer;
+        } else {
+            this.groupsSyncronizer =
+                    new GroupsSyncronizer(Configuration.firebaseUrl, this.getAppId(), loggedUser.getId());
+            return this.groupsSyncronizer;
         }
     }
 

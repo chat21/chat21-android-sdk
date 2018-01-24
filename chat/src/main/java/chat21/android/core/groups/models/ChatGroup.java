@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by stefanodp91 on 16/01/17.
  */
 
-public class Group implements Serializable {
+public class ChatGroup implements Serializable {
     @Exclude
     private String groupId;
     private Long createdOn;
@@ -19,11 +19,11 @@ public class Group implements Serializable {
     private String name;
     private String owner;
 
-    public Group() {
+    public ChatGroup() {
 
     }
 
-    public Group(String name, String owner) {
+    public ChatGroup(String name, String owner) {
         this.name = name;
         this.owner = owner;
     }
@@ -63,7 +63,7 @@ public class Group implements Serializable {
         return members;
     }
 
-    public void addMembers(Map<String, Integer> members) {
+    public void setMembers(Map<String, Integer> members) {
         this.members = members;
     }
 
@@ -85,7 +85,7 @@ public class Group implements Serializable {
 
     @Override
     public String toString() {
-        return "Group{" +
+        return "ChatGroup{" +
                 "groupId='" + groupId + '\'' +
                 ", createdOn=" + createdOn +
                 ", iconURL='" + iconURL + '\'' +

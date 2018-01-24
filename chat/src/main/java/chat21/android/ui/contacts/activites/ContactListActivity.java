@@ -28,7 +28,7 @@ import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
 import chat21.android.core.contacts.listeners.ContactListener;
-import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
+import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;

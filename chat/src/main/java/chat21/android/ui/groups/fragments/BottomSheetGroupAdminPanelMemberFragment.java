@@ -1,6 +1,7 @@
 package chat21.android.ui.groups.fragments;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
@@ -18,8 +19,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.groups.models.Group;
-import chat21.android.groups.utils.GroupUtils;
+import chat21.android.core.groups.GroupUtils;
+import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.ChatUI;
+import chat21.android.ui.users.activities.PublicProfileActivity;
 import chat21.android.utils.StringUtils;
 
 /**
@@ -29,31 +33,27 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
         View.OnClickListener {
     public static final String TAG = BottomSheetGroupAdminPanelMemberFragment.class.getName();
 
-    private static final String _BOTTOM_SHEET_HOME_FRAGMENT_EXTRAS_USERNAME =
-            "_BOTTOM_SHEET_HOME_FRAGMENT_EXTRAS_USERNAME";
-    private static final String _BOTTOM_SHEET_HOME_FRAGMENT_EXTRAS_GROUP_ID =
-            "_BOTTOM_SHEET_HOME_FRAGMENT_EXTRAS_GROUP_ID";
+    private static final String PRIVATE_BUNDLE_GROUP_MEMBER = "PRIVATE_BUNDLE_GROUP_MEMBER";
+    private static final String PRIVATE_BUNDLE_GROUP = "PRIVATE_BUNDLE_GROUP";
 
-    private String username;
-    private String groupId;
+    private IChatUser groupMember;
+    private ChatGroup chatGroup;
     private String loggedUserId;
 
     private TextView mUsername;
     private Button mBtnRemoveMember;
-    //    private Button mBtnSeeProfile;
+    private Button mBtnSeeProfile;
     private Button mBtnSendMessage;
     private Button mBtnCancel;
 
-    public static BottomSheetGroupAdminPanelMemberFragment newInstance(
-            String username,
-            String groupId) {
+    public static BottomSheetGroupAdminPanelMemberFragment newInstance(IChatUser groupMember, ChatGroup chatGroup) {
         Log.i(TAG, "newInstance");
 
         BottomSheetGroupAdminPanelMemberFragment f =
                 new BottomSheetGroupAdminPanelMemberFragment();
         Bundle args = new Bundle();
-        args.putString(_BOTTOM_SHEET_HOME_FRAGMENT_EXTRAS_USERNAME, username);
-        args.putString(_BOTTOM_SHEET_HOME_FRAGMENT_EXTRAS_GROUP_ID, groupId);
+        args.putSerializable(PRIVATE_BUNDLE_GROUP_MEMBER, groupMember);
+        args.putSerializable(PRIVATE_BUNDLE_GROUP, chatGroup);
         f.setArguments(args);
         return f;
     }
@@ -63,10 +63,10 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
         super.onCreate(savedInstanceState);
 
         // retrieves the username from newInstance params
-        username = getArguments().getString(_BOTTOM_SHEET_HOME_FRAGMENT_EXTRAS_USERNAME);
+        groupMember = (IChatUser) getArguments().getSerializable(PRIVATE_BUNDLE_GROUP_MEMBER);
 
         // retrieves the groupId from newInstance params
-        groupId = getArguments().getString(_BOTTOM_SHEET_HOME_FRAGMENT_EXTRAS_GROUP_ID);
+        chatGroup = (ChatGroup) getArguments().getSerializable(PRIVATE_BUNDLE_GROUP);
 
         // retrieves the logged userId from chant configuration
         loggedUserId = ChatManager.getInstance().getLoggedUser().getId();
@@ -92,7 +92,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
 
         mUsername = (TextView) rootView.findViewById(R.id.username);
         mBtnRemoveMember = (Button) rootView.findViewById(R.id.btn_remove_member);
-//        mBtnSeeProfile = (Button) rootView.findViewById(R.id.btn_see_profile);
+        mBtnSeeProfile = (Button) rootView.findViewById(R.id.btn_see_profile);
         mBtnSendMessage = (Button) rootView.findViewById(R.id.btn_send_message);
         mBtnCancel = (Button) rootView.findViewById(R.id.btn_cancel);
     }
@@ -100,7 +100,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void initViews() {
         Log.i(TAG, "initViews");
 
-        mUsername.setText(username);
+        mUsername.setText(groupMember.getFullName());
 
         initRemoveMemberButton();
 
@@ -112,7 +112,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
         Log.d(TAG, "initListeners");
 
         mBtnRemoveMember.setOnClickListener(this);
-//        mBtnSeeProfile.setOnClickListener(this);
+        mBtnSeeProfile.setOnClickListener(this);
         mBtnSendMessage.setOnClickListener(this);
         mBtnCancel.setOnClickListener(this);
     }
@@ -120,16 +120,16 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void initRemoveMemberButton() {
         Log.d(TAG, "initRemoveMemberButton");
 
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), groupId,
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), chatGroup.getGroupId(),
                 new GroupUtils.OnGroupsChangeListener() {
                     @Override
-                    public void onGroupChanged(Group group, String groupId) {
+                    public void onGroupChanged(ChatGroup chatGroup, String groupId) {
 
-                        // the logged user is the admin of the group
-                        // and the logged user is a member of the group
-                        if (GroupUtils.isAnAdmin(group, loggedUserId)) {
+                        // the logged user is the admin of the chatGroup
+                        // and the logged user is a member of the chatGroup
+                        if (GroupUtils.isAnAdmin(chatGroup, loggedUserId)) {
                             // the clicked user is an admin
-                            if (username.equals(group.getOwner())) {
+                            if (groupMember.getId().equals(chatGroup.getOwner())) {
                                 // cannot delete and admin
                                 mBtnRemoveMember.setVisibility(View.GONE);
                             } else {
@@ -139,8 +139,8 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
                             mBtnRemoveMember.setVisibility(View.GONE);
                         }
 
-                        // allows the logged user to leave the group
-                        if (username.equals(loggedUserId)) {
+                        // allows the logged user to leave the chatGroup
+                        if (groupMember.getId().equals(loggedUserId)) {
                             mBtnRemoveMember.setText(getString(
                                     R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_btn_label));
                             mBtnRemoveMember.setVisibility(View.VISIBLE);
@@ -158,13 +158,13 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void initSendMessageButton() {
         Log.d(TAG, "initSendMessageButton");
 
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), groupId,
+        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), chatGroup.getGroupId(),
                 new GroupUtils.OnGroupsChangeListener() {
                     @Override
-                    public void onGroupChanged(Group group, String groupId) {
+                    public void onGroupChanged(ChatGroup chatGroup, String groupId) {
 
                         // hide the send message to itself
-                        if (username.equals(loggedUserId)) {
+                        if (groupMember.getId().equals(loggedUserId)) {
                             mBtnSendMessage.setVisibility(View.GONE);
                         } else {
                             mBtnSendMessage.setVisibility(View.VISIBLE);
@@ -182,11 +182,9 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     public void onClick(View view) {
         if (view.getId() == mBtnRemoveMember.getId()) {
             onRemoveClickListener();
-        }
-//        else if (view.getId() == mBtnSeeProfile.getId()) {
-//            onSeeProfileClickListener();
-//        }
-        else if (view.getId() == mBtnSendMessage.getId()) {
+        } else if (view.getId() == mBtnSeeProfile.getId()) {
+            onSeeProfileClickListener();
+        } else if (view.getId() == mBtnSendMessage.getId()) {
 //            onSendMessageClickListener();
         } else if (view.getId() == mBtnCancel.getId()) {
             onCancelClickListener();
@@ -201,11 +199,13 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
         showRemoveMemberAlertDialog();
     }
 
-//    private void onSeeProfileClickListener() {
-//        Log.d(TAG, "onSeeprofileClickListener");
-//
-//        Toast.makeText(getActivity(), "onSeeProfileClickListener", Toast.LENGTH_SHORT).show();
-//    }
+    private void onSeeProfileClickListener() {
+        Log.d(TAG, "onSeeprofileClickListener");
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), PublicProfileActivity.class);
+        intent.putExtra(ChatUI.BUNDLE_RECIPIENT, groupMember);
+        startActivity(intent);
+    }
 
 //    private void onSendMessageClickListener() {
 //        Log.d(TAG, "onSendMessageClickListener");
@@ -242,12 +242,12 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
 
         String message, positiveClickMessage;
 
-        // allows the logged user to leave the group
-        if (username.equals(loggedUserId)) {
+        // allows the logged user to leave the chatGroup
+        if (groupMember.getId().equals(loggedUserId)) {
             message = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_message);
             positiveClickMessage = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_positive_click);
         } else {
-            message = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_message, username);
+            message = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_message, groupMember.getFullName());
             positiveClickMessage = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_positive_click);
         }
 
@@ -257,7 +257,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
                 .setPositiveButton(positiveClickMessage, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        removeMemberFromGroup(ChatManager.getInstance().getAppId(), groupId, username);
+                        removeMemberFromGroup(ChatManager.getInstance().getAppId(), chatGroup.getGroupId(), groupMember.getId());
 
                         // dismiss the dialog
                         dialog.dismiss();

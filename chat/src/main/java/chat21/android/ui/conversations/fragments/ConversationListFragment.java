@@ -262,7 +262,6 @@ public class ConversationListFragment extends Fragment implements
         IChatUser recipient = new ChatUser(conversation.getConvers_with(), conversation.getConvers_with_fullname());
         intent.putExtra(ChatUI.BUNDLE_RECIPIENT, recipient);
         intent.putExtra(ChatUI.BUNDLE_CHANNEL_TYPE, conversation.getChannelType());
-//        intent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, false);
         getActivity().startActivity(intent);
     }
 

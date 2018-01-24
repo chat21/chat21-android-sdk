@@ -84,11 +84,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     private boolean conversWithOnline = false;
     private long conversWithLastOnline = -1;
 
-//    // check if this activity is called from a background notification
-//    private boolean isFromBackgroundNotification = false;
-//    // check if this activity is called from a foreground notification
-//    private boolean isFromForegroundNotification = false;
-
     private RecyclerView recyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private MessageListAdapter messageListAdapter;
@@ -130,6 +125,10 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         }
 
         channelType = getIntent().getStringExtra(BUNDLE_CHANNEL_TYPE);
+        // default case
+        if (!StringUtils.isValid(channelType)) {
+            channelType = Message.DIRECT_CHANNEL_TYPE;
+        }
 
         conversationMessagesHandler = ChatManager.getInstance()
                 .getConversationMessagesHandler(recipient);
@@ -242,7 +241,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                 Intent intent = new Intent(MessageListActivity.this, PublicProfileActivity.class);
 
                 intent.putExtra(ChatUI.BUNDLE_RECIPIENT, recipient);
-//                intent.putExtra(INTENT_BUNDLE_CALLING_ACTIVITY, targetClass);
                 startActivity(intent);
             }
         });
@@ -259,67 +257,11 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MessageListActivity.this, GroupAdminPanelActivity.class);
-                intent.putExtra(ChatUI.BUNDLE_RECIPIENT, recipient);
+                intent.putExtra(ChatUI.BUNDLE_GROUP_ID, recipient.getId());
                 startActivityForResult(intent, ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
             }
         });
     }
-
-
-//    private void initGroupToolbar(String pictureUrl, String recipient, String recipientFullName) {
-//        Log.d(TAG, "initGroupToolbar");
-//
-//        // toolbar picture
-//        setPicture(pictureUrl, R.drawable.ic_group_avatar);
-//
-//        // toolbar recipient display name
-//        String recipientDisplayName = StringUtils.isValid(recipientFullName) ?
-//                recipientFullName : recipient;
-//        mTitleTextView.setText(recipientDisplayName);
-//
-//        // toolbar subtitle
-//        displayGroupMembersInSubtitle();
-//
-//        // toolbar click listener
-//        View.OnClickListener onToolbarClickListener = new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d(TAG, "onToolbarClickListener.onClick");
-//
-//                starGroupDetailsActivity();
-//            }
-//        };
-//
-//        toolbar.setOnClickListener(onToolbarClickListener); // shows the group information
-//    }
-//
-//    // bugfix Issue #31
-//    private void displayGroupMembersInSubtitle() {
-//        mSubTitleTextView.setText(getString(R.string.activity_message_list_group_info_label));
-//
-//        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(),
-//                new GroupUtils.OnGroupsChangeListener() {
-//                    @Override
-//                    public void onGroupChanged(Group group, String groupId) {
-//
-//                        String members;
-//                        if (group != null && group.getMembers() != null) {
-//                            members = GroupUtils.getGroupMembersAsList(group.getMembers());
-//                        } else {
-//                            Log.e(TAG, "displayGroupMembersInSubtitle" +
-//                                    ".subscribeOnGroupsChanges.onGroupChanged: group is null.");
-//                            members = getString(R.string.activity_message_list_group_info_you_label);
-//                        }
-//
-//                        mSubTitleTextView.setText(members);
-//                    }
-//
-//                    @Override
-//                    public void onGroupCancelled(String errorMessage) {
-//                        Log.e(TAG, errorMessage);
-//                    }
-//                });
-//    }
 
     private void setPicture(String pictureUrl, @DrawableRes int placeholder) {
         Glide.with(getApplicationContext())
@@ -328,18 +270,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(mPictureView);
     }
-
-//    private void starGroupDetailsActivity() {
-//        Log.d(TAG, "starGroupDetailsActivity");
-//
-////        if (recipient == null)
-////            return;
-//
-//        Intent intent = new Intent(this, GroupAdminPanelActivity.class);
-//        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_NAME, recipient.getFullName());
-//        intent.putExtra(GroupAdminPanelActivity.EXTRAS_GROUP_ID, recipient.getId());
-//        startActivityForResult(intent, ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
-//    }
 
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView");
@@ -506,7 +436,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 //            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), conversation.getConvers_with(),
 //                    new GroupUtils.OnGroupsChangeListener() {
 //                        @Override
-//                        public void onGroupChanged(Group group, String groupId) {
+//                        public void onGroupChanged(ChatGroup group, String groupId) {
 //                            // the logged user is a member of the group
 //                            if (group != null && group.getMembers() != null) {
 //                                if (group.getMembers().containsKey(
@@ -637,16 +567,9 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 //                toggleTelegramPanelVisibility(); // update the input panel ui
 //            }
 
-//            // bugfix Issue #33
-//            if (conversation != null)
-//                initToolbar(conversation);
-
             // bugfix Issue #15
         } else if (requestCode == _INTENT_ACTION_GET_PICTURE) {
             if (data != null && data.getData() != null && resultCode == RESULT_OK) {
-
-//                if (conversation == null)
-//                    return;
 
                 Uri uri = data.getData();
 
@@ -699,19 +622,9 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
                 progressDialog.dismiss(); // bugfix Issue #45
 
-//                if (StringUtils.isValid((conversation.getGroup_id()))) {
-//                    mMessageDAO.sendGroupMessage(downloadUrl.toString(), type,
-//                            conversation);
-//                } else {
-                // update firebase references and send notification
-
                 ChatManager.getInstance().sendImageMessage(recipient.getId(),
                         recipient.getFullName(), downloadUrl.toString(), channelType,
                         null, null);
-
-//                    ChatManager.getInstance().sendMessage(downloadUrl.toString(), type,
-//                            conversation, extras);
-//                }
             }
 
             @Override

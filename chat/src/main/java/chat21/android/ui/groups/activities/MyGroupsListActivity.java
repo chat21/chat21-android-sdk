@@ -24,19 +24,18 @@ import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.conversations.models.Conversation;
-import chat21.android.core.groups.models.Group;
+import chat21.android.core.groups.models.ChatGroup;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.dao.groups.GroupsDAO;
-import chat21.android.dao.groups.OnGroupsRetrievedCallback;
+import chat21.android.core.groups.GroupsDAO;
+import chat21.android.core.groups.OnGroupsRetrievedCallback;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.groups.adapters.MyGroupsListAdapter;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.StringUtils;
 
-import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
+import static chat21.android.utils.DebugConstants.DEBUG_GROUPS;
 
 /**
  * Created by stefanodp91 on 26/09/17.
@@ -50,15 +49,14 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
     private RecyclerView mMyGroupsListRecyclerView;
     private MyGroupsListAdapter mMyGroupsListRecyclerAdapter;
     private RelativeLayout mEmptyLayout;
-    private Conversation mConversation;
 
-    private List<Group> mGroupList = new ArrayList<>();
+    private List<ChatGroup> mChatGroupList = new ArrayList<>();
 
     private ProgressBar mProgress;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onCreate");
+        Log.d(DEBUG_GROUPS, "MyGroupsListActivity.onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups_list);
@@ -98,7 +96,7 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 //        mMyGroupsListRecyclerView.setLayoutManager(mLayoutManager);
 
         mMyGroupsListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        updateAdapter(mGroupList);
+        updateAdapter(mChatGroupList);
     }
 
     private void initToolbar() {
@@ -106,19 +104,19 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void updateAdapter(List<Group> groups) {
+    private void updateAdapter(List<ChatGroup> chatGroups) {
         if (mMyGroupsListRecyclerAdapter == null) {
-            mMyGroupsListRecyclerAdapter = new MyGroupsListAdapter(this, groups);
+            mMyGroupsListRecyclerAdapter = new MyGroupsListAdapter(this, chatGroups);
             mMyGroupsListRecyclerAdapter.setOnGroupClickListener(this);
             mMyGroupsListRecyclerView.setAdapter(mMyGroupsListRecyclerAdapter);
         } else {
-            mMyGroupsListRecyclerAdapter.setList(groups);
+            mMyGroupsListRecyclerAdapter.setList(chatGroups);
             mMyGroupsListRecyclerAdapter.notifyDataSetChanged();
         }
     }
 
     private void retrieveGroupsForUser(String userId) {
-        Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.retrieveGroupsForUser: userId == " + userId);
+        Log.d(DEBUG_GROUPS, "MyGroupsListActivity.retrieveGroupsForUser: userId == " + userId);
 
         if (mGroupsDAO == null)
             mGroupsDAO = new GroupsDAO();
@@ -127,10 +125,10 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 
 
     @Override
-    public void onGroupsRetrievedSuccess(List<Group> groups) {
-        if (groups != null && groups.size() > 0) {
-            Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess: " +
-                    "groups == " + groups.toString());
+    public void onGroupsRetrievedSuccess(List<ChatGroup> chatGroups) {
+        if (chatGroups != null && chatGroups.size() > 0) {
+            Log.d(DEBUG_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess: " +
+                    "chatGroups == " + chatGroups.toString());
 
             if (mProgress != null)
                 mProgress.setVisibility(View.GONE);
@@ -138,9 +136,9 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
             mMyGroupsListRecyclerView.setVisibility(View.VISIBLE);
             mEmptyLayout.setVisibility(View.GONE);
 
-            updateAdapter(groups);
+            updateAdapter(chatGroups);
         } else {
-            Log.e(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess: " +
+            Log.e(DEBUG_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess: " +
                     "groupsIds is empty or null");
             onGroupsRetrievedError(new Exception("groupsIds is empty or null"));
         }
@@ -148,7 +146,7 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 
     @Override
     public void onGroupsRetrievedError(Exception e) {
-        Log.e(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedError" + e.getMessage());
+        Log.e(DEBUG_GROUPS, "MyGroupsListActivity.onGroupsRetrievedError" + e.getMessage());
 
         if (mProgress != null)
             mProgress.setVisibility(View.GONE);
@@ -159,9 +157,9 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 
 
     @Override
-    public void onGroupClicked(final Group group, int position) {
-        Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupClicked: " +
-                "group == " + group.toString() + ", position == " + position);
+    public void onGroupClicked(final ChatGroup chatGroup, int position) {
+        Log.d(DEBUG_GROUPS, "MyGroupsListActivity.onGroupClicked: " +
+                "chatGroup == " + chatGroup.toString() + ", position == " + position);
 
         DatabaseReference nodeConversation;
 
@@ -170,15 +168,15 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
                     .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
                     .child("apps/" + ChatManager.getInstance().getAppId()
                             + "/users/" + ChatManager.getInstance().getLoggedUser().getId()
-                            + "/conversations/" + group.getGroupId());
+                            + "/conversations/" + chatGroup.getGroupId());
         } else {
             nodeConversation = FirebaseDatabase.getInstance().getReference()
                     .child("apps/" + ChatManager.getInstance().getAppId()
                             + "/users/" + ChatManager.getInstance().getLoggedUser().getId()
-                            + "/conversations/" + group.getGroupId());
+                            + "/conversations/" + chatGroup.getGroupId());
         }
 
-        Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
+        Log.d(DEBUG_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
                 ".addValueEventListener.onDataChange: " +
                 "nodeConversation == " + nodeConversation.toString());
 
@@ -186,26 +184,11 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
         nodeConversation.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
+                Log.d(DEBUG_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
                         ".addValueEventListener.onDataChange: " +
                         "dataSnapshot == " + dataSnapshot.toString());
 
-//                if (dataSnapshot.getValue() != null) {
-//                    // decode conversation
-//                    mConversation = ConversationsHandler.decodeConversationFromSnapshot(dataSnapshot);
-//                } else {
-//                    // create a new group conversation
-//                    mConversation = new Conversation();
-//                    mConversation.setRecipientFullName(group.getName());
-//                    mConversation.setRecipient(group.getGroupId());
-//                    mConversation.setConversationId(group.getGroupId());
-//                }
-
-                IChatUser groupRecipient = new ChatUser(group.getGroupId(), group.getName());
-
-//                Log.d(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupsRetrievedSuccess" +
-//                        ".addValueEventListener.onDataChange: " +
-//                        "mConversation == " + mConversation.toString());
+                IChatUser groupRecipient = new ChatUser(chatGroup.getGroupId(), chatGroup.getName());
 
                 // start the message list activity
                 Intent intent = new Intent(MyGroupsListActivity.this, MessageListActivity.class);
@@ -217,7 +200,7 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupsR
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(DEBUG_NODE_GROUPS, "MyGroupsListActivity.onGroupClicked" +
+                Log.e(DEBUG_GROUPS, "MyGroupsListActivity.onGroupClicked" +
                         ".addValueEventListener.onDataChange: " + databaseError.getMessage());
 
                 onGroupsRetrievedError(new Exception(databaseError.getMessage()));

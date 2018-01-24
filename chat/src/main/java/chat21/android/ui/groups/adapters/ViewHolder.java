@@ -13,8 +13,8 @@ import com.bumptech.glide.Glide;
 
 import chat21.android.R;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
-import chat21.android.core.groups.models.Group;
-import chat21.android.groups.utils.GroupUtils;
+import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.groups.GroupUtils;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
@@ -32,17 +32,17 @@ class ViewHolder extends RecyclerView.ViewHolder {
         mMembers = (TextView) itemView.findViewById(R.id.members);
     }
 
-    public void bind(Group group, int position, OnGroupClickListener callback) {
+    public void bind(ChatGroup chatGroup, int position, OnGroupClickListener callback) {
 
-        setName(group.getName());
+        setName(chatGroup.getName());
 
-//        setCreatedOn(group.getCreatedOnLong());
+//        setCreatedOn(chatGroup.getCreatedOnLong());
 
-        setImage(group.getIconURL());
+        setImage(chatGroup.getIconURL());
 
-        setOnGroupClickListener(group, position, callback);
+        setOnGroupClickListener(chatGroup, position, callback);
 
-        setMembers(group);
+        setMembers(chatGroup);
     }
 
     private void setName(String name) {
@@ -77,11 +77,11 @@ class ViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    private void setMembers(Group group) {
+    private void setMembers(ChatGroup chatGroup) {
 
         String members;
-        if (group != null && group.getMembers() != null) {
-            members = GroupUtils.getGroupMembersAsList(group.getMembers());
+        if (chatGroup != null && chatGroup.getMembers() != null) {
+            members = GroupUtils.getGroupMembersAsList(chatGroup.getMembers());
         } else {
             // if there are no members show the logged user as "you"
             members = itemView.getContext().getString(R.string.activity_message_list_group_info_you_label);
@@ -91,13 +91,13 @@ class ViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    private void setOnGroupClickListener(final Group group,
+    private void setOnGroupClickListener(final ChatGroup chatGroup,
                                          final int position,
                                          final OnGroupClickListener callback) {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callback.onGroupClicked(group, position);
+                callback.onGroupClicked(chatGroup, position);
             }
         });
     }

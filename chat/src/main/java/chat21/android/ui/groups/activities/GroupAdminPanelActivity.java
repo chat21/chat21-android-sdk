@@ -1,6 +1,5 @@
 package chat21.android.ui.groups.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -24,32 +22,24 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.R;
-import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
-import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
-import chat21.android.core.groups.models.Group;
-import chat21.android.core.users.models.ChatUser;
+import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
+import chat21.android.core.groups.models.ChatGroup;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.groups.utils.GroupUtils;
-import chat21.android.ui.ChatUI;
 import chat21.android.ui.groups.adapters.GroupMembersListAdapter;
 import chat21.android.ui.groups.fragments.BottomSheetGroupAdminPanelMemberFragment;
 import chat21.android.ui.groups.listeners.OnGroupMemberClickListener;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
-import static chat21.android.ui.ChatUI.BUNDLE_RECIPIENT;
+import static chat21.android.ui.ChatUI.BUNDLE_GROUP_ID;
 
 /**
  * Created by stefanodp91 on 29/06/17.
  */
-public class GroupAdminPanelActivity extends AppCompatActivity implements
-        OnGroupMemberClickListener,
-        GroupUtils.OnNodeMembersChangeListener,
-        GroupUtils.OnGroupsChangeListener {
+public class GroupAdminPanelActivity extends AppCompatActivity implements OnGroupMemberClickListener {
     private static final String TAG = GroupAdminPanelActivity.class.getName();
 
-    private Toolbar mToolbar;
     private RecyclerView mMemberList;
     private LinearLayoutManager mMemberLayoutManager;
     private GroupMembersListAdapter mGroupMembersListAdapter;
@@ -58,43 +48,46 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private LinearLayout mBoxMembers;
     private LinearLayout mBoxUnavailableMembers;
 
-    private Group mGroup;
-
     private MenuItem mAddMemberMenuItem;
     private ContactsSynchronizer contactsSynchronizer;
 
-    private IChatUser recipient;
+    private String groupId;
+    private ChatGroup chatGroup;
+    private List<IChatUser> groupMembers;
+    private List<IChatUser> groupAdmins;
+
+    private IChatUser loggedUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
-
-        recipient = (IChatUser) getIntent().getExtras().get(BUNDLE_RECIPIENT);
-
         setContentView(R.layout.activity_group_admin_panel);
-
         registerViews();
-        initViews();
+
+        // retrieve the groupId (from MessageListActivity)
+        groupId = getIntent().getStringExtra(BUNDLE_GROUP_ID);
+
+        // retrieve the chatGroup by its groupId from memory
+        this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
+        chatGroup = ChatManager.getInstance().getGroupsSyncronizer().getById(groupId);
+
+        loggedUser = ChatManager.getInstance().getLoggedUser();
+
+        if (chatGroup != null) {
+            groupMembers = convertMembersMapToList(chatGroup.getMembers());
+            groupAdmins = getGroupAdmins();
+
+            setToolbar();
+            setCreatedBy();
+            setCreatedOn();
+            initRecyclerViewMembers();
+            toggleAddMemberButtons();
+        }
     }
-
-//    @Override
-//    protected void onResume() {
-//        // observes for group changes
-//        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(), this);
-//
-//        // observes for members change
-//        GroupUtils.subscribeOnNodeMembersChanges(ChatManager.getInstance().getAppId(), recipient.getId(), this);
-//
-//        super.onResume();
-//    }
-
 
     private void registerViews() {
         Log.d(TAG, "registerViews");
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mMemberList = (RecyclerView) findViewById(R.id.members);
         mGroupImage = (ImageView) findViewById(R.id.image);
         mBoxAddMember = (LinearLayout) findViewById(R.id.box_add_member);
@@ -102,25 +95,92 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         mBoxUnavailableMembers = (LinearLayout) findViewById(R.id.box_unavailable_members);
     }
 
-    private void initViews() {
-        Log.d(TAG, "initViews");
+    private List<IChatUser> convertMembersMapToList(Map<String, Integer> memberMaps) {
+        List<IChatUser> members = new ArrayList<>();
 
-        intiToolbar();
+        // iterate contacts
+        for (IChatUser contact : contactsSynchronizer.getContacts()) {
+            // iterate keys
+            for (String member : memberMaps.keySet()) {
+                if (member.equals(contact.getId())) {
+                    members.add(contact);
+                }
+            }
+        }
 
-        initRecyclerViewMembers();
-
-        toggleAddMemberButtons();
+        return members;
     }
 
-    private void intiToolbar() {
-        Log.d(TAG, "intiToolbar");
+    private List<IChatUser> getGroupAdmins() {
+        List<IChatUser> admins = new ArrayList<>();
 
-        mToolbar.setTitle(recipient.getFullName());
+        String owner = chatGroup.getOwner(); // it always exists
 
-        initGroupImage(recipient.getProfilePictureUrl());
+        for (IChatUser member : groupMembers) {
+            if (member.getId().equals(owner)) {
+                admins.add(member);
+                break;
+            }
+        }
 
-        setSupportActionBar(mToolbar);
+        return admins;
+    }
+
+    private void setToolbar() {
+        Log.d(TAG, "GroupAdminPanelActivity.setToolbar");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // chatGroup name
+        TextView toolbarTitle = findViewById(R.id.toolbar_title);
+        toolbarTitle.setText(chatGroup.getName());
+
+//        TextView toolbarSubTitle = findViewById(R.id.toolbar_subtitle);
+//        toolbarSubTitle.setText("");
+
+        // chatGroup picture
+        Glide.with(getApplicationContext())
+                .load(chatGroup.getIconURL())
+                .placeholder(R.drawable.ic_group_avatar)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                .into(mGroupImage);
+
+        // minimal settings
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setCreatedBy() {
+        Log.d(TAG, "GroupAdminPanelActivity.setCreatedByOn");
+
+        TextView createdByView = (TextView) findViewById(R.id.created_by);
+
+        // if the creator of the chatGroup is the logged user set it
+        // otherwise retrieve the chatGroup creator from the chatGroup member list
+        String creator = loggedUser.getId().equals(chatGroup.getOwner()) ? loggedUser.getFullName() : "";
+        for (IChatUser member : groupMembers) {
+            if (member.getId().equals(chatGroup.getOwner())) {
+                creator = member.getFullName();
+                break;
+            }
+        }
+
+        String createdBy = getString(R.string.activity_group_admin_panel_formatted_created_by_label, creator);
+        createdByView.setText(createdBy);
+    }
+
+    private void setCreatedOn() {
+
+        TextView createdOnView = (TextView) findViewById(R.id.created_on);
+
+        // retrieve the creation date
+        String timestamp = TimeUtils.getFormattedTimestamp(chatGroup.getCreatedOnLong());
+
+        // format the user creator and creating date string
+        String createOn = getString(R.string.activity_group_admin_panel_formatted_created_on_label, timestamp);
+
+        // show the text
+        createdOnView.setText(createOn);
     }
 
     private void initRecyclerViewMembers() {
@@ -128,159 +188,28 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
 
         mMemberLayoutManager = new LinearLayoutManager(this);
         mMemberList.setLayoutManager(mMemberLayoutManager);
+
+        toggleGroupMembersVisibility();
     }
 
-
-    private void toggleAddMemberButtons() {
-        Log.d(TAG, "toggleAddMemberButtons");
-
-        if (mGroup != null) {
-            // the user is the admin of the group
-            // and the user is a member of the group
-            if (GroupUtils.isAnAdmin(mGroup, ChatManager.getInstance().getLoggedUser().getId())) {
-                showAddMember();
-            } else {
-                hideAddMember();
-            }
-        } else {
-            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(),
-                    new GroupUtils.OnGroupsChangeListener() {
-                        @Override
-                        public void onGroupChanged(Group group, String groupId) {
-                            mGroup = group;
-
-                            // the user is the admin of the group
-                            // and the user is a member of the group
-                            if (GroupUtils.isAnAdmin(mGroup, ChatManager.getInstance().getLoggedUser().getId())) {
-                                showAddMember();
-                            } else {
-                                hideAddMember();
-                            }
-                        }
-
-                        @Override
-                        public void onGroupCancelled(String errorMessage) {
-                            Log.e(TAG, errorMessage);
-                        }
-                    });
-        }
-    }
-
-
-    private void showAddMember() {
-        Log.d(TAG, "showAddMember");
-
-        // shows the add member box
-        mBoxAddMember.setVisibility(View.VISIBLE);
-
-        // hides the add member menu item
-        if (mAddMemberMenuItem != null)
-            mAddMemberMenuItem.setVisible(true);
-
-        // set the click listener
-        mBoxAddMember.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (AbstractNetworkReceiver.isConnected(getApplicationContext())) {
-                    startAddMemberActivity();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            getString(R.string.menu_activity_group_admin_panel_activity_cannot_add_member_offline),
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void hideAddMember() {
-        Log.d(TAG, "hideAddMember");
-
-        // hides the add member box
-        mBoxAddMember.setVisibility(View.GONE);
-
-        // hides the add member menu item
-        if (mAddMemberMenuItem != null)
-            mAddMemberMenuItem.setVisible(false);
-
-        // unset the click listener
-        mBoxAddMember.setOnClickListener(null);
-    }
-
-    private void initCreatedByOn(Group group) {
-        Log.d(TAG, "initCreatedByOn");
-
-        TextView mCreatedByOn = (TextView) findViewById(R.id.created_by_on);
-        String createdBy = group.getOwner();
-
-        try {
-            for (IChatUser mUser : this.contactsSynchronizer.getContacts()) {
-                if (group != null && group.getMembers() != null) {
-                    if (group.getOwner().equals(mUser.getId())) {
-                        createdBy = mUser.getFullName();
-                    } else if (group.getOwner().equals(ChatManager.getInstance().getLoggedUser().getId())) {
-                        createdBy = getString(R.string.activity_group_admin_panel_you_label);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "cannot retrive created by/on. " + e.getMessage());
-        }
-
-        try {
-            String timestamp = TimeUtils.getFormattedTimestamp(group.getCreatedOnLong());
-            mCreatedByOn.setText(
-                    getString(R.string.activity_group_admin_panel_formatted_created_by_on_label,
-                            createdBy, timestamp));
-        } catch (Exception e) {
-            Log.e(TAG, "initCreatedByOn: cannot set the timestamp.");
-            mCreatedByOn.setText(getString(R.string.activity_group_admin_panel_not_available_formatted_created_by_on_label));
-        }
-    }
-
-
-    private void initCardViewMembers(Group group) {
+    private void toggleGroupMembersVisibility() {
         Log.d(TAG, "initCardViewMembers");
 
-        List<IChatUser> members = new ArrayList<IChatUser>();
-
-        if (group != null && group.getMembers() != null) {
+        if (groupMembers != null && groupMembers.size() > 0) {
             mBoxUnavailableMembers.setVisibility(View.GONE);
             mBoxMembers.setVisibility(View.VISIBLE);
 
-            // bugfix Issue #18
-            for (Map.Entry<String, Integer> member : group.getMembers().entrySet()) {
-                IChatUser mUser = new ChatUser();
-                mUser.setId(member.getKey());
-                mUser.setFullName(member.getKey());
-                members.add(mUser);
-            }
-
             // displays the member list
-            updateGroupMemberList(members);
-
-            if (mGroupMembersListAdapter != null) {
-                mGroupMembersListAdapter.setGroup(group);
-            }
+            updateGroupMemberListAdapter(groupMembers);
         } else {
-            Log.e(TAG, "initCardViewMembers: group is null");
+            Log.e(TAG, "GroupAdminPanelActivity.toggleCardViewMembers: groupMembers is not valid");
             mBoxMembers.setVisibility(View.GONE);
             mBoxUnavailableMembers.setVisibility(View.VISIBLE);
         }
     }
 
-    private void initGroupImage(String iconURL) {
-        Log.d(TAG, "initGroupImage");
-
-        Glide.with(getApplicationContext())
-                .load(iconURL)
-                .placeholder(R.drawable.ic_group_avatar)
-                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .into(mGroupImage);
-    }
-
-    private void updateGroupMemberList(List<IChatUser> members) {
-        Log.d(TAG, "updateGroupMemberList");
+    private void updateGroupMemberListAdapter(List<IChatUser> members) {
+        Log.d(TAG, "updateGroupMemberListAdapter");
 
         if (mGroupMembersListAdapter == null) {
             mGroupMembersListAdapter = new GroupMembersListAdapter(this, members);
@@ -290,15 +219,95 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
             mGroupMembersListAdapter.setList(members);
             mGroupMembersListAdapter.notifyDataSetChanged();
         }
+
+        for (IChatUser admin : groupAdmins) {
+            mGroupMembersListAdapter.addAdmin(admin);
+        }
     }
+
+
+    private void toggleAddMemberButtons() {
+        Log.d(TAG, "toggleAddMemberButtons");
+
+//        if (mGroup != null) {
+//            // the user is the admin of the chatGroup
+//            // and the user is a member of the chatGroup
+//            if (GroupUtils.isAnAdmin(mGroup, ChatManager.getInstance().getLoggedUser().getId())) {
+//                showAddMember();
+//            } else {
+//                hideAddMember();
+//            }
+//        } else {
+//            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), chatGroup.getGroupId(),
+//                    new GroupUtils.OnGroupsChangeListener() {
+//                        @Override
+//                        public void onGroupChanged(ChatGroup chatGroup, String groupId) {
+//                            mGroup = chatGroup;
+//
+//                            // the user is the admin of the chatGroup
+//                            // and the user is a member of the chatGroup
+//                            if (GroupUtils.isAnAdmin(mGroup, ChatManager.getInstance().getLoggedUser().getId())) {
+//                                showAddMember();
+//                            } else {
+//                                hideAddMember();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onGroupCancelled(String errorMessage) {
+//                            Log.e(TAG, errorMessage);
+//                        }
+//                    });
+//        }
+    }
+
+
+//    private void showAddMember() {
+//        Log.d(TAG, "showAddMember");
+//
+//        // shows the add member box
+//        mBoxAddMember.setVisibility(View.VISIBLE);
+//
+//        // hides the add member menu item
+//        if (mAddMemberMenuItem != null)
+//            mAddMemberMenuItem.setVisible(true);
+//
+//        // set the click listener
+//        mBoxAddMember.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                if (AbstractNetworkReceiver.isConnected(getApplicationContext())) {
+//                    startAddMemberActivity();
+//                } else {
+//                    Toast.makeText(getApplicationContext(),
+//                            getString(R.string.menu_activity_group_admin_panel_activity_cannot_add_member_offline),
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//    }
+//
+//    private void hideAddMember() {
+//        Log.d(TAG, "hideAddMember");
+//
+//        // hides the add member box
+//        mBoxAddMember.setVisibility(View.GONE);
+//
+//        // hides the add member menu item
+//        if (mAddMemberMenuItem != null)
+//            mAddMemberMenuItem.setVisible(false);
+//
+//        // unset the click listener
+//        mBoxAddMember.setOnClickListener(null);
+//    }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu");
 
-        getMenuInflater()
-                .inflate(R.menu.menu_activity_group_admin_panel, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_group_admin_panel, menu);
 
         mAddMemberMenuItem = menu.findItem(R.id.action_add_member);
 
@@ -329,116 +338,51 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private void startAddMemberActivity() {
         Log.d(TAG, "startAddMemberActivity");
 
-//        try {
-        // targetClass MUST NOT BE NULL
-//            Class<?> targetClass = Class
-//                    .forName(getString(R.string.target_add_members_activity_class));
-//            final Intent intent = new Intent(this, targetClass);
-
-        final Intent intent = new Intent(this, AddMembersActivity.class);
-
-        if (mGroup != null) {
-            intent.putExtra(ChatUI.BUNDLE_GROUP, mGroup);
-            intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
-                    GroupAdminPanelActivity.class.getName());
-            intent.putExtra(ChatUI.BUNDLE_GROUP_ID, recipient.getId());
-//                startActivityForResult(intent, Chat.INTENT_ADD_MEMBERS_ACTIVITY);
-            startActivity(intent);
-        } else {
-            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(),
-                    new GroupUtils.OnGroupsChangeListener() {
-                        @Override
-                        public void onGroupChanged(Group group, String groupId) {
-                            mGroup = group;
-                            intent.putExtra(ChatUI.BUNDLE_GROUP, group);
-                            intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
-                                    GroupAdminPanelActivity.class.getName());
-                            intent.putExtra(ChatUI.BUNDLE_GROUP_ID, groupId);
-//                                startActivityForResult(intent, Chat.INTENT_ADD_MEMBERS_ACTIVITY);
-                            startActivity(intent);
-                        }
-
-                        @Override
-                        public void onGroupCancelled(String errorMessage) {
-                            Log.e(TAG, "onGroupCancelled. " + errorMessage);
-                        }
-                    });
-        }
-
-//        } catch (ClassNotFoundException e) {
-//            Log.e(TAG, "cannot retrieve the user list activity target class. " +
-//                    "Message: " + e.getMessage());
+//        final Intent intent = new Intent(this, AddMembersActivity.class);
+//
+//        if (mGroup != null) {
+//            intent.putExtra(ChatUI.BUNDLE_GROUP, mGroup);
+//            intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
+//                    GroupAdminPanelActivity.class.getName());
+//            intent.putExtra(BUNDLE_GROUP_ID, recipient.getId());
+//            startActivity(intent);
+//        } else {
+//            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(),
+//                    new GroupUtils.OnGroupsChangeListener() {
+//                        @Override
+//                        public void onGroupChanged(ChatGroup chatGroup, String groupId) {
+//                            mGroup = chatGroup;
+//                            intent.putExtra(ChatUI.BUNDLE_GROUP, chatGroup);
+//                            intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
+//                                    GroupAdminPanelActivity.class.getName());
+//                            intent.putExtra(BUNDLE_GROUP_ID, groupId);
+//                            startActivity(intent);
+//                        }
+//
+//                        @Override
+//                        public void onGroupCancelled(String errorMessage) {
+//                            Log.e(TAG, "onGroupCancelled. " + errorMessage);
+//                        }
+//                    });
 //        }
     }
 
     // handles the click on a member
     @Override
-    public void onGroupMemberClicked(IChatUser item, int position) {
+    public void onGroupMemberClicked(IChatUser member, int position) {
         Log.i(TAG, "onGroupMemberClicked");
 
-        showMemberBottomSheetFragment(item.getId(), recipient.getId());
+        showMemberBottomSheetFragment(member, chatGroup);
     }
 
-    private void showMemberBottomSheetFragment(String username, String groupId) {
+    private void showMemberBottomSheetFragment(IChatUser groupMember, ChatGroup chatGroup) {
         Log.d(TAG, "showMemberBottomSheetFragment");
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         BottomSheetGroupAdminPanelMemberFragment dialog =
-                BottomSheetGroupAdminPanelMemberFragment.newInstance(username, groupId);
+                BottomSheetGroupAdminPanelMemberFragment.newInstance(groupMember, chatGroup);
         dialog.show(ft, BottomSheetGroupAdminPanelMemberFragment.TAG);
     }
-
-    // GroupUtils.OnNodeMembersChangeListener
-    @Override
-    public void onMembersAdded(List<IChatUser> members) {
-        Log.d(TAG, "onMemberAddedListener");
-
-        // displays the member list
-        updateGroupMemberList(members);
-    }
-
-    @Override
-    public void onNodeMembersChanged(List<IChatUser> members) {
-        Log.d(TAG, "onMemberChangedListener");
-
-        // displays the member list
-        updateGroupMemberList(members);
-    }
-
-    @Override
-    public void onNodeMembersRemoved() {
-        Log.d(TAG, "onMembersRemoved");
-    }
-
-    @Override
-    public void onNodeMembersMoved() {
-        Log.d(TAG, "onMembersMoved");
-    }
-
-    @Override
-    public void onNodeMembersCancelled(String errorMessage) {
-        Log.e(TAG, "onMembersCancelled. " + errorMessage);
-    }
-    // end GroupUtils.OnNodeMembersChangeListener
-
-    // GroupUtils.OnGroupsChangeListener
-    @Override
-    public void onGroupChanged(Group group, String groupId) {
-        Log.d(TAG, "onGroupChanged");
-
-        initCreatedByOn(group);
-
-        initCardViewMembers(group);
-
-        initGroupImage(group.getIconURL());
-    }
-
-    @Override
-    public void onGroupCancelled(String errorMessage) {
-        Log.e(TAG, "onGroupCancelled. " + errorMessage);
-    }
-    // end GroupUtils.OnGroupsChangeListener
-
 
     @Override
     public void onBackPressed() {

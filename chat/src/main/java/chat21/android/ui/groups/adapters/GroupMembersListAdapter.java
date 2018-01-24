@@ -10,14 +10,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.ui.groups.listeners.OnGroupMemberClickListener;
-import chat21.android.core.groups.models.Group;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
-import chat21.android.utils.StringUtils;
+import chat21.android.ui.groups.listeners.OnGroupMemberClickListener;
 import chat21.android.utils.image.CropCircleTransformation;
 
 /**
@@ -25,13 +24,15 @@ import chat21.android.utils.image.CropCircleTransformation;
  */
 public class GroupMembersListAdapter extends AbstractRecyclerAdapter<IChatUser,
         GroupMembersListAdapter.ViewHolder> {
-    private static final String TAG = GroupMembersListAdapter.class.getName();
-    private Group group;
+
+    private List<IChatUser> admins;
 
     private OnGroupMemberClickListener onGroupMemberClickListener;
 
     public GroupMembersListAdapter(Context context, List<IChatUser> mList) {
         super(context, mList);
+
+        admins = new ArrayList<>();
     }
 
     public OnGroupMemberClickListener getOnGroupMemberClickListener() {
@@ -55,27 +56,19 @@ public class GroupMembersListAdapter extends AbstractRecyclerAdapter<IChatUser,
 //        Log.d(TAG, "onBindViewHolder");
         IChatUser contact = getItem(position);
 
-        String denormalizedContactId = contact.getId().replace("_", ".");
-
-        holder.contact.setText(StringUtils.isValid(contact.getFullName()) ?
-                contact.getFullName() : denormalizedContactId);
+        holder.contact.setText(contact.getFullName());
 
         loadProfileImage(holder, contact);
 
-        setGroupAdmin(holder, contact);
+        showAdminLabel(holder, contact);
 
         setOnMemberClickListener(holder, position, contact);
     }
 
-    // if the current contact is an admin it shows the admin label near the name
-    private void setGroupAdmin(ViewHolder holder, IChatUser contact) {
-        if (group != null) {
-            String admin = group.getOwner(); // it's an id
-            if (contact.getId().equals(admin)) {
-                holder.mGroupAdminLabel.setVisibility(View.VISIBLE);
-            } else {
-                holder.mGroupAdminLabel.setVisibility(View.GONE);
-            }
+    // if the contact is an admin it shows the admin label near the name
+    private void showAdminLabel(ViewHolder holder, IChatUser contact) {
+        if (admins.contains(contact)) {
+            holder.mGroupAdminLabel.setVisibility(View.VISIBLE);
         } else {
             holder.mGroupAdminLabel.setVisibility(View.GONE);
         }
@@ -105,12 +98,15 @@ public class GroupMembersListAdapter extends AbstractRecyclerAdapter<IChatUser,
         });
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
-    public Group getGroup() {
-        return group;
+    /**
+     * Add a group admin if isn't already added
+     *
+     * @param admin
+     */
+    public void addAdmin(IChatUser admin) {
+        if (!admins.contains(admin)) {
+            admins.add(admin);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -1,4 +1,4 @@
-package  chat21.android.dao.groups;
+package chat21.android.core.groups;
 
 /**
  * Created by stefanodp91 on 26/09/17.

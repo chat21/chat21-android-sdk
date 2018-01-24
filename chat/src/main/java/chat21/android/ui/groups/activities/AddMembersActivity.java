@@ -26,10 +26,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,10 +34,11 @@ import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
-import chat21.android.core.groups.models.Group;
+import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
+import chat21.android.core.groups.GroupUtils;
+import chat21.android.core.groups.GroupsDAO;
+import chat21.android.core.groups.models.ChatGroup;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.groups.utils.GroupUtils;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.ui.groups.adapters.SelectedContactListAdapter;
@@ -607,35 +604,37 @@ public class AddMembersActivity extends AppCompatActivity implements
     private void onCreateOptionsItemClicked() {
         Log.d(TAG, "onCreateOptionsItemClicked");
 
-        Group group = addMembersToGroup();
-        Log.d(TAG, group.toString());
+        ChatGroup chatGroup = addMembersToGroup();
+        Log.d(TAG, chatGroup.toString());
 
-        uploadGroup(ChatManager.getInstance().getAppId(), getGroupId(), group);
+        GroupsDAO.uploadGroup(ChatManager.getInstance().getAppId(), getGroupId(),
+                chatGroup, this, this);
     }
 
     private void onAddMemberOptionsItemClicked() {
         Log.d(TAG, "onAddMemberOptionsItemClicked");
 
-        Group group = addMembersToGroup();
-        Log.d(TAG, group.toString());
+        ChatGroup chatGroup = addMembersToGroup();
+        Log.d(TAG, chatGroup.toString());
 
-        uploadGroup(ChatManager.getInstance().getAppId(), getGroupId(), group);
+        GroupsDAO.uploadGroup(ChatManager.getInstance().getAppId(), getGroupId(),
+                chatGroup, this, this);
     }
 
     // add the list of member to the created group
-    private Group addMembersToGroup() {
+    private ChatGroup addMembersToGroup() {
         Log.d(TAG, "addMembersToGroup");
 
-        Group group = getGroup();
+        ChatGroup chatGroup = getGroup();
         Map<String, Integer> members = convertListToMap(mSelectedList);
 
-        // if the current group has members update them
-        if (group != null && group.getMembers() != null && group.getMembers().size() > 0) {
-            members.putAll(group.getMembers());
+        // if the current chatGroup has members update them
+        if (chatGroup != null && chatGroup.getMembers() != null && chatGroup.getMembers().size() > 0) {
+            members.putAll(chatGroup.getMembers());
         }
 
-        group.addMembers(members);
-        return group;
+        chatGroup.setMembers(members);
+        return chatGroup;
     }
 
     // convert the list of contact to a map of members
@@ -654,10 +653,10 @@ public class AddMembersActivity extends AppCompatActivity implements
         return members;
     }
 
-    private Group getGroup() {
+    private ChatGroup getGroup() {
         Log.d(TAG, "getGroup");
 
-        return (Group) getIntent()
+        return (ChatGroup) getIntent()
                 .getExtras()
                 .getSerializable(ChatUI.BUNDLE_GROUP);
     }
@@ -674,89 +673,12 @@ public class AddMembersActivity extends AppCompatActivity implements
                 .getString(ChatUI.BUNDLE_PARENT_ACTIVITY);
     }
 
-    private void uploadGroup(String appId, String groupId, final Group group) {
-        Log.d(TAG, "uploadGroup");
-
-        if (group.getMembers().size() > 0) {
-            if (!StringUtils.isValid(groupId)) {
-
-                DatabaseReference nodeGroups;
-
-                if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
-                    nodeGroups = FirebaseDatabase.getInstance()
-                            .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
-                            .child("apps/" + ChatManager.getInstance().getAppId() + "/groups");
-                } else {
-                    nodeGroups = FirebaseDatabase.getInstance().getReference()
-                            .child("apps/" + ChatManager.getInstance().getAppId() + "/groups");
-                }
-
-                nodeGroups.push().setValue(group, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError,
-                                           DatabaseReference databaseReference) {
-                        Log.d(TAG, "uploadGroup.onComplete");
-
-                        if (databaseError != null) {
-                            String errorMessage = "uploadGroup.onComplete: " +
-                                    "group not uploaded. " + databaseError.getMessage();
-                            onGroupCreatedError(errorMessage);
-                        } else {
-                            Log.d(TAG, "group uploaded with success");
-
-                            // example of database reference
-                            // https://chat-95351.firebaseio.com/groups/-KncezORPzKzmAiIppSF
-                            String groupId = databaseReference.getKey();
-
-                            onGroupCreatedSuccess(groupId, group);
-                        }
-                    }
-                });
-            } else {
-                DatabaseReference nodeMembers;
-                if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
-                    nodeMembers = FirebaseDatabase.getInstance()
-                            .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
-                            .child("apps/" + appId + "/groups/" + groupId + "/members");
-                } else {
-                    nodeMembers = FirebaseDatabase.getInstance().getReference()
-                            .child("apps/" + appId + "/groups/" + groupId + "/members");
-                }
-
-                nodeMembers.setValue(group.getMembers(),
-                        new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError,
-                                                   DatabaseReference databaseReference) {
-                                Log.d(TAG, "uploadGroup.onComplete");
-
-                                if (databaseError != null) {
-                                    String errorMessage = "uploadGroup.onComplete: " +
-                                            "group not uploaded. " + databaseError.getMessage();
-                                    onGroupUpdatedError(errorMessage);
-                                } else {
-                                    Log.d(TAG, "group uploaded with success");
-
-                                    DatabaseReference membersKey = databaseReference.getParent();
-                                    String groupId = membersKey.getKey();
-
-                                    onGroupUpdatedSuccess(groupId, group);
-                                }
-                            }
-                        });
-            }
-        } else {
-            String errorMessage = "uploadGroup: group not uploaded. " +
-                    "cannot upload group. group size is less or equals 0";
-            onGroupCreatedError(errorMessage);
-        }
-    }
 
     @Override
-    public void onGroupCreatedSuccess(String groupId, Group group) {
+    public void onGroupCreatedSuccess(String groupId, ChatGroup chatGroup) {
         Log.d(TAG, "onGroupCreatedSuccess");
 
-        //createConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, group);
+        //createConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, chatGroup);
 
         startNextActivity(groupId);
     }
@@ -766,14 +688,13 @@ public class AddMembersActivity extends AppCompatActivity implements
         Log.d(TAG, "onGroupCreatedError");
 
         Log.e(TAG, errorMessage);
-        FirebaseCrash.report(new Exception(errorMessage));
     }
 
     @Override
-    public void onGroupUpdatedSuccess(String groupId, Group group) {
+    public void onGroupUpdatedSuccess(String groupId, ChatGroup chatGroup) {
         Log.d(TAG, "onGroupCreatedSuccess");
 
-        //updateConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, group);
+        //updateConversationsOnFirebaseAsync(ChatManager.getInstance().getTenant(), groupId, chatGroup);
 
         startNextActivity(groupId);
     }
@@ -783,12 +704,11 @@ public class AddMembersActivity extends AppCompatActivity implements
         Log.d(TAG, "onGroupUpdatedError");
 
         Log.e(TAG, errorMessage);
-        FirebaseCrash.report(new Exception(errorMessage));
     }
 
     // create a conversation for each member of the group with a custom message.
     // the creator of the group has a custom message
-//    private void createConversationsOnFirebaseAsync(String appId, String groupId, Group group) {
+//    private void createConversationsOnFirebaseAsync(String appId, String groupId, ChatGroup group) {
 //        Log.d(TAG, "createConversationsOnFirebaseAsync");
 //
 //        IChatUser loggedUser = ChatManager.getInstance().getLoggedUser();
@@ -826,7 +746,7 @@ public class AddMembersActivity extends AppCompatActivity implements
 //        }
 //    }
 //
-//    private void updateConversationsOnFirebaseAsync(String appId, String groupId, Group group) {
+//    private void updateConversationsOnFirebaseAsync(String appId, String groupId, ChatGroup group) {
 //        Log.d(TAG, "updateConversationsOnFirebaseAsync");
 //
 //        IChatUser loggedUser = ChatManager.getInstance().getLoggedUser();

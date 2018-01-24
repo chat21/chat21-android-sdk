@@ -8,8 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import chat21.android.core.ChatManager;
 import chat21.android.core.users.models.ChatUser;

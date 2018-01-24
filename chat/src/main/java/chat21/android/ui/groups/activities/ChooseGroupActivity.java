@@ -25,16 +25,16 @@ import java.util.List;
 import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
-import chat21.android.dao.groups.GroupsDAO;
-import chat21.android.dao.groups.OnGroupsRetrievedCallback;
+import chat21.android.core.groups.GroupsDAO;
+import chat21.android.core.groups.OnGroupsRetrievedCallback;
+import chat21.android.core.groups.models.ChatGroup;
 import chat21.android.ui.groups.adapters.MyGroupsListAdapter;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
-import chat21.android.core.groups.models.Group;
 import chat21.android.ui.ChatUI;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
-import static chat21.android.utils.DebugConstants.DEBUG_NODE_GROUPS;
+import static chat21.android.utils.DebugConstants.DEBUG_GROUPS;
 
 /**
  * Created by stefanodp91 on 26/09/17.
@@ -54,11 +54,11 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
     private ImageView mGroupIcon;
 
     private Conversation mConversation;
-    private List<Group> mGroupList = new ArrayList<>();
+    private List<ChatGroup> mChatGroupList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d(DEBUG_NODE_GROUPS, "ChooseGroupActivity.onCreate");
+        Log.d(DEBUG_GROUPS, "ChooseGroupActivity.onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_group);
@@ -100,7 +100,7 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
 //        mMyGroupsListRecyclerView.setLayoutManager(mLayoutManager);
 
         mMyGroupsListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        updateAdapter(mGroupList);
+        updateAdapter(mChatGroupList);
 
         initBoxCreateGroup();
     }
@@ -110,19 +110,19 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void updateAdapter(List<Group> groups) {
+    private void updateAdapter(List<ChatGroup> chatGroups) {
         if (mMyGroupsListRecyclerAdapter == null) {
-            mMyGroupsListRecyclerAdapter = new MyGroupsListAdapter(this, groups);
+            mMyGroupsListRecyclerAdapter = new MyGroupsListAdapter(this, chatGroups);
             mMyGroupsListRecyclerAdapter.setOnGroupClickListener(this);
             mMyGroupsListRecyclerView.setAdapter(mMyGroupsListRecyclerAdapter);
         } else {
-            mMyGroupsListRecyclerAdapter.setList(groups);
+            mMyGroupsListRecyclerAdapter.setList(chatGroups);
             mMyGroupsListRecyclerAdapter.notifyDataSetChanged();
         }
     }
 
     private void initBoxCreateGroup() {
-        Log.d(DEBUG_NODE_GROUPS, "initBoxCreateGroup");
+        Log.d(DEBUG_GROUPS, "initBoxCreateGroup");
 
         Glide.with(getApplicationContext())
                 .load("")
@@ -140,14 +140,14 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
     }
 
     private void startCreateGroupActivity() {
-        Log.d(DEBUG_NODE_GROUPS, "startCreateGroupActivity");
+        Log.d(DEBUG_GROUPS, "startCreateGroupActivity");
 
         Intent intent = new Intent(this, CreateGroupActivity.class);
         startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
     }
 
     private void retrieveGroupsForUser(String userId) {
-        Log.d(DEBUG_NODE_GROUPS, "ChooseGroupActivity.startCreateGroupActivity: userId == " + userId);
+        Log.d(DEBUG_GROUPS, "ChooseGroupActivity.startCreateGroupActivity: userId == " + userId);
 
         if (mGroupsDAO == null)
             mGroupsDAO = new GroupsDAO();
@@ -156,10 +156,10 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
 
 
     @Override
-    public void onGroupsRetrievedSuccess(List<Group> groups) {
-        if (groups != null && groups.size() > 0) {
-            Log.d(DEBUG_NODE_GROUPS, "ChooseGroupActivity.onGroupsRetrievedSuccess: " +
-                    "groups == " + groups.toString());
+    public void onGroupsRetrievedSuccess(List<ChatGroup> chatGroups) {
+        if (chatGroups != null && chatGroups.size() > 0) {
+            Log.d(DEBUG_GROUPS, "ChooseGroupActivity.onGroupsRetrievedSuccess: " +
+                    "chatGroups == " + chatGroups.toString());
 
             if (mProgress != null)
                 mProgress.setVisibility(View.GONE);
@@ -167,9 +167,9 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
             mMyGroupsListRecyclerView.setVisibility(View.VISIBLE);
             mEmptyLayout.setVisibility(View.GONE);
 
-            updateAdapter(groups);
+            updateAdapter(chatGroups);
         } else {
-            Log.e(DEBUG_NODE_GROUPS, "ChooseGroupActivity.onGroupsRetrievedSuccess: " +
+            Log.e(DEBUG_GROUPS, "ChooseGroupActivity.onGroupsRetrievedSuccess: " +
                     "groupsIds is empty or null");
             onGroupsRetrievedError(new Exception("groupsIds is empty or null"));
         }
@@ -177,7 +177,7 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
 
     @Override
     public void onGroupsRetrievedError(Exception e) {
-        Log.e(DEBUG_NODE_GROUPS, "ChooseGroupActivity.onGroupsRetrievedError" + e.getMessage());
+        Log.e(DEBUG_GROUPS, "ChooseGroupActivity.onGroupsRetrievedError" + e.getMessage());
 
         if (mProgress != null)
             mProgress.setVisibility(View.GONE);
@@ -188,15 +188,15 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
 
 
     @Override
-    public void onGroupClicked(final Group group, int position) {
-        Log.d(DEBUG_NODE_GROUPS, "ChooseGroupActivity.onGroupClicked: " +
-                "group == " + group.toString() + ", position == " + position);
+    public void onGroupClicked(final ChatGroup chatGroup, int position) {
+        Log.d(DEBUG_GROUPS, "ChooseGroupActivity.onGroupClicked: " +
+                "chatGroup == " + chatGroup.toString() + ", position == " + position);
 
-        showChoiceGroupConfirmDialog(group);
+        showChoiceGroupConfirmDialog(chatGroup);
     }
 
-    private void showChoiceGroupConfirmDialog(final Group group) {
-        String groupDisplayName = StringUtils.isValid(group.getName()) ? group.getName() : group.getGroupId();
+    private void showChoiceGroupConfirmDialog(final ChatGroup chatGroup) {
+        String groupDisplayName = StringUtils.isValid(chatGroup.getName()) ? chatGroup.getName() : chatGroup.getGroupId();
 
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.activity_choose_group_choice_group_confirm_dialog_title))
@@ -206,7 +206,7 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                onShowChoiceGroupDialogPositiveClick(group);
+                                onShowChoiceGroupDialogPositiveClick(chatGroup);
                             }
                         }).setNegativeButton(getString(R.string.activity_choose_group_choice_group_confirm_dialog_negative_button_label),
                 new DialogInterface.OnClickListener() {
@@ -217,9 +217,9 @@ public class ChooseGroupActivity extends AppCompatActivity implements OnGroupsRe
                 }).show();
     }
 
-    private void onShowChoiceGroupDialogPositiveClick(Group group) {
+    private void onShowChoiceGroupDialogPositiveClick(ChatGroup chatGroup) {
         Intent intent = getIntent();
-        intent.putExtra(ChatUI.BUNDLE_GROUP, group);
+        intent.putExtra(ChatUI.BUNDLE_GROUP, chatGroup);
         setResult(RESULT_OK, intent);
         finish();
     }

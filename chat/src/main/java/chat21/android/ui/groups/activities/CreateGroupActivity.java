@@ -15,11 +15,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.crash.FirebaseCrash;
-
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.groups.models.Group;
+import chat21.android.core.groups.models.ChatGroup;
 import chat21.android.ui.ChatUI;
 import chat21.android.utils.StringUtils;
 
@@ -85,7 +83,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 //            mMessage.setText(getString(R.string.create_group_activity_add_group_message_label));
 //        } else {
 //            // icona abilitata
-            mMessage.setText(getString(R.string.create_group_activity_add_group_message_with_image_label));
+        mMessage.setText(getString(R.string.create_group_activity_add_group_message_with_image_label));
 //        }
     }
 
@@ -173,30 +171,29 @@ public class CreateGroupActivity extends AppCompatActivity {
     private void onNextOptionsItemClicked() {
         Log.d(TAG, "onNextOptionsItemClicked");
 
-        Group group = createGroup();
-        if (group != null) {
-            Log.d(TAG, group.toString());
-            startAddMembersActivity(group);
+        ChatGroup chatGroup = createGroup();
+        if (chatGroup != null) {
+            Log.d(TAG, chatGroup.toString());
+            startAddMembersActivity(chatGroup);
         } else {
-            String errorMessage = "onNextOptionsItemClicked: group object is null";
+            String errorMessage = "onNextOptionsItemClicked: chatGroup object is null";
             Log.e(TAG, errorMessage);
-            FirebaseCrash.report(new Exception(errorMessage));
         }
     }
 
-    private Group createGroup() {
+    private ChatGroup createGroup() {
         Log.d(TAG, "createGroup");
 
-        Group group = null;
+        ChatGroup chatGroup = null;
         if (isValidGroupName()) {
             String groupName = mGroupName.getText().toString();
-            group = new Group(groupName, ChatManager.getInstance().getLoggedUser().getId());
-            group.getCreatedOn();
+            chatGroup = new ChatGroup(groupName, ChatManager.getInstance().getLoggedUser().getId());
+            chatGroup.getCreatedOn();
         }
-        return group;
+        return chatGroup;
     }
 
-    private void startAddMembersActivity(Group group) {
+    private void startAddMembersActivity(ChatGroup chatGroup) {
         Log.d(TAG, "startAddMembersActivity");
 
 //        try {
@@ -205,18 +202,18 @@ public class CreateGroupActivity extends AppCompatActivity {
 //            Intent intent = new Intent(this, targetClass);
         Intent intent = new Intent(this, AddMembersActivity.class);
 
-        intent.putExtra(ChatUI.BUNDLE_GROUP, group);
+        intent.putExtra(ChatUI.BUNDLE_GROUP, chatGroup);
         intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
                 CreateGroupActivity.class.getName());
         startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
 //        } catch (ClassNotFoundException e) {
-//            String errorMessage = "cannot retrieve the add group activity target class. \n" + e.getMessage();
+//            String errorMessage = "cannot retrieve the add chatGroup activity target class. \n" + e.getMessage();
 //            Log.e(TAG, errorMessage);
 //            FirebaseCrash.report(new Exception(errorMessage));
 //        }
 
 //        Intent intent = new Intent(this, AddMembersActivity.class);
-//        intent.putExtra(Chat.BUNDLE_GROUP, group);
+//        intent.putExtra(Chat.BUNDLE_GROUP, chatGroup);
 //        startActivityForResult(intent, Chat.REQUEST_CREATE_GROUP);
     }
 

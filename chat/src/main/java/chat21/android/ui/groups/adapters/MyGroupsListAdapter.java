@@ -10,14 +10,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import chat21.android.R;
+import chat21.android.core.groups.models.ChatGroup;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
-import chat21.android.core.groups.models.Group;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 
 /**
  * Created by stefano on 29/06/2017.
  */
-public class MyGroupsListAdapter extends AbstractRecyclerAdapter<Group,
+public class MyGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup,
         ViewHolder> {
 
     private OnGroupClickListener onGroupClickListener;
@@ -30,23 +30,23 @@ public class MyGroupsListAdapter extends AbstractRecyclerAdapter<Group,
         this.onGroupClickListener = onGroupClickListener;
     }
 
-    public MyGroupsListAdapter(Context context, List<Group> mList) {
+    public MyGroupsListAdapter(Context context, List<ChatGroup> mList) {
         super(context, mList);
         setList(mList);
     }
 
-    private void sortItems(List<Group> mList) {
+    private void sortItems(List<ChatGroup> mList) {
         // sort by descending timestamp (first the last created, than the oldest)
-        Collections.sort(mList, new Comparator<Group>() {
+        Collections.sort(mList, new Comparator<ChatGroup>() {
             @Override
-            public int compare(Group item1, Group item2) {
+            public int compare(ChatGroup item1, ChatGroup item2) {
                 return Long.compare(item2.getCreatedOnLong(), item1.getCreatedOnLong());
             }
         });
     }
 
     @Override
-    public void setList(List<Group> mList) {
+    public void setList(List<ChatGroup> mList) {
         sortItems(mList);
         super.setList(mList);
     }
@@ -61,8 +61,8 @@ public class MyGroupsListAdapter extends AbstractRecyclerAdapter<Group,
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Group group = getItem(position);
+        ChatGroup chatGroup = getItem(position);
 
-        holder.bind(group, position, getOnGroupClickListener());
+        holder.bind(chatGroup, position, getOnGroupClickListener());
     }
 }
