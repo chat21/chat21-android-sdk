@@ -69,7 +69,6 @@ public class ChatUI implements Serializable {
         //set the default mContext value equals to ChatManager.getInstance(). Use ChatUI.getIntance().setContext to use another context
         mContext = ChatManager.getInstance().getContext();
 
-
         //default init for onNewConversationClickListener
         setDefaultOnNewConversationClickListener();
 
@@ -126,7 +125,6 @@ public class ChatUI implements Serializable {
         this.onAttachClickListener = onAttachClickListener;
     }
 
-
     public OnContactClickListener getOnContactClickListener() {
         Log.d(TAG, "getOnContactClickListener");
         return onContactClickListener;
@@ -151,7 +149,6 @@ public class ChatUI implements Serializable {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // start activity from context
 
                 mContext.startActivity(intent);
-
             }
         };
     }
@@ -194,7 +191,6 @@ public class ChatUI implements Serializable {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
-
 
     public void openConversationMessagesActivity(String recipientId, String recipientFullName) {
         this.openConversationMessagesActivity(new ChatUser(recipientId, recipientFullName));

@@ -8,12 +8,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.R;
+import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
 import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import chat21.android.core.groups.models.ChatGroup;
@@ -48,7 +49,6 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
     private LinearLayout mBoxMembers;
     private LinearLayout mBoxUnavailableMembers;
 
-    private MenuItem mAddMemberMenuItem;
     private ContactsSynchronizer contactsSynchronizer;
 
     private String groupId;
@@ -225,93 +225,47 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
         }
     }
 
-
     private void toggleAddMemberButtons() {
         Log.d(TAG, "toggleAddMemberButtons");
 
-//        if (mGroup != null) {
-//            // the user is the admin of the chatGroup
-//            // and the user is a member of the chatGroup
-//            if (GroupUtils.isAnAdmin(mGroup, ChatManager.getInstance().getLoggedUser().getId())) {
-//                showAddMember();
-//            } else {
-//                hideAddMember();
-//            }
-//        } else {
-//            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), chatGroup.getGroupId(),
-//                    new GroupUtils.OnGroupsChangeListener() {
-//                        @Override
-//                        public void onGroupChanged(ChatGroup chatGroup, String groupId) {
-//                            mGroup = chatGroup;
-//
-//                            // the user is the admin of the chatGroup
-//                            // and the user is a member of the chatGroup
-//                            if (GroupUtils.isAnAdmin(mGroup, ChatManager.getInstance().getLoggedUser().getId())) {
-//                                showAddMember();
-//                            } else {
-//                                hideAddMember();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onGroupCancelled(String errorMessage) {
-//                            Log.e(TAG, errorMessage);
-//                        }
-//                    });
-//        }
+        // check if the current user is an admin and a member of the group
+        if (groupAdmins.contains(loggedUser) && groupMembers.contains(loggedUser)) {
+            showAddMember();
+        } else {
+            hideAddMember();
+        }
     }
 
+    private void showAddMember() {
+        Log.d(TAG, "GroupAdminPanelActivity.showAddMember");
 
-//    private void showAddMember() {
-//        Log.d(TAG, "showAddMember");
-//
-//        // shows the add member box
-//        mBoxAddMember.setVisibility(View.VISIBLE);
-//
-//        // hides the add member menu item
-//        if (mAddMemberMenuItem != null)
-//            mAddMemberMenuItem.setVisible(true);
-//
-//        // set the click listener
-//        mBoxAddMember.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                if (AbstractNetworkReceiver.isConnected(getApplicationContext())) {
-//                    startAddMemberActivity();
-//                } else {
-//                    Toast.makeText(getApplicationContext(),
-//                            getString(R.string.menu_activity_group_admin_panel_activity_cannot_add_member_offline),
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//    }
-//
-//    private void hideAddMember() {
-//        Log.d(TAG, "hideAddMember");
-//
-//        // hides the add member box
-//        mBoxAddMember.setVisibility(View.GONE);
-//
-//        // hides the add member menu item
-//        if (mAddMemberMenuItem != null)
-//            mAddMemberMenuItem.setVisible(false);
-//
-//        // unset the click listener
-//        mBoxAddMember.setOnClickListener(null);
-//    }
+        // shows the add member box
+        mBoxAddMember.setVisibility(View.VISIBLE);
 
+        // set the click listener
+        mBoxAddMember.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "onCreateOptionsMenu");
+                if (AbstractNetworkReceiver.isConnected(getApplicationContext())) {
+                    startAddMemberActivity();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.menu_activity_group_admin_panel_activity_cannot_add_member_offline),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
-        getMenuInflater().inflate(R.menu.menu_activity_group_admin_panel, menu);
+    private void hideAddMember() {
+        Log.d(TAG, "GroupAdminPanelActivity.hideAddMember");
 
-        mAddMemberMenuItem = menu.findItem(R.id.action_add_member);
+        // hides the add member box
+        mBoxAddMember.setVisibility(View.GONE);
 
-        return true;
+        // unset the click listener
+        mBoxAddMember.setOnClickListener(null);
     }
 
     @Override
@@ -321,22 +275,15 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
-        } else if (item.getItemId() == R.id.action_add_member) {
-            onAddMemberOptionsItemClicked();
-            return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
     }
 
-    private void onAddMemberOptionsItemClicked() {
-        Log.d(TAG, "onAddMemberOptionsItemClicked");
-
-        startAddMemberActivity();
-    }
-
     private void startAddMemberActivity() {
         Log.d(TAG, "startAddMemberActivity");
+
+        Toast.makeText(this, "startAddMemberActivity", Toast.LENGTH_SHORT).show();
 
 //        final Intent intent = new Intent(this, AddMembersActivity.class);
 //
@@ -382,11 +329,5 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
         BottomSheetGroupAdminPanelMemberFragment dialog =
                 BottomSheetGroupAdminPanelMemberFragment.newInstance(groupMember, chatGroup);
         dialog.show(ft, BottomSheetGroupAdminPanelMemberFragment.TAG);
-    }
-
-    @Override
-    public void onBackPressed() {
-        setResult(RESULT_OK); // force update interface of the calling activity
-        super.onBackPressed();
     }
 }

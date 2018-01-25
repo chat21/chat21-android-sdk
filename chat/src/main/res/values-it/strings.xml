@@ -53,7 +53,6 @@
     <string name="activity_group_admin_panel_not_available_members_label">Le informazioni sui membri non sono dispobiili</string>
     <string name="activity_group_admin_panel_you_label">te</string>
     <string name="activity_group_admin_panel_add_member_title">Aggiungi membro</string>
-    <string name="menu_activity_group_admin_panel_activity_add_member">@string/activity_group_admin_panel_add_member_title</string>
     <string name="menu_activity_group_admin_panel_activity_cannot_add_member_offline">Non puoi aggiungere un membro se sei offline</string>
 
     <!--fragment_bottom_sheet_group_admin_panel_member-->
