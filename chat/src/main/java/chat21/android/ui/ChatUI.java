@@ -48,7 +48,6 @@ public class ChatUI implements Serializable {
 
     // request constants
     public static final int _REQUEST_CODE_CREATE_GROUP = 100;
-    public static final int _REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY = 200;
     public static final int REQUEST_CODE_SIGNUP_ACTIVITY = 300;
 
     private Context mContext;
