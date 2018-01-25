@@ -47,6 +47,7 @@ import java.io.File;
 import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.exception.ChatRuntimeException;
+import chat21.android.core.groups.models.ChatGroup;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
@@ -79,7 +80,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
 
-    private PresenceHandler presenceHandler;
+    private PresenceHandler presenceHandler = null;
     private ConversationMessagesHandler conversationMessagesHandler;
     private boolean conversWithOnline = false;
     private long conversWithLastOnline = -1;
@@ -102,50 +103,82 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     private ImageView sendButton;
     private LinearLayout mEmojiBar;
 
-    // retrieved data
+    /**
+     * {@code recipient} is the real contact whom is talking with.
+     * it contains all the info to start a conversation.
+     */
     private IChatUser recipient;
-
-    private String channelType;
+    /**
+     * {@code chatGroup} is a support item witch contains all addictional info
+     * about group such as the members list which cannot be included inside the {@code recipient}
+     */
+    private ChatGroup chatGroup;
+    private String channelType; // detect if is a group or a direct conversation
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_message_list);
 
         registerViews();
 
-        // it comes from other activities or from a foreground notification
+        // retrieve recipient from other activities or from a foreground notification
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.BUNDLE_RECIPIENT);
-
+        // retrieve recipient from background notification
         if (recipient == null) {
-            // it comes from background notification
             recipient = getRecipientFromBackgroundNotification();
             Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipient == " + recipient.toString());
         }
 
+        // retrieve channel type
         channelType = getIntent().getStringExtra(BUNDLE_CHANNEL_TYPE);
         // default case
         if (!StringUtils.isValid(channelType)) {
             channelType = Message.DIRECT_CHANNEL_TYPE;
         }
 
+        // retrieve group
+        if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+            chatGroup = ChatManager.getInstance().getGroupsSyncronizer().getById(recipient.getId());
+        }
+
+        // conversation handler
         conversationMessagesHandler = ChatManager.getInstance()
                 .getConversationMessagesHandler(recipient);
         conversationMessagesHandler.upsertConversationMessagesListener(this);
         Log.d(TAG, "MessageListActivity.onCreate: conversationMessagesHandler attached");
         conversationMessagesHandler.connect();
         Log.d(TAG, "MessageListActivity.onCreate: conversationMessagesHandler connected");
-        presenceHandler = ChatManager.getInstance().getPresenceHandler(recipient.getId());
-        presenceHandler.upsertPresenceListener(this);
-        presenceHandler.connect();
 
         initRecyclerView();
 
+        //////// toolbar
+        if (channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
+            if (recipient != null) {
+                initDirectToolbar(recipient);
+            }
+        } else if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+            if (chatGroup != null) {
+                initGroupToolbar(chatGroup);
+            }
+        }
+
+        // minimal settings
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //////// end toolbar
+
+        /////// presence manager
+        if (channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
+            if (recipient != null) {
+                presenceHandler = ChatManager.getInstance().getPresenceHandler(recipient.getId());
+                presenceHandler.upsertPresenceListener(this);
+                presenceHandler.connect();
+            }
+        }
+
         // panel which contains the edittext, the emoji button and the attach button
         initInputPanel();
-
-        initToolbar(recipient);
     }
 
     @Override
@@ -166,8 +199,10 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         super.onDestroy();
         Log.d(TAG, "  MessageListActivity.onDestroy");
 
-        presenceHandler.removePresenceListener(this);
-        Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy: presenceHandler detached");
+        if (presenceHandler != null) {
+            presenceHandler.removePresenceListener(this);
+            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy: presenceHandler detached");
+        }
 
         conversationMessagesHandler.removeConversationMessagesListener(this);
     }
@@ -208,26 +243,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         return recipient;
     }
 
-    private void initToolbar(IChatUser recipient) {
-        Log.d(TAG, "initToolbar");
-
-
-        if (channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
-            if (recipient != null) {
-                initDirectToolbar(recipient);
-            }
-        } else if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
-            if (recipient != null) {
-                initGroupToolbar(recipient);
-            }
-        }
-
-        // minimal settings
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-
     private void initDirectToolbar(final IChatUser recipient) {
         // toolbar picture
         setPicture(recipient.getProfilePictureUrl(), R.drawable.ic_person_avatar);
@@ -246,18 +261,28 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         });
     }
 
-    private void initGroupToolbar(final IChatUser recipient) {
+    private void initGroupToolbar(final ChatGroup chatGroup) {
         // toolbar picture
-        setPicture(recipient.getProfilePictureUrl(), R.drawable.ic_group_avatar);
+        setPicture(chatGroup.getIconURL(), R.drawable.ic_group_avatar);
 
-        // toolbar recipient display name
-        mTitleTextView.setText(recipient.getFullName());
+        // group name
+        mTitleTextView.setText(chatGroup.getName());
+
+        // toolbar group members
+        String groupMembers;
+        if (chatGroup != null && chatGroup.getMembersList() != null && chatGroup.getMembersList().size() > 0) {
+            groupMembers = chatGroup.printMembersListWithSeparator(", ");
+        } else {
+            // if there are no members show the logged user as "you"
+            groupMembers = getString(R.string.activity_message_list_group_info_you_label);
+        }
+        mSubTitleTextView.setText(groupMembers);
 
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MessageListActivity.this, GroupAdminPanelActivity.class);
-                intent.putExtra(ChatUI.BUNDLE_GROUP_ID, recipient.getId());
+                intent.putExtra(ChatUI.BUNDLE_GROUP_ID, chatGroup.getGroupId());
                 startActivityForResult(intent, ChatUI._REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY);
             }
         });

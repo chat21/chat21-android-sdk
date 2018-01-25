@@ -121,8 +121,7 @@ public class ChatGroup implements Serializable {
 
             // if the string starts with separator remove it
             if (delimitedList.startsWith(separator)) {
-                int index = delimitedList.indexOf(delimitedList);
-                delimitedList = delimitedList.substring(index, delimitedList.length());
+                delimitedList = delimitedList.replaceFirst("^"+separator, "");
             }
         }
 
