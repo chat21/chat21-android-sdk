@@ -107,32 +107,6 @@ public class GroupUtils {
         return userId.equals(chatGroup.getOwner()) && chatGroup.getMembers().containsKey(userId) ? true : false;
     }
 
-    public static String getGroupMembersAsList(Map<String, Integer> membersMap) {
-        String members = "";
-
-        for (Map.Entry<String, Integer> entry : membersMap.entrySet()) {
-            String groupUserId = entry.getKey();
-
-            String denormalizedUserId = groupUserId.replace("_", ".");
-
-            // if the member is not the current user shows the member username
-            if (!groupUserId.equals(ChatManager.getInstance().getLoggedUser().getId())) {
-                members += (denormalizedUserId + ", ");
-            }
-        }
-
-//        // add the current logged user as first member of the group
-//        members = context.getString(R.string.activity_message_list_group_info_you_label) + ", " + members;
-
-        // remove empty spaces
-        members = members.trim();
-
-        // if the member string end with the separator, remove it
-        if (members.endsWith(","))
-            members = members.substring(0, members.length() - 1);
-
-        return members;
-    }
 
     public interface OnGroupsChangeListener {
         void onGroupChanged(ChatGroup chatGroup, String groupId);

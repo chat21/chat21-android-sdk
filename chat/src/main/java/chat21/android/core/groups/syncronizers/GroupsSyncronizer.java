@@ -179,7 +179,7 @@ public class GroupsSyncronizer {
         }
     }
 
-    public static ChatGroup decodeGroupFromSnapshot(DataSnapshot dataSnapshot) {
+    public ChatGroup decodeGroupFromSnapshot(DataSnapshot dataSnapshot) {
 //        Log.d(DEBUG_GROUPS, "GroupsSyncronizer.decodeGroupFromSnapshot: dataSnapshot == " + dataSnapshot.toString());
 //        DataSnapshot {
 //            key = -L3XgCm9Fpve_cV5Ma_z,

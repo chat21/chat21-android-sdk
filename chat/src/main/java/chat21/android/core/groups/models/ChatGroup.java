@@ -4,7 +4,13 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import chat21.android.core.ChatManager;
+import chat21.android.core.users.models.IChatUser;
 
 /**
  * Created by stefanodp91 on 16/01/17.
@@ -67,6 +73,12 @@ public class ChatGroup implements Serializable {
         this.members = members;
     }
 
+    @Exclude
+    public List<IChatUser> getMembersList() {
+
+        return patchMembers(members);
+    }
+
     public String getName() {
         return name;
     }
@@ -81,6 +93,40 @@ public class ChatGroup implements Serializable {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    private List<IChatUser> patchMembers(Map<String, Integer> members) {
+        List<IChatUser> patchedMembers = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> entry : members.entrySet()) {
+            IChatUser contact = ChatManager.getInstance().getContactsSynchronizer().findById(entry.getKey());
+            if (contact != null) {
+                patchedMembers.add(contact);
+            }
+        }
+
+        return patchedMembers;
+    }
+
+    public String printMembersListWithSeparator(String separator) {
+        String delimitedList = "";
+
+        if (getMembersList() != null && getMembersList().size() > 0) {
+            // append chat users
+            Iterator<IChatUser> it = getMembersList().iterator();
+
+            while (it.hasNext()) {
+                delimitedList += separator + it.next().getFullName();
+            }
+
+            // if the string starts with separator remove it
+            if (delimitedList.startsWith(separator)) {
+                int index = delimitedList.indexOf(delimitedList);
+                delimitedList = delimitedList.substring(index, delimitedList.length());
+            }
+        }
+
+        return delimitedList;
     }
 
     @Override
