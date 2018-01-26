@@ -14,23 +14,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.groups.GroupUtils;
 import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.ui.ChatUI;
+import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.users.activities.PublicProfileActivity;
-import chat21.android.utils.StringUtils;
+
+import static chat21.android.ui.ChatUI.BUNDLE_RECIPIENT;
 
 /**
  * Created by frontiere21 on 25/11/16.
  */
-public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogFragment implements
-        View.OnClickListener {
+public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogFragment {
     public static final String TAG = BottomSheetGroupAdminPanelMemberFragment.class.getName();
 
     private static final String PRIVATE_BUNDLE_GROUP_MEMBER = "PRIVATE_BUNDLE_GROUP_MEMBER";
@@ -38,13 +35,11 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
 
     private IChatUser groupMember;
     private ChatGroup chatGroup;
-    private String loggedUserId;
+    private IChatUser loggedUser;
 
-    private TextView mUsername;
-    private Button mBtnRemoveMember;
-    private Button mBtnSeeProfile;
-    private Button mBtnSendMessage;
-    private Button mBtnCancel;
+    private Button removeMember;
+
+    private GroupsSyncronizer groupsSyncronizer;
 
     public static BottomSheetGroupAdminPanelMemberFragment newInstance(IChatUser groupMember, ChatGroup chatGroup) {
         Log.i(TAG, "newInstance");
@@ -69,7 +64,9 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
         chatGroup = (ChatGroup) getArguments().getSerializable(PRIVATE_BUNDLE_GROUP);
 
         // retrieves the logged userId from chant configuration
-        loggedUserId = ChatManager.getInstance().getLoggedUser().getId();
+        loggedUser = ChatManager.getInstance().getLoggedUser();
+
+        groupsSyncronizer = ChatManager.getInstance().getGroupsSyncronizer();
     }
 
     @Override
@@ -80,8 +77,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
                         container, false);
 
         registerViews(rootView);
-        initViews();
-        initListeners();
+        initRemoveMemberButton();
 
         return rootView;
     }
@@ -90,151 +86,91 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
     private void registerViews(View rootView) {
         Log.i(TAG, "registerViews");
 
-        mUsername = (TextView) rootView.findViewById(R.id.username);
-        mBtnRemoveMember = (Button) rootView.findViewById(R.id.btn_remove_member);
-        mBtnSeeProfile = (Button) rootView.findViewById(R.id.btn_see_profile);
-        mBtnSendMessage = (Button) rootView.findViewById(R.id.btn_send_message);
-        mBtnCancel = (Button) rootView.findViewById(R.id.btn_cancel);
-    }
+        // contact username
+        TextView username = (TextView) rootView.findViewById(R.id.username);
+        username.setText(groupMember.getFullName());
 
-    private void initViews() {
-        Log.i(TAG, "initViews");
+        // remove member
+        removeMember = (Button) rootView.findViewById(R.id.btn_remove_member);
+        removeMember.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showRemoveMemberAlertDialog();
+            }
+        });
 
-        mUsername.setText(groupMember.getFullName());
+        // see profile
+        Button seeProfile = (Button) rootView.findViewById(R.id.btn_see_profile);
+        if (!groupMember.equals(loggedUser)) {
+            seeProfile.setVisibility(View.VISIBLE);
+            seeProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity().getApplicationContext(), PublicProfileActivity.class);
+                    intent.putExtra(BUNDLE_RECIPIENT, groupMember);
+                    startActivity(intent);
 
-        initRemoveMemberButton();
+                    // dismiss the bottomsheet
+                    getDialog().dismiss();
+                }
+            });
+        } else {
+            seeProfile.setVisibility(View.GONE);
+        }
 
-        // bugfix Issue #43
-        initSendMessageButton();
-    }
+        // send direct message
+        Button sendMessage = (Button) rootView.findViewById(R.id.btn_send_message);
+        if (!groupMember.equals(loggedUser)) {
+            sendMessage.setVisibility(View.VISIBLE);
+            sendMessage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), MessageListActivity.class);
+                    intent.putExtra(BUNDLE_RECIPIENT, groupMember);
+                    getActivity().startActivity(intent);
 
-    private void initListeners() {
-        Log.d(TAG, "initListeners");
+                    // dismiss the bottomsheet
+                    getDialog().dismiss();
+                }
+            });
+        } else {
+            sendMessage.setVisibility(View.GONE);
+        }
 
-        mBtnRemoveMember.setOnClickListener(this);
-        mBtnSeeProfile.setOnClickListener(this);
-        mBtnSendMessage.setOnClickListener(this);
-        mBtnCancel.setOnClickListener(this);
+        // cancel
+        Button cancel = (Button) rootView.findViewById(R.id.btn_cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // dismiss the bottomsheet
+                getDialog().dismiss();
+            }
+        });
     }
 
     private void initRemoveMemberButton() {
         Log.d(TAG, "initRemoveMemberButton");
 
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), chatGroup.getGroupId(),
-                new GroupUtils.OnGroupsChangeListener() {
-                    @Override
-                    public void onGroupChanged(ChatGroup chatGroup, String groupId) {
-
-                        // the logged user is the admin of the chatGroup
-                        // and the logged user is a member of the chatGroup
-                        if (GroupUtils.isAnAdmin(chatGroup, loggedUserId)) {
-                            // the clicked user is an admin
-                            if (groupMember.getId().equals(chatGroup.getOwner())) {
-                                // cannot delete and admin
-                                mBtnRemoveMember.setVisibility(View.GONE);
-                            } else {
-                                mBtnRemoveMember.setVisibility(View.VISIBLE);
-                            }
-                        } else {
-                            mBtnRemoveMember.setVisibility(View.GONE);
-                        }
-
-                        // allows the logged user to leave the chatGroup
-                        if (groupMember.getId().equals(loggedUserId)) {
-                            mBtnRemoveMember.setText(getString(
-                                    R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_btn_label));
-                            mBtnRemoveMember.setVisibility(View.VISIBLE);
-                        }
-                    }
-
-                    @Override
-                    public void onGroupCancelled(String errorMessage) {
-                        Log.e(TAG, errorMessage);
-                    }
-                });
-    }
-
-    // bugfix Issue #43
-    private void initSendMessageButton() {
-        Log.d(TAG, "initSendMessageButton");
-
-        GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), chatGroup.getGroupId(),
-                new GroupUtils.OnGroupsChangeListener() {
-                    @Override
-                    public void onGroupChanged(ChatGroup chatGroup, String groupId) {
-
-                        // hide the send message to itself
-                        if (groupMember.getId().equals(loggedUserId)) {
-                            mBtnSendMessage.setVisibility(View.GONE);
-                        } else {
-                            mBtnSendMessage.setVisibility(View.VISIBLE);
-                        }
-                    }
-
-                    @Override
-                    public void onGroupCancelled(String errorMessage) {
-                        Log.e(TAG, errorMessage);
-                    }
-                });
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == mBtnRemoveMember.getId()) {
-            onRemoveClickListener();
-        } else if (view.getId() == mBtnSeeProfile.getId()) {
-            onSeeProfileClickListener();
-        } else if (view.getId() == mBtnSendMessage.getId()) {
-//            onSendMessageClickListener();
-        } else if (view.getId() == mBtnCancel.getId()) {
-            onCancelClickListener();
+        // check logged user is the admin of the group
+        if (chatGroup.getOwner().equals(loggedUser.getId()) &&
+                chatGroup.getMembersList().contains(loggedUser)) {
+            // the clicked user is an admin
+            if (groupMember.getId().equals(chatGroup.getOwner())) {
+                // cannot delete and admin
+                removeMember.setVisibility(View.GONE);
+            } else {
+                removeMember.setVisibility(View.VISIBLE);
+            }
         } else {
-            Log.w(TAG, "not handled click");
+            removeMember.setVisibility(View.GONE);
         }
-    }
 
-    private void onRemoveClickListener() {
-        Log.d(TAG, "onRemoveClickListener");
-
-        showRemoveMemberAlertDialog();
-    }
-
-    private void onSeeProfileClickListener() {
-        Log.d(TAG, "onSeeprofileClickListener");
-
-        Intent intent = new Intent(getActivity().getApplicationContext(), PublicProfileActivity.class);
-        intent.putExtra(ChatUI.BUNDLE_RECIPIENT, groupMember);
-        startActivity(intent);
-    }
-
-//    private void onSendMessageClickListener() {
-//        Log.d(TAG, "onSendMessageClickListener");
-//
-//        String conversationId =  username;
-////        String conversationId = ConversationUtils.getConversationId(ChatManager.getInstance()
-////                .getLoggedUser()
-////                .getId(), username);
-//
-//        startMessageActivity(conversationId);
-//
-//        // dismiss the bottomsheet
-//        getDialog().dismiss();
-//    }
-
-//    private void startMessageActivity(String conversationId) {
-//        Log.d(TAG, "startMessageActivity");
-//
-//        Intent intent = new Intent(getActivity(), MessageListActivity.class);
-//        intent.putExtra(INTENT_BUNDLE_RECIPIENT_ID, conversationId);
-//        intent.putExtra(ChatUI.INTENT_BUNDLE_IS_FROM_NOTIFICATION, false);
-//        getActivity().startActivity(intent);
-//    }
-
-    private void onCancelClickListener() {
-        Log.d(TAG, "onCancelClickListener");
-
-        // dismiss the bottomsheet
-        getDialog().dismiss();
+        // allows the logged user to leave the chatGroup
+        if (groupMember.equals(loggedUser)) {
+            removeMember.setText(getString(
+                    R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_btn_label));
+            removeMember.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showRemoveMemberAlertDialog() {
@@ -243,7 +179,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
         String message, positiveClickMessage;
 
         // allows the logged user to leave the chatGroup
-        if (groupMember.getId().equals(loggedUserId)) {
+        if (groupMember.equals(loggedUser)) {
             message = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_message);
             positiveClickMessage = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_positive_click);
         } else {
@@ -257,7 +193,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
                 .setPositiveButton(positiveClickMessage, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        removeMemberFromGroup(ChatManager.getInstance().getAppId(), chatGroup.getGroupId(), groupMember.getId());
+                        groupsSyncronizer.removeMemberFromChatGroup(chatGroup.getGroupId(), groupMember);
 
                         // dismiss the dialog
                         dialog.dismiss();
@@ -276,22 +212,5 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
                         getDialog().dismiss();
                     }
                 }).show();
-    }
-
-    private void removeMemberFromGroup(String appId, final String groupId, final String userId) {
-        Log.d(TAG, "removeMemberFromGroup");
-
-        DatabaseReference nodeMembers;
-
-        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
-            nodeMembers = FirebaseDatabase.getInstance()
-                    .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
-                    .child("apps/" + appId + "/groups/" + groupId + "/members/" + userId);
-        } else {
-            nodeMembers = FirebaseDatabase.getInstance().getReference()
-                    .child("apps/" + appId + "/groups/" + groupId + "/members/" + userId);
-        }
-
-        nodeMembers.removeValue();
     }
 }
