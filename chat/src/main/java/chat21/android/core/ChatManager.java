@@ -374,7 +374,7 @@ public class ChatManager {
         }
     }
 
-//    public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
+//    public void addChatGroupsListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
 //
 //        ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
 //                Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser().getId()

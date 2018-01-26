@@ -1,5 +1,6 @@
 package chat21.android.ui.groups.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -19,13 +20,14 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
-import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
+import chat21.android.core.exception.ChatRuntimeException;
+import chat21.android.core.groups.listeners.GroupsListener;
 import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.groups.adapters.GroupMembersListAdapter;
 import chat21.android.ui.groups.fragments.BottomSheetGroupAdminPanelMemberFragment;
@@ -33,12 +35,14 @@ import chat21.android.ui.groups.listeners.OnGroupMemberClickListener;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
+import static chat21.android.ui.ChatUI.BUNDLE_GROUP;
 import static chat21.android.ui.ChatUI.BUNDLE_GROUP_ID;
+import static chat21.android.ui.ChatUI.BUNDLE_PARENT_ACTIVITY;
 
 /**
  * Created by stefanodp91 on 29/06/17.
  */
-public class GroupAdminPanelActivity extends AppCompatActivity implements OnGroupMemberClickListener {
+public class GroupAdminPanelActivity extends AppCompatActivity implements OnGroupMemberClickListener, GroupsListener {
     private static final String TAG = GroupAdminPanelActivity.class.getName();
 
     private RecyclerView mMemberList;
@@ -49,7 +53,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
     private LinearLayout mBoxMembers;
     private LinearLayout mBoxUnavailableMembers;
 
-    private ContactsSynchronizer contactsSynchronizer;
+    private GroupsSyncronizer groupsSyncronizer;
 
     private String groupId;
     private ChatGroup chatGroup;
@@ -64,17 +68,20 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
         setContentView(R.layout.activity_group_admin_panel);
         registerViews();
 
+        loggedUser = ChatManager.getInstance().getLoggedUser();
+
         // retrieve the groupId (from MessageListActivity)
         groupId = getIntent().getStringExtra(BUNDLE_GROUP_ID);
 
-        // retrieve the chatGroup by its groupId from memory
-        this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
-        chatGroup = ChatManager.getInstance().getGroupsSyncronizer().getById(groupId);
+        this.groupsSyncronizer = ChatManager.getInstance().getGroupsSyncronizer();
 
-        loggedUser = ChatManager.getInstance().getLoggedUser();
+        chatGroup = groupsSyncronizer.getById(groupId);
+        groupsSyncronizer.addGroupsListener(this);
 
         if (chatGroup != null) {
-            groupMembers = convertMembersMapToList(chatGroup.getMembers());
+            groupsSyncronizer.connect();
+
+            groupMembers = chatGroup.getMembersList();
             groupAdmins = getGroupAdmins();
 
             setToolbar();
@@ -93,22 +100,6 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
         mBoxAddMember = (LinearLayout) findViewById(R.id.box_add_member);
         mBoxMembers = (LinearLayout) findViewById(R.id.box_members);
         mBoxUnavailableMembers = (LinearLayout) findViewById(R.id.box_unavailable_members);
-    }
-
-    private List<IChatUser> convertMembersMapToList(Map<String, Integer> memberMaps) {
-        List<IChatUser> members = new ArrayList<>();
-
-        // iterate contacts
-        for (IChatUser contact : contactsSynchronizer.getContacts()) {
-            // iterate keys
-            for (String member : memberMaps.keySet()) {
-                if (member.equals(contact.getId())) {
-                    members.add(contact);
-                }
-            }
-        }
-
-        return members;
     }
 
     private List<IChatUser> getGroupAdmins() {
@@ -283,35 +274,10 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
     private void startAddMemberActivity() {
         Log.d(TAG, "startAddMemberActivity");
 
-        Toast.makeText(this, "startAddMemberActivity", Toast.LENGTH_SHORT).show();
-
-//        final Intent intent = new Intent(this, AddMembersActivity.class);
-//
-//        if (mGroup != null) {
-//            intent.putExtra(ChatUI.BUNDLE_GROUP, mGroup);
-//            intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
-//                    GroupAdminPanelActivity.class.getName());
-//            intent.putExtra(BUNDLE_GROUP_ID, recipient.getId());
-//            startActivity(intent);
-//        } else {
-//            GroupUtils.subscribeOnGroupsChanges(ChatManager.getInstance().getAppId(), recipient.getId(),
-//                    new GroupUtils.OnGroupsChangeListener() {
-//                        @Override
-//                        public void onGroupChanged(ChatGroup chatGroup, String groupId) {
-//                            mGroup = chatGroup;
-//                            intent.putExtra(ChatUI.BUNDLE_GROUP, chatGroup);
-//                            intent.putExtra(ChatUI.BUNDLE_PARENT_ACTIVITY,
-//                                    GroupAdminPanelActivity.class.getName());
-//                            intent.putExtra(BUNDLE_GROUP_ID, groupId);
-//                            startActivity(intent);
-//                        }
-//
-//                        @Override
-//                        public void onGroupCancelled(String errorMessage) {
-//                            Log.e(TAG, "onGroupCancelled. " + errorMessage);
-//                        }
-//                    });
-//        }
+//        Intent intent = new Intent(this, AddMembersActivity.class);
+        Intent intent = new Intent(this, AddMembersToGroupActivity.class);
+        intent.putExtra(BUNDLE_GROUP, chatGroup);
+        startActivity(intent);
     }
 
     // handles the click on a member
@@ -329,5 +295,46 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
         BottomSheetGroupAdminPanelMemberFragment dialog =
                 BottomSheetGroupAdminPanelMemberFragment.newInstance(groupMember, chatGroup);
         dialog.show(ft, BottomSheetGroupAdminPanelMemberFragment.TAG);
+    }
+
+    @Override
+    public void onGroupAdded(ChatGroup chatGroup, ChatRuntimeException e) {
+        if (e == null) {
+
+            if (chatGroup.getGroupId().equals(groupId)) {
+                Log.d(TAG, "GroupAdminPanelActivity.onGroupAdded.chatGroup: " + chatGroup.toString());
+
+                this.chatGroup = chatGroup;
+
+                updateGroupMemberListAdapter(chatGroup.getMembersList()); // update members
+            }
+        } else {
+            Log.e(TAG, "GroupAdminPanelActivity.onGroupAdded: " + e.toString());
+        }
+    }
+
+    @Override
+    public void onGroupChanged(ChatGroup chatGroup, ChatRuntimeException e) {
+        if (e == null) {
+
+            this.chatGroup = chatGroup;
+
+            if (chatGroup.getGroupId().equals(groupId)) {
+                Log.d(TAG, "GroupAdminPanelActivity.onGroupChanged.chatGroup: " + chatGroup.toString());
+
+                updateGroupMemberListAdapter(chatGroup.getMembersList()); // update members
+            }
+        } else {
+            Log.e(TAG, "GroupAdminPanelActivity.onGroupChanged: " + e.toString());
+        }
+    }
+
+    @Override
+    public void onGroupRemoved(ChatRuntimeException e) {
+        if (e == null) {
+            Log.d(TAG, "GroupAdminPanelActivity.onGroupRemoved");
+        } else {
+            Log.e(TAG, "GroupAdminPanelActivity.onGroupRemoved: " + e.toString());
+        }
     }
 }

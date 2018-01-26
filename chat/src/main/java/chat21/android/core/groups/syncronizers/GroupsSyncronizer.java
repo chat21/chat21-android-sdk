@@ -15,6 +15,7 @@ import java.util.Map;
 import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.groups.listeners.GroupsListener;
 import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_GROUPS;
@@ -26,9 +27,8 @@ import static chat21.android.utils.DebugConstants.DEBUG_GROUPS;
 public class GroupsSyncronizer {
 
     private List<ChatGroup> chatGroups;
-    private DatabaseReference groupsNode;
-    private String appId;
-    private String currentUserId;
+    private DatabaseReference userGroupsNode;
+    private DatabaseReference appGroupsNode;
     private List<GroupsListener> groupsListeners;
     private ChildEventListener groupsChildEventListener;
 
@@ -36,21 +36,36 @@ public class GroupsSyncronizer {
         groupsListeners = new ArrayList<>();
         chatGroups = new ArrayList<>(); // chatGroups in memory
 
-        this.appId = appId;
-        this.currentUserId = currentUserId;
+        setupAppGroupsNode(firebaseUrl, appId);
+        setupUserGroupsNode(firebaseUrl, appId, currentUserId);
+    }
 
+    private void setupAppGroupsNode(String firebaseUrl, String appId) {
         if (StringUtils.isValid(firebaseUrl)) {
-            this.groupsNode = FirebaseDatabase.getInstance()
+            this.appGroupsNode = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl(firebaseUrl)
+                    .child("/apps/" + appId + "/groups/");
+        } else {
+            this.appGroupsNode = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("/apps/" + appId + "/groups/");
+        }
+        this.appGroupsNode.keepSynced(true);
+        Log.d(DEBUG_GROUPS, "GroupsSyncronizer.appGroupsNode == " + appGroupsNode.toString());
+    }
+
+    private void setupUserGroupsNode(String firebaseUrl, String appId, String currentUserId) {
+        if (StringUtils.isValid(firebaseUrl)) {
+            this.userGroupsNode = FirebaseDatabase.getInstance()
                     .getReferenceFromUrl(firebaseUrl)
                     .child("/apps/" + appId + "/users/" + currentUserId + "/groups/");
         } else {
-            this.groupsNode = FirebaseDatabase.getInstance()
+            this.userGroupsNode = FirebaseDatabase.getInstance()
                     .getReference()
                     .child("/apps/" + appId + "/users/" + currentUserId + "/groups/");
         }
-        this.groupsNode.keepSynced(true);
-
-        Log.d(DEBUG_GROUPS, "GroupsSyncronizer.groupsNode == " + groupsNode.toString());
+        this.userGroupsNode.keepSynced(true);
+        Log.d(DEBUG_GROUPS, "GroupsSyncronizer.userGroupsNode == " + userGroupsNode.toString());
     }
 
     public ChildEventListener connect(GroupsListener groupsListener) {
@@ -62,7 +77,7 @@ public class GroupsSyncronizer {
 
         if (this.groupsChildEventListener == null) {
 
-            this.groupsChildEventListener = groupsNode.addChildEventListener(new ChildEventListener() {
+            this.groupsChildEventListener = userGroupsNode.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                     Log.d(DEBUG_GROUPS, "GroupsSyncronizer.connect.onChildAdded");
@@ -114,7 +129,24 @@ public class GroupsSyncronizer {
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     Log.d(DEBUG_GROUPS, "GroupsSyncronizer.connect.onChildRemoved");
 
-                    // TODO: 24/01/18
+                    try {
+                        ChatGroup chatGroup = decodeGroupFromSnapshot(dataSnapshot);
+
+                        saveOrUpdateGroupInMemory(chatGroup);
+
+                        if (groupsListeners != null) {
+                            for (GroupsListener groupsListener : groupsListeners) {
+                                groupsListener.onGroupRemoved(null);
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        if (groupsListeners != null) {
+                            for (GroupsListener groupsListener : groupsListeners) {
+                                groupsListener.onGroupRemoved(new ChatRuntimeException(e));
+                            }
+                        }
+                    }
                 }
 
                 @Override
@@ -264,7 +296,7 @@ public class GroupsSyncronizer {
     }
 
     public void disconnect() {
-        this.groupsNode.removeEventListener(this.groupsChildEventListener);
+        this.userGroupsNode.removeEventListener(this.groupsChildEventListener);
         this.removeAllGroupsListeners();
     }
 
@@ -281,5 +313,26 @@ public class GroupsSyncronizer {
             }
         }
         return null;
+    }
+
+    public void removeMemberFromChatGroup(String groupId, IChatUser toRemove) {
+        ChatGroup chatGroup = getById(groupId);
+
+        if (chatGroup.getMembersList().contains(toRemove)) {
+            appGroupsNode.child("/" + groupId + "/members/" + toRemove.getId()).removeValue();
+        }
+    }
+
+
+    public void addMembersToChatGroup(String groupId, Map<String, Integer> toAdd) {
+        ChatGroup chatGroup = getById(groupId);
+
+        Map<String, Integer> chatGroupMembers = chatGroup.getMembers();
+
+        // add the news member to the existing members
+        // the map automatically override existing keys
+        chatGroupMembers.putAll(toAdd);
+
+        appGroupsNode.child("/" + chatGroup.getGroupId() + "/members/").setValue(chatGroupMembers);
     }
 }

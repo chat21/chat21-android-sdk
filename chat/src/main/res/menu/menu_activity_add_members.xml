@@ -5,9 +5,9 @@
     <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="always"
+        android:title="@string/add_members_activity_searchview_query_hint"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        android:title="@string/add_members_activity_searchview_query_hint"/>
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_create"
@@ -18,9 +18,17 @@
 
     <item
         android:id="@+id/action_add_member"
-        android:orderInCategory="1"
         android:icon="@drawable/ic_add_member_white_24dp"
+        android:orderInCategory="1"
         android:title="@string/menu_add_members_action_add_member"
+        android:visible="false"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_next"
+        android:orderInCategory="1"
+        android:title="Next"
         android:visible="false"
         app:showAsAction="always" />
 </menu>

@@ -55,7 +55,15 @@
             android:label="@string/string_create_group_activity_title"></activity>
 
         <activity
+            android:name=".ui.groups.activities.NewGroupActivity"
+            android:label="@string/string_create_group_activity_title"></activity>
+
+        <activity
             android:name=".ui.groups.activities.AddMembersActivity"
+            android:label="@string/string_add_members_activity_title"></activity>
+
+        <activity
+            android:name=".ui.groups.activities.AddMembersToGroupActivity"
             android:label="@string/string_add_members_activity_title"></activity>
 
         <activity android:name=".ui.groups.activities.GroupAdminPanelActivity"></activity>
