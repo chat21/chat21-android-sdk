@@ -68,7 +68,7 @@
 
     <!--fragment_conversation_list-->
     <string name="fragment_conversation_list_cannot_open_conversation_label">@string/activity_conversation_list_cannot_open_converation_label</string>
-    <string name="fragment_conversation_list_my_group_label">I miei gruppi</string>
+    <string name="fragment_conversation_list_my_group_label">Gruppi</string>
 
     <!--fragment_bottom_sheet_group_admin_panel_member-->
     <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_title">Rimuovi membro</string>

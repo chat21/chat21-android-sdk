@@ -49,7 +49,7 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupCl
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //////// end toolbar
 
-        layoutNoGroups = findViewById(R.id.layout_no_groups); 
+        layoutNoGroups = findViewById(R.id.layout_no_groups);
 
         //////// recycler view
         mMyGroupsListRecyclerView = (RecyclerView) findViewById(R.id.list);
