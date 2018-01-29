@@ -46,8 +46,8 @@ import java.io.File;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.chat_groups.models.ChatGroup;
+import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;
@@ -344,123 +344,121 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     private void initInputPanel() {
         Log.d(TAG, "initInputPanel");
 
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-        if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
-            mEmojiBar.setVisibility(View.VISIBLE);
+            @Override
+            public void afterTextChanged(Editable s) {
+                // bugfix ssue #4
+                if (editText.getText().toString() == null ||
+                        editText.getText().toString().isEmpty() ||
+                        // source : https://stackoverflow.com/questions/28040993/check-if-string-is-only-line-breaks
+                        // This regular expression will match all the strings that
+                        // contain one or more characters from the set of \n and \r.
+                        editText.getText().toString().matches("[\\n\\r]+")) {
+                    // not valid input - hides the send button
+                    sendButton.setVisibility(View.GONE);
+                    attachButton.setVisibility(View.VISIBLE);
+                } else {
+                    // valid input - shows the send button
+                    sendButton.setVisibility(View.VISIBLE);
+                    attachButton.setVisibility(View.GONE);
+                }
+            }
+        });
 
-            if (chatGroup != null && chatGroup.getMembersList().contains(ChatManager.getInstance().getLoggedUser())) {
+        emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+        attachButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+        sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
 
-                editText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
+        emojiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                emojiPopup.toggle();
+            }
+        });
+        attachButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Log.d(TAG, "MessageListActivity.onAttachClicked");
 
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    }
+                if (ChatUI.getInstance().getOnAttachClickListener() != null) {
+                    ChatUI.getInstance().getOnAttachClickListener().onAttachClicked(null);
+                }
 
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        // bugfix ssue #4
-                        if (editText.getText().toString() == null ||
-                                editText.getText().toString().isEmpty() ||
-                                // source : https://stackoverflow.com/questions/28040993/check-if-string-is-only-line-breaks
-                                // This regular expression will match all the strings that
-                                // contain one or more characters from the set of \n and \r.
-                                editText.getText().toString().matches("[\\n\\r]+")) {
-                            // not valid input - hides the send button
-                            sendButton.setVisibility(View.GONE);
-                            attachButton.setVisibility(View.VISIBLE);
-                        } else {
-                            // valid input - shows the send button
-                            sendButton.setVisibility(View.VISIBLE);
-                            attachButton.setVisibility(View.GONE);
-                        }
-                    }
-                });
+                showAttachBottomSheet();
+            }
+        });
 
-                emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
-                attachButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
-                sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Log.d(TAG, "onSendClicked");
 
-                emojiButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        emojiPopup.toggle();
-                    }
-                });
-                attachButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        Log.d(TAG, "MessageListActivity.onAttachClicked");
+                String text = editText.getText().toString();
 
-                        if (ChatUI.getInstance().getOnAttachClickListener() != null) {
-                            ChatUI.getInstance().getOnAttachClickListener().onAttachClicked(null);
-                        }
-
-                        showAttachBottomSheet();
-                    }
-                });
-
-                sendButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        Log.d(TAG, "onSendClicked");
-
-                        String text = editText.getText().toString();
-
-                        if (!StringUtils.isValid(text)) {
+                if (!StringUtils.isValid(text)) {
 //                    Toast.makeText(MessageListActivity.this,
 //                            getString(R.string.cannot_send_empty_message),
 //                            Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+                    return;
+                }
 
-                        ChatManager.getInstance()
-                                .sendTextMessage(recipient.getId(), recipient.getFullName(), text, channelType, null, new SendMessageListener() {
-                                    @Override
-                                    public void onBeforeMessageSent(Message message, ChatRuntimeException chatException) {
-                                        if (chatException == null) {
-                                            // if the message exists update it, else add it
-                                            Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.id: " + message.getId());
-                                            Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.recipient: " + message.getRecipient());
+                ChatManager.getInstance()
+                        .sendTextMessage(recipient.getId(), recipient.getFullName(), text, channelType, null, new SendMessageListener() {
+                            @Override
+                            public void onBeforeMessageSent(Message message, ChatRuntimeException chatException) {
+                                if (chatException == null) {
+                                    // if the message exists update it, else add it
+                                    Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.id: " + message.getId());
+                                    Log.d(TAG, "sendTextMessage.onBeforeMessageSent.message.recipient: " + message.getRecipient());
 
-                                            messageListAdapter.updateMessage(message);
-                                            scrollToBottom();
-                                        } else {
+                                    messageListAdapter.updateMessage(message);
+                                    scrollToBottom();
+                                } else {
 
-                                            Toast.makeText(MessageListActivity.this,
-                                                    "Failed to send message",
-                                                    Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MessageListActivity.this,
+                                            "Failed to send message",
+                                            Toast.LENGTH_SHORT).show();
 
-                                            Log.e(TAG, "sendTextMessage.onBeforeMessageSent: ", chatException);
-                                        }
-                                    }
+                                    Log.e(TAG, "sendTextMessage.onBeforeMessageSent: ", chatException);
+                                }
+                            }
 
-                                    @Override
-                                    public void onMessageSentComplete(Message message, ChatRuntimeException chatException) {
-                                        if (chatException == null) {
+                            @Override
+                            public void onMessageSentComplete(Message message, ChatRuntimeException chatException) {
+                                if (chatException == null) {
 
-                                            Log.d(TAG, "message sent: " + message.toString());
-                                        } else {
-                                            Toast.makeText(MessageListActivity.this,
-                                                    "Failed to send message",
-                                                    Toast.LENGTH_SHORT).show();
-                                            Log.e(TAG, "error sending message : ", chatException);
-                                        }
-                                    }
-                                });
+                                    Log.d(TAG, "message sent: " + message.toString());
+                                } else {
+                                    Toast.makeText(MessageListActivity.this,
+                                            "Failed to send message",
+                                            Toast.LENGTH_SHORT).show();
+                                    Log.e(TAG, "error sending message : ", chatException);
+                                }
+                            }
+                        });
 
-                        // clear the edittext
-                        editText.setText("");
-                    }
-                });
-                setUpEmojiPopup();
+                // clear the edittext
+                editText.setText("");
+            }
+        });
+        setUpEmojiPopup();
+
+        if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+            if (chatGroup != null && chatGroup.getMembersList().contains(ChatManager.getInstance().getLoggedUser())) {
+                mEmojiBar.setVisibility(View.VISIBLE);
             } else {
                 mEmojiBar.setVisibility(View.GONE);
             }
         }
+
     }
 
     @Override
@@ -724,7 +722,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                 .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
                     @Override
                     public void onEmojiPopupDismiss() {
-                        emojiButton.setImageResource(R.drawable.emoji_google_category_people);
+                        emojiButton.setImageResource(R.drawable.emoji_ios_category_people);
                     }
                 })
                 .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
