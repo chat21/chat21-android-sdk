@@ -49,6 +49,8 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupCl
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //////// end toolbar
 
+        layoutNoGroups = findViewById(R.id.layout_no_groups); 
+
         //////// recycler view
         mMyGroupsListRecyclerView = (RecyclerView) findViewById(R.id.list);
         // grid facebook like
@@ -57,8 +59,6 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupCl
         mMyGroupsListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         updateAdapter(ChatManager.getInstance().getGroupsSyncronizer().getChatGroups());
         //////// end recycler view
-
-        layoutNoGroups = findViewById(R.id.layout_no_groups);
     }
 
     private void updateAdapter(List<ChatGroup> chatGroups) {
