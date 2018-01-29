@@ -7,16 +7,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.google.GoogleEmojiProvider;
+import com.vanniktech.emoji.ios.IosEmojiProvider;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import chat21.android.core.conversations.ConversationsHandler;
-import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
@@ -153,10 +153,9 @@ public class ChatManager {
 
         mInstance = chat;
 
-        // TODO: 16/01/18 move the emoji provider to chatUI
         // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.
-//        EmojiManager.install(new IosEmojiProvider());
-        EmojiManager.install(new GoogleEmojiProvider());
+        //  EmojiManager.install(new IosEmojiProvider());
+        //EmojiManager.install(new IosEmojiProvider());
 
 //        chat.loggedUser = currentUser;
         // serialize the current user

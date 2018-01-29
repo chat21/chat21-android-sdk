@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import com.vanniktech.emoji.EmojiManager;
+import com.vanniktech.emoji.ios.IosEmojiProvider;
+
 import java.io.Serializable;
 
 import chat21.android.core.ChatManager;
@@ -67,6 +70,10 @@ public class ChatUI implements Serializable {
 
         //set the default mContext value equals to ChatManager.getInstance(). Use ChatUI.getIntance().setContext to use another context
         mContext = ChatManager.getInstance().getContext();
+
+        // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.
+        // EmojiManager.install(new IosEmojiProvider());
+        EmojiManager.install(new IosEmojiProvider());
 
         //default init for onNewConversationClickListener
         setDefaultOnNewConversationClickListener();
