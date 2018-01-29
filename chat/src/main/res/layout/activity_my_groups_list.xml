@@ -23,8 +23,14 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <include
+        android:id="@+id/layout_no_groups"
+        layout="@layout/layout_no_groups"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </android.support.design.widget.CoordinatorLayout>

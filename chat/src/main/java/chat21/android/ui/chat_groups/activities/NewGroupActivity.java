@@ -1,4 +1,4 @@
-package chat21.android.ui.groups.activities;
+package chat21.android.ui.chat_groups.activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,7 +19,7 @@ import chat21.android.core.chat_groups.listeners.ChatGroupCreatedListener;
 import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.exception.ChatRuntimeException;
-import chat21.android.ui.groups.WizardNewGroup;
+import chat21.android.ui.chat_groups.WizardNewGroup;
 import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_GROUPS;

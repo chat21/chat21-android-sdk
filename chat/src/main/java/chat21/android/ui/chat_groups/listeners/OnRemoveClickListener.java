@@ -1,4 +1,4 @@
-package chat21.android.ui.groups.listeners;
+package chat21.android.ui.chat_groups.listeners;
 
 /**
  * Created by stefanodp91 on 17/01/17.

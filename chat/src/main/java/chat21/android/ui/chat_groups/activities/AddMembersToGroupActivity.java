@@ -1,4 +1,4 @@
-package chat21.android.ui.groups.activities;
+package chat21.android.ui.chat_groups.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -39,9 +39,9 @@ import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
-import chat21.android.ui.groups.WizardNewGroup;
-import chat21.android.ui.groups.adapters.SelectedContactListAdapter;
-import chat21.android.ui.groups.listeners.OnRemoveClickListener;
+import chat21.android.ui.chat_groups.WizardNewGroup;
+import chat21.android.ui.chat_groups.adapters.SelectedContactListAdapter;
+import chat21.android.ui.chat_groups.listeners.OnRemoveClickListener;
 import chat21.android.utils.image.CropCircleTransformation;
 
 import static chat21.android.ui.ChatUI.BUNDLE_GROUP;

@@ -29,7 +29,7 @@ import chat21.android.ui.ChatUI;
 import chat21.android.ui.conversations.adapters.ConversationsListAdapter;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
-import chat21.android.ui.groups.activities.MyGroupsListActivity;
+import chat21.android.ui.chat_groups.activities.MyGroupsListActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 
 import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;

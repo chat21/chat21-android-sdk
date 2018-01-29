@@ -1,4 +1,4 @@
-package chat21.android.ui.groups.listeners;
+package chat21.android.ui.chat_groups.listeners;
 
 import chat21.android.core.chat_groups.models.ChatGroup;
 

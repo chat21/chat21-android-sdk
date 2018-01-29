@@ -1,4 +1,4 @@
-package chat21.android.ui.groups.fragments;
+package chat21.android.ui.chat_groups.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;

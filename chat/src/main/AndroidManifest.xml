@@ -51,17 +51,17 @@
         <activity android:name="chat21.android.ui.messages.activities.ImageDetailsActivity" />
 
         <activity
-            android:name=".ui.groups.activities.NewGroupActivity"
+            android:name=".ui.chat_groups.activities.NewGroupActivity"
             android:label="@string/string_create_group_activity_title"></activity>
 
         <activity
-            android:name=".ui.groups.activities.AddMembersToGroupActivity"
+            android:name=".ui.chat_groups.activities.AddMembersToGroupActivity"
             android:label="@string/string_add_members_activity_title"></activity>
 
-        <activity android:name=".ui.groups.activities.GroupAdminPanelActivity"></activity>
+        <activity android:name=".ui.chat_groups.activities.GroupAdminPanelActivity"></activity>
 
         <activity
-            android:name=".ui.groups.activities.MyGroupsListActivity"
+            android:name=".ui.chat_groups.activities.MyGroupsListActivity"
             android:label="@string/activity_group_list_activity_title"></activity>
 
         <!--<activity-->

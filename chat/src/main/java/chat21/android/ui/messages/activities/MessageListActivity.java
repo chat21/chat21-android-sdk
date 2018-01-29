@@ -59,7 +59,7 @@ import chat21.android.core.users.models.IChatUser;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
 import chat21.android.ui.ChatUI;
-import chat21.android.ui.groups.activities.GroupAdminPanelActivity;
+import chat21.android.ui.chat_groups.activities.GroupAdminPanelActivity;
 import chat21.android.ui.messages.adapters.MessageListAdapter;
 import chat21.android.ui.messages.fragments.BottomSheetAttach;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;

@@ -35,7 +35,7 @@ import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
-import chat21.android.ui.groups.activities.AddMembersToGroupActivity;
+import chat21.android.ui.chat_groups.activities.AddMembersToGroupActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.image.CropCircleTransformation;
 

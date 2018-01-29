@@ -1,4 +1,4 @@
-package chat21.android.ui.groups.adapters;
+package chat21.android.ui.chat_groups.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +16,7 @@ import java.util.List;
 import chat21.android.R;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
-import chat21.android.ui.groups.listeners.OnGroupMemberClickListener;
+import chat21.android.ui.chat_groups.listeners.OnGroupMemberClickListener;
 import chat21.android.utils.image.CropCircleTransformation;
 
 /**

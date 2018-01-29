@@ -1,4 +1,4 @@
-package chat21.android.ui.groups.activities;
+package chat21.android.ui.chat_groups.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,9 +29,9 @@ import chat21.android.core.chat_groups.listeners.ChatGroupsListener;
 import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.ui.groups.adapters.GroupMembersListAdapter;
-import chat21.android.ui.groups.fragments.BottomSheetGroupAdminPanelMemberFragment;
-import chat21.android.ui.groups.listeners.OnGroupMemberClickListener;
+import chat21.android.ui.chat_groups.adapters.GroupMembersListAdapter;
+import chat21.android.ui.chat_groups.fragments.BottomSheetGroupAdminPanelMemberFragment;
+import chat21.android.ui.chat_groups.listeners.OnGroupMemberClickListener;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
