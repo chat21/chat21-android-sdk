@@ -410,8 +410,8 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                     return;
                 }
 
-                ChatManager.getInstance()
-                        .sendTextMessage(recipient.getId(), recipient.getFullName(), text, channelType, null, new SendMessageListener() {
+                ChatManager.getInstance().sendTextMessage(recipient.getId(), recipient.getFullName(),
+                        text, channelType, null, new SendMessageListener() {
                             @Override
                             public void onBeforeMessageSent(Message message, ChatRuntimeException chatException) {
                                 if (chatException == null) {
