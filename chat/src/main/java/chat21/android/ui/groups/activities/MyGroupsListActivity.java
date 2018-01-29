@@ -14,7 +14,7 @@ import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;

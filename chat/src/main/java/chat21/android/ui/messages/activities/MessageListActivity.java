@@ -47,7 +47,7 @@ import java.io.File;
 import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.exception.ChatRuntimeException;
-import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.ConversationMessagesListener;
 import chat21.android.core.messages.listeners.SendMessageListener;

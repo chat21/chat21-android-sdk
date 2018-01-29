@@ -16,7 +16,7 @@ import java.util.Map;
 
 import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import chat21.android.core.conversations.ConversationsHandler;
-import chat21.android.core.groups.syncronizers.GroupsSyncronizer;
+import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;

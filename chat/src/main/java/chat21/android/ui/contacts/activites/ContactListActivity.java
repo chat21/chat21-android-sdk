@@ -35,10 +35,11 @@ import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
-import chat21.android.ui.groups.activities.CreateGroupActivity;
+import chat21.android.ui.groups.activities.AddMembersToGroupActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.image.CropCircleTransformation;
 
+import static chat21.android.ui.ChatUI.REQUEST_CODE_CREATE_GROUP;
 import static chat21.android.utils.DebugConstants.DEBUG_CONTACTS_SYNC;
 
 /**
@@ -266,13 +267,16 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
     private void startCreateGroupActivity() {
         Log.d(TAG, "startCreateGroupActivity");
 
-        Intent intent = new Intent(this, CreateGroupActivity.class);
-        startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
+//        Intent intent = new Intent(this, CreateGroupActivity.class);
+//        startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
+
+        Intent intent = new Intent(this, AddMembersToGroupActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_CREATE_GROUP);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ChatUI._REQUEST_CODE_CREATE_GROUP) {
+        if (requestCode == REQUEST_CODE_CREATE_GROUP) {
             if (resultCode == RESULT_OK) {
                 finish();
             }

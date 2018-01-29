@@ -28,7 +28,7 @@
     <item
         android:id="@+id/action_next"
         android:orderInCategory="1"
-        android:title="Next"
+        android:title="@string/menu_add_members_action_next"
         android:visible="false"
         app:showAsAction="always" />
 </menu>

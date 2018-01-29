@@ -34,17 +34,18 @@ import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
+import chat21.android.core.chat_groups.models.ChatGroup;
+import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
-import chat21.android.core.groups.models.ChatGroup;
-import chat21.android.core.groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
-import chat21.android.ui.groups.NewGroupWizard;
+import chat21.android.ui.groups.WizardNewGroup;
 import chat21.android.ui.groups.adapters.SelectedContactListAdapter;
 import chat21.android.ui.groups.listeners.OnRemoveClickListener;
 import chat21.android.utils.image.CropCircleTransformation;
 
 import static chat21.android.ui.ChatUI.BUNDLE_GROUP;
+import static chat21.android.ui.ChatUI.REQUEST_CODE_CREATE_GROUP;
 
 /**
  * Created by stefanodp91 on 26/01/18.
@@ -112,7 +113,6 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         // selected contact list views
         setupSelectedContactList();
     }
-
 
     private void setupContactList() {
         contactsListView.setLayoutManager(new LinearLayoutManager(this));
@@ -205,8 +205,7 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
 
         List<IChatUser> list = new ArrayList<>();
 
-        IChatUser currentUser = ChatManager.getInstance()
-                .getLoggedUser();
+        IChatUser currentUser = ChatManager.getInstance().getLoggedUser();
 
         if (this.contactsSynchronizer.getContacts() != null)
             for (IChatUser chatUser : this.contactsSynchronizer.getContacts()) {
@@ -251,20 +250,18 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         });
     }
 
-
     private void onActionNextClicked() {
 
         // convert the members list to a sanified format
         Map<String, Integer> membersMap = convertListToMap(selectedContactsList);
 
         if (chatGroup != null) {
-//            chatGroup.setMembers(membersMap);
             groupsSyncronizer.addMembersToChatGroup(chatGroup.getGroupId(), membersMap);
             finish(); // back to previous activity
         } else {
-            NewGroupWizard.getInstance().getTempChatGroup().setMembers(membersMap);
+            WizardNewGroup.getInstance().getTempChatGroup().addMembers(membersMap);
             Intent intent = new Intent(this, NewGroupActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_CODE_CREATE_GROUP);
         }
     }
 
@@ -359,6 +356,16 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         return members;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_CODE_CREATE_GROUP) {
+            if(resultCode == RESULT_OK) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        }
+    }
+
     // create a custom RecycleViewAdapter class
     public class ContactsListAdapter extends RecyclerView.Adapter<ContactsListAdapter.ViewHolder> implements
             Filterable {
@@ -422,7 +429,6 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         }
 
         private void showContactAlreadyAdded(RecyclerView recyclerView, int position) {
-//            View viewAtPosition = recyclerView.getLayoutManager().getChildAt(position);
             ContactsListAdapter.ViewHolder holder =
                     (ContactsListAdapter.ViewHolder) recyclerView.findViewHolderForLayoutPosition(position);
 
@@ -433,9 +439,6 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
 
                 // show the already added label
                 holder.mAlreadyAddedLabel.setVisibility(View.VISIBLE);
-
-//                // show the already added icon
-//                holder.mAlreadyAddedIcon.setVisibility(View.VISIBLE);
             }
         }
 
@@ -462,10 +465,6 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
                 // hide the already added label
                 TextView mAlreadyAddedLabel = viewAtPosition.findViewById(R.id.already_added_label);
                 mAlreadyAddedLabel.setVisibility(View.GONE);
-
-//                // hide the already added icon
-//                LinearLayout mAlreadyAddedIcon = viewAtPosition.findViewById(R.id.already_added_icon);
-//                mAlreadyAddedIcon.setVisibility(View.GONE);
             }
         }
 

@@ -1,12 +1,12 @@
 package chat21.android.ui.groups;
 
-import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.chat_groups.models.ChatGroup;
 
 /**
  * Created by stefanodp91 on 26/01/18.
  */
 
-public class NewGroupWizard {
+public class WizardNewGroup {
 //    private static final String PRIVATE_NEW_GROUP_WIZARD_SERIALIZABLE_CHAT_GROUP =
 //            "PRIVATE_NEW_GROUP_WIZARD_SERIALIZABLE_CHAT_GROUP";
 
@@ -14,10 +14,10 @@ public class NewGroupWizard {
 
     // singleton
     // source : https://android.jlelse.eu/how-to-make-the-perfect-singleton-de6b951dfdb0
-    private static volatile NewGroupWizard instance;
+    private static volatile WizardNewGroup instance;
 
     //private constructor.
-    private NewGroupWizard() {
+    private WizardNewGroup() {
 
         // Prevent form the reflection api.
         if (instance != null) {
@@ -25,10 +25,10 @@ public class NewGroupWizard {
         }
     }
 
-    public static NewGroupWizard getInstance() {
+    public static WizardNewGroup getInstance() {
         if (instance == null) { //if there is no instance available... create new one
-            synchronized (NewGroupWizard.class) {
-                if (instance == null) instance = new NewGroupWizard();
+            synchronized (WizardNewGroup.class) {
+                if (instance == null) instance = new WizardNewGroup();
             }
         }
 
@@ -36,7 +36,7 @@ public class NewGroupWizard {
     }
 
 //    // Make singleton from serialize and deserialize operation.
-//    protected NewGroupWizard readResolve() {
+//    protected WizardNewGroup readResolve() {
 //        return getInstance();
 //    }
     // end singleton

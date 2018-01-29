@@ -40,15 +40,14 @@ public class ChatUI implements Serializable {
     public static final String BUNDLE_MESSAGE = "BUNDLE_MESSAGE";
     public static final String BUNDLE_GROUP = "BUNDLE_GROUP";
     public static final String BUNDLE_GROUP_ID = "BUNDLE_GROUP_ID";
-    public static final String BUNDLE_PARENT_ACTIVITY = "BUNDLE_PARENT_ACTIVITY";
     public static final String BUNDLE_CHANNEL_TYPE = "BUNDLE_CHANNEL_TYPE";
 
     public static final String BUNDLE_SIGNED_UP_USER_EMAIL = "BUNDLE_SIGNED_UP_USER_EMAIL";
     public static final String BUNDLE_SIGNED_UP_USER_PASSWORD = "BUNDLE_SIGNED_UP_USER_PASSWORD";
 
     // request constants
-    public static final int _REQUEST_CODE_CREATE_GROUP = 100;
-    public static final int REQUEST_CODE_SIGNUP_ACTIVITY = 300;
+    public static final int REQUEST_CODE_CREATE_GROUP = 100;
+    public static final int REQUEST_CODE_SIGNUP_ACTIVITY = 200;
 
     private Context mContext;
     private OnNewConversationClickListener onNewConversationClickListener;

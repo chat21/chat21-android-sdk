@@ -36,6 +36,7 @@
     <string name="add_members_activity_contacts_title">Contact List</string>
     <string name="menu_add_members_action_create">Create</string>
     <string name="menu_add_members_action_add_member">@string/activity_group_admin_panel_add_member_title</string>
+    <string name="menu_add_members_action_next">Next</string>
     <!--<string name="menu_add_members_added_to_the_group">You have been added to group \"%1$s\"</string>-->
     <string name="menu_add_members_added_to_the_group">%1$s added you</string>
     <string name="menu_add_members_created_the_group">You have created the group \"%1$s\"</string>

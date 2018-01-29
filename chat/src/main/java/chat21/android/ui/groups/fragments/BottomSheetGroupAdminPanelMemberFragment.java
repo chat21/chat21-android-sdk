@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
-import chat21.android.core.groups.models.ChatGroup;
-import chat21.android.core.groups.syncronizers.GroupsSyncronizer;
+import chat21.android.core.chat_groups.models.ChatGroup;
+import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.users.activities.PublicProfileActivity;

@@ -25,9 +25,9 @@ import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
 import chat21.android.core.exception.ChatRuntimeException;
-import chat21.android.core.groups.listeners.GroupsListener;
-import chat21.android.core.groups.models.ChatGroup;
-import chat21.android.core.groups.syncronizers.GroupsSyncronizer;
+import chat21.android.core.chat_groups.listeners.ChatGroupsListener;
+import chat21.android.core.chat_groups.models.ChatGroup;
+import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.groups.adapters.GroupMembersListAdapter;
 import chat21.android.ui.groups.fragments.BottomSheetGroupAdminPanelMemberFragment;
@@ -37,12 +37,11 @@ import chat21.android.utils.image.CropCircleTransformation;
 
 import static chat21.android.ui.ChatUI.BUNDLE_GROUP;
 import static chat21.android.ui.ChatUI.BUNDLE_GROUP_ID;
-import static chat21.android.ui.ChatUI.BUNDLE_PARENT_ACTIVITY;
 
 /**
  * Created by stefanodp91 on 29/06/17.
  */
-public class GroupAdminPanelActivity extends AppCompatActivity implements OnGroupMemberClickListener, GroupsListener {
+public class GroupAdminPanelActivity extends AppCompatActivity implements OnGroupMemberClickListener, ChatGroupsListener {
     private static final String TAG = GroupAdminPanelActivity.class.getName();
 
     private RecyclerView mMemberList;

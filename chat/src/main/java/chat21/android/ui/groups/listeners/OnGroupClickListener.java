@@ -1,6 +1,6 @@
 package chat21.android.ui.groups.listeners;
 
-import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.chat_groups.models.ChatGroup;
 
 /**
  * Created by stefanodp91 on 07/12/17.

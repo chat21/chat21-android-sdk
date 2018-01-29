@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import chat21.android.R;
-import chat21.android.core.groups.models.ChatGroup;
+import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import chat21.android.ui.groups.listeners.OnGroupClickListener;
 import chat21.android.utils.image.CropCircleTransformation;
