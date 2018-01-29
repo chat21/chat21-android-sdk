@@ -17,6 +17,7 @@ import com.vanniktech.emoji.EmojiTextView;
 import java.util.List;
 
 import chat21.android.R;
+import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
@@ -75,7 +76,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
 
         setRecipientDisplayName(holder, conversation.getConvers_with_fullname(), conversation.getConvers_with());
 
-        setLastMessageText(holder, conversation.getIs_new(), conversation.getLast_message_text());
+        setLastMessageText(holder, conversation);
 
         setTimestamp(holder, conversation.getIs_new(), conversation.getTimestampLong());
 
@@ -109,10 +110,22 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     }
 
     // show te last message text
-    private void setLastMessageText(ViewHolder holder, boolean hasNewMessages, String lastMessageText) {
-        // TODO: 18/12/17 format the text using the person who sent the message as prefix - check if the conversWith is a group or a person
+    private void setLastMessageText(ViewHolder holder, Conversation conversation) {
 
-        if (hasNewMessages) {
+        // default text message
+        String lastMessageText = conversation.getLast_message_text();
+
+        // if the group message sender is different from the logger user show it
+        if (conversation.isGroupChannel()) {
+            if (!conversation.getSender().equals(ChatManager.getInstance().getLoggedUser().getId())) {
+
+                lastMessageText = holder.itemView.getContext()
+                        .getString(R.string.activity_conversation_list_adapter_formatted_last_message_text,
+                                conversation.getSender_fullname(), lastMessageText);
+            }
+        }
+
+        if (conversation.getIs_new()) {
             // show bold text
             holder.lastTextMessage.setText(Html.fromHtml("<b>" + lastMessageText + "</b>"));
         } else {
