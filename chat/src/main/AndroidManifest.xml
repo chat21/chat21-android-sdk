@@ -64,10 +64,6 @@
             android:name=".ui.chat_groups.activities.MyGroupsListActivity"
             android:label="@string/activity_group_list_activity_title"></activity>
 
-        <!--<activity-->
-            <!--android:name=".ui.groups.activities.ChooseGroupActivity"-->
-            <!--android:label="@string/activity_group_list_activity_title"></activity>-->
-
         <!--display the user profile-->
         <activity android:name=".ui.users.activities.PublicProfileActivity" />
 

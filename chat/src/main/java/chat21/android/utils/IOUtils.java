@@ -1,8 +1,6 @@
 package chat21.android.utils;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.util.Log;
 
 import java.io.FileInputStream;
@@ -89,22 +87,5 @@ public class IOUtils {
             Log.e(TAG, "cannot delete object " + filename + " from disk");
         }
         return success;
-    }
-
-    /**
-     * Return the app version label
-     *
-     * @param context
-     * @return the app version
-     */
-    public static String getAppVersion(Context context) {
-        PackageInfo pInfo;
-        try {
-            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            return pInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
     }
 }

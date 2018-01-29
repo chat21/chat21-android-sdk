@@ -38,7 +38,7 @@ public class NewGroupActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_group);
+        setContentView(R.layout.activity_new_group);
 
         groupsSyncronizer = ChatManager.getInstance().getGroupsSyncronizer();
 
@@ -82,7 +82,7 @@ public class NewGroupActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_activity_create_group, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_new_group, menu);
 
         actionNextMenuItem = menu.findItem(R.id.action_next);
         return true;

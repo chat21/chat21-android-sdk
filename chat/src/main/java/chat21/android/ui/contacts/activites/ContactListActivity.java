@@ -33,9 +33,9 @@ import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
+import chat21.android.ui.chat_groups.activities.AddMembersToGroupActivity;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
-import chat21.android.ui.chat_groups.activities.AddMembersToGroupActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.image.CropCircleTransformation;
 
@@ -79,7 +79,7 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         mSubTitle.setVisibility(View.GONE);
 
         // contacts list adapter
-        mAdapter = new ContactListAdapter(this, contactList);
+        mAdapter = new ContactListAdapter(contactList);
         mAdapter.setOnContactClickListener(this);
 
         // recyclerview

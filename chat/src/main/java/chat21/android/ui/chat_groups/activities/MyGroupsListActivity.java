@@ -53,9 +53,6 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupCl
 
         //////// recycler view
         mMyGroupsListRecyclerView = (RecyclerView) findViewById(R.id.list);
-        // grid facebook like
-//        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
-//        mMyGroupsListRecyclerView.setLayoutManager(mLayoutManager);
         mMyGroupsListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         updateAdapter(ChatManager.getInstance().getGroupsSyncronizer().getChatGroups());
         //////// end recycler view
