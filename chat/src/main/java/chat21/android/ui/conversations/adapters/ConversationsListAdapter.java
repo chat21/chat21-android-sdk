@@ -113,11 +113,13 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     private void setLastMessageText(ViewHolder holder, Conversation conversation) {
 
         // default text message
-        String lastMessageText = conversation.getLast_message_text();
+        String lastMessageText = StringUtils.isValid(conversation.getLast_message_text()) ?
+                conversation.getLast_message_text() : "";
 
         // if the group message sender is different from the logger and the reserved user "system" user show it
         if (conversation.isGroupChannel()) {
-            if (!conversation.getSender().equals(ChatManager.getInstance().getLoggedUser().getId()) &&
+            if (conversation.getSender() != null && !conversation.getSender()
+                    .equals(ChatManager.getInstance().getLoggedUser().getId()) &&
                     !conversation.getSender().equals("system")) {
 
                 lastMessageText = holder.itemView.getContext()

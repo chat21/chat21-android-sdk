@@ -26,10 +26,10 @@ import chat21.android.core.presence.listeners.MyPresenceListener;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
+import chat21.android.ui.chat_groups.activities.MyGroupsListActivity;
 import chat21.android.ui.conversations.adapters.ConversationsListAdapter;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
-import chat21.android.ui.chat_groups.activities.MyGroupsListActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 
 import static chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
@@ -237,6 +237,8 @@ public class ConversationListFragment extends Fragment implements
     @Override
     public void onConversationClicked(Conversation conversation, int position) {
         // click on conversation
+
+        if (conversation == null) return;
 
         // set the conversation as read
         conversationsHandler.setConversationRead(conversation.getConversationId());

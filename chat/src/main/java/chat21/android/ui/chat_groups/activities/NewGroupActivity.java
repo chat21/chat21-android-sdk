@@ -18,7 +18,9 @@ import chat21.android.core.ChatManager;
 import chat21.android.core.chat_groups.listeners.ChatGroupCreatedListener;
 import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
+import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
+import chat21.android.core.messages.models.Message;
 import chat21.android.ui.chat_groups.WizardNewGroup;
 import chat21.android.utils.StringUtils;
 
@@ -34,6 +36,8 @@ public class NewGroupActivity extends AppCompatActivity {
 
     private EditText groupNameView;
     private MenuItem actionNextMenuItem;
+
+//    private AlertDialog progressDialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +74,8 @@ public class NewGroupActivity extends AppCompatActivity {
                 }
             }
         });
+
+//        progressDialog = createProgress();
     }
 
     // check if the group name is valid
@@ -104,7 +110,9 @@ public class NewGroupActivity extends AppCompatActivity {
 
     private void onActionNextClicked() {
 
-        String chatGroupName = WizardNewGroup.getInstance().getTempChatGroup().getName();
+//        showProgress();
+
+        final String chatGroupName = WizardNewGroup.getInstance().getTempChatGroup().getName();
         Map<String, Integer> chatGroupMembers = WizardNewGroup.getInstance().getTempChatGroup().getMembers();
 
         groupsSyncronizer.createChatGroup(chatGroupName, chatGroupMembers, new ChatGroupCreatedListener() {
@@ -112,9 +120,18 @@ public class NewGroupActivity extends AppCompatActivity {
             public void onChatGroupCreated(ChatGroup chatGroup, ChatRuntimeException chatException) {
                 Log.d(DEBUG_GROUPS, "NewGroupActivity.onActionNextClicked.onChatGroupCreated");
 
+//                dismissProgress();
+
                 if (chatException == null) {
                     Log.d(DEBUG_GROUPS, "NewGroupActivity.onActionNextClicked" +
                             ".onChatGroupCreated: chatGroup == " + chatGroup.toString());
+
+                    // create a conversation on the fly
+                    Conversation conversation = createConversationForAdapter(chatGroup);
+
+                    // add the conversation to the conversation adapter
+                    ChatManager.getInstance().getConversationsHandler().addConversation(conversation);
+
                     setResult(RESULT_OK);
                     finish();
                 } else {
@@ -127,4 +144,35 @@ public class NewGroupActivity extends AppCompatActivity {
             }
         });
     }
+
+    // create a conversation on the fly
+    private Conversation createConversationForAdapter(ChatGroup chatGroup) {
+        Conversation conversation = new Conversation();
+        conversation.setChannelType(Message.GROUP_CHANNEL_TYPE);
+        conversation.setConversationId(chatGroup.getGroupId());
+        conversation.setTimestamp(chatGroup.getCreatedOnLong());
+        conversation.setIs_new(true);
+        conversation.setRecipientFullName(chatGroup.getName());
+        Log.d(DEBUG_GROUPS, "NewGroupActivity.onActionNextClicked" +
+                ".onChatGroupCreated: it has been created on the fly the conversation == " + conversation.toString());
+        return conversation;
+    }
+
+//    private AlertDialog createProgress() {
+//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+//        // custom layout
+//        View dialogView = getLayoutInflater()
+//                .inflate(R.layout.layout_progress_alert_dialog, null);
+//        dialogBuilder.setView(dialogView);
+//        dialogBuilder.setCancelable(false); // user cannot dismiss the progress
+//        return dialogBuilder.create();
+//    }
+//
+//    private void showProgress() {
+//        if (progressDialog != null) progressDialog.show();
+//    }
+//
+//    private void dismissProgress() {
+//        if (progressDialog != null) progressDialog.dismiss();
+//    }
 }
