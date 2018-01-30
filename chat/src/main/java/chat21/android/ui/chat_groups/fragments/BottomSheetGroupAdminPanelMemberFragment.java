@@ -106,7 +106,8 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
             seeProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getActivity().getApplicationContext(), PublicProfileActivity.class);
+                    Intent intent = new Intent(getActivity()
+                            .getApplicationContext(), PublicProfileActivity.class);
                     intent.putExtra(BUNDLE_RECIPIENT, groupMember);
                     startActivity(intent);
 
