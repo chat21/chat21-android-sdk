@@ -188,7 +188,6 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         Intent intent = new Intent(this, MessageListActivity.class);
         intent.putExtra(ChatUI.BUNDLE_RECIPIENT, contact);
         intent.putExtra(ChatUI.BUNDLE_CHANNEL_TYPE, Message.DIRECT_CHANNEL_TYPE);
-        intent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, false);
 
         startActivity(intent);
 

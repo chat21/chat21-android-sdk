@@ -37,7 +37,6 @@ public class ChatUI implements Serializable {
 
     private static final String TAG = ChatUI.class.getName();
 
-    public static final String BUNDLE_IS_FROM_NOTIFICATION = "BUNDLE_IS_FROM_NOTIFICATION";
     public static final String BUNDLE_RECIPIENT = "BUNDLE_RECIPIENT";
     // target class to be called in listeners (such as OnProfileClickListener)
     public static final String BUNDLE_MESSAGE = "BUNDLE_MESSAGE";
@@ -205,17 +204,9 @@ public class ChatUI implements Serializable {
     // TODO: 24/11/17 showChatWith(user)
     // TODO: 24/11/17 add extras here
     public void openConversationMessagesActivity(IChatUser recipient) {
-
-//        IChatUser iChatUser = ChatManager.getInstance().getLoggedUser();
-//        // generate the conversationId
-//        String conversationId = ConversationUtils.getConversationId(iChatUser.getId(), contactId);
-
         // launch the chat
         Intent intent = new Intent(mContext, MessageListActivity.class);
         intent.putExtra(BUNDLE_RECIPIENT, recipient);
-        intent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, false);
-        // extras to be sent in messages or in the conversation
-//        intent.putExtra(Chat.INTENT_BUNDLE_EXTRAS, (Serializable) mConfiguration.getExtras());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
@@ -246,7 +237,6 @@ public class ChatUI implements Serializable {
 
             Intent intent = new Intent(mContext, MessageListActivity.class);
             intent.putExtra(BUNDLE_RECIPIENT, recipient);
-            intent.putExtra(BUNDLE_IS_FROM_NOTIFICATION, true);
             intent.putExtra(BUNDLE_CHANNEL_TYPE, channelType);
             // start from outside of an activity context
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

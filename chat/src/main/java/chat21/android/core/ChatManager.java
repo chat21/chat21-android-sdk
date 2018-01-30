@@ -6,8 +6,6 @@ import android.util.Log;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.ios.IosEmojiProvider;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,8 +26,6 @@ import chat21.android.utils.IOUtils;
 import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
-import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
-import static chat21.android.utils.DebugConstants.DEBUG_SESSION;
 
 /**
  * Created by stefano on 19/05/2016.
@@ -69,20 +65,20 @@ public class ChatManager {
 
     public void setLoggedUser(IChatUser loggedUser) {
         this.loggedUser = loggedUser;
-        Log.d(DEBUG_SESSION, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
+        Log.d(TAG, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
         // serialize on disk
         IOUtils.saveObjectToFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, loggedUser);
     }
 
     public IChatUser getLoggedUser() {
-        Log.v(DEBUG_SESSION, "ChatManager.getloggedUser");
+        Log.v(TAG, "ChatManager.getloggedUser");
         return loggedUser;
     }
 
     public boolean isUserLogged() {
-        Log.d(DEBUG_SESSION, "ChatManager.isUserLogged");
+        Log.d(TAG, "ChatManager.isUserLogged");
         boolean isUserLogged = getLoggedUser() != null ? true : false;
-        Log.d(DEBUG_SESSION, "ChatManager.isUserLogged: isUserLogged == " + isUserLogged);
+        Log.d(TAG, "ChatManager.isUserLogged: isUserLogged == " + isUserLogged);
         return isUserLogged;
     }
 
@@ -295,11 +291,9 @@ public class ChatManager {
     public ConversationMessagesHandler getConversationMessagesHandler(IChatUser recipient) {
         String recipientId = recipient.getId();
         Log.d(TAG, "Getting ConversationMessagesHandler for recipientId " + recipientId);
-        Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: Getting ConversationMessagesHandler for recipientId " + recipientId);
 
         if (conversationMessagesHandlerMap.containsKey(recipientId)) {
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
-            Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
 
             return conversationMessagesHandlerMap.get(recipientId);
         } else {
@@ -308,7 +302,6 @@ public class ChatManager {
             conversationMessagesHandlerMap.put(recipientId, messageHandler);
 
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " created.");
-            Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: ConversationMessagesHandler for recipientId " + recipientId + " created with hash " + messageHandler.hashCode());
 
             return messageHandler;
         }
