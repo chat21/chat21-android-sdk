@@ -44,7 +44,7 @@ import chat21.android.ui.chat_groups.adapters.SelectedContactListAdapter;
 import chat21.android.ui.chat_groups.listeners.OnRemoveClickListener;
 import chat21.android.utils.image.CropCircleTransformation;
 
-import static chat21.android.ui.ChatUI.BUNDLE_GROUP;
+import static chat21.android.ui.ChatUI.BUNDLE_CHAT_GROUP;
 import static chat21.android.ui.ChatUI.REQUEST_CODE_CREATE_GROUP;
 
 /**
@@ -92,8 +92,8 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         selectedContactsList = new ArrayList<IChatUser>();
 
         // retrieve the chatGroup if exists
-        if (getIntent().hasExtra(BUNDLE_GROUP)) {
-            chatGroup = (ChatGroup) getIntent().getSerializableExtra(BUNDLE_GROUP);
+        if (getIntent().hasExtra(BUNDLE_CHAT_GROUP)) {
+            chatGroup = (ChatGroup) getIntent().getSerializableExtra(BUNDLE_CHAT_GROUP);
         }
 
         // setup toolbar

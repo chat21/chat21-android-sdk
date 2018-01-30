@@ -35,7 +35,7 @@ import chat21.android.ui.chat_groups.listeners.OnGroupMemberClickListener;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.CropCircleTransformation;
 
-import static chat21.android.ui.ChatUI.BUNDLE_GROUP;
+import static chat21.android.ui.ChatUI.BUNDLE_CHAT_GROUP;
 import static chat21.android.ui.ChatUI.BUNDLE_GROUP_ID;
 
 /**
@@ -275,7 +275,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements OnGrou
 
 //        Intent intent = new Intent(this, AddMembersActivity.class);
         Intent intent = new Intent(this, AddMembersToGroupActivity.class);
-        intent.putExtra(BUNDLE_GROUP, chatGroup);
+        intent.putExtra(BUNDLE_CHAT_GROUP, chatGroup);
         startActivity(intent);
     }
 

@@ -40,7 +40,7 @@ public class ChatUI implements Serializable {
     public static final String BUNDLE_RECIPIENT = "BUNDLE_RECIPIENT";
     // target class to be called in listeners (such as OnProfileClickListener)
     public static final String BUNDLE_MESSAGE = "BUNDLE_MESSAGE";
-    public static final String BUNDLE_GROUP = "BUNDLE_GROUP";
+    public static final String BUNDLE_CHAT_GROUP = "BUNDLE_CHAT_GROUP";
     public static final String BUNDLE_GROUP_ID = "BUNDLE_GROUP_ID";
     public static final String BUNDLE_CHANNEL_TYPE = "BUNDLE_CHANNEL_TYPE";
 
