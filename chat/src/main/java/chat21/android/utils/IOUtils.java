@@ -20,7 +20,7 @@ public class IOUtils {
      * @return true if success, false otherwise
      */
     public static boolean saveObjectToFile(Context context, String filename, Object object) {
-        Log.d(TAG, "saveObjectToFile");
+//        Log.d(TAG, "saveObjectToFile");
         try {
             //Open a private file associated with this Context's application package
             //for writing. Creates the file if it doesn't already exist.
@@ -53,8 +53,8 @@ public class IOUtils {
      * @return the serialized object
      */
     public static Object getObjectFromFile(Context context, String filename) {
-        Log.d(TAG, "getObjectFromFile");
-        Log.d(TAG, "context: " + context);
+//        Log.d(TAG, "getObjectFromFile");
+//        Log.d(TAG, "context: " + context);
 
         try {
             FileInputStream inputStream = context.openFileInput(filename);
@@ -78,7 +78,7 @@ public class IOUtils {
      * @return true if success, false otherwise
      */
     public static boolean deleteObject(Context context, String filename) {
-        Log.d(TAG, "deleteObject");
+//        Log.d(TAG, "deleteObject");
         boolean success = context.deleteFile(filename);
 
         if (success) {

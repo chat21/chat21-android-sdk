@@ -12,7 +12,7 @@ import java.util.Locale;
  * Created by stefano on 25/08/2015.
  */
 public class ChatUtils {
-    private static final String TAG = ChatUtils.class.getName();
+//    private static final String TAG = ChatUtils.class.getName();
 
 //    // check if the group creation enabled or disabled
 //    public static boolean areGroupsEnabled(Context context) {
@@ -30,7 +30,7 @@ public class ChatUtils {
      * @return Application's version code from the {@code PackageManager}.
      */
     public static int getVersionCode(Context context) {
-        Log.d(TAG, "getVersionCode");
+//        Log.d(TAG, "getVersionCode");
         try {
             PackageInfo packageInfo = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0);
@@ -45,7 +45,7 @@ public class ChatUtils {
      * @return Application's version name from the {@code PackageManager}.
      */
     public static String getVersionName(Context context) {
-        Log.d(TAG, "getVersionName");
+//        Log.d(TAG, "getVersionName");
         try {
             PackageInfo packageInfo = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0);
