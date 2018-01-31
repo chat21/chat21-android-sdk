@@ -42,10 +42,10 @@
             <!-- http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification
              from notification
              bugfix Issue #39-->
-            <!--            <intent-filter>
-                            <action android:name="ACTION_DEFAULT_CHAT_INTENT" />
-                            <category android:name="android.intent.category.DEFAULT" />
-                        </intent-filter>-->
+            <intent-filter>
+                <action android:name="ACTION_DEFAULT_CHAT_INTENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <activity android:name="chat21.android.ui.messages.activities.ImageDetailsActivity" />
