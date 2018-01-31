@@ -27,8 +27,8 @@ import static chat21.android.ui.ChatUI.BUNDLE_RECIPIENT;
 /**
  * Created by frontiere21 on 25/11/16.
  */
-public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogFragment {
-    public static final String TAG = BottomSheetGroupAdminPanelMemberFragment.class.getName();
+public class BottomSheetGroupAdminPanelMember extends BottomSheetDialogFragment {
+    public static final String TAG = BottomSheetGroupAdminPanelMember.class.getName();
 
     private static final String PRIVATE_BUNDLE_GROUP_MEMBER = "PRIVATE_BUNDLE_GROUP_MEMBER";
     private static final String PRIVATE_BUNDLE_GROUP = "PRIVATE_BUNDLE_GROUP";
@@ -41,11 +41,11 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
 
     private GroupsSyncronizer groupsSyncronizer;
 
-    public static BottomSheetGroupAdminPanelMemberFragment newInstance(IChatUser groupMember, ChatGroup chatGroup) {
+    public static BottomSheetGroupAdminPanelMember newInstance(IChatUser groupMember, ChatGroup chatGroup) {
         Log.i(TAG, "newInstance");
 
-        BottomSheetGroupAdminPanelMemberFragment f =
-                new BottomSheetGroupAdminPanelMemberFragment();
+        BottomSheetGroupAdminPanelMember f =
+                new BottomSheetGroupAdminPanelMember();
         Bundle args = new Bundle();
         args.putSerializable(PRIVATE_BUNDLE_GROUP_MEMBER, groupMember);
         args.putSerializable(PRIVATE_BUNDLE_GROUP, chatGroup);
@@ -169,7 +169,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
         // allows the logged user to leave the chatGroup
         if (groupMember.equals(loggedUser)) {
             removeMember.setText(getString(
-                    R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_btn_label));
+                    R.string.bottom_sheet_group_admin_panel_member_leave_group_btn_label));
             removeMember.setVisibility(View.VISIBLE);
         }
     }
@@ -181,15 +181,15 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
 
         // allows the logged user to leave the chatGroup
         if (groupMember.equals(loggedUser)) {
-            message = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_message);
-            positiveClickMessage = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_positive_click);
+            message = getString(R.string.bottom_sheet_group_admin_panel_member_leave_group_alert_message);
+            positiveClickMessage = getString(R.string.bottom_sheet_group_admin_panel_member_leave_group_alert_positive_click);
         } else {
-            message = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_message, groupMember.getFullName());
-            positiveClickMessage = getString(R.string.fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_positive_click);
+            message = getString(R.string.bottom_sheet_group_admin_panel_member_remove_member_alert_message, groupMember.getFullName());
+            positiveClickMessage = getString(R.string.bottom_sheet_group_admin_panel_member_remove_member_alert_positive_click);
         }
 
         new AlertDialog.Builder(getActivity())
-                .setTitle(getString(R.string.fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_title))
+                .setTitle(getString(R.string.bottom_sheet_group_admin_panel_member_remove_member_alert_title))
                 .setMessage(Html.fromHtml(message))
                 .setPositiveButton(positiveClickMessage, new DialogInterface.OnClickListener() {
                     @Override
@@ -203,7 +203,7 @@ public class BottomSheetGroupAdminPanelMemberFragment extends BottomSheetDialogF
                         getDialog().dismiss();
                     }
                 })
-                .setNegativeButton(getString(R.string.fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_negative_click), new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.bottom_sheet_group_admin_panel_member_remove_member_alert_negative_click), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // dismiss the dialog

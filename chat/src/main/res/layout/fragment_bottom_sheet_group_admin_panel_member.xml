@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:text="@string/fragment_bottom_sheet_group_admin_panel_member_remove_member_btn_label"
+                android:text="@string/bottom_sheet_group_admin_panel_member_remove_member_btn_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/red_500" />
 
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:text="@string/fragment_bottom_sheet_group_admin_panel_member_see_profile_btn_label"
+                android:text="@string/bottom_sheet_group_admin_panel_member_see_profile_btn_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <!--line separator-->
@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:text="@string/fragment_bottom_sheet_group_admin_panel_member_send_message_btn_label"
+                android:text="@string/bottom_sheet_group_admin_panel_member_send_message_btn_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:visibility="gone" />
 
@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:text="@string/fragment_bottom_sheet_group_admin_panel_member_btn_cancel_label"
+                android:text="@string/bottom_sheet_group_admin_panel_member_btn_cancel_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
