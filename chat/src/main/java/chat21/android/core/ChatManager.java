@@ -1,5 +1,6 @@
 package chat21.android.core;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import chat21.android.core.authentication.ChatAuthentication;
 import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
 import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
@@ -23,6 +25,7 @@ import chat21.android.core.presence.MyPresenceHandler;
 import chat21.android.core.presence.PresenceHandler;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.ChatUI;
 import chat21.android.utils.IOUtils;
 import chat21.android.utils.StringUtils;
 
@@ -99,7 +102,51 @@ public class ChatManager {
     }
 
     /**
-     * It initializes the SDK.
+     * It initializes the SDK Anonymously using  DEFAULT appId.
+     *
+     * @param loginActivity
+     */
+    public static void startAnonymously(final Activity loginActivity, final ChatAuthentication.OnChatLoginCallback onChatLoginCallback) {
+        startAnonymously(loginActivity, _DEFAULT_APP_ID_VALUE, onChatLoginCallback);
+    }
+
+    /**
+     * It initializes the SDK Anonymously using DEFAULT appId.
+     *
+     * @param loginActivity
+     * @param appId
+     */
+    public static void startAnonymously(final Activity loginActivity, final String appId, final ChatAuthentication.OnChatLoginCallback onChatLoginCallback ) {
+
+        //getting context from loginActivity
+        final Context context = loginActivity.getApplicationContext();
+
+        ChatAuthentication.getInstance().signInAnonymously(loginActivity,
+                new ChatAuthentication.OnChatLoginCallback() {
+                    @Override
+                    public void onChatLoginSuccess(IChatUser currentUser) {
+
+                        start(context, appId, currentUser);
+
+                        Log.i(TAG, "chat has been initialized with success");
+
+                        onChatLoginCallback.onChatLoginSuccess(currentUser);
+                    }
+
+                    @Override
+                    public void onChatLoginError(Exception e) {
+                        Log.e(TAG, "onChatLoginError", e);
+                        onChatLoginCallback.onChatLoginError(e);
+
+                    }
+                });
+
+    }
+
+
+
+    /**
+     * It initializes the SDK using DEFAULT appId and a current user.
      * It serializes the current user.
      * It serializes the configurations.
      *
@@ -111,7 +158,7 @@ public class ChatManager {
     }
 
     /**
-     * It initializes the SDK.
+     * It initializes the SDK specifing appId and the currentUser
      * It serializes the current user.
      * It serializes the configurations.
      *
@@ -128,7 +175,7 @@ public class ChatManager {
     }
 
     /**
-     * It initializes the SDK.
+     * It initializes the SDK passing a configuration object and the current user.
      * It serializes the current user.
      * It serializes the configurations.
      *

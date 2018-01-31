@@ -69,7 +69,7 @@ public class ChatUI implements Serializable {
     //private constructor.
     private ChatUI() {
 
-        //set the default mContext value equals to ChatManager.getInstance(). Use ChatUI.getIntance().setContext to use another context
+        //set the default mContext value equals to ChatManager.getInstance().getContext() Use ChatUI.getIntance().setContext to use another context
         mContext = ChatManager.getInstance().getContext();
 
 
