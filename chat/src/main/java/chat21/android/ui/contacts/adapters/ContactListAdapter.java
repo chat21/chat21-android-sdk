@@ -1,6 +1,7 @@
 package chat21.android.ui.contacts.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import chat21.android.R;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.utils.image.CropCircleTransformation;
+
+//import static chat21.android.ui.contacts.activites.ContactListActivity.TAG_CONTACTS_SEARCH;
 
 /**
  * Created by stefanodp91 on 05/01/17.
@@ -83,6 +86,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
                 String charString = charSequence.toString();
+//                Log.d(TAG_CONTACTS_SEARCH, "ContactListAdapter.getFilter.performFiltering: " +
+//                        "charString == " + charString);
                 if (charString.isEmpty()) {
                     contactListFiltered = contactList;
                 } else {
