@@ -19,6 +19,7 @@ import java.util.List;
 import chat21.android.R;
 import chat21.android.core.ChatManager;
 import chat21.android.core.conversations.models.Conversation;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
@@ -87,14 +88,20 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     private void setRecipientPicture(ViewHolder holder, Conversation conversation) {
         if (conversation.isDirectChannel()) {
 
-            // retrieve the contact picture
-            String contactPicture = ChatManager.getInstance()
+            // retrieve the contact
+            IChatUser contact = ChatManager.getInstance()
                     .getContactsSynchronizer()
-                    .findById(conversation.getConvers_with())
-                    .getProfilePictureUrl();
+                    .findById(conversation.getConvers_with());
 
+            // retrieve the contact picture
+            String contactPicture = "";
+            if (contact != null) {
+                contactPicture = contact.getProfilePictureUrl();
+            }
+
+            // show the contact picture
             Glide.with(holder.itemView.getContext())
-                    .load(StringUtils.isValid(contactPicture) ? contactPicture : "")
+                    .load(contactPicture)
                     .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);
