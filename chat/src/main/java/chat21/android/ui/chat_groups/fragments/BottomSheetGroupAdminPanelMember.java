@@ -127,8 +127,6 @@ public class BottomSheetGroupAdminPanelMember extends BottomSheetDialogFragment 
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), MessageListActivity.class);
-                    // clear activity stack
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.putExtra(BUNDLE_RECIPIENT, groupMember);
                     getActivity().startActivity(intent);
 
