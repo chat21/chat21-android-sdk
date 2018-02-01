@@ -42,4 +42,5 @@
     <dimen name="shape_row_chat_timestamp_radius">32dp</dimen>
 
     <dimen name="chat_emoji_size">26dp</dimen>
+    <dimen name="chat_row_conversation_emoji_size">16dp</dimen>
 </resources>
