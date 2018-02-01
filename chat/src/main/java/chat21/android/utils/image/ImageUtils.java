@@ -21,7 +21,7 @@ import java.io.InputStream;
  */
 
 public class ImageUtils {
-    private static final String TAG = ImageUtils.class.getName();
+//    private static final String TAG = ImageUtils.class.getName();
 
     /**
      * returns a drawable with the new color
@@ -33,7 +33,7 @@ public class ImageUtils {
      */
     public static Drawable changeDrawableColor(Context context, @ColorRes int colorToId,
                                                @DrawableRes int drawableToChangeId) {
-        Log.v(TAG, "changeDrawableColor");
+//        Log.v(TAG, "changeDrawableColor");
         int color = context.getResources().getColor(colorToId);
         Drawable drawable = context.getResources().getDrawable(drawableToChangeId);
         drawable.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
