@@ -54,7 +54,6 @@ import chat21.android.core.messages.listeners.SendMessageListener;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.presence.PresenceHandler;
 import chat21.android.core.presence.listeners.PresenceListener;
-import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.storage.OnUploadedCallback;
 import chat21.android.storage.StorageHandler;
@@ -122,13 +121,23 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
         registerViews();
 
-        // retrieve recipient from other activities or from a foreground notification
+        // retrieve recipient
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.BUNDLE_RECIPIENT);
-        // retrieve recipient from background notification
-        if (recipient == null) {
-            recipient = getRecipientFromBackgroundNotification();
-            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipient == " + recipient.toString());
+        String recipientId;
+        if (recipient != null) {
+            recipientId = recipient.getId();
+        } else {
+            if (StringUtils.isValid(getIntent().getStringExtra("sender"))) {
+                recipientId = getIntent().getStringExtra("sender");
+                Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipientId == " + recipientId);
+            } else {
+                throw new ChatRuntimeException("Recipient can not be retrieved! are you sure you have passed it correctly?");
+            }
         }
+
+        // retrieve the updated recipient
+        recipient = ChatManager.getInstance().getContactsSynchronizer()
+                .findById(recipientId);
 
         // retrieve channel type
         channelType = getIntent().getStringExtra(BUNDLE_CHANNEL_TYPE);
@@ -225,22 +234,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         sendButton = (ImageView) findViewById(R.id.main_activity_send);
         recyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmojiBar = (LinearLayout) findViewById(R.id.main_activity_emoji_bar);
-    }
-
-    private IChatUser getRecipientFromBackgroundNotification() {
-        IChatUser recipient = null;
-        if (StringUtils.isValid(getIntent().getStringExtra("sender")) &&
-                StringUtils.isValid(getIntent().getStringExtra("sender_fullname"))) {
-            String contactId = getIntent().getStringExtra("sender");
-            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate.fromNotification: contactId == " + contactId);
-
-            String contactFullName = getIntent().getStringExtra("sender_fullname");
-            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate.fromNotification: contactFullName == " + contactFullName);
-
-            // create the recipient from background notification data
-            recipient = new ChatUser(contactId, contactFullName);
-        }
-        return recipient;
     }
 
     private void initDirectToolbar(final IChatUser recipient) {
@@ -766,7 +759,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
         }
 
-        if(!conversWithOnline && lastOnline == PresenceHandler.LAST_ONLINE_UNDEFINED)  {
+        if (!conversWithOnline && lastOnline == PresenceHandler.LAST_ONLINE_UNDEFINED) {
             mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_offline));
         }
     }

@@ -71,8 +71,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     public void onBindViewHolder(ConversationsListAdapter.ViewHolder holder, final int position) {
         final Conversation conversation = getItem(position);
 
-        // TODO: 19/12/17 retrieve the pictrure url from the recipient
-        setRecipientPicture(holder, conversation, "");
+        setRecipientPicture(holder, conversation);
 
         setRecipientDisplayName(holder, conversation.getConvers_with_fullname(), conversation.getConvers_with());
 
@@ -85,16 +84,23 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
         setConversationLongCLickAction(holder, conversation, position);
     }
 
-    private void setRecipientPicture(ViewHolder holder, Conversation conversation, String pictureUrl) {
+    private void setRecipientPicture(ViewHolder holder, Conversation conversation) {
         if (conversation.isDirectChannel()) {
+
+            // retrieve the contact picture
+            String contactPicture = ChatManager.getInstance()
+                    .getContactsSynchronizer()
+                    .findById(conversation.getConvers_with())
+                    .getProfilePictureUrl();
+
             Glide.with(holder.itemView.getContext())
-                    .load(pictureUrl)
+                    .load(StringUtils.isValid(contactPicture) ? contactPicture : "")
                     .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);
         } else if (conversation.isGroupChannel()) {
             Glide.with(holder.itemView.getContext())
-                    .load(pictureUrl)
+                    .load("") // TODO: 01/02/18 set the group image
                     .placeholder(R.drawable.ic_group_avatar)
                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);
