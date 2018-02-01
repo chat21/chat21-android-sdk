@@ -238,8 +238,6 @@ public class ConversationListFragment extends Fragment implements
     public void onConversationClicked(Conversation conversation, int position) {
         // click on conversation
 
-        if (conversation == null) return;
-
         // set the conversation as read
         conversationsHandler.setConversationRead(conversation.getConversationId());
 
@@ -258,7 +256,7 @@ public class ConversationListFragment extends Fragment implements
     }
 
     private void startMessageActivity(Conversation conversation) {
-        Log.d(TAG, "ConversationListFragment.startMessageActivity");
+        Log.d(TAG, "ConversationListFragment.startMessageActivity: conversation == " + conversation.toString());
 
         Intent intent = new Intent(getActivity(), MessageListActivity.class);
         IChatUser recipient = new ChatUser(conversation.getConvers_with(), conversation.getConvers_with_fullname());

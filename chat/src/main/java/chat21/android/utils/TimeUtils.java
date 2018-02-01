@@ -14,7 +14,7 @@ import java.util.Locale;
  * Created by stefano on 05/09/2015.
  */
 public class TimeUtils {
-    private static final String TAG = TimeUtils.class.getName();
+//    private static final String TAG = TimeUtils.class.getName();
 
     private static Long ONE_DAY_IN_MILLIS = Long.valueOf(86400000);  // 1 day = 86400000 millis
 
@@ -26,7 +26,7 @@ public class TimeUtils {
      * @return the date string
      */
     public static String getFormattedDate(Long timestamp, Locale locale) {
-        Log.d(TAG, "getFormattedDate");
+//        Log.d(TAG, "getFormattedDate");
 
         Long currentTime = getCurrentTime(locale);
         Long timeDiff = currentTime - timestamp;
@@ -48,12 +48,12 @@ public class TimeUtils {
 
     // return the current time in millis
     private static Long getCurrentTime(Locale locale) {
-        Log.d(TAG, "getCurrentTime");
+//        Log.d(TAG, "getCurrentTime");
         return Calendar.getInstance(locale).getTimeInMillis();
     }
 
     public static String fixPrettyTimeFutureMessage(String convertedTimestamp) {
-        Log.d(TAG, "fixPrettyTimeFutureMessage");
+//        Log.d(TAG, "fixPrettyTimeFutureMessage");
         String fixedTimestamp = convertedTimestamp;
         if (convertedTimestamp.compareTo("fra poco") == 0) {
             fixedTimestamp = "adesso";
@@ -62,7 +62,7 @@ public class TimeUtils {
     }
 
     public static String getFormattedTimestamp(long timestampLong) {
-        Log.d(TAG, "getFormattedTimestamp");
+//        Log.d(TAG, "getFormattedTimestamp");
         PrettyTime p = new PrettyTime();
         String timestamp =
                 p.format(new Date((timestampLong)));

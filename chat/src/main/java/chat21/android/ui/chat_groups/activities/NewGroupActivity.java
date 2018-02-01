@@ -153,6 +153,8 @@ public class NewGroupActivity extends AppCompatActivity {
         conversation.setTimestamp(chatGroup.getCreatedOnLong());
         conversation.setIs_new(true);
         conversation.setRecipientFullName(chatGroup.getName());
+        conversation.setConvers_with(chatGroup.getGroupId());
+        conversation.setConvers_with_fullname(chatGroup.getName());
         Log.d(DEBUG_GROUPS, "NewGroupActivity.onActionNextClicked" +
                 ".onChatGroupCreated: it has been created on the fly the conversation == " + conversation.toString());
         return conversation;

@@ -44,11 +44,11 @@
     <string name="menu_activity_group_admin_panel_activity_cannot_add_member_offline">Non puoi aggiungere un membro se sei offline</string>
 
     <!--fragment_bottom_sheet_group_admin_panel_member-->
-    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_btn_label">Rimuovi membro</string>
-    <string name="fragment_bottom_sheet_group_admin_panel_member_leave_group_btn_label">Abbandona il gruppo</string>
-    <string name="fragment_bottom_sheet_group_admin_panel_member_see_profile_btn_label">Visualizza profilo</string>
-    <string name="fragment_bottom_sheet_group_admin_panel_member_send_message_btn_label">Invia messaggio</string>
-    <string name="fragment_bottom_sheet_group_admin_panel_member_btn_cancel_label">Annulla</string>
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_btn_label">Rimuovi membro</string>
+    <string name="bottom_sheet_group_admin_panel_member_leave_group_btn_label">Abbandona il gruppo</string>
+    <string name="bottom_sheet_group_admin_panel_member_see_profile_btn_label">Visualizza profilo</string>
+    <string name="bottom_sheet_group_admin_panel_member_send_message_btn_label">Invia messaggio</string>
+    <string name="bottom_sheet_group_admin_panel_member_btn_cancel_label">Annulla</string>
 
     <!--activity_conversation_list-->
     <string name="activity_conversation_list_cannot_open_converation_label">Impossibile aprire la conversazione selezioanta</string>
@@ -57,12 +57,12 @@
     <string name="fragment_conversation_list_my_group_label">Gruppi</string>
 
     <!--fragment_bottom_sheet_group_admin_panel_member-->
-    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_title">Rimuovi membro</string>
-    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_message">Vuoi davvero rimuovere <b>%1$s</b> dal gruppo?</string>
-    <string name="fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_message">Vuoi davvero abbandonare il gruppo?</string>
-    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_positive_click">Rimuovi</string>
-    <string name="fragment_bottom_sheet_group_admin_panel_member_leave_group_alert_positive_click">Abbandona</string>
-    <string name="fragment_bottom_sheet_group_admin_panel_member_remove_member_alert_negative_click">Annulla</string>
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_alert_title">Rimuovi membro</string>
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_alert_message">Vuoi davvero rimuovere <b>%1$s</b> dal gruppo?</string>
+    <string name="bottom_sheet_group_admin_panel_member_leave_group_alert_message">Vuoi davvero abbandonare il gruppo?</string>
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_alert_positive_click">Rimuovi</string>
+    <string name="bottom_sheet_group_admin_panel_member_leave_group_alert_positive_click">Abbandona</string>
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_alert_negative_click">Annulla</string>
 
     <!--activity_message_list-->
     <string name="activity_message_list_group_info_you_label">tu</string>
@@ -76,8 +76,8 @@
     <string name="activity_message_list_confirm_dialog_upload_message_label">Vuoi mandare questa immagine?</string>
 
     <!--fragment_bottom_sheet_attach-->
-    <string name="fragment_bottom_sheet_attach_images_label">Immagini</string>
-    <string name="fragment_bottom_sheet_attach_documents_label">Documenti</string>
+    <string name="bottom_sheet_attach_images_label">Immagini</string>
+    <string name="bottom_sheet_attach_documents_label">Documenti</string>
 
     <!--activity_public_profile-->
     <string name="activity_public_profile_presence_online">Online</string>
@@ -89,9 +89,9 @@
     <string name="activity_my_groups_list_error_subtitle">Non sei membro di nessun gruppo</string>
 
     <!--fragment_bottom_sheet_conversation_list-->
-    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_title">Elimina converazione</string>
-    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_message">Vuoi davvero eliminare la converazione?\nL\'operazione non può essere annullata.</string>
-    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_button_label">Cancella conversazione</string>
-    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_label">elimina conversazione</string>
-    <string name="fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_negative">annulla</string>
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_title">Elimina converazione</string>
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_message">Vuoi davvero eliminare la converazione?\nL\'operazione non può essere annullata.</string>
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_button_label">Cancella conversazione</string>
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_label">elimina conversazione</string>
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_negative">annulla</string>
 </resources>

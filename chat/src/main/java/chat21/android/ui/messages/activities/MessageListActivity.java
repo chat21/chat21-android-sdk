@@ -745,7 +745,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         } else {
             conversWithOnline = false;
 
-            if (conversWithLastOnline != 0) {
+            if (conversWithLastOnline != PresenceHandler.LAST_ONLINE_UNDEFINED) {
                 mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
                 Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.isUserOnline: " +
                         "conversWithLastOnline == " + conversWithLastOnline);
@@ -762,8 +762,13 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
         conversWithLastOnline = lastOnline;
 
-        if (!conversWithOnline)
+        if (!conversWithOnline) {
             mSubTitleTextView.setText(TimeUtils.getFormattedTimestamp(lastOnline));
+        }
+
+        if(!conversWithOnline && lastOnline == PresenceHandler.LAST_ONLINE_UNDEFINED)  {
+            mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_offline));
+        }
     }
 
     @Override

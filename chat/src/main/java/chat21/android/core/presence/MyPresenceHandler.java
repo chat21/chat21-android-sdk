@@ -36,31 +36,30 @@ public class MyPresenceHandler {
     private ValueEventListener valueEventListener;
 
     private List<MyPresenceListener> myPresenceListeners;
-//    private String firebase;
-//    private String appId;
-
     // the device that is currently connected
     String deviceId = null;
 
     public MyPresenceHandler(String firebaseUrl, String appId, String userId) {
-//        this.firebase = firebase;
-//        this.appId = appId;
         myPresenceListeners = new ArrayList<>();
 
         // since I can connect from multiple devices, we store each connection instance separately
         // any time that connectionsRef's value is null (i.e. has no children) I am offline
         database = FirebaseDatabase.getInstance();
-        if(StringUtils.isValid(firebaseUrl)) {
-            connectionsRef = database.getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/presence/" + userId + "/connections");
+        if (StringUtils.isValid(firebaseUrl)) {
+            connectionsRef = database.getReferenceFromUrl(firebaseUrl)
+                    .child("/apps/" + appId + "/presence/" + userId + "/connections");
         } else {
-            connectionsRef = database.getReference().child("/apps/" + appId + "/presence/" + userId + "/connections");
+            connectionsRef = database.getReference()
+                    .child("/apps/" + appId + "/presence/" + userId + "/connections");
         }
 
         // stores the timestamp of my last disconnect (the last time I was seen online)
-        if(StringUtils.isValid(firebaseUrl)) {
-            lastOnlineRef = database.getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/presence/" + userId + "/lastOnline");
+        if (StringUtils.isValid(firebaseUrl)) {
+            lastOnlineRef = database.getReferenceFromUrl(firebaseUrl)
+                    .child("/apps/" + appId + "/presence/" + userId + "/lastOnline");
         } else {
-            lastOnlineRef = database.getReference().child("/apps/" + appId + "/presence/" + userId + "/lastOnline");
+            lastOnlineRef = database.getReference()
+                    .child("/apps/" + appId + "/presence/" + userId + "/lastOnline");
         }
 
         // /.info/connected is a boolean value which is not synchronized between clients because
@@ -72,7 +71,8 @@ public class MyPresenceHandler {
         // When a client has no active listeners, no pending write or onDisconnect operations,
         // and is not explicitly disconnected by the goOffline method,
         // Firebase closes the connection after 60 seconds of inactivity.
-        // source: https://stackoverflow.com/questions/41563120/firebase-database-differentiate-between-online-and-offline-data
+        // source:
+        // https://stackoverflow.com/questions/41563120/firebase-database-differentiate-between-online-and-offline-data
         connectedRef = database.getReference(".info/connected");
     }
 
@@ -101,11 +101,13 @@ public class MyPresenceHandler {
             removePresenceListener(myPresenceListener);
             addPresenceListener(myPresenceListener);
             Log.i(DEBUG_MY_PRESENCE, "MyPresenceHandler.upsertPresenceListener: " +
-                    "myPresenceListener with hashCode: " + myPresenceListener.hashCode() + " updated");
+                    "myPresenceListener with hashCode: " +
+                    myPresenceListener.hashCode() + " updated");
         } else {
             addPresenceListener(myPresenceListener);
             Log.i(DEBUG_MY_PRESENCE, "MyPresenceHandler.upsertPresenceListener: " +
-                    " myPresenceListener with hashCode: " + myPresenceListener.hashCode() + " added");
+                    " myPresenceListener with hashCode: " +
+                    myPresenceListener.hashCode() + " added");
         }
     }
 
@@ -140,7 +142,8 @@ public class MyPresenceHandler {
 
                 @Override
                 public void onCancelled(DatabaseError error) {
-                    Log.i(DEBUG_MY_PRESENCE, "MyPresenceHandler.connect.onCancelled: Listener was cancelled at .info/connected");
+                    Log.i(DEBUG_MY_PRESENCE, "MyPresenceHandler.connect.onCancelled: " +
+                            "Listener was cancelled at .info/connected");
 
                     if (myPresenceListeners != null && myPresenceListeners.size() > 0) {
                         for (MyPresenceListener p : myPresenceListeners) {
@@ -159,25 +162,29 @@ public class MyPresenceHandler {
     public void disconnect() {
         if (myPresenceListeners != null && myPresenceListeners.size() > 0) {
             myPresenceListeners.clear();
-            Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect: myPresenceListeners has been cleared.");
+            Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect:" +
+                    " myPresenceListeners has been cleared.");
         }
 
         // when the device disconnects, remove the deviceId connection from the connections list
         if (connectionsRef != null && StringUtils.isValid(deviceId)) {
             connectionsRef.child(deviceId).removeValue();
-            Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect: connectionsRef with deviceId: " + deviceId + " has been detached.");
+            Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect: " +
+                    "connectionsRef with deviceId: " + deviceId + " has been detached.");
         }
 
         // when the user is disconnect, update the last time he was seen online
         if (lastOnlineRef != null) {
             lastOnlineRef.setValue(ServerValue.TIMESTAMP);
-            Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect: lastOnlineRef has been updated");
+            Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect:" +
+                    " lastOnlineRef has been updated");
         }
 
         // detach all listeners
         if (connectedRef != null && valueEventListener != null) {
             connectedRef.removeEventListener(valueEventListener);
-            Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect: connectedRef valueEventListener has been detached");
+            Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect: " +
+                    "connectedRef valueEventListener has been detached");
         }
     }
 }

@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:text="@string/fragment_bottom_sheet_attach_images_label"
+                android:text="@string/bottom_sheet_attach_images_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <!--line separator-->
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:text="@string/fragment_bottom_sheet_attach_documents_label"
+                android:text="@string/bottom_sheet_attach_documents_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <!--line separator-->

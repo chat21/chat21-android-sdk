@@ -45,9 +45,13 @@ public class ConversationsHandler {
         this.currentUserId = currentUserId;
 
         if (StringUtils.isValid(firebaseUrl)) {
-            this.conversationsNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
+            this.conversationsNode = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl(firebaseUrl)
+                    .child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
         } else {
-            this.conversationsNode = FirebaseDatabase.getInstance().getReference().child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
+            this.conversationsNode = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
         }
         this.conversationsNode.keepSynced(true);
 
@@ -57,7 +61,8 @@ public class ConversationsHandler {
                 try {
                     return o2.getTimestampLong().compareTo(o1.getTimestampLong());
                 } catch (Exception e) {
-                    Log.e(TAG, "ConversationHandler.sortConversationsInMemory: cannot compare conversations timestamp", e);
+                    Log.e(TAG, "ConversationHandler.sortConversationsInMemory: " +
+                            "cannot compare conversations timestamp", e);
                     return 0;
                 }
             }
@@ -88,22 +93,35 @@ public class ConversationsHandler {
                             setConversationRead(conversation.getConversationId());
                         }
 
-                        saveOrUpdateConversationInMemory(conversation);
-                        sortConversationsInMemory();
-
-                        if (conversationsListeners != null) {
-                            for (ConversationsListener conversationsListener : conversationsListeners) {
-                                conversationsListener.onConversationAdded(conversation, null);
-                            }
-                        }
-
+                        addConversation(conversation);
                     } catch (Exception e) {
-                        if (conversationsListeners != null) {
-                            for (ConversationsListener conversationsListener : conversationsListeners) {
-                                conversationsListener.onConversationAdded(null, new ChatRuntimeException(e));
-                            }
-                        }
+                        notifyConversationAdded(null, new ChatRuntimeException(e));
                     }
+
+//                    try {
+//                        Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
+//
+//                        // it sets the conversation as read if the person whom are talking to is the current user
+//                        if (currentUserId.equals(conversation.getSender())) {
+//                            setConversationRead(conversation.getConversationId());
+//                        }
+//
+//                        saveOrUpdateConversationInMemory(conversation);
+//                        sortConversationsInMemory();
+//
+//                        if (conversationsListeners != null) {
+//                            for (ConversationsListener conversationsListener : conversationsListeners) {
+//                                conversationsListener.onConversationAdded(conversation, null);
+//                            }
+//                        }
+//
+//                    } catch (Exception e) {
+//                        if (conversationsListeners != null) {
+//                            for (ConversationsListener conversationsListener : conversationsListeners) {
+//                                conversationsListener.onConversationAdded(null, new ChatRuntimeException(e));
+//                            }
+//                        }
+//                    }
                 }
 
                 //for return receipt
@@ -113,23 +131,30 @@ public class ConversationsHandler {
 
                     try {
                         Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
-
-                        saveOrUpdateConversationInMemory(conversation);
-                        sortConversationsInMemory();
-
-                        if (conversationsListeners != null) {
-                            for (ConversationsListener conversationsListener : conversationsListeners) {
-                                conversationsListener.onConversationChanged(conversation, null);
-                            }
-                        }
-
+                        addConversation(conversation);
                     } catch (Exception e) {
-                        if (conversationsListeners != null) {
-                            for (ConversationsListener conversationsListener : conversationsListeners) {
-                                conversationsListener.onConversationChanged(null, new ChatRuntimeException(e));
-                            }
-                        }
+                        notifyConversationChanged(null, new ChatRuntimeException(e));
                     }
+
+//                    try {
+//                        Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
+//
+//                        saveOrUpdateConversationInMemory(conversation);
+//                        sortConversationsInMemory();
+//
+//                        if (conversationsListeners != null) {
+//                            for (ConversationsListener conversationsListener : conversationsListeners) {
+//                                conversationsListener.onConversationChanged(conversation, null);
+//                            }
+//                        }
+//
+//                    } catch (Exception e) {
+//                        if (conversationsListeners != null) {
+//                            for (ConversationsListener conversationsListener : conversationsListeners) {
+//                                conversationsListener.onConversationChanged(null, new ChatRuntimeException(e));
+//                            }
+//                        }
+//                    }
                 }
 
                 @Override
@@ -229,16 +254,31 @@ public class ConversationsHandler {
     }
 
     public void addConversation(Conversation conversation) {
-        saveOrUpdateConversationInMemory(conversation);
-        sortConversationsInMemory();
 
+        try {
+            saveOrUpdateConversationInMemory(conversation);
+            sortConversationsInMemory();
+            notifyConversationAdded(conversation, null);
+        } catch (Exception e) {
+            notifyConversationAdded(null, new ChatRuntimeException(e));
+        }
+    }
+
+    private void notifyConversationAdded(Conversation conversation, ChatRuntimeException exception) {
         if (conversationsListeners != null) {
             for (ConversationsListener conversationsListener : conversationsListeners) {
-                conversationsListener.onConversationChanged(conversation, null);
+                conversationsListener.onConversationChanged(conversation, exception);
             }
         }
     }
 
+    private void notifyConversationChanged(Conversation conversation, ChatRuntimeException exception) {
+        if (conversationsListeners != null) {
+            for (ConversationsListener conversationsListener : conversationsListeners) {
+                conversationsListener.onConversationChanged(conversation, exception);
+            }
+        }
+    }
 
     public static Conversation decodeConversationFromSnapshot(DataSnapshot dataSnapshot) {
         Log.d(TAG, "ConversationHandler.decodeConversationFromSnapshop");
@@ -247,7 +287,8 @@ public class ConversationsHandler {
 
         // conversationId
         conversation.setConversationId(dataSnapshot.getKey());
-        Log.d(TAG, "ConversationsHandler.decodeConversationSnapshop: conversationId = " + conversation.getConversationId());
+        Log.d(TAG, "ConversationsHandler.decodeConversationSnapshop: conversationId = " +
+                conversation.getConversationId());
 
         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
@@ -256,7 +297,8 @@ public class ConversationsHandler {
             boolean is_new = (boolean) map.get("is_new");
             conversation.setIs_new(is_new);
         } catch (Exception e) {
-            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop: cannot retrieve is_new");
+            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop:" +
+                    " cannot retrieve is_new");
         }
 
         // last_message_text
@@ -264,7 +306,8 @@ public class ConversationsHandler {
             String last_message_text = (String) map.get("last_message_text");
             conversation.setLast_message_text(last_message_text);
         } catch (Exception e) {
-            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop: cannot retrieve last_message_text");
+            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop: " +
+                    "cannot retrieve last_message_text");
         }
 
         // recipient
@@ -272,7 +315,8 @@ public class ConversationsHandler {
             String recipient = (String) map.get("recipient");
             conversation.setRecipient(recipient);
         } catch (Exception e) {
-            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop: cannot retrieve recipient");
+            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop:" +
+                    " cannot retrieve recipient");
         }
 
         // rrecipient_fullname
@@ -324,7 +368,8 @@ public class ConversationsHandler {
 
 
         // convers with
-        if (conversation.getRecipient().equals(ChatManager.getInstance().getLoggedUser().getId())) {
+        if (conversation.getRecipient()
+                .equals(ChatManager.getInstance().getLoggedUser().getId())) {
             conversation.setConvers_with(conversation.getSender());
             conversation.setConvers_with_fullname(conversation.getSender_fullname());
         } else {
@@ -332,14 +377,12 @@ public class ConversationsHandler {
             conversation.setConvers_with_fullname(conversation.getRecipientFullName());
         }
 
-
         return conversation;
     }
 
 
     public void setConversationRead(final String recipientId) {
         Log.d(TAG, "setConversationRead");
-
 
         conversationsNode.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -355,13 +398,13 @@ public class ConversationsHandler {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                String errorMessage = "cannot mark the conversation as read.: " + databaseError.getMessage();
+                String errorMessage = "cannot mark the conversation as read: " +
+                        databaseError.getMessage();
                 Log.e(TAG, errorMessage);
                 FirebaseCrash.report(new Exception(errorMessage));
             }
         });
     }
-
 
     public List<ConversationsListener> getConversationsListener() {
         return conversationsListeners;
@@ -376,8 +419,8 @@ public class ConversationsHandler {
 
         this.conversationsListeners.add(conversationsListener);
 
-        Log.i(TAG, "  conversationsListener with hashCode: " + conversationsListener.hashCode() + " added");
-
+        Log.i(TAG, "  conversationsListener with hashCode: " +
+                conversationsListener.hashCode() + " added");
     }
 
     public void removeConversationsListener(ConversationsListener conversationsListener) {
@@ -386,8 +429,8 @@ public class ConversationsHandler {
         if (conversationsListeners != null)
             this.conversationsListeners.remove(conversationsListener);
 
-        Log.i(TAG, "  conversationsListener with hashCode: " + conversationsListener.hashCode() + " removed");
-
+        Log.i(TAG, "  conversationsListener with hashCode: " +
+                conversationsListener.hashCode() + " removed");
     }
 
     public void upsertConversationsListener(ConversationsListener conversationsListener) {
@@ -396,12 +439,13 @@ public class ConversationsHandler {
         if (conversations.contains(conversationsListener)) {
             this.removeConversationsListener(conversationsListener);
             this.addConversationsListener(conversationsListener);
-            Log.i(TAG, "  conversationsListener with hashCode: " + conversationsListener.hashCode() + " updated");
+            Log.i(TAG, "  conversationsListener with hashCode: " +
+                    conversationsListener.hashCode() + " updated");
 
         } else {
             this.addConversationsListener(conversationsListener);
-            Log.i(TAG, "  conversationsListener with hashCode: " + conversationsListener.hashCode() + " added");
-
+            Log.i(TAG, "  conversationsListener with hashCode: " +
+                    conversationsListener.hashCode() + " added");
         }
     }
 
@@ -418,7 +462,6 @@ public class ConversationsHandler {
         this.conversationsNode.removeEventListener(this.conversationsChildEventListener);
         this.removeAllConversationsListeners();
     }
-
 
 //    public void deleteConversation(String recipientId, final ConversationsListener conversationsListener) {
 //        DatabaseReference.CompletionListener onConversationRemoved
@@ -440,7 +483,6 @@ public class ConversationsHandler {
 //        // remove the conversation with recipientId
 //        this.conversationsNode.child(recipientId).removeValue(onConversationRemoved);
 //    }
-
 
 //    public DatabaseReference getConversationsNode() {
 //        return conversationsNode;

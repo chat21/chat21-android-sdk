@@ -24,41 +24,32 @@ import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 
 public class PresenceHandler {
 
+    public static final long LAST_ONLINE_UNDEFINED = -1;
+
     // since I can connect from multiple devices, we store each connection instance separately
     // any time that connectionsRef's value is null (i.e. has no children) I am offline
     private FirebaseDatabase database;
 
     private DatabaseReference userPresenceRef;
 
-//    private DatabaseReference connectionsRef;
-
-//    // stores the timestamp of user last disconnect (the last time I was seen online)
-//    private DatabaseReference lastOnlineRef;
-
     private ValueEventListener valueEventListener;
 
     private List<PresenceListener> presenceListeners;
-//    private String firebase;
-//    private String appId;
 
     public PresenceHandler(String firebaseUrl, String appId, String userId) {
-//        this.firebase = firebase;
-//        this.appId = appId;
         presenceListeners = new ArrayList<>();
 
         // since I can connect from multiple devices, we store each connection instance separately
         // any time that connectionsRef's value is null (i.e. has no children) I am offline
         database = FirebaseDatabase.getInstance();
 
-        if(StringUtils.isValid(firebaseUrl)) {
-            userPresenceRef = database.getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/presence/" + userId);
+        if (StringUtils.isValid(firebaseUrl)) {
+            userPresenceRef = database.getReferenceFromUrl(firebaseUrl)
+                    .child("/apps/" + appId + "/presence/" + userId);
         } else {
-            userPresenceRef = database.getReference().child("/apps/" + appId + "/presence/" + userId);
+            userPresenceRef = database.getReference()
+                    .child("/apps/" + appId + "/presence/" + userId);
         }
-//        connectionsRef = userPresenceRef.child("/connections");
-
-//        // stores the timestamp of last disconnect (the last time I was seen online)
-//        lastOnlineRef = userPresenceRef.child("/lastOnline");
     }
 
     public void addPresenceListener(PresenceListener presenceListener) {
@@ -95,25 +86,14 @@ public class PresenceHandler {
     }
 
     public ValueEventListener connect() {
-//        if (valueEventListener == null) {
 
         valueEventListener = userPresenceRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i(DEBUG_USER_PRESENCE, "PresenceHandler.connect.onDataChange: dataSnapshot == " + dataSnapshot);
+                Log.i(DEBUG_USER_PRESENCE, "PresenceHandler.connect.onDataChange:" +
+                        " dataSnapshot == " + dataSnapshot);
 
-                // full datasnapshot example
-//                    DataSnapshot {
-//                        key = etWruToogVdIyLztne1tBu3VR902,
-//                                value = {
-//                                        lastOnline = 1515509219023,
-//                                        connections = {
-//                                                -L2QbracGqMhxa5HAkBb = true
-//                                        }
-//                                }
-//                    }
-
-                long lastOnline = -1;
+                long lastOnline = LAST_ONLINE_UNDEFINED;
                 boolean online = false;
                 Map<String, Boolean> connections = new HashMap<>();
 
@@ -125,14 +105,16 @@ public class PresenceHandler {
                     try {
                         lastOnline = (long) value.get("lastOnline");
                     } catch (Exception e) {
-                        Log.w(DEBUG_USER_PRESENCE, "PresenceHandler.connect.onDataChange: Cannot retrieve lastOnline " + e.toString());
+                        Log.w(DEBUG_USER_PRESENCE, "PresenceHandler.connect.onDataChange:" +
+                                " Cannot retrieve lastOnline " + e.toString());
                     }
 
                     // retrieve connections
                     try {
                         connections = (Map<String, Boolean>) value.get("connections");
                     } catch (Exception e) {
-                        Log.w(DEBUG_USER_PRESENCE, "PresenceHandler.connect.onDataChange: Cannot retrieve connections " + e.toString());
+                        Log.w(DEBUG_USER_PRESENCE, "PresenceHandler.connect.onDataChange:" +
+                                " Cannot retrieve connections " + e.toString());
                     }
 
                     // if exists at least one connection, the user is marked as online
@@ -155,17 +137,14 @@ public class PresenceHandler {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(DEBUG_USER_PRESENCE, "PresenceHandler.connect.onCancelled: " + databaseError.toString());
+                Log.w(DEBUG_USER_PRESENCE, "PresenceHandler.connect.onCancelled: " +
+                        databaseError.toString());
 
                 for (PresenceListener p : presenceListeners) {
                     p.onPresenceError(databaseError.toException());
                 }
             }
         });
-
-//        } else {
-//            Log.d(DEBUG_USER_PRESENCE, "PresenceHandler.connect: listener already added.");
-//        }
 
         return valueEventListener;
     }

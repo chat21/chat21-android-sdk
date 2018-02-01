@@ -107,9 +107,9 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.showRemoveMemberAlertDialog");
 
         new AlertDialog.Builder(getActivity())
-                .setTitle(getString(R.string.fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_title))
-                .setMessage(getString(R.string.fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_message))
-                .setPositiveButton(getString(R.string.fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_label),
+                .setTitle(getString(R.string.bottom_sheet_conversation_list_confirm_delete_conversation_alert_title))
+                .setMessage(getString(R.string.bottom_sheet_conversation_list_confirm_delete_conversation_alert_message))
+                .setPositiveButton(getString(R.string.bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_label),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -119,7 +119,7 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
                                 perfomDeleteConversation();
                             }
                         })
-                .setNegativeButton(getString(R.string.fragment_bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_negative),
+                .setNegativeButton(getString(R.string.bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_negative),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

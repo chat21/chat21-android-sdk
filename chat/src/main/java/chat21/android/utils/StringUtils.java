@@ -6,11 +6,11 @@ import android.util.Log;
  * Created by stefano on 18/05/2016.
  */
 public class StringUtils {
-    private static final String TAG = StringUtils.class.getName();
+//    private static final String TAG = StringUtils.class.getName();
 
     // Sort two strings alphabetically
     public static String[] sort(String x, String y) {
-        Log.d(TAG, "sort");
+//        Log.d(TAG, "sort");
         String[] results = new String[2];
 
         if (x.compareToIgnoreCase(y) <= 0) {
@@ -25,7 +25,7 @@ public class StringUtils {
     }
 
     public static boolean isValid(String string) {
-        Log.d(TAG, "isValid");
+//        Log.d(TAG, "isValid");
         return (string != null && !string.trim().isEmpty()) ? true : false;
     }
 
@@ -37,7 +37,7 @@ public class StringUtils {
      * @return the normalized string
      */
     public static String removeFirebaseForbiddenChars(String text, String toReplace) {
-        Log.d(TAG, "removeFirebaseForbiddenChars");
+//        Log.d(TAG, "removeFirebaseForbiddenChars");
         text = text.replace(".", toReplace);
         text = text.replace("$", toReplace);
         text = text.replace("#", toReplace);

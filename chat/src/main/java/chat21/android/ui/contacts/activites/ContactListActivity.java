@@ -45,8 +45,11 @@ import static chat21.android.utils.DebugConstants.DEBUG_CONTACTS_SYNC;
 /**
  * Created by stefano on 25/08/2015.
  */
-public class ContactListActivity extends AppCompatActivity implements OnContactClickListener, ContactListener {
+public class ContactListActivity extends AppCompatActivity implements OnContactClickListener,
+        ContactListener {
     private static final String TAG = ContactListActivity.class.getSimpleName();
+
+//    public static final String TAG_CONTACTS_SEARCH = "TAG_CONTACTS_SEARCH";
 
     private RecyclerView recyclerView;
     private List<IChatUser> contactList;
@@ -84,7 +87,8 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
 
         // recyclerview
         recyclerView = findViewById(R.id.user_list);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        RecyclerView.LayoutManager mLayoutManager =
+                new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
@@ -97,7 +101,8 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         initBoxCreateGroup();
 
         this.contactsSynchronizer.upsertContactsListener(this);
-        Log.d(DEBUG_CONTACTS_SYNC, "ContactListActivity.onCreate: contactsSynchronizer attached");
+        Log.d(DEBUG_CONTACTS_SYNC,
+                "ContactListActivity.onCreate: contactsSynchronizer attached");
 //        this.contactsSynchronizer.connect();
     }
 
@@ -105,7 +110,8 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
     protected void onDestroy() {
 
         contactsSynchronizer.removeContactsListener(this);
-        Log.d(DEBUG_CONTACTS_SYNC, "ContactListActivity.onDestroy: contactsSynchronizer detached");
+        Log.d(DEBUG_CONTACTS_SYNC,
+                "ContactListActivity.onDestroy: contactsSynchronizer detached");
 
         super.onDestroy();
     }
@@ -135,6 +141,8 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
             public boolean onQueryTextChange(String query) {
                 // filter recycler view when text is changed
                 mAdapter.getFilter().filter(query);
+//                Log.d(TAG, "ContactListActivity.OnQueryTextListener.onQueryTextChange:" +
+//                        " query == " + query);
                 return false;
             }
         });
@@ -246,7 +254,8 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
                     if (AbstractNetworkReceiver.isConnected(getApplicationContext())) {
 
                         if (ChatUI.getInstance().getOnCreateGroupClickListener() != null) {
-                            ChatUI.getInstance().getOnCreateGroupClickListener().onCreateGroupClicked();
+                            ChatUI.getInstance().getOnCreateGroupClickListener()
+                                    .onCreateGroupClicked();
                         }
 
                         startCreateGroupActivity();
@@ -265,9 +274,6 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
 
     private void startCreateGroupActivity() {
         Log.d(TAG, "startCreateGroupActivity");
-
-//        Intent intent = new Intent(this, CreateGroupActivity.class);
-//        startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
 
         Intent intent = new Intent(this, AddMembersToGroupActivity.class);
         startActivityForResult(intent, REQUEST_CODE_CREATE_GROUP);
