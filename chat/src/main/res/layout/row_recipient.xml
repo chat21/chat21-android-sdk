@@ -95,6 +95,7 @@
                     android:linksClickable="true"
                     android:textColor="@color/background_bubble_text_recipient"
                     android:textColorLink="@color/color_clickable_link_recipient"
+                    android:textSize="@dimen/chat_row_recipient_text_size"
                     app:emojiSize="@dimen/chat_emoji_size" />
             </LinearLayout>
 

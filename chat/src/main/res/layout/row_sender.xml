@@ -78,6 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:autoLink="web|email"
+                    android:textSize="@dimen/chat_row_sender_text_size"
                     android:linksClickable="true"
                     android:textColor="@color/background_bubble_text_sender"
                     android:textColorLink="@color/color_clickable_link_sender"
