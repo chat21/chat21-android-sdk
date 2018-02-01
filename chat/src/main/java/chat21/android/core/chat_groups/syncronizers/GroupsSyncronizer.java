@@ -329,9 +329,24 @@ public class GroupsSyncronizer {
 
     public void removeMemberFromChatGroup(String groupId, IChatUser toRemove) {
         ChatGroup chatGroup = getById(groupId);
+        int index = chatGroups.indexOf(chatGroup);
 
-        if (chatGroup.getMembersList().contains(toRemove)) {
+        if (chatGroup.getMembers().containsKey(toRemove.getId())) {
+            // remove from firebase app reference
             appGroupsNode.child("/" + groupId + "/members/" + toRemove.getId()).removeValue();
+
+            // remove member from local group
+            chatGroup.getMembers().remove(toRemove.getId());
+
+            // update local chatGroups
+            chatGroups.set(index, chatGroup);
+
+            // notify all subscribers
+            if (chatGroupsListeners != null) {
+                for (ChatGroupsListener chatGroupsListener : chatGroupsListeners) {
+                    chatGroupsListener.onGroupChanged(chatGroup, null);
+                }
+            }
         }
     }
 
