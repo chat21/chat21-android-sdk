@@ -123,21 +123,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
         // retrieve recipient
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.BUNDLE_RECIPIENT);
-        String recipientId;
-        if (recipient != null) {
-            recipientId = recipient.getId();
-        } else {
-            if (StringUtils.isValid(getIntent().getStringExtra("sender"))) {
-                recipientId = getIntent().getStringExtra("sender");
-                Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipientId == " + recipientId);
-            } else {
-                throw new ChatRuntimeException("Recipient can not be retrieved! are you sure you have passed it correctly?");
-            }
-        }
-
-        // retrieve the updated recipient
-        recipient = ChatManager.getInstance().getContactsSynchronizer()
-                .findById(recipientId);
 
         // retrieve channel type
         channelType = getIntent().getStringExtra(BUNDLE_CHANNEL_TYPE);
@@ -146,9 +131,27 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             channelType = Message.DIRECT_CHANNEL_TYPE;
         }
 
-        // retrieve group
+
         if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+            // retrieve group
             chatGroup = ChatManager.getInstance().getGroupsSyncronizer().getById(recipient.getId());
+        } else {
+            // retrive contact
+            String recipientId;
+            if (recipient != null) {
+                recipientId = recipient.getId();
+            } else {
+                if (StringUtils.isValid(getIntent().getStringExtra("sender"))) {
+                    recipientId = getIntent().getStringExtra("sender");
+                    Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipientId == " + recipientId);
+                } else {
+                    throw new ChatRuntimeException("Recipient can not be retrieved! are you sure you have passed it correctly?");
+                }
+            }
+
+            // retrieve the updated recipient
+            recipient = ChatManager.getInstance().getContactsSynchronizer()
+                    .findById(recipientId);
         }
 
         // conversation handler
