@@ -67,7 +67,7 @@ public class ChatUI implements Serializable {
     //private constructor.
     private ChatUI() {
 
-        //set the default mContext value equals to ChatManager.getInstance(). Use ChatUI.getIntance().setContext to use another context
+        //set the default mContext value equals to ChatManager.getInstance().getContext() Use ChatUI.getIntance().setContext to use another context
         mContext = ChatManager.getInstance().getContext();
 
         // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.

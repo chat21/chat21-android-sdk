@@ -39,29 +39,33 @@
         <!--display the list of all messages into a specific conversation-->
         <activity android:name="chat21.android.ui.messages.activities.MessageListActivity">
 
-            <!-- http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification
-             from notification
-             bugfix Issue #39-->
-            <intent-filter>
+           <!-- http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification
+            from notification
+            bugfix Issue #39-->
+<!--            <intent-filter>
                 <action android:name="ACTION_DEFAULT_CHAT_INTENT" />
                 <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
 
         <activity android:name="chat21.android.ui.messages.activities.ImageDetailsActivity" />
 
         <activity
-            android:name=".ui.chat_groups.activities.NewGroupActivity"
+            android:name=".ui.groups.activities.CreateGroupActivity"
             android:label="@string/string_create_group_activity_title"></activity>
 
         <activity
-            android:name=".ui.chat_groups.activities.AddMembersToGroupActivity"
+            android:name=".ui.groups.activities.AddMembersActivity"
             android:label="@string/string_add_members_activity_title"></activity>
 
-        <activity android:name=".ui.chat_groups.activities.GroupAdminPanelActivity"></activity>
+        <activity android:name=".ui.groups.activities.GroupAdminPanelActivity"></activity>
 
         <activity
-            android:name=".ui.chat_groups.activities.MyGroupsListActivity"
+            android:name=".ui.groups.activities.MyGroupsListActivity"
+            android:label="@string/activity_group_list_activity_title"></activity>
+
+        <activity
+            android:name=".ui.groups.activities.ChooseGroupActivity"
             android:label="@string/activity_group_list_activity_title"></activity>
 
         <!--display the user profile-->

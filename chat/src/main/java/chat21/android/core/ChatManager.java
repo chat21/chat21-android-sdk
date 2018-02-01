@@ -1,19 +1,22 @@
 package chat21.android.core;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.vanniktech.emoji.EmojiManager;
+import com.vanniktech.emoji.google.GoogleEmojiProvider;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
-import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
+import chat21.android.core.authentication.ChatAuthentication;
+import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
 import chat21.android.core.conversations.ConversationsHandler;
 import chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import chat21.android.core.messages.listeners.SendMessageListener;
@@ -22,10 +25,13 @@ import chat21.android.core.presence.MyPresenceHandler;
 import chat21.android.core.presence.PresenceHandler;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
+import chat21.android.ui.ChatUI;
 import chat21.android.utils.IOUtils;
 import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
+import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
+import static chat21.android.utils.DebugConstants.DEBUG_SESSION;
 
 /**
  * Created by stefano on 19/05/2016.
@@ -54,7 +60,6 @@ public class ChatManager {
     private Map<String, PresenceHandler> presenceHandlerMap;
 
     private ContactsSynchronizer contactsSynchronizer;
-    private GroupsSyncronizer groupsSyncronizer;
 
     // private constructor
     private ChatManager() {
@@ -65,20 +70,20 @@ public class ChatManager {
 
     public void setLoggedUser(IChatUser loggedUser) {
         this.loggedUser = loggedUser;
-        Log.d(TAG, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
+        Log.d(DEBUG_SESSION, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
         // serialize on disk
         IOUtils.saveObjectToFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, loggedUser);
     }
 
     public IChatUser getLoggedUser() {
-        Log.v(TAG, "ChatManager.getloggedUser");
+        Log.v(DEBUG_SESSION, "ChatManager.getloggedUser");
         return loggedUser;
     }
 
     public boolean isUserLogged() {
-        Log.d(TAG, "ChatManager.isUserLogged");
+        Log.d(DEBUG_SESSION, "ChatManager.isUserLogged");
         boolean isUserLogged = getLoggedUser() != null ? true : false;
-        Log.d(TAG, "ChatManager.isUserLogged: isUserLogged == " + isUserLogged);
+        Log.d(DEBUG_SESSION, "ChatManager.isUserLogged: isUserLogged == " + isUserLogged);
         return isUserLogged;
     }
 
@@ -97,7 +102,51 @@ public class ChatManager {
     }
 
     /**
-     * It initializes the SDK.
+     * It initializes the SDK Anonymously using  DEFAULT appId.
+     *
+     * @param loginActivity
+     */
+    public static void startAnonymously(final Activity loginActivity, final ChatAuthentication.OnChatLoginCallback onChatLoginCallback) {
+        startAnonymously(loginActivity, _DEFAULT_APP_ID_VALUE, onChatLoginCallback);
+    }
+
+    /**
+     * It initializes the SDK Anonymously using DEFAULT appId.
+     *
+     * @param loginActivity
+     * @param appId
+     */
+    public static void startAnonymously(final Activity loginActivity, final String appId, final ChatAuthentication.OnChatLoginCallback onChatLoginCallback ) {
+
+        //getting context from loginActivity
+        final Context context = loginActivity.getApplicationContext();
+
+        ChatAuthentication.getInstance().signInAnonymously(loginActivity,
+                new ChatAuthentication.OnChatLoginCallback() {
+                    @Override
+                    public void onChatLoginSuccess(IChatUser currentUser) {
+
+                        start(context, appId, currentUser);
+
+                        Log.i(TAG, "chat has been initialized with success");
+
+                        onChatLoginCallback.onChatLoginSuccess(currentUser);
+                    }
+
+                    @Override
+                    public void onChatLoginError(Exception e) {
+                        Log.e(TAG, "onChatLoginError", e);
+                        onChatLoginCallback.onChatLoginError(e);
+
+                    }
+                });
+
+    }
+
+
+
+    /**
+     * It initializes the SDK using DEFAULT appId and a current user.
      * It serializes the current user.
      * It serializes the configurations.
      *
@@ -109,7 +158,7 @@ public class ChatManager {
     }
 
     /**
-     * It initializes the SDK.
+     * It initializes the SDK specifing appId and the currentUser
      * It serializes the current user.
      * It serializes the configurations.
      *
@@ -126,7 +175,7 @@ public class ChatManager {
     }
 
     /**
-     * It initializes the SDK.
+     * It initializes the SDK passing a configuration object and the current user.
      * It serializes the current user.
      * It serializes the configurations.
      *
@@ -149,9 +198,10 @@ public class ChatManager {
 
         mInstance = chat;
 
+        // TODO: 16/01/18 move the emoji provider to chatUI
         // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.
-        //  EmojiManager.install(new IosEmojiProvider());
-        //EmojiManager.install(new IosEmojiProvider());
+//        EmojiManager.install(new IosEmojiProvider());
+        EmojiManager.install(new GoogleEmojiProvider());
 
 //        chat.loggedUser = currentUser;
         // serialize the current user
@@ -163,19 +213,13 @@ public class ChatManager {
         // serialize the appId
         IOUtils.saveObjectToFile(context, _SERIALIZED_CHAT_CONFIGURATION_TENANT, configuration.appId);
 
-        chat.initContactsSyncronizer();
 
-        chat.initGroupsSyncronizer();
+        chat.initContactsSyncronizer();
     }
 
-    private void initContactsSyncronizer() {
+    public void initContactsSyncronizer() {
         this.contactsSynchronizer = getContactsSynchronizer();
         this.contactsSynchronizer.connect();
-    }
-
-    private void initGroupsSyncronizer() {
-        this.groupsSyncronizer = getGroupsSyncronizer();
-        this.groupsSyncronizer.connect();
     }
 
     public void dispose() {
@@ -214,13 +258,6 @@ public class ChatManager {
             this.contactsSynchronizer.disconnect();
         }
         this.contactsSynchronizer = null;
-
-        // dispose groupsSyncronizer
-        if (groupsSyncronizer != null) {
-            this.groupsSyncronizer.removeAllGroupsListeners();
-            this.groupsSyncronizer.disconnect();
-        }
-        this.groupsSyncronizer = null;
 
         deleteInstanceId();
 
@@ -291,9 +328,11 @@ public class ChatManager {
     public ConversationMessagesHandler getConversationMessagesHandler(IChatUser recipient) {
         String recipientId = recipient.getId();
         Log.d(TAG, "Getting ConversationMessagesHandler for recipientId " + recipientId);
+        Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: Getting ConversationMessagesHandler for recipientId " + recipientId);
 
         if (conversationMessagesHandlerMap.containsKey(recipientId)) {
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
+            Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: ConversationMessagesHandler for recipientId " + recipientId + " already inizialized. Return it");
 
             return conversationMessagesHandlerMap.get(recipientId);
         } else {
@@ -302,6 +341,7 @@ public class ChatManager {
             conversationMessagesHandlerMap.put(recipientId, messageHandler);
 
             Log.i(TAG, "ConversationMessagesHandler for recipientId " + recipientId + " created.");
+            Log.d(DEBUG_NOTIFICATION, "ChatManager.ConversationMessagesHandler: ConversationMessagesHandler for recipientId " + recipientId + " created with hash " + messageHandler.hashCode());
 
             return messageHandler;
         }
@@ -346,16 +386,6 @@ public class ChatManager {
         }
     }
 
-    public GroupsSyncronizer getGroupsSyncronizer() {
-        if (this.groupsSyncronizer != null) {
-            return this.groupsSyncronizer;
-        } else {
-            this.groupsSyncronizer =
-                    new GroupsSyncronizer(Configuration.firebaseUrl, this.getAppId(), loggedUser.getId());
-            return this.groupsSyncronizer;
-        }
-    }
-
     public MyPresenceHandler getMyPresenceHandler() {
         if (this.myPresenceHandler != null) {
             return this.myPresenceHandler;
@@ -366,7 +396,7 @@ public class ChatManager {
         }
     }
 
-//    public void addChatGroupsListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
+//    public void addConversationMessagesListener(String recipientId, ConversationMessagesListener conversationMessagesListener){
 //
 //        ConversationMessagesHandler messageHandler = new ConversationMessagesHandler(
 //                Configuration.firebaseUrl, recipientId, this.getTenant(), this.getLoggedUser().getId()

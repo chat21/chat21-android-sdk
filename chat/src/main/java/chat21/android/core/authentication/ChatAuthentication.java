@@ -31,6 +31,8 @@ import chat21.android.R;
 import chat21.android.core.authentication.task.GetCustomTokenTask;
 import chat21.android.core.authentication.task.OnCustomAuthTokenCallback;
 import chat21.android.core.authentication.task.RefreshFirebaseInstanceIdTask;
+import chat21.android.core.users.models.ChatUser;
+import chat21.android.core.users.models.IChatUser;
 import chat21.android.instanceid.receiver.TokenBroadcastReceiver;
 import chat21.android.utils.ChatUtils;
 import chat21.android.utils.StringUtils;
@@ -38,10 +40,9 @@ import chat21.android.utils.StringUtils;
 import static chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
 /**
- * Created by stefanodp91 on 27/11/17.
+ * Created by andrealeo on 27/11/17.
  */
 
-@Deprecated
 public final class ChatAuthentication {
 
     //firebase auth START
@@ -56,7 +57,7 @@ public final class ChatAuthentication {
 //    https://github.com/firebase/quickstart-android/blob/master/auth/app/src/main/java/com/google/firebase/quickstart/auth/CustomAuthActivity.java
 
     public interface OnChatLoginCallback {
-        void onChatLoginSuccess();
+        void onChatLoginSuccess(IChatUser currentUser);
 
         void onChatLoginError(Exception e);
     }
@@ -81,6 +82,14 @@ public final class ChatAuthentication {
     private boolean isUserProfileUpdated = false;
 
     private static ChatAuthentication authInstance;
+
+
+    private ChatAuthentication() {
+// Prevent form the reflection api.
+        if (authInstance != null) {
+            throw new RuntimeException("Use getInstance() method to get the single instance of this class.");
+        }
+    }
 
     //firebase auth END
 
@@ -210,6 +219,63 @@ public final class ChatAuthentication {
                 .setValue(ServerValue.TIMESTAMP);
     }
 
+    public void signInAnonymously(final Activity loginActivity, final OnChatLoginCallback onChatLoginCallback) {
+
+        Log.i(DEBUG_LOGIN, "signInWithEmailAndPassword called");
+
+        // bugfix Issue #11
+        // if the google play service is not updated inform the user
+        if (!checkPlayServices(loginActivity.getApplicationContext())) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(loginActivity);
+            builder.setTitle("Google Play Services not updated")
+                    .setMessage("Update the Google Play Service to continue using the app")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            loginActivity.finish();
+                        }
+                    })
+                    .show();
+        }
+
+        getFirebaseAuth().signInAnonymously()
+                .addOnCompleteListener(loginActivity, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (task.isSuccessful()) {
+                            new RefreshFirebaseInstanceIdTask().execute();
+
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+                            IChatUser iChatUser = convertFirebaseUserToChatUser(firebaseUser);
+
+                            Log.d(DEBUG_LOGIN, "calling  onChatLoginCallback.onChatLoginSuccess() iChatUser :  " + iChatUser);
+
+                            onChatLoginCallback.onChatLoginSuccess(iChatUser);
+                        } else {
+                            Log.e(DEBUG_LOGIN, "signInAnonymously", task.getException());
+                            Toast.makeText(loginActivity, "Authentication failed.",
+                                    Toast.LENGTH_LONG).show();
+                            Log.d(DEBUG_LOGIN, "calling  onChatLoginCallback.onChatLoginError()");
+                            onChatLoginCallback.onChatLoginError(task.getException());
+                        }
+                    }
+                });
+    }
+
+
+    private  IChatUser convertFirebaseUserToChatUser (FirebaseUser firebaseUser) {
+        if (firebaseUser!=null){
+            return new ChatUser(firebaseUser.getUid(), firebaseUser.getDisplayName());
+        }else {
+            return null;
+        }
+    }
+
     public void signInWithEmailAndPassword(final Activity loginActivity, final String email, final String password,
                                            final OnChatLoginCallback onChatLoginCallback) {
 
@@ -240,9 +306,15 @@ public final class ChatAuthentication {
                         // signed in user can be handled in the listener.
                         if (task.isSuccessful()) {
                             new RefreshFirebaseInstanceIdTask().execute();
-                            Log.d(DEBUG_LOGIN, "calling  onChatLoginCallback.onChatLoginSuccess()");
 
-                            onChatLoginCallback.onChatLoginSuccess();
+
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+                            IChatUser iChatUser = convertFirebaseUserToChatUser(firebaseUser);
+
+                            Log.d(DEBUG_LOGIN, "calling  onChatLoginCallback.onChatLoginSuccess() iChatUser :  " + iChatUser);
+
+                            onChatLoginCallback.onChatLoginSuccess(iChatUser);
                         } else {
                             Log.e(DEBUG_LOGIN, "signInWithCustomToken", task.getException());
                             Toast.makeText(loginActivity, "Authentication failed.",
@@ -288,9 +360,14 @@ public final class ChatAuthentication {
                 // signed in user can be handled in the listener.
                 if (task.isSuccessful()) {
                     new RefreshFirebaseInstanceIdTask().execute();
-                    Log.d(DEBUG_LOGIN, "calling  onChatLoginCallback.onChatLoginSuccess()");
 
-                    onChatLoginCallback.onChatLoginSuccess();
+                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+                    IChatUser iChatUser = convertFirebaseUserToChatUser(firebaseUser);
+
+                    Log.d(DEBUG_LOGIN, "calling  onChatLoginCallback.onChatLoginSuccess() iChatUser :  " + iChatUser);
+
+                    onChatLoginCallback.onChatLoginSuccess(iChatUser);
                 } else {
                     Log.e(DEBUG_LOGIN, "signInWithCustomToken", task.getException());
                     Toast.makeText(loginActivity, "Authentication failed.",
