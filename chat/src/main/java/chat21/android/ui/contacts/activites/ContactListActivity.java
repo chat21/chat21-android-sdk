@@ -28,17 +28,18 @@ import chat21.android.R;
 import chat21.android.connectivity.AbstractNetworkReceiver;
 import chat21.android.core.ChatManager;
 import chat21.android.core.contacts.listeners.ContactListener;
-import chat21.android.core.contacts.synchronizer.ContactsSynchronizer;
+import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.ChatUI;
+import chat21.android.ui.chat_groups.activities.AddMembersToGroupActivity;
 import chat21.android.ui.contacts.adapters.ContactListAdapter;
 import chat21.android.ui.contacts.listeners.OnContactClickListener;
-import chat21.android.ui.groups.activities.CreateGroupActivity;
 import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.utils.image.CropCircleTransformation;
 
+import static chat21.android.ui.ChatUI.REQUEST_CODE_CREATE_GROUP;
 import static chat21.android.utils.DebugConstants.DEBUG_CONTACTS_SYNC;
 
 /**
@@ -78,7 +79,7 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         mSubTitle.setVisibility(View.GONE);
 
         // contacts list adapter
-        mAdapter = new ContactListAdapter(this, contactList);
+        mAdapter = new ContactListAdapter(contactList);
         mAdapter.setOnContactClickListener(this);
 
         // recyclerview
@@ -187,7 +188,6 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         Intent intent = new Intent(this, MessageListActivity.class);
         intent.putExtra(ChatUI.BUNDLE_RECIPIENT, contact);
         intent.putExtra(ChatUI.BUNDLE_CHANNEL_TYPE, Message.DIRECT_CHANNEL_TYPE);
-        intent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, false);
 
         startActivity(intent);
 
@@ -266,13 +266,16 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
     private void startCreateGroupActivity() {
         Log.d(TAG, "startCreateGroupActivity");
 
-        Intent intent = new Intent(this, CreateGroupActivity.class);
-        startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
+//        Intent intent = new Intent(this, CreateGroupActivity.class);
+//        startActivityForResult(intent, ChatUI._REQUEST_CODE_CREATE_GROUP);
+
+        Intent intent = new Intent(this, AddMembersToGroupActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_CREATE_GROUP);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ChatUI._REQUEST_CODE_CREATE_GROUP) {
+        if (requestCode == REQUEST_CODE_CREATE_GROUP) {
             if (resultCode == RESULT_OK) {
                 finish();
             }

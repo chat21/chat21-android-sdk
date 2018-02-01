@@ -1,6 +1,5 @@
 package chat21.android.ui.contacts.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,19 +26,16 @@ import chat21.android.utils.image.CropCircleTransformation;
 public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ViewHolder>
         implements Filterable {
 
-    private Context context;
     private List<IChatUser> contactList;
 
     private List<IChatUser> contactListFiltered;
 
     private OnContactClickListener onContactClickListener;
 
-    public ContactListAdapter(Context context, List<IChatUser> contactList) {
-        this.context = context;
+    public ContactListAdapter(List<IChatUser> contactList) {
         this.contactList = contactList;
         this.contactListFiltered = contactList;
     }
-
 
     public void setOnContactClickListener(OnContactClickListener onContactClickListener) {
         this.onContactClickListener = onContactClickListener;
@@ -47,21 +43,6 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
     public OnContactClickListener getOnContactClickListener() {
         return onContactClickListener;
-    }
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView mContactFullName;
-        private final TextView mContactUsername;
-        private final ImageView mProfilePicture;
-
-        ViewHolder(View itemView) {
-            super(itemView);
-            mContactFullName = (TextView) itemView.findViewById(R.id.fullname);
-            mContactUsername = (TextView) itemView.findViewById(R.id.username);
-            mProfilePicture = (ImageView) itemView.findViewById(R.id.profile_picture);
-        }
-
     }
 
     @Override
@@ -127,5 +108,18 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
                 notifyDataSetChanged();
             }
         };
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView mContactFullName;
+        private final TextView mContactUsername;
+        private final ImageView mProfilePicture;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+            mContactFullName = (TextView) itemView.findViewById(R.id.fullname);
+            mContactUsername = (TextView) itemView.findViewById(R.id.username);
+            mProfilePicture = (ImageView) itemView.findViewById(R.id.profile_picture);
+        }
     }
 }

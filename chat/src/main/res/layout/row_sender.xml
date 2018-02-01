@@ -81,7 +81,7 @@
                     android:linksClickable="true"
                     android:textColor="@color/background_bubble_text_sender"
                     android:textColorLink="@color/color_clickable_link_sender"
-                    app:emojiSize="15dp" />
+                    app:emojiSize="@dimen/chat_emoji_size" />
             </LinearLayout>
 
             <LinearLayout

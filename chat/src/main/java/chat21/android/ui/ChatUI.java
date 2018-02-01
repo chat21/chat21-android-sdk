@@ -7,9 +7,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import com.vanniktech.emoji.EmojiManager;
+import com.vanniktech.emoji.ios.IosEmojiProvider;
+
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import chat21.android.core.ChatManager;
 import chat21.android.core.users.models.ChatUser;
@@ -36,22 +37,19 @@ public class ChatUI implements Serializable {
 
     private static final String TAG = ChatUI.class.getName();
 
-    public static final String BUNDLE_IS_FROM_NOTIFICATION = "BUNDLE_IS_FROM_NOTIFICATION";
     public static final String BUNDLE_RECIPIENT = "BUNDLE_RECIPIENT";
     // target class to be called in listeners (such as OnProfileClickListener)
     public static final String BUNDLE_MESSAGE = "BUNDLE_MESSAGE";
-    public static final String BUNDLE_GROUP = "BUNDLE_GROUP";
+    public static final String BUNDLE_CHAT_GROUP = "BUNDLE_CHAT_GROUP";
     public static final String BUNDLE_GROUP_ID = "BUNDLE_GROUP_ID";
-    public static final String BUNDLE_PARENT_ACTIVITY = "BUNDLE_PARENT_ACTIVITY";
     public static final String BUNDLE_CHANNEL_TYPE = "BUNDLE_CHANNEL_TYPE";
 
     public static final String BUNDLE_SIGNED_UP_USER_EMAIL = "BUNDLE_SIGNED_UP_USER_EMAIL";
     public static final String BUNDLE_SIGNED_UP_USER_PASSWORD = "BUNDLE_SIGNED_UP_USER_PASSWORD";
 
     // request constants
-    public static final int _REQUEST_CODE_CREATE_GROUP = 100;
-    public static final int _REQUEST_CODE_GROUP_ADMIN_PANEL_ACTIVITY = 200;
-    public static final int REQUEST_CODE_SIGNUP_ACTIVITY = 300;
+    public static final int REQUEST_CODE_CREATE_GROUP = 100;
+    public static final int REQUEST_CODE_SIGNUP_ACTIVITY = 200;
 
     private Context mContext;
     private OnNewConversationClickListener onNewConversationClickListener;
@@ -72,6 +70,9 @@ public class ChatUI implements Serializable {
         //set the default mContext value equals to ChatManager.getInstance().getContext() Use ChatUI.getIntance().setContext to use another context
         mContext = ChatManager.getInstance().getContext();
 
+        // This line needs to be executed before any usage of EmojiTextView, EmojiEditText or EmojiButton.
+        // EmojiManager.install(new IosEmojiProvider());
+        EmojiManager.install(new IosEmojiProvider());
 
         //default init for onNewConversationClickListener
         setDefaultOnNewConversationClickListener();
@@ -129,7 +130,6 @@ public class ChatUI implements Serializable {
         this.onAttachClickListener = onAttachClickListener;
     }
 
-
     public OnContactClickListener getOnContactClickListener() {
         Log.d(TAG, "getOnContactClickListener");
         return onContactClickListener;
@@ -154,7 +154,6 @@ public class ChatUI implements Serializable {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // start activity from context
 
                 mContext.startActivity(intent);
-
             }
         };
     }
@@ -198,7 +197,6 @@ public class ChatUI implements Serializable {
         mContext.startActivity(intent);
     }
 
-
     public void openConversationMessagesActivity(String recipientId, String recipientFullName) {
         this.openConversationMessagesActivity(new ChatUser(recipientId, recipientFullName));
     }
@@ -206,17 +204,9 @@ public class ChatUI implements Serializable {
     // TODO: 24/11/17 showChatWith(user)
     // TODO: 24/11/17 add extras here
     public void openConversationMessagesActivity(IChatUser recipient) {
-
-//        IChatUser iChatUser = ChatManager.getInstance().getLoggedUser();
-//        // generate the conversationId
-//        String conversationId = ConversationUtils.getConversationId(iChatUser.getId(), contactId);
-
         // launch the chat
         Intent intent = new Intent(mContext, MessageListActivity.class);
         intent.putExtra(BUNDLE_RECIPIENT, recipient);
-        intent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, false);
-        // extras to be sent in messages or in the conversation
-//        intent.putExtra(Chat.INTENT_BUNDLE_EXTRAS, (Serializable) mConfiguration.getExtras());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
@@ -247,7 +237,6 @@ public class ChatUI implements Serializable {
 
             Intent intent = new Intent(mContext, MessageListActivity.class);
             intent.putExtra(BUNDLE_RECIPIENT, recipient);
-            intent.putExtra(BUNDLE_IS_FROM_NOTIFICATION, true);
             intent.putExtra(BUNDLE_CHANNEL_TYPE, channelType);
             // start from outside of an activity context
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

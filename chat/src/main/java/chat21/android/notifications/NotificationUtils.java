@@ -28,7 +28,6 @@ public class NotificationUtils {
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         notificationIntent.putExtra(ChatUI.BUNDLE_RECIPIENT, sender);
-        notificationIntent.putExtra(ChatUI.BUNDLE_IS_FROM_NOTIFICATION, true);
 
         return notificationIntent;
     }

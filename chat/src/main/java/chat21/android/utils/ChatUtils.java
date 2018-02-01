@@ -56,23 +56,25 @@ public class ChatUtils {
         }
     }
 
-    /**
-     * Returns the device language code
-     *
-     * @return
-     */
-    public static String getLanguage() {
-        Log.d(TAG, "getLanguage");
-//		Locale locale = Locale.getDefault();
-        String lang = Locale.getDefault().getLanguage();
-        Log.d(TAG, "Language: " + lang);
-        return lang;
-    }
+//    /**
+//     * Returns the device language code
+//     *
+//     * @return
+//     */
+//    public static String getLanguage() {
+//        Log.d(TAG, "getLanguage");
+////		Locale locale = Locale.getDefault();
+//        String lang = Locale.getDefault().getLanguage();
+//        Log.d(TAG, "Language: " + lang);
+//        return lang;
+//    }
 
+    @Deprecated
     public static String normalizeUsername(String username) {
         return username.replace(".", "_");
     }
 
+    @Deprecated
     public static String deNormalizeUsername(String username) {
         return username.replace("_", ".");
     }

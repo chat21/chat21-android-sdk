@@ -17,13 +17,9 @@
     <dimen name="chat_padding_xx_small">2dp</dimen>
     <dimen name="chat_padding_big">22dp</dimen>
 
-
     <dimen name="chat_profile_picture_size">48dp</dimen>
     <dimen name="chat_profile_picture_toolbar_size">40dp</dimen>
 
-    <dimen name="chat_input_text_height">48dip</dimen>
-    <dimen name="chat_message_group_margin">32dp</dimen>
-    <!--<dimen name="chat_message_image_size">130dp</dimen>-->
 
     <dimen name="chat_progress_bar_size">70dp</dimen>
 
@@ -40,16 +36,10 @@
 
     <dimen name="chat_activity_group_admin_panel_image_height">280dp</dimen>
 
-    <dimen name="chat_row_group_grid_image_size">80dp</dimen>
-    <dimen name="chat_row_group_grid_box_title_size">74dp</dimen>
-    <dimen name="chat_row_group_grid_box_members_size">65dp</dimen>
     <dimen name="chat_row_group_image_size">48dp</dimen>
-
-    <!--emoji panel-->
-    <dimen name="emoji_size_default">20sp</dimen>
-    <dimen name="emoji_size_only_emojis">40sp</dimen>
-    <dimen name="emoji_size_single_emoji">60sp</dimen>
 
     <!--shape_row_chat_timestamp-->
     <dimen name="shape_row_chat_timestamp_radius">32dp</dimen>
+
+    <dimen name="chat_emoji_size">26dp</dimen>
 </resources>

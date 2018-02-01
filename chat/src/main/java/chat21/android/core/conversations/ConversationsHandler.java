@@ -228,6 +228,17 @@ public class ConversationsHandler {
         }
     }
 
+    public void addConversation(Conversation conversation) {
+        saveOrUpdateConversationInMemory(conversation);
+        sortConversationsInMemory();
+
+        if (conversationsListeners != null) {
+            for (ConversationsListener conversationsListener : conversationsListeners) {
+                conversationsListener.onConversationChanged(conversation, null);
+            }
+        }
+    }
+
 
     public static Conversation decodeConversationFromSnapshot(DataSnapshot dataSnapshot) {
         Log.d(TAG, "ConversationHandler.decodeConversationFromSnapshop");
@@ -397,9 +408,7 @@ public class ConversationsHandler {
     public void removeAllConversationsListeners() {
         this.conversationsListeners = null;
         Log.i(TAG, "Removed all ConversationsListeners");
-
     }
-
 
     public ChildEventListener getConversationsChildEventListener() {
         return conversationsChildEventListener;

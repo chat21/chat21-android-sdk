@@ -42,23 +42,23 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         </RelativeLayout>
 
-        <!-- message information -->
-        <RelativeLayout
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/chat_margin_small"
-            android:orientation="horizontal">
+        <!--&lt;!&ndash; message information &ndash;&gt;-->
+        <!--<RelativeLayout-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="@dimen/chat_margin_small"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:id="@+id/user_connectivity_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLength="15"
-                android:maxLines="1"
-                android:text="@string/user_connectivity_status"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-        </RelativeLayout>
+            <!--<TextView-->
+                <!--android:id="@+id/user_connectivity_status"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:ellipsize="end"-->
+                <!--android:maxLength="15"-->
+                <!--android:maxLines="1"-->
+                <!--android:text="@string/user_connectivity_status"-->
+                <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium" />-->
+        <!--</RelativeLayout>-->
     </LinearLayout>
 </LinearLayout>

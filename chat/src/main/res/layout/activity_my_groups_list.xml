@@ -21,25 +21,16 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 
-    <ProgressBar
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
         android:visibility="gone"
-        android:id="@+id/progress_bar"
-        android:layout_width="@dimen/chat_progress_bar_size"
-        android:layout_height="@dimen/chat_progress_bar_size"
-        android:layout_gravity="center" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <include
         android:id="@+id/layout_no_groups"
         layout="@layout/layout_no_groups"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"></include>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </android.support.design.widget.CoordinatorLayout>

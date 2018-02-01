@@ -46,8 +46,8 @@ dependencies {
     compile 'org.apache.httpcomponents:httpcore:4.3'
 
     // send message panel
-//    compile 'com.vanniktech:emoji-ios:0.5.1'
-    compile 'com.vanniktech:emoji-google:0.5.1'
+    compile 'com.vanniktech:emoji-ios:0.5.1'
+//    compile 'com.vanniktech:emoji-google:0.5.1'
 
 //    // file picker
 //    // source: https://github.com/Angads25/android-filepicker

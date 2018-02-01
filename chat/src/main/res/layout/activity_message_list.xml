@@ -67,13 +67,14 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/emoji_google_category_people"
+            app:srcCompat="@drawable/emoji_ios_category_people"
             tools:ignore="ContentDescription" />
 
 
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/main_activity_chat_bottom_message_edittext"
             android:layout_width="0dp"
+            app:emojiSize="@dimen/chat_emoji_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:imeOptions="actionSend|flagNoExtractUi"
