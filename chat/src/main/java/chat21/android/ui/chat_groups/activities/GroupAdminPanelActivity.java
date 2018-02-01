@@ -46,8 +46,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private static final String TAG = GroupAdminPanelActivity.class.getName();
 
     private RecyclerView mMemberList;
-    private LinearLayoutManager mMemberLayoutManager;
-    private static GroupMembersListAdapter mGroupMembersListAdapter;
+    private GroupMembersListAdapter mGroupMembersListAdapter;
     private ImageView mGroupImage;
     private LinearLayout mBoxAddMember;
     private LinearLayout mBoxMembers;
@@ -57,7 +56,6 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
 
     private String groupId;
     private ChatGroup chatGroup;
-    private List<IChatUser> groupMembers;
     private List<IChatUser> groupAdmins;
 
     private IChatUser loggedUser;
@@ -74,22 +72,26 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         groupId = getIntent().getStringExtra(BUNDLE_GROUP_ID);
 
         this.groupsSyncronizer = ChatManager.getInstance().getGroupsSyncronizer();
+        groupsSyncronizer.addGroupsListener(this);
+        groupsSyncronizer.connect();
 
         chatGroup = groupsSyncronizer.getById(groupId);
-        groupsSyncronizer.addGroupsListener(this);
 
-        if (chatGroup != null) {
-            groupsSyncronizer.connect();
+        groupAdmins = getGroupAdmins();
 
-            groupMembers = chatGroup.getMembersList();
-            groupAdmins = getGroupAdmins();
+        setToolbar();
+        setCreatedBy();
+        setCreatedOn();
+        initRecyclerViewMembers();
+        toggleAddMemberButton();
+    }
 
-            setToolbar();
-            setCreatedBy();
-            setCreatedOn();
-            initRecyclerViewMembers();
-            toggleAddMemberButtons();
-        }
+    @Override
+    protected void onDestroy() {
+
+        groupsSyncronizer.removeGroupsListener(this);
+
+        super.onDestroy();
     }
 
     private void registerViews() {
@@ -107,7 +109,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
 
         String owner = chatGroup.getOwner(); // it always exists
 
-        for (IChatUser member : groupMembers) {
+        for (IChatUser member : chatGroup.getMembersList()) {
             if (member.getId().equals(owner)) {
                 admins.add(member);
                 break;
@@ -150,7 +152,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         // otherwise retrieve the chatGroup creator from the chatGroup member list
         String creator = loggedUser.getId()
                 .equals(chatGroup.getOwner()) ? loggedUser.getFullName() : "";
-        for (IChatUser member : groupMembers) {
+        for (IChatUser member : chatGroup.getMembersList()) {
             if (member.getId().equals(chatGroup.getOwner())) {
                 creator = member.getFullName();
                 break;
@@ -178,21 +180,17 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private void initRecyclerViewMembers() {
         Log.d(TAG, "initRecyclerViewMembers");
 
-        mMemberLayoutManager = new LinearLayoutManager(this);
-        mMemberList.setLayoutManager(mMemberLayoutManager);
-
-        toggleGroupMembersVisibility();
+        mMemberList.setLayoutManager(new LinearLayoutManager(this));
+        updateGroupMemberListAdapter(chatGroup.getMembersList());
     }
 
     private void toggleGroupMembersVisibility() {
         Log.d(TAG, "initCardViewMembers");
 
-        if (groupMembers != null && groupMembers.size() > 0) {
+        if (chatGroup.getMembersList() != null && chatGroup.getMembersList().size() > 0) {
             mBoxUnavailableMembers.setVisibility(View.GONE);
             mBoxMembers.setVisibility(View.VISIBLE);
 
-            // displays the member list
-            updateGroupMemberListAdapter(groupMembers);
         } else {
             Log.e(TAG, "GroupAdminPanelActivity.toggleCardViewMembers: " +
                     "groupMembers is not valid");
@@ -216,13 +214,15 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         for (IChatUser admin : groupAdmins) {
             mGroupMembersListAdapter.addAdmin(admin);
         }
+
+        toggleGroupMembersVisibility();
     }
 
-    private void toggleAddMemberButtons() {
-        Log.d(TAG, "toggleAddMemberButtons");
+    private void toggleAddMemberButton() {
+        Log.d(TAG, "toggleAddMemberButton");
 
         // check if the current user is an admin and a member of the group
-        if (groupAdmins.contains(loggedUser) && groupMembers.contains(loggedUser)) {
+        if (groupAdmins.contains(loggedUser) && chatGroup.getMembersList().contains(loggedUser)) {
             showAddMember();
         } else {
             hideAddMember();
