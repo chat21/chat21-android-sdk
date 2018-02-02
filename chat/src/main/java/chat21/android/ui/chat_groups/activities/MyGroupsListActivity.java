@@ -16,7 +16,10 @@ import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
+import chat21.android.core.chat_groups.listeners.ChatGroupsListener;
 import chat21.android.core.chat_groups.models.ChatGroup;
+import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
+import chat21.android.core.exception.ChatRuntimeException;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
@@ -32,16 +35,23 @@ import static chat21.android.utils.DebugConstants.DEBUG_GROUPS;
  * Created by stefanodp91 on 26/09/17.
  */
 
-public class MyGroupsListActivity extends AppCompatActivity implements OnGroupClickListener {
+public class MyGroupsListActivity extends AppCompatActivity implements OnGroupClickListener, ChatGroupsListener {
+
+    private static final String TAG = MyGroupsListActivity.class.getName();
 
     private RecyclerView mMyGroupsListRecyclerView;
     private MyGroupsListAdapter mMyGroupsListRecyclerAdapter;
     private RelativeLayout layoutNoGroups;
 
+    private GroupsSyncronizer groupsSyncronizer;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_groups_list);
+
+        groupsSyncronizer = ChatManager.getInstance().getGroupsSyncronizer();
+        groupsSyncronizer.addGroupsListener(this);
 
         //////// toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -54,8 +64,10 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupCl
         //////// recycler view
         mMyGroupsListRecyclerView = (RecyclerView) findViewById(R.id.list);
         mMyGroupsListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        updateAdapter(ChatManager.getInstance().getGroupsSyncronizer().getChatGroups());
+        updateAdapter(groupsSyncronizer.getChatGroups());
         //////// end recycler view
+
+        groupsSyncronizer.connect();
     }
 
     private void updateAdapter(List<ChatGroup> chatGroups) {
@@ -101,5 +113,33 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupCl
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onGroupAdded(ChatGroup chatGroup, ChatRuntimeException e) {
+        if (e == null) {
+            mMyGroupsListRecyclerAdapter.notifyDataSetChanged();
+        } else {
+            Log.e(TAG, "MyGroupsListActivity.onGroupAdded: e == " + e.toString());
+        }
+    }
+
+    @Override
+    public void onGroupChanged(ChatGroup chatGroup, ChatRuntimeException e) {if (e == null) {
+            mMyGroupsListRecyclerAdapter.notifyDataSetChanged();
+        } else {
+            Log.e(TAG, "MyGroupsListActivity.onGroupChanged: e == " + e.toString());
+        }
+
+    }
+
+    @Override
+    public void onGroupRemoved(ChatRuntimeException e) {
+        if (e == null) {
+            mMyGroupsListRecyclerAdapter.notifyDataSetChanged();
+        } else {
+            Log.e(TAG, "MyGroupsListActivity.onGroupRemoved: e == " + e.toString());
+        }
+
     }
 }

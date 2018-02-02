@@ -184,7 +184,7 @@ public class GroupsSyncronizer {
         // look for the group
         int index = -1;
         for (ChatGroup tempChatGroup : chatGroups) {
-            if (tempChatGroup.equals(newChatGroup)) {
+            if (tempChatGroup.getGroupId().equals(newChatGroup.getGroupId())) {
                 index = chatGroups.indexOf(tempChatGroup);
                 break;
             }
