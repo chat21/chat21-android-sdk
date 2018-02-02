@@ -120,6 +120,9 @@ public class NewGroupActivity extends AppCompatActivity {
             public void onChatGroupCreated(ChatGroup chatGroup, ChatRuntimeException chatException) {
                 Log.d(DEBUG_GROUPS, "NewGroupActivity.onActionNextClicked.onChatGroupCreated");
 
+                // clear the wizard
+                WizardNewGroup.getInstance().dispose();
+
 //                dismissProgress();
 
                 if (chatException == null) {

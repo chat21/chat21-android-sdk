@@ -71,6 +71,10 @@ public class ChatGroup implements Serializable {
         return members;
     }
 
+    public void setMembers(Map<String, Integer> members) {
+        this.members = members;
+    }
+
     public void addMembers(Map<String, Integer> members) {
         this.members.putAll(members);
     }

@@ -399,7 +399,7 @@ public class GroupsSyncronizer {
     private ChatGroup createGroupForFirebase(String chatGroupName, Map<String, Integer> members) {
         ChatGroup chatGroup = new ChatGroup();
         chatGroup.setName(chatGroupName);
-        chatGroup.addMembers(members);
+        chatGroup.setMembers(members);
         chatGroup.setOwner(currentUserId);
         chatGroup.setTimestamp(new Date().getTime());
         return chatGroup;

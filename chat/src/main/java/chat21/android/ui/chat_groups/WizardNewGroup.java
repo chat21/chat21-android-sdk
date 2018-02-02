@@ -44,4 +44,19 @@ public class WizardNewGroup {
     public ChatGroup getTempChatGroup() {
         return tempChatGroup;
     }
+
+    public void dispose() {
+        clearTempGroup();
+    }
+
+    private void clearTempGroup() {
+        tempChatGroup.setGroupId("");
+        tempChatGroup.getCreatedOn();
+        tempChatGroup.setTimestamp(0L);
+        tempChatGroup.setIconURL("");
+        tempChatGroup.getMembers().clear();
+        tempChatGroup.getMembersList().clear();
+        tempChatGroup.setName("");
+        tempChatGroup.setOwner("");
+    }
 }
