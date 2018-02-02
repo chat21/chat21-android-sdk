@@ -18,6 +18,7 @@ import java.util.List;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
+import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
@@ -86,6 +87,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     }
 
     private void setRecipientPicture(ViewHolder holder, Conversation conversation) {
+        String picture = "";
         if (conversation.isDirectChannel()) {
 
             // retrieve the contact
@@ -94,20 +96,30 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
                     .findById(conversation.getConvers_with());
 
             // retrieve the contact picture
-            String contactPicture = "";
             if (contact != null) {
-                contactPicture = contact.getProfilePictureUrl();
+                picture = contact.getProfilePictureUrl();
             }
 
             // show the contact picture
             Glide.with(holder.itemView.getContext())
-                    .load(contactPicture)
+                    .load(picture)
                     .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);
         } else if (conversation.isGroupChannel()) {
+
+            // retrieve the group
+            ChatGroup chatGroup = ChatManager.getInstance()
+                    .getGroupsSyncronizer()
+                    .getById(conversation.getConversationId());
+
+            // retrieve the group picture
+            if (chatGroup != null) {
+                picture = chatGroup.getIconURL();
+            }
+
             Glide.with(holder.itemView.getContext())
-                    .load("") // TODO: 01/02/18 set the group image
+                    .load(picture)
                     .placeholder(R.drawable.ic_group_avatar)
                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);

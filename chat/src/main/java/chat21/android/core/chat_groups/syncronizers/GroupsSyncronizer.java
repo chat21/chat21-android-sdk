@@ -239,6 +239,13 @@ public class GroupsSyncronizer {
         if (dataSnapshot.getValue() != null) {
             Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
+            try {
+                String iconURL = (String) map.get("iconURL");
+                chatGroup.setIconURL(iconURL);
+            } catch (Exception e) {
+                Log.w(DEBUG_GROUPS,  "GroupsSyncronizer.decodeGroupFromSnapshot: cannot retrieve iconURL");
+            }
+
             String owner = (String) map.get("owner");
             chatGroup.setOwner(owner);
 

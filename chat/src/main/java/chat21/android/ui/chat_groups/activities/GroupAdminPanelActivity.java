@@ -135,7 +135,6 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         Glide.with(getApplicationContext())
                 .load(chatGroup.getIconURL())
                 .placeholder(R.drawable.ic_group_avatar)
-                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .into(mGroupImage);
 
         // minimal settings
