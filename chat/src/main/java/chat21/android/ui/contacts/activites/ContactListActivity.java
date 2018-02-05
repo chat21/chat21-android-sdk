@@ -70,6 +70,7 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
 
         // contacts
         contactList = contactsSynchronizer.getContacts();
+        excludeLoggedUser(contactList);
 
         // toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -104,6 +105,17 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
         Log.d(DEBUG_CONTACTS_SYNC,
                 "ContactListActivity.onCreate: contactsSynchronizer attached");
 //        this.contactsSynchronizer.connect();
+    }
+
+    /**
+     * It excludes the logged user from the list of visible users
+     * @param contactList the list from which to exclude the logged in user
+     */
+    private void excludeLoggedUser(List<IChatUser> contactList) {
+       int loggedUserIndex = contactList.indexOf(ChatManager.getInstance().getLoggedUser());
+       if(loggedUserIndex != -1) {
+           contactList.remove(loggedUserIndex);
+       }
     }
 
     @Override
