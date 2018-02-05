@@ -131,7 +131,7 @@ public class ConversationsHandler {
 
                     try {
                         Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
-                        addConversation(conversation);
+                        updateConversation(conversation);
                     } catch (Exception e) {
                         notifyConversationChanged(null, new ChatRuntimeException(e));
                     }
@@ -261,6 +261,17 @@ public class ConversationsHandler {
             notifyConversationAdded(conversation, null);
         } catch (Exception e) {
             notifyConversationAdded(null, new ChatRuntimeException(e));
+        }
+    }
+
+    public void updateConversation(Conversation conversation) {
+
+        try {
+            saveOrUpdateConversationInMemory(conversation);
+            sortConversationsInMemory();
+            notifyConversationChanged(conversation, null);
+        } catch (Exception e) {
+            notifyConversationChanged(null, new ChatRuntimeException(e));
         }
     }
 
