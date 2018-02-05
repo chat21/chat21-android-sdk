@@ -38,10 +38,10 @@ import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import chat21.android.core.users.models.IChatUser;
-import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.ui.chat_groups.WizardNewGroup;
 import chat21.android.ui.chat_groups.adapters.SelectedContactListAdapter;
 import chat21.android.ui.chat_groups.listeners.OnRemoveClickListener;
+import chat21.android.ui.contacts.listeners.OnContactClickListener;
 import chat21.android.utils.image.CropCircleTransformation;
 
 import static chat21.android.ui.ChatUI.BUNDLE_CHAT_GROUP;
@@ -85,8 +85,10 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         this.contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
         this.groupsSyncronizer = ChatManager.getInstance().getGroupsSyncronizer();
 
-        // setup data
-        dictionaryWords = getContactsListWithoutCurrentUser();
+        // retrieve the contacts list
+        List<IChatUser> tempContactList = ChatManager.getInstance().getContactsSynchronizer().getContacts();
+        excludeLoggedUser(tempContactList); // remove the logged user frome the contacts list
+        dictionaryWords = tempContactList; // set the contact list without the logged user
         filteredList = new ArrayList<>();
         filteredList.addAll(dictionaryWords);
         selectedContactsList = new ArrayList<IChatUser>();
@@ -200,21 +202,16 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         }
     }
 
-    // exclude the current user from the searchable contact list
-    private List<IChatUser> getContactsListWithoutCurrentUser() {
-
-        List<IChatUser> list = new ArrayList<>();
-
-        IChatUser currentUser = ChatManager.getInstance().getLoggedUser();
-
-        if (this.contactsSynchronizer.getContacts() != null)
-            for (IChatUser chatUser : this.contactsSynchronizer.getContacts()) {
-                if (!chatUser.getId().equals(currentUser.getId())) {
-                    list.add(chatUser);
-                }
-            }
-
-        return list;
+    /**
+     * It excludes the logged user from the list of visible users
+     *
+     * @param contactList the list from which to exclude the logged in user
+     */
+    private void excludeLoggedUser(List<IChatUser> contactList) {
+        int loggedUserIndex = contactList.indexOf(ChatManager.getInstance().getLoggedUser());
+        if (loggedUserIndex != -1) {
+            contactList.remove(loggedUserIndex);
+        }
     }
 
     @Override
@@ -358,8 +355,8 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_CODE_CREATE_GROUP) {
-            if(resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_CODE_CREATE_GROUP) {
+            if (resultCode == RESULT_OK) {
                 setResult(RESULT_OK);
                 finish();
             }
