@@ -56,7 +56,7 @@ public class PublicProfileActivity extends AppCompatActivity implements Presence
 
         // connection status (online/offline) as subtitle
         mToolbarSubTitle = findViewById(R.id.toolbar_subtitle);
-        mToolbarSubTitle.setText("connection status will be here");
+        mToolbarSubTitle.setText("");
 
         // set user email
         TextView mEmail = findViewById(R.id.email);
@@ -115,7 +115,7 @@ public class PublicProfileActivity extends AppCompatActivity implements Presence
         } else {
             conversWithOnline = false;
 
-            if (conversWithLastOnline != 0) {
+            if (conversWithLastOnline != PresenceHandler.LAST_ONLINE_UNDEFINED) {
                 mToolbarSubTitle.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
                 Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.isUserOnline: " +
                         "conversWithLastOnline == " + conversWithLastOnline);
@@ -132,8 +132,13 @@ public class PublicProfileActivity extends AppCompatActivity implements Presence
 
         conversWithLastOnline = lastOnline;
 
-        if (!conversWithOnline)
+        if (!conversWithOnline) {
             mToolbarSubTitle.setText(TimeUtils.getFormattedTimestamp(lastOnline));
+        }
+
+        if (!conversWithOnline && lastOnline == PresenceHandler.LAST_ONLINE_UNDEFINED) {
+            mToolbarSubTitle.setText(getString(R.string.activity_public_profile_presence_offline));
+        }
     }
 
     @Override
