@@ -125,7 +125,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.BUNDLE_RECIPIENT);
 
         // retrieve channel type
-        channelType = getIntent().getStringExtra(BUNDLE_CHANNEL_TYPE);
+        channelType = (String) getIntent().getExtras().get(BUNDLE_CHANNEL_TYPE);
         // default case
         if (!StringUtils.isValid(channelType)) {
             channelType = Message.DIRECT_CHANNEL_TYPE;
