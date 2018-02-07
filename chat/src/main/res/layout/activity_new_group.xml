@@ -33,8 +33,10 @@
             android:orientation="vertical">
 
             <!--header-->
+            <!--todo-->
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
+                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/chat_margin_normal"
                 android:background="@color/cardview_light_background"
@@ -61,7 +63,6 @@
                         android:layout_gravity="center_horizontal"
                         android:orientation="vertical">
 
-                        <!--todo-->
                         <ImageView
                             android:id="@+id/group_icon"
                             style="@style/Base.TextAppearance.AppCompat.Small"
