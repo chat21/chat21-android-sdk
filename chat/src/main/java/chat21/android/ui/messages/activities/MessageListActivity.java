@@ -154,13 +154,14 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                     .findById(recipientId);
         }
 
-        // conversation handler
+        // ######### begin conversation messages handler
         conversationMessagesHandler = ChatManager.getInstance()
                 .getConversationMessagesHandler(recipient);
         conversationMessagesHandler.upsertConversationMessagesListener(this);
         Log.d(TAG, "MessageListActivity.onCreate: conversationMessagesHandler attached");
         conversationMessagesHandler.connect();
         Log.d(TAG, "MessageListActivity.onCreate: conversationMessagesHandler connected");
+        // ######### end conversation messages handler
 
         initRecyclerView();
 
