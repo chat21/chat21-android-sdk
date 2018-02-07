@@ -258,7 +258,6 @@ public class ChatManager {
 
         // dispose contactsSynchonizer
         if (contactsSynchronizer != null) {
-            this.contactsSynchronizer.removeAllContactsListeners();
             this.contactsSynchronizer.disconnect();
         }
         this.contactsSynchronizer = null;
