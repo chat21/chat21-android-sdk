@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.core.ChatManager;
+import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
@@ -278,7 +279,7 @@ public class ConversationsHandler {
     private void notifyConversationAdded(Conversation conversation, ChatRuntimeException exception) {
         if (conversationsListeners != null) {
             for (ConversationsListener conversationsListener : conversationsListeners) {
-                conversationsListener.onConversationChanged(conversation, exception);
+                conversationsListener.onConversationAdded(conversation, exception);
             }
         }
     }
@@ -498,4 +499,20 @@ public class ConversationsHandler {
 //    public DatabaseReference getConversationsNode() {
 //        return conversationsNode;
 //    }
+
+
+    /**
+     * It looks for the conversation with {@code conversationId}
+     *
+     * @param conversationId the group id to looking for
+     * @return the conversation if exists, null otherwise
+     */
+    public Conversation getById(String conversationId) {
+        for (Conversation conversation : conversations) {
+            if (conversation.getConversationId().equals(conversationId)) {
+                return conversation;
+            }
+        }
+        return null;
+    }
 }

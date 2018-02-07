@@ -113,6 +113,11 @@ public class ChatGroup implements Serializable {
             if (contact != null) {
                 patchedMembers.add(contact);
             }
+
+            // TODO: 07/02/18 check for this
+            if(entry.getKey().equals(ChatManager.getInstance().getLoggedUser().getId())) {
+                patchedMembers.add(ChatManager.getInstance().getLoggedUser());
+            }
         }
 
         return patchedMembers;
