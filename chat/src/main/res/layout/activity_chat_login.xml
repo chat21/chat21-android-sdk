@@ -119,7 +119,6 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="andrea.leo@frontiere21.it"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
             </android.support.design.widget.TextInputLayout>
 
@@ -138,7 +137,6 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="123456"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
             </android.support.design.widget.TextInputLayout>
             <!--</LinearLayout>-->
