@@ -115,8 +115,10 @@ public class ChatGroup implements Serializable {
             }
 
             // TODO: 07/02/18 check for this
-            if(entry.getKey().equals(ChatManager.getInstance().getLoggedUser().getId())) {
-                patchedMembers.add(ChatManager.getInstance().getLoggedUser());
+            if (entry.getKey().equals(ChatManager.getInstance().getLoggedUser().getId())) {
+                if (!patchedMembers.contains(ChatManager.getInstance().getLoggedUser())) {
+                    patchedMembers.add(ChatManager.getInstance().getLoggedUser());
+                }
             }
         }
 
