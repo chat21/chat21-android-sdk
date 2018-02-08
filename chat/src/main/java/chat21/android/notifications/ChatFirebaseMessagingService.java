@@ -56,6 +56,29 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //                recipient=QetCMCeMldY06F4YPOeC6Rvph4C3
 //            }
 
+//            example GROUP:
+//            Message data payload: {
+//                        google.sent_time=1518079821473,
+//                        google.ttl=2419200,
+//                        gcm.notification.e=1,
+//                        sender=QetCMCeMldY06F4YPOeC6Rvph4C3,
+//                        sender_fullname=Pinch Tozoom,
+//                        gcm.notification.sound=default,
+//                        gcm.notification.title=Pinch Tozoom,
+//                        channel_type=group,
+//                        from=77360455507,
+//                        text=Foreground group,
+//                        gcm.notification.sound2=default,
+//                        timestamp=1518079821455,
+//                        google.message_id=0:1518079821483572%90a182f990a182f9,
+//                        recipient_fullname=Meeting 8 Feb 2018,
+//                        gcm.notification.body=Foreground group,
+//                        gcm.notification.icon=ic_notification_small,
+//                        recipient=-L4oY__34pvOXBfgeTak,
+//                        gcm.notification.click_action=NEW_MESSAGE,
+//                        collapse_key=chat21.android.demo
+//                    }
+
             String sender = remoteMessage.getData().get("sender");
             String senderFullName = remoteMessage.getData().get("sender_fullname");
             String channelType = remoteMessage.getData().get("channel_type");
@@ -66,8 +89,8 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 
             if (channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
                 sendDirectNotification(sender, senderFullName, text, channelType);
-            } else if (channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
-//                sendGroupNotification();
+            } else if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+                sendGroupNotification(recipient, recipientFullName, senderFullName, text, channelType);
             } else {
                 // default case
                 sendDirectNotification(sender, senderFullName, text, channelType);
@@ -86,7 +109,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     /**
-     * Create and show a simple notification containing the received FCM message.
+     * Create and show a direct notification containing the received FCM message.
      *
      * @param sender         the id of the message's sender
      * @param senderFullName the display name of the message's sender
@@ -95,23 +118,69 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
     private void sendDirectNotification(String sender, String senderFullName, String text, String channel) {
 
         Intent intent = new Intent(this, MessageListActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(ChatUI.BUNDLE_RECIPIENT, new ChatUser(sender, senderFullName));
         intent.putExtra(BUNDLE_CHANNEL_TYPE, channel);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-//        String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channel)
                         .setSmallIcon(R.drawable.ic_notification_small)
                         .setContentTitle(senderFullName)
+                        .setContentText(text)
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Oreo fix
+        String channelId = channel;
+        String channelName = channel;
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(
+                    channelId, channelName, importance);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        int notificationId = (int) new Date().getTime();
+        notificationManager.notify(notificationId, notificationBuilder.build());
+    }
+
+    /**
+     * Create and show a group notification containing the received FCM message.
+     *
+     * @param sender         the id of the message's sender
+     * @param senderFullName the display name of the message's sender
+     * @param text           the message text
+     */
+    private void sendGroupNotification(String sender, String senderFullName, String recipientFullName, String text, String channel) {
+
+        String title = recipientFullName + " @" + senderFullName;
+
+        Intent intent = new Intent(this, MessageListActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(ChatUI.BUNDLE_RECIPIENT, new ChatUser(sender, senderFullName));
+        intent.putExtra(BUNDLE_CHANNEL_TYPE, channel);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, channel)
+                        .setSmallIcon(R.drawable.ic_notification_small)
+                        .setContentTitle(title)
                         .setContentText(text)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
