@@ -46,7 +46,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d(DEBUG_NOTIFICATION, "Message data payload: " + remoteMessage.getData());
 //            example DIRECT:
-//            Message data payload: {
+//            {
 //                sender=u2K7nLo2dTZEOYYTykrufN6BDF92,
 //                sender_fullname=Stefano De Pascalis,
 //                channel_type=direct,
@@ -55,29 +55,29 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 //                recipient_fullname=Pinch Tozoom,
 //                recipient=QetCMCeMldY06F4YPOeC6Rvph4C3
 //            }
-
+//
 //            example GROUP:
-//            Message data payload: {
-//                        google.sent_time=1518079821473,
-//                        google.ttl=2419200,
-//                        gcm.notification.e=1,
-//                        sender=QetCMCeMldY06F4YPOeC6Rvph4C3,
-//                        sender_fullname=Pinch Tozoom,
-//                        gcm.notification.sound=default,
-//                        gcm.notification.title=Pinch Tozoom,
-//                        channel_type=group,
-//                        from=77360455507,
-//                        text=Foreground group,
-//                        gcm.notification.sound2=default,
-//                        timestamp=1518079821455,
-//                        google.message_id=0:1518079821483572%90a182f990a182f9,
-//                        recipient_fullname=Meeting 8 Feb 2018,
-//                        gcm.notification.body=Foreground group,
-//                        gcm.notification.icon=ic_notification_small,
-//                        recipient=-L4oY__34pvOXBfgeTak,
-//                        gcm.notification.click_action=NEW_MESSAGE,
-//                        collapse_key=chat21.android.demo
-//                    }
+//            {
+//                google.sent_time=1518079821473,
+//                google.ttl=2419200,
+//                gcm.notification.e=1,
+//                sender=QetCMCeMldY06F4YPOeC6Rvph4C3,
+//                sender_fullname=Pinch Tozoom,
+//                gcm.notification.sound=default,
+//                gcm.notification.title=Pinch Tozoom,
+//                channel_type=group,
+//                from=77360455507,
+//                text=Foreground group,
+//                gcm.notification.sound2=default,
+//                timestamp=1518079821455,
+//                google.message_id=0:1518079821483572%90a182f990a182f9,
+//                recipient_fullname=Meeting 8 Feb 2018,
+//                gcm.notification.body=Foreground group,
+//                gcm.notification.icon=ic_notification_small,
+//                recipient=-L4oY__34pvOXBfgeTak,
+//                gcm.notification.click_action=NEW_MESSAGE,
+//                collapse_key=chat21.android.demo
+//            }
 
             String sender = remoteMessage.getData().get("sender");
             String senderFullName = remoteMessage.getData().get("sender_fullname");
