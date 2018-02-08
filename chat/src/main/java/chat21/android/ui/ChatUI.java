@@ -2,6 +2,7 @@ package chat21.android.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +14,7 @@ import com.vanniktech.emoji.ios.IosEmojiProvider;
 import java.io.Serializable;
 
 import chat21.android.core.ChatManager;
+import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.contacts.activites.ContactListActivity;
@@ -25,7 +27,6 @@ import chat21.android.ui.messages.activities.MessageListActivity;
 import chat21.android.ui.messages.listeners.OnAttachClickListener;
 import chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
-import chat21.android.utils.StringUtils;
 
 import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 
@@ -219,32 +220,68 @@ public class ChatUI implements Serializable {
         this.mContext = context;
     }
 
+
     public void processRemoteNotification(Intent notificationIntent) {
-        Log.d(DEBUG_NOTIFICATION, "ChatUI.processRemoteNotification: notificationIntent == " + notificationIntent.toString());
+//        key == google.sent_time   	values == 1518088363536
+//        key == google.ttl   		    values == 2419200
+//        key == sender 				values == mVFL2ncvuhNYwlFHXhg0AZAioav2
+//        key == sender_fullname		values == Sundar Pichai
+//        key == channel_type			values == group
+//        key == from					values == 77360455507
+//        key == text					values == test background 2
+//        key == timestamp			    values == 1518088363486
+//        key == google.message_id	    values == 0:1518088363542657%90a182f990a182f9
+//        key == recipient_fullname	    values == ChromeOS recap
+//        key == recipient 			    values == -L4omVgWKAqZOAkJQpLe
+//        key == collapse_key 		    values == chat21.android.demo
 
-        if (StringUtils.isValid(notificationIntent.getStringExtra("sender")) &&
-                StringUtils.isValid(notificationIntent.getStringExtra("sender_fullname"))) {
-            String contactId = notificationIntent.getStringExtra("sender");
-            Log.d(DEBUG_NOTIFICATION, "ChatUI.processRemoteNotification: contactId == " + contactId);
+        Bundle extras = notificationIntent.getExtras();
+        if (extras != null) {
+//            for (String key : extras.keySet()) {
+//                Log.d(DEBUG_NOTIFICATION, "ChatUI.processRemoteNotification:" +
+//                        " key == " + key + " - values == " + extras.get(key).toString());
+//            }
 
-            String contactFullName = notificationIntent.getStringExtra("sender_fullname");
-            Log.d(DEBUG_NOTIFICATION, "ChatUI.processRemoteNotification: contactFullName == " + contactFullName);
+            if (extras.containsKey("channel_type")) {
+                String channel = extras.getString("channel_type");
 
-            String channelType = notificationIntent.getStringExtra("channel_type");
-
-            // create the recipient from background notification data
-            IChatUser recipient = new ChatUser(contactId, contactFullName);
-
-            Intent intent = new Intent(mContext, MessageListActivity.class);
-            intent.putExtra(BUNDLE_RECIPIENT, recipient);
-            intent.putExtra(BUNDLE_CHANNEL_TYPE, channelType);
-            // start from outside of an activity context
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            // clear activity stack
-//            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            mContext.startActivity(intent);
-
+                if (channel.equals(Message.DIRECT_CHANNEL_TYPE)) {
+                    processDirectNotification(extras, channel);
+                } else if (channel.equals(Message.GROUP_CHANNEL_TYPE)) {
+                    processGroupNotification(extras, channel);
+                } else {
+                    // default case
+                    processDirectNotification(extras, channel);
+                }
+            }
         }
+    }
+
+    private void processDirectNotification(Bundle extras, String channel) {
+        if (extras.containsKey("sender") && extras.containsKey("sender_fullname")) {
+            String sender = extras.getString("sender");
+            String senderFullName = extras.getString("sender_fullname");
+            IChatUser contact = new ChatUser(sender, senderFullName);
+
+            startMessageListActivity(contact, channel);
+        }
+    }
+
+    private void processGroupNotification(Bundle extras, String channel) {
+        if (extras.containsKey("recipient") && extras.containsKey("recipient_fullname")) {
+            String recipient = extras.getString("recipient");
+            String recipientFullName = extras.getString("recipient_fullname");
+            IChatUser contact = new ChatUser(recipient, recipientFullName);
+
+            startMessageListActivity(contact, channel);
+        }
+    }
+
+    private void startMessageListActivity(IChatUser contact, String channel) {
+        Intent intent = new Intent(mContext, MessageListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(ChatUI.BUNDLE_RECIPIENT, contact);
+        intent.putExtra(BUNDLE_CHANNEL_TYPE, channel);
+        mContext.startActivity(intent);
     }
 }
