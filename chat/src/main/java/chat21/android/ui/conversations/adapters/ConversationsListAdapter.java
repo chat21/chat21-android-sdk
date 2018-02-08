@@ -77,6 +77,8 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
 
         setRecipientDisplayName(holder, conversation.getConvers_with_fullname(), conversation.getConvers_with());
 
+        setGroupSenderName(holder, conversation);
+
         setLastMessageText(holder, conversation);
 
         setTimestamp(holder, conversation.getIs_new(), conversation.getTimestampLong());
@@ -141,24 +143,32 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
         String lastMessageText = StringUtils.isValid(conversation.getLast_message_text()) ?
                 conversation.getLast_message_text() : "";
 
-        // if the group message sender is different from the logger and the reserved user "system" user show it
-        if (conversation.isGroupChannel()) {
-            if (conversation.getSender() != null && !conversation.getSender()
-                    .equals(ChatManager.getInstance().getLoggedUser().getId()) &&
-                    !conversation.getSender().equals("system")) {
-
-                lastMessageText = holder.itemView.getContext()
-                        .getString(R.string.activity_conversation_list_adapter_formatted_last_message_text,
-                                conversation.getSender_fullname(), lastMessageText);
-            }
-        }
-
         if (conversation.getIs_new()) {
             // show bold text
             holder.lastTextMessage.setText(Html.fromHtml("<b>" + lastMessageText + "</b>"));
         } else {
             // not not bold text
             holder.lastTextMessage.setText(lastMessageText);
+        }
+    }
+
+    private void setGroupSenderName(ViewHolder holder, Conversation conversation) {
+        if (conversation.isGroupChannel()) {
+
+            // retrieve the sender
+            String sender = conversation.getSender();
+            if (conversation.getSender() != null && conversation.getSender().equals(ChatManager.getInstance().getLoggedUser().getId())) {
+                sender = holder.itemView.getContext().getString(R.string.activity_conversation_list_adapter_you_label);
+            } else {
+                if (!conversation.getSender().equals("system")) {
+                    sender = conversation.getSender_fullname();
+                }
+            }
+
+            holder.senderDisplayName.setText(sender + ": "); // set it
+            holder.senderDisplayName.setVisibility(View.VISIBLE); // show it
+        } else {
+            holder.senderDisplayName.setVisibility(View.GONE);
         }
     }
 
@@ -215,6 +225,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView recipientPicture;
         private TextView recipientDisplayName;
+        private TextView senderDisplayName;
         private EmojiTextView lastTextMessage;
         private TextView lastMessageTimestamp;
 
@@ -223,6 +234,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
 
             recipientPicture = itemView.findViewById(R.id.recipient_picture);
             recipientDisplayName = itemView.findViewById(R.id.recipient_display_name);
+            senderDisplayName = itemView.findViewById(R.id.sender_display_name);
             lastTextMessage = itemView.findViewById(R.id.last_text_message);
             lastMessageTimestamp = itemView.findViewById(R.id.last_message_timestamp);
         }

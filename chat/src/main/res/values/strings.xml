@@ -51,7 +51,7 @@
 
     <!--activity_conversation_list-->
     <string name="activity_conversation_list_cannot_open_converation_label">cannot open the selected chat.</string>
-    <string name="activity_conversation_list_adapter_formatted_last_message_text">%1$s: %2$s</string>
+    <string name="activity_conversation_list_adapter_you_label">you</string>
 
     <!--fragment_conversation_list-->
     <string name="fragment_conversation_list_my_group_label">Groups</string>
