@@ -160,8 +160,10 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
             if (conversation.getSender() != null && conversation.getSender().equals(ChatManager.getInstance().getLoggedUser().getId())) {
                 sender = holder.itemView.getContext().getString(R.string.activity_conversation_list_adapter_you_label);
             } else {
-                if (!conversation.getSender().equals("system")) {
-                    sender = conversation.getSender_fullname();
+                if (StringUtils.isValid(conversation.getSender())) {
+                    if (!conversation.getSender().equals("system")) {
+                        sender = conversation.getSender_fullname();
+                    }
                 }
             }
 
