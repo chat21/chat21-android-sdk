@@ -1,6 +1,5 @@
 package chat21.android.ui.chat_groups.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -86,7 +85,7 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         this.groupsSyncronizer = ChatManager.getInstance().getGroupsSyncronizer();
 
         // retrieve the contacts list
-        List<IChatUser> tempContactList = ChatManager.getInstance().getContactsSynchronizer().getContacts();
+        List<IChatUser> tempContactList = contactsSynchronizer.getContacts();
         excludeLoggedUser(tempContactList); // remove the logged user frome the contacts list
         dictionaryWords = tempContactList; // set the contact list without the logged user
         filteredList = new ArrayList<>();
@@ -138,7 +137,7 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         toggleEmptyLayout(contactList);
 
         if (contactsListAdapter == null) {
-            contactsListAdapter = new ContactsListAdapter(this, contactList);
+            contactsListAdapter = new ContactsListAdapter(contactList);
             contactsListAdapter.setHasStableIds(true);
             contactsListAdapter.setOnContactClickListener(this);
             contactsListView.setAdapter(contactsListAdapter);
@@ -156,7 +155,7 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
 
         if (selectedContactsListAdapter == null) {
             selectedContactsListAdapter = new SelectedContactListAdapter(this, selectedList);
-            selectedContactsListAdapter.setHasStableIds(true);
+//            selectedContactsListAdapter.setHasStableIds(true);
             selectedContactsListAdapter.setOnRemoveClickListener(this);
             selectedContactsListView.setAdapter(selectedContactsListAdapter);
         } else {
@@ -285,8 +284,7 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
             // remove the item at position from the contacts list and update the adapter
             selectedContactsList.remove(position);
 
-            // hide the already added
-            contactsListAdapter.hideContactAlreadyAdded(contactsListView, contact);
+            contactsListAdapter.removeFromAlreadyAddedList(contact);
 
             updateSelectedContactListAdapter(selectedContactsList, position);
         } else {
@@ -305,22 +303,17 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         addMemberToGroup(contact, selectedContactsList, position);
     }
 
-    private void addMemberToGroup(IChatUser user, List<IChatUser> contactList, int position) {
+    private void addMemberToGroup(IChatUser contact, List<IChatUser> contactList, int position) {
 
         // add a contact only if it not exists
-        if (!isContactAlreadyAdded(user, contactList)) {
+        if (!isContactAlreadyAdded(contact, contactList)) {
             // add the contact to the contact list and update the adapter
-            contactList.add(user);
-
-            updateSelectedContactListAdapter(contactList, position);
-
-            // shows already added
-            contactsListAdapter.showContactAlreadyAdded(contactsListView, position);
-        } else {
-
-            // shows already added
-            contactsListAdapter.showContactAlreadyAdded(contactsListView, position);
+            contactList.add(contact);
         }
+
+        contactsListAdapter.addToAlreadyAddedList(contact, position);
+
+        updateSelectedContactListAdapter(contactList, position);
     }
 
     // check if a contact is already added to a list
@@ -370,9 +363,12 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
         private ContactsListAdapter.CustomFilter mFilter;
         private OnContactClickListener onContactClickListener;
 
-        public ContactsListAdapter(Context context, List<IChatUser> items) {
+        private List<IChatUser> alreadyAddedList;
+
+        public ContactsListAdapter(List<IChatUser> items) {
             mValues = items;
             mFilter = new ContactsListAdapter.CustomFilter(ContactsListAdapter.this);
+            alreadyAddedList = new ArrayList<>();
         }
 
         public OnContactClickListener getOnContactClickListener() {
@@ -392,21 +388,24 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
 
         @Override
         public void onBindViewHolder(final ContactsListAdapter.ViewHolder holder, final int position) {
-            holder.mItem = mValues.get(position);
+//            holder.mItem = mValues.get(position);
+            final IChatUser contact = mValues.get(position);
 
             Glide.with(holder.itemView.getContext())
-                    .load(mValues.get(position).getProfilePictureUrl())
+                    .load(contact.getProfilePictureUrl())
                     .placeholder(R.drawable.ic_person_avatar)
                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.mImageView);
 
-            holder.mFullname.setText(mValues.get(position).getFullName());
-            holder.mUsername.setText(mValues.get(position).getId());
+            holder.mFullname.setText(contact.getFullName());
+            holder.mUsername.setText(contact.getId());
+
+            toggleAlreadyAddedLabel(holder, contact);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getOnContactClickListener().onContactClicked(mValues.get(position), position);
+                    getOnContactClickListener().onContactClicked(contact, position);
                 }
             });
         }
@@ -425,45 +424,83 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
             mValues = list;
         }
 
-        private void showContactAlreadyAdded(RecyclerView recyclerView, int position) {
-            ContactsListAdapter.ViewHolder holder =
-                    (ContactsListAdapter.ViewHolder) recyclerView.findViewHolderForLayoutPosition(position);
+        public void addToAlreadyAddedList(IChatUser chatUser, int position) {
+            int index = alreadyAddedList.indexOf(chatUser);
 
-            // If the view has been recycled, it is null
-            if (holder != null) {
-                // hide the username label
-                holder.mUsername.setVisibility(View.GONE);
+            if (index == position) {
+                // already added
+                alreadyAddedList.set(position, chatUser); // update the user
+            } else {
+                // not already added
+                alreadyAddedList.add(chatUser);
+            }
 
-                // show the already added label
+            notifyDataSetChanged();
+
+        }
+
+        public void removeFromAlreadyAddedList(IChatUser chatUser) {
+            int index = alreadyAddedList.indexOf(chatUser);
+
+            if (index != -1) {
+                // already added
+                alreadyAddedList.remove(chatUser);
+                notifyDataSetChanged();
+            }
+        }
+
+        public void toggleAlreadyAddedLabel(ViewHolder holder, IChatUser chatUser) {
+            int index = alreadyAddedList.indexOf(chatUser);
+
+            if (index != -1) {
+                // already added
+
                 holder.mAlreadyAddedLabel.setVisibility(View.VISIBLE);
+            } else {
+                // not already added
+                holder.mAlreadyAddedLabel.setVisibility(View.GONE);
             }
         }
 
-        private void hideContactAlreadyAdded(RecyclerView recyclerView, IChatUser contact) {
-
-            // get the contact position
-            int position = 0;
-            for (int i = 0; i < mValues.size(); i++) {
-                if (mValues.get(i).getId().equals(contact.getId())) {
-                    position = i;
-                    break;
-                }
-            }
-
-            // retrieve the contact view by position
-            View viewAtPosition = recyclerView.getLayoutManager().getChildAt(position);
-
-            // If the view has been recycled, it is null
-            if (viewAtPosition != null) {
-                // show the username label
-                TextView mUsername = viewAtPosition.findViewById(R.id.username);
-                mUsername.setVisibility(View.VISIBLE);
-
-                // hide the already added label
-                TextView mAlreadyAddedLabel = viewAtPosition.findViewById(R.id.already_added_label);
-                mAlreadyAddedLabel.setVisibility(View.GONE);
-            }
-        }
+//        private void showContactAlreadyAdded(RecyclerView recyclerView, int position) {
+//            ContactsListAdapter.ViewHolder holder =
+//                    (ContactsListAdapter.ViewHolder) recyclerView.findViewHolderForLayoutPosition(position);
+//
+//            // If the view has been recycled, it is null
+//            if (holder != null) {
+//                // hide the username label
+//                holder.mUsername.setVisibility(View.GONE);
+//
+//                // show the already added label
+//                holder.mAlreadyAddedLabel.setVisibility(View.VISIBLE);
+//            }
+//        }
+//
+//        private void hideContactAlreadyAdded(RecyclerView recyclerView, IChatUser contact) {
+//
+//            // get the contact position
+//            int position = 0;
+//            for (int i = 0; i < mValues.size(); i++) {
+//                if (mValues.get(i).getId().equals(contact.getId())) {
+//                    position = i;
+//                    break;
+//                }
+//            }
+//
+//            // retrieve the contact view by position
+//            View viewAtPosition = recyclerView.getLayoutManager().getChildAt(position);
+//
+//            // If the view has been recycled, it is null
+//            if (viewAtPosition != null) {
+//                // show the username label
+//                TextView mUsername = viewAtPosition.findViewById(R.id.username);
+//                mUsername.setVisibility(View.VISIBLE);
+//
+//                // hide the already added label
+//                TextView mAlreadyAddedLabel = viewAtPosition.findViewById(R.id.already_added_label);
+//                mAlreadyAddedLabel.setVisibility(View.GONE);
+//            }
+//        }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final ImageView mImageView;
@@ -471,7 +508,7 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
             public final TextView mUsername;
             public final TextView mAlreadyAddedLabel;
             public final LinearLayout mAlreadyAddedIcon;
-            public IChatUser mItem;
+//            public IChatUser mItem;
 
             public ViewHolder(View view) {
                 super(view);

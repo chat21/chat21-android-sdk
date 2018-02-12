@@ -58,13 +58,13 @@ public class SelectedContactListAdapter extends AbstractRecyclerAdapter<IChatUse
     class SelectedContactViewHolder extends RecyclerView.ViewHolder {
         private final TextView contact;
         private final ImageView profilePicture;
-        private final ImageView remove;
+//        private final ImageView remove;
 
         SelectedContactViewHolder(View itemView) {
             super(itemView);
             contact = (TextView) itemView.findViewById(R.id.username);
             profilePicture = (ImageView) itemView.findViewById(R.id.profile_picture);
-            remove = (ImageView) itemView.findViewById(R.id.remove);
+//            remove = (ImageView) itemView.findViewById(R.id.remove);
         }
 
         public void bind(IChatUser contact, int position, OnRemoveClickListener callback) {
@@ -93,12 +93,12 @@ public class SelectedContactListAdapter extends AbstractRecyclerAdapter<IChatUse
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int returnedPosition = 0;
-                    if (position > 0) {
-                        returnedPosition = position;
-                    }
+//                    int returnedPosition = 0;
+//                    if (position > 0) {
+//                        returnedPosition = position;
+//                    }
 
-                    callback.onRemoveClickListener(returnedPosition);
+                    callback.onRemoveClickListener(position);
                 }
             });
         }
