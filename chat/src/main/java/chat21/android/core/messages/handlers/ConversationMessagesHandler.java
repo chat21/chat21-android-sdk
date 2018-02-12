@@ -50,9 +50,13 @@ public class ConversationMessagesHandler {
         this.recipient = recipient;
 
         if (StringUtils.isValid(firebaseUrl)) {
-            this.conversationMessagesNode = FirebaseDatabase.getInstance().getReferenceFromUrl(firebaseUrl).child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
+            this.conversationMessagesNode = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl(firebaseUrl)
+                    .child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
         } else {
-            this.conversationMessagesNode = FirebaseDatabase.getInstance().getReference().child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
+            this.conversationMessagesNode = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("/apps/" + appId + "/users/" + currentUser.getId() + "/messages/" + recipient.getId());
         }
 
         this.conversationMessagesNode.keepSynced(true);
@@ -63,7 +67,8 @@ public class ConversationMessagesHandler {
     }
 
     public void sendMessage(String type, String text, String channelType,
-                            final Map<String, Object> customAttributes, final SendMessageListener sendMessageListener) {
+                            final Map<String, Object> customAttributes,
+                            final SendMessageListener sendMessageListener) {
         Log.v(TAG, "sendMessage called");
 
         // the message to send
@@ -85,7 +90,7 @@ public class ConversationMessagesHandler {
 
 //        message.setStatus(Message.STATUS_SENDING);
         message.setTimestamp(new Date().getTime());
-        message.setCustomAttributes(customAttributes);
+        message.setMetadata(customAttributes);
 
         Log.d(TAG, "sendMessage.message: " + message.toString());
 
@@ -339,6 +344,11 @@ public class ConversationMessagesHandler {
 
         String channelType = (String) map.get("channel_type");
 
+        Map<String, Object> metadata = null;
+        if(map.containsKey("metadata")) {
+            metadata = (Map<String, Object>) map.get("metadata");
+        }
+
         Message message = new Message();
 
         message.setId(messageId);
@@ -351,6 +361,7 @@ public class ConversationMessagesHandler {
         message.setTimestamp(timestamp);
         message.setType(type);
         message.setChannelType(channelType);
+        message.setMetadata(metadata);
 
         Log.v(TAG, "decodeMessageSnapShop.message : " + message);
 

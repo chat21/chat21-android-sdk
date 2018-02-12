@@ -17,6 +17,7 @@ import com.bumptech.glide.request.target.Target;
 import com.vanniktech.emoji.EmojiTextView;
 
 import java.util.Date;
+import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.messages.models.Message;
@@ -91,6 +92,17 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         setOnMessageClickListener(onMessageClickListener);
     }
 
+    private String getImageUrl(Message message) {
+        String imgUrl = "";
+
+        Map<String, Object> metadata = message.getMetadata();
+        if (metadata != null) {
+            imgUrl = (String) metadata.get("src");
+        }
+
+        return imgUrl;
+    }
+
     // Resolve Issue #32
     private void setImagePreview(final Message message) {
 
@@ -98,7 +110,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         mProgressBar.setVisibility(View.VISIBLE);
 
         Glide.with(itemView.getContext())
-                .load(message.getText())
+                .load(getImageUrl(message))
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(

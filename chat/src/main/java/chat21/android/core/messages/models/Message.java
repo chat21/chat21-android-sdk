@@ -4,7 +4,6 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -64,13 +63,13 @@ public class Message implements Serializable, Cloneable {
     @PropertyName("channel_type")
     String channelType;
 
-    @PropertyName("custom_attributes")
-    Map<String, Object> customAttributes;
+    @PropertyName("metadata")
+    Map<String, Object> metadata;
 
 
     public Message() {
 
-       // this.status = STATUS_SENDING;
+        // this.status = STATUS_SENDING;
         //this.timestamp = new Date().getTime();
     }
 
@@ -179,7 +178,7 @@ public class Message implements Serializable, Cloneable {
 
     @Exclude
     public boolean isDirectChannel() {
-        if (this.channelType==null || this.channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
+        if (this.channelType == null || this.channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
             return true;
         } else {
             return false;
@@ -188,21 +187,21 @@ public class Message implements Serializable, Cloneable {
 
     @Exclude
     public boolean isGroupChannel() {
-        if (this.channelType!=null && this.channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+        if (this.channelType != null && this.channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
             return true;
         } else {
             return false;
         }
     }
 
-    @PropertyName("custom_attributes")
-    public Map<String, Object> getCustomAttributes() {
-        return customAttributes;
+    @PropertyName("metadata")
+    public Map<String, Object> getMetadata() {
+        return metadata;
     }
 
-    @PropertyName("custom_attributes")
-    public void setCustomAttributes(Map<String, Object> customAttributes) {
-        this.customAttributes = customAttributes;
+    @PropertyName("metadata")
+    public void setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata;
     }
 
     @Override
@@ -221,27 +220,29 @@ public class Message implements Serializable, Cloneable {
     }
 
     @Exclude
-    public Object clone(){
+    public Object clone() {
         try {
             return super.clone();
-        }catch (CloneNotSupportedException cnse) {
+        } catch (CloneNotSupportedException cnse) {
             return null;
         }
     }
 
-    @Override
     @Exclude
+    @Override
     public String toString() {
         return "Message{" +
-                "sender='" + sender + '\'' +
-                ", sender_fullname='" + senderFullname + '\'' +
+                "id='" + id + '\'' +
+                ", sender='" + sender + '\'' +
+                ", senderFullname='" + senderFullname + '\'' +
                 ", recipient='" + recipient + '\'' +
-                ", recipient_fullname='" + recipientFullname + '\'' +
+                ", recipientFullname='" + recipientFullname + '\'' +
                 ", text='" + text + '\'' +
                 ", status=" + status +
                 ", timestamp=" + timestamp +
                 ", type='" + type + '\'' +
-                ", channel_type=" + channelType +
+                ", channelType='" + channelType + '\'' +
+                ", metadata=" + metadata +
                 '}';
     }
 }

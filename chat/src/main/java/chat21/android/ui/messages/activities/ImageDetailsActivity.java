@@ -1,7 +1,6 @@
 package chat21.android.ui.messages.activities;
 
 import android.graphics.Bitmap;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +12,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+
+import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.messages.models.Message;
@@ -29,11 +30,7 @@ import chat21.android.utils.views.TouchImageView;
 public class ImageDetailsActivity extends AppCompatActivity {
     private static final String TAG = ImageDetailsActivity.class.getName();
 
-    private Toolbar toolbar;
-    private TouchImageView mImage;
-    private TextView mTitle;
-    private TextView mSender;
-    private TextView mTimestamp;
+    private Message message;
 
 //    private FloatingActionButton mBtnShare;
 //    private FloatingActionButton mBtnDownload;
@@ -43,40 +40,65 @@ public class ImageDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_details);
 
+        message = (Message) getIntent().getExtras().getSerializable(ChatUI.BUNDLE_MESSAGE);
+
+        // ### begin toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // ### end toolbar
+
+
+        registerViews();
+
+        // ### begin image
+        String imgUrl = getImageUrl(message);
+        setImage(imgUrl);
+        // ### end image
+
+        // ### begin title
+        String title = message.getText();
+        if (StringUtils.isValid(title)) {
+            TextView mTitle = findViewById(R.id.image_title);
+            mTitle.setText(title);
+        }
+        // ### end title
+
+        // ### begin sender
+        String sender = message.getSenderFullname();
+        if (StringUtils.isValid(sender)) {
+            TextView mSender = findViewById(R.id.sender);
+            mSender.setText(sender);
+        }
+        // ### end sender
+
+        // ### begin timestamp
+        TextView mTimestamp = findViewById(R.id.timestamp);
+        try {
+            long timestamp = message.getTimestamp();
+            String formattedTimestamp = TimeUtils.getFormattedTimestamp(timestamp);
+            mTimestamp.setText(formattedTimestamp);
+        } catch (Exception e) {
+            Log.e(TAG, "cannot retrieve the timestamp. " + e.getMessage());
+        }
+        // ### end timestamp
+
+
 //        // change the statusbar color
 //        ThemeUtils.changeStatusBarColor(this, getResources().getColor(R.color.black));
 
-        registerViews();
-        initViews();
 //        initListeners();
     }
 
-    private Message getMessage() {
-        Log.i(TAG, "getMessage");
-        return (Message) getIntent().getExtras().getSerializable(ChatUI.BUNDLE_MESSAGE);
-    }
 
     private void registerViews() {
         Log.i(TAG, "registerViews");
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        mImage = (TouchImageView) findViewById(R.id.image);
-        mTitle = (TextView) findViewById(R.id.image_title);
-        mSender = (TextView) findViewById(R.id.sender);
-        mTimestamp = (TextView) findViewById(R.id.timestamp);
 
 //        mBtnShare = (FloatingActionButton) findViewById(R.id.share);
 //        mBtnDownload = (FloatingActionButton) findViewById(R.id.download);
     }
 
-    private void initViews() {
-        Log.i(TAG, "initViews");
-        initToolbar();
-        setImage();
-        setTitle();
-        setSender();
-        setTimestamp();
-    }
 
 //    private void initListeners() {
 //        mBtnShare.setOnClickListener(onShareClickListener);
@@ -97,80 +119,50 @@ public class ImageDetailsActivity extends AppCompatActivity {
 //        }
 //    };
 
-    private void initToolbar() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+    private String getImageUrl(Message message) {
+        String imgUrl = "";
+
+        Map<String, Object> metadata = message.getMetadata();
+        if (metadata != null) {
+            imgUrl = (String) metadata.get("src");
+        }
+
+        return imgUrl;
     }
 
-    private void setImage() {
+    private void setImage(String imgUrl) {
         Log.i(TAG, "setImage");
+
+        final TouchImageView mImage = findViewById(R.id.image);
 
         mImage.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
             @Override
             public void onMove() {
-                RectF rect = mImage.getZoomedRect();
-                float currentZoom = mImage.getCurrentZoom();
-                boolean isZoomed = mImage.isZoomed();
-                //Log.e("sfsdfdsf", ""+currentZoom+","+isZoomed);
-                //Do whater ever stuff u want
+//                RectF rect = mImage.getZoomedRect();
+//                float currentZoom = mImage.getCurrentZoom();
+//                boolean isZoomed = mImage.isZoomed();
             }
         });
 
-        if (getMessage() != null) {
-            String uri = getMessage().getText();
-            if (StringUtils.isValid(uri)) {
 
-                // https://github.com/MikeOrtiz/TouchImageView/issues/135
-                Glide.with(this)
-                        .load(uri)
-                        .asBitmap()
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                mImage.setImageBitmap(resource);
-                            }
-                        });
+        // https://github.com/MikeOrtiz/TouchImageView/issues/135
+        Glide.with(this)
+                .load(imgUrl)
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        mImage.setImageBitmap(resource);
+                    }
+                });
 
 //                // make the imageview zoomable
 //                // source : https://github.com/chrisbanes/PhotoView
 //                PhotoViewAttacher mAttacher = new PhotoViewAttacher(mImage);
 //                mAttacher.update();
-            }
-        }
     }
 
-    private void setTitle() {
-        Log.i(TAG, "setTitle");
-        if (getMessage() != null) {
-            String title = getMessage().getText();
-            if (StringUtils.isValid(title)) {
-                mTitle.setText(title);
-            }
-        }
-    }
-
-    private void setSender() {
-        Log.i(TAG, "setSender");
-        if (getMessage() != null) {
-            String sender = getMessage().getSenderFullname();
-            if (StringUtils.isValid(sender)) {
-                mSender.setText(sender);
-            }
-        }
-    }
-
-    private void setTimestamp() {
-        Log.i(TAG, "setTimestamp");
-        if (getMessage() != null) {
-            try {
-                long timestamp = getMessage().getTimestamp();
-                String formattedTimestamp = TimeUtils.getFormattedTimestamp(timestamp);
-                mTimestamp.setText(formattedTimestamp);
-            } catch (Exception e) {
-                Log.e(TAG, "cannot retrieve the timestamp. " + e.getMessage());
-            }
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

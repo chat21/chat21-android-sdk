@@ -449,29 +449,29 @@ public class ChatManager {
     }
 
     public void sendTextMessage(String recipientId, String recipientFullName, String text, String channelType,
-                                Map customAttributes, SendMessageListener sendMessageListener) {
+                                Map metadata, SendMessageListener sendMessageListener) {
 
         Log.d(TAG, "sending text message to recipientId : " + recipientId +
                 ", recipientFullName: " + recipientFullName + " with text : " +
-                text + " and customAttributes : " + customAttributes);
+                text + " and metadata : " + metadata);
 
         getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
-                Message.TYPE_TEXT, text, channelType, customAttributes, sendMessageListener);
+                Message.TYPE_TEXT, text, channelType, metadata, sendMessageListener);
     }
 
     public void sendImageMessage(String recipientId, String recipientFullName, String text, String channelType,
-                                 Map customAttributes, SendMessageListener sendMessageListener) {
+                                 Map metadata, SendMessageListener sendMessageListener) {
 
         Log.d(TAG, "sending image message to recipientId : " + recipientId +
                 ", recipientFullName: " + recipientFullName + " with text : " +
-                text + " and customAttributes : " + customAttributes);
+                text + " and metadata : " + metadata);
 
         getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
-                Message.TYPE_IMAGE, text, channelType, customAttributes, sendMessageListener);
+                Message.TYPE_IMAGE, text, channelType, metadata, sendMessageListener);
     }
 
     public void sendFileMessage(String recipient_id, String text, String channelType, URL url, String fileName,
-                                Map customAttributes, SendMessageListener sendMessageListener) {
+                                Map metadata, SendMessageListener sendMessageListener) {
 
     }
 
