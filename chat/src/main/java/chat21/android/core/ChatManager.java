@@ -75,7 +75,7 @@ public class ChatManager {
     }
 
     public IChatUser getLoggedUser() {
-        Log.v(TAG, "ChatManager.getloggedUser");
+//        Log.v(TAG, "ChatManager.getloggedUser");
         return loggedUser;
     }
 
@@ -308,7 +308,7 @@ public class ChatManager {
      * @return the instance
      */
     public static ChatManager getInstance() {
-        Log.v(TAG, "getInstance");
+//        Log.v(TAG, "getInstance");
         if (mInstance == null) {
             throw new RuntimeException("instance cannot be null. call start first.");
         }
