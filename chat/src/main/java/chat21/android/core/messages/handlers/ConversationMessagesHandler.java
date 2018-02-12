@@ -67,7 +67,7 @@ public class ConversationMessagesHandler {
     }
 
     public void sendMessage(String type, String text, String channelType,
-                            final Map<String, Object> customAttributes,
+                            final Map<String, Object> metadata,
                             final SendMessageListener sendMessageListener) {
         Log.v(TAG, "sendMessage called");
 
@@ -90,7 +90,7 @@ public class ConversationMessagesHandler {
 
 //        message.setStatus(Message.STATUS_SENDING);
         message.setTimestamp(new Date().getTime());
-        message.setMetadata(customAttributes);
+        message.setMetadata(metadata);
 
         Log.d(TAG, "sendMessage.message: " + message.toString());
 
@@ -344,8 +344,9 @@ public class ConversationMessagesHandler {
 
         String channelType = (String) map.get("channel_type");
 
+        // if metadata is a string ignore it
         Map<String, Object> metadata = null;
-        if(map.containsKey("metadata")) {
+        if (map.containsKey("metadata") && !(map.get("metadata") instanceof String)) {
             metadata = (Map<String, Object>) map.get("metadata");
         }
 
@@ -361,7 +362,7 @@ public class ConversationMessagesHandler {
         message.setTimestamp(timestamp);
         message.setType(type);
         message.setChannelType(channelType);
-        message.setMetadata(metadata);
+        if (metadata != null) message.setMetadata(metadata);
 
         Log.v(TAG, "decodeMessageSnapShop.message : " + message);
 
