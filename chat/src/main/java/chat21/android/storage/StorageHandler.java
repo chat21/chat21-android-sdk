@@ -88,7 +88,7 @@ public class StorageHandler {
         // random uid.
         // this is used to generate an unique folder in which
         // upload the file to preserve the filename
-        String uuid = UUID.randomUUID().toString();
+        final String uuid = UUID.randomUUID().toString();
 
         // upload to /public/images/uuid/file.ext
         StorageReference riversRef = storageReference.child(type.toString() + "/" + uuid + "/" +
@@ -125,7 +125,7 @@ public class StorageHandler {
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 Log.d(TAG, "addOnFailureListener.onSuccess - downloadUrl: " + downloadUrl);
 
-                callback.onUploadSuccess(downloadUrl, type);
+                callback.onUploadSuccess(uuid, downloadUrl, type);
             }
         });
     }

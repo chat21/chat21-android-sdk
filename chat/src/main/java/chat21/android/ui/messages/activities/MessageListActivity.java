@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiImageView;
 import com.vanniktech.emoji.EmojiPopup;
@@ -43,6 +46,8 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import chat21.android.R;
 import chat21.android.core.ChatManager;
@@ -588,14 +593,37 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
         StorageHandler.uploadFile(this, file, new OnUploadedCallback() {
             @Override
-            public void onUploadSuccess(Uri downloadUrl, String type) {
+            public void onUploadSuccess(final String uid, final Uri downloadUrl, String type) {
                 Log.d(TAG, "uploadFile.onUploadSuccess - downloadUrl: " + downloadUrl);
 
                 progressDialog.dismiss(); // bugfix Issue #45
 
-                ChatManager.getInstance().sendImageMessage(recipient.getId(),
-                        recipient.getFullName(), downloadUrl.toString(), channelType,
-                        null, null);
+                Glide.with(getApplicationContext())
+                        .load(downloadUrl)
+                        .asBitmap()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+                                int width = bitmap.getWidth();
+                                int height = bitmap.getHeight();
+
+                                Log.d(TAG, " MessageListActivity.uploadFile:" +
+                                        " width == " + width + " - height == " + height);
+
+                                Map<String, Object> metadata = new HashMap<>();
+                                metadata.put("width", width);
+                                metadata.put("height", height);
+                                metadata.put("src", downloadUrl.toString());
+                                metadata.put("uid", uid);
+
+                                Log.d(TAG, " MessageListActivity.uploadFile:" +
+                                        " metadata == " + metadata);
+
+                                ChatManager.getInstance().sendImageMessage(recipient.getId(),
+                                        recipient.getFullName(), "", channelType,
+                                        metadata, null);
+                            }
+                        });
             }
 
             @Override
@@ -605,7 +633,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                 // bugfix Issue #45
                 progressDialog.setProgress((int) progress);
 
-                // TODO: 06/09/17 agganciare progress direttamente alla cella della recyclerview
+                // TODO: 06/09/17 progress within viewholder
             }
 
             @Override
