@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import chat21.android.core.ChatManager;
-import chat21.android.core.chat_groups.models.ChatGroup;
 import chat21.android.core.conversations.listeners.ConversationsListener;
 import chat21.android.core.conversations.models.Conversation;
 import chat21.android.core.exception.ChatRuntimeException;
@@ -37,6 +36,8 @@ public class ConversationsHandler {
     private List<ConversationsListener> conversationsListeners;
     private ChildEventListener conversationsChildEventListener;
     private Comparator<Conversation> conversationComparator;
+
+    private String currentOpenConversationId;
 
     public ConversationsHandler(String firebaseUrl, String appId, String currentUserId) {
         conversationsListeners = new ArrayList<ConversationsListener>();
@@ -197,6 +198,14 @@ public class ConversationsHandler {
         }
 
         return conversationsChildEventListener;
+    }
+
+    public String getCurrentOpenConversationId() {
+        return currentOpenConversationId;
+    }
+
+    public void setCurrentOpenConversationId(String currentOpenConversationId) {
+        this.currentOpenConversationId = currentOpenConversationId;
     }
 
     public List<Conversation> getConversations() {

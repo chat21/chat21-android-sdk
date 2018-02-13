@@ -200,6 +200,26 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // set the active conversation
+        ChatManager.getInstance().getConversationsHandler()
+                .setCurrentOpenConversationId(recipient.getId());
+        Log.d(TAG, "MessageListActivity.onResume: " +
+                "currentOpenConversationId == " + recipient.getId());
+    }
+
+    @Override
+    protected void onPause() {
+        // unset the active conversation
+        ChatManager.getInstance().getConversationsHandler()
+                .setCurrentOpenConversationId(null);
+        Log.d(TAG, "MessageListActivity.onResume: currentOpenConversationId detached");
+
+        super.onPause();
+    }
+
+    @Override
     protected void onStop() {
         Log.d(TAG, "  MessageListActivity.onStop");
 
@@ -208,7 +228,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             emojiPopup.dismiss();
         }
 
-        // detach the conversation messages listener
         super.onStop();
     }
 
@@ -222,6 +241,12 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy: presenceHandler detached");
         }
 
+        // unset the active conversation
+        ChatManager.getInstance().getConversationsHandler()
+                .setCurrentOpenConversationId(null);
+        Log.d(TAG, "MessageListActivity.onResume: currentOpenConversationId detached");
+
+        // detach the conversation messages listener
         conversationMessagesHandler.removeConversationMessagesListener(this);
     }
 
@@ -460,7 +485,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                 mEmojiBar.setVisibility(View.GONE);
             }
         }
-
     }
 
     @Override

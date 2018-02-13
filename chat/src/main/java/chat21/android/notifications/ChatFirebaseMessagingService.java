@@ -16,10 +16,12 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.Date;
 
 import chat21.android.R;
+import chat21.android.core.ChatManager;
 import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.ChatUser;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.messages.activities.MessageListActivity;
+import chat21.android.utils.StringUtils;
 
 import static chat21.android.ui.ChatUI.BUNDLE_CHANNEL_TYPE;
 import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
@@ -87,13 +89,36 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
             String recipientFullName = remoteMessage.getData().get("recipient_fullname");
             String recipient = remoteMessage.getData().get("recipient");
 
+            String currentOpenConversationId = ChatManager.getInstance()
+                    .getConversationsHandler()
+                    .getCurrentOpenConversationId();
+
             if (channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
-                sendDirectNotification(sender, senderFullName, text, channelType);
+
+                if(StringUtils.isValid(currentOpenConversationId) && !currentOpenConversationId.equals(sender)) {
+                    sendDirectNotification(sender, senderFullName, text, channelType);
+                } else {
+                    if(!StringUtils.isValid(currentOpenConversationId)) {
+                        sendDirectNotification(sender, senderFullName, text, channelType);
+                    }
+                }
             } else if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
-                sendGroupNotification(recipient, recipientFullName, senderFullName, text, channelType);
+                if(StringUtils.isValid(currentOpenConversationId) && !currentOpenConversationId.equals(recipient)) {
+                    sendGroupNotification(recipient, recipientFullName, senderFullName, text, channelType);
+                } else {
+                    if(!StringUtils.isValid(currentOpenConversationId)) {
+                        sendGroupNotification(recipient, recipientFullName, senderFullName, text, channelType);
+                    }
+                }
             } else {
                 // default case
-                sendDirectNotification(sender, senderFullName, text, channelType);
+                if(StringUtils.isValid(currentOpenConversationId) && !currentOpenConversationId.equals(sender)) {
+                    sendDirectNotification(sender, senderFullName, text, channelType);
+                } else {
+                    if(!StringUtils.isValid(currentOpenConversationId)) {
+                        sendDirectNotification(sender, senderFullName, text, channelType);
+                    }
+                }
             }
         }
 
