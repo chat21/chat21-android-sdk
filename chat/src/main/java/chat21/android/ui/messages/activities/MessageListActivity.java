@@ -136,7 +136,6 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             channelType = Message.DIRECT_CHANNEL_TYPE;
         }
 
-
         if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
             // retrieve group
             chatGroup = ChatManager.getInstance().getGroupsSyncronizer().getById(recipient.getId());
@@ -207,6 +206,11 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                 .setCurrentOpenConversationId(recipient.getId());
         Log.d(TAG, "MessageListActivity.onResume: " +
                 "currentOpenConversationId == " + recipient.getId());
+
+        // set the current conversation as read
+        ChatManager.getInstance()
+                .getConversationsHandler()
+                .setConversationRead(recipient.getId());
     }
 
     @Override

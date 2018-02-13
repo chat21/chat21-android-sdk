@@ -405,26 +405,31 @@ public class ConversationsHandler {
     public void setConversationRead(final String recipientId) {
         Log.d(TAG, "setConversationRead");
 
-        conversationsNode.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                // check if the conversation exists to prevent conversation with only "is_new" value
-                if (snapshot.hasChild(recipientId)) {
-                    // update the state
-                    conversationsNode.child(recipientId)
-                            .child("is_new")
-                            .setValue(false); // the conversation has been read
+        Conversation conversation = getById(recipientId);
+        // check if the conversation is new
+        // if it is new set the conversation as read (false), do nothing otherwise
+        if (conversation != null && conversation.getIs_new()) {
+            conversationsNode.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    // check if the conversation exists to prevent conversation with only "is_new" value
+                    if (snapshot.hasChild(recipientId)) {
+                        // update the state
+                        conversationsNode.child(recipientId)
+                                .child("is_new")
+                                .setValue(false); // the conversation has been read
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                String errorMessage = "cannot mark the conversation as read: " +
-                        databaseError.getMessage();
-                Log.e(TAG, errorMessage);
-                FirebaseCrash.report(new Exception(errorMessage));
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    String errorMessage = "cannot mark the conversation as read: " +
+                            databaseError.getMessage();
+                    Log.e(TAG, errorMessage);
+                    FirebaseCrash.report(new Exception(errorMessage));
+                }
+            });
+        }
     }
 
     public List<ConversationsListener> getConversationsListener() {
