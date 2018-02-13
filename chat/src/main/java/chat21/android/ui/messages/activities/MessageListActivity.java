@@ -79,7 +79,8 @@ import static chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
 /**
  * Created by stefano on 31/08/2015.
  */
-public class MessageListActivity extends AppCompatActivity implements ConversationMessagesListener, PresenceListener {
+public class MessageListActivity extends AppCompatActivity
+        implements ConversationMessagesListener, PresenceListener {
     private static final String TAG = MessageListActivity.class.getName();
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
@@ -147,9 +148,11 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             } else {
                 if (StringUtils.isValid(getIntent().getStringExtra("sender"))) {
                     recipientId = getIntent().getStringExtra("sender");
-                    Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate: recipientId == " + recipientId);
+                    Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate:" +
+                            " recipientId == " + recipientId);
                 } else {
-                    throw new ChatRuntimeException("Recipient can not be retrieved! are you sure you have passed it correctly?");
+                    throw new ChatRuntimeException("Recipient can not be retrieved! " +
+                            "Did you pass it correctly?");
                 }
             }
 
@@ -242,7 +245,8 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
         if (presenceHandler != null) {
             presenceHandler.removePresenceListener(this);
-            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy: presenceHandler detached");
+            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy:" +
+                    " presenceHandler detached");
         }
 
         // unset the active conversation
@@ -284,7 +288,8 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MessageListActivity.this, PublicProfileActivity.class);
+                Intent intent = new Intent(MessageListActivity.this,
+                        PublicProfileActivity.class);
 
                 intent.putExtra(ChatUI.BUNDLE_RECIPIENT, recipient);
                 startActivity(intent);
@@ -301,7 +306,8 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
         // toolbar group members
         String groupMembers;
-        if (chatGroup != null && chatGroup.getMembersList() != null && chatGroup.getMembersList().size() > 0) {
+        if (chatGroup != null && chatGroup.getMembersList() != null &&
+                chatGroup.getMembersList().size() > 0) {
             groupMembers = chatGroup.printMembersListWithSeparator(", ");
         } else {
             // if there are no members show the logged user as "you"
@@ -312,7 +318,8 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MessageListActivity.this, GroupAdminPanelActivity.class);
+                Intent intent = new Intent(MessageListActivity.this,
+                        GroupAdminPanelActivity.class);
                 intent.putExtra(ChatUI.BUNDLE_GROUP_ID, chatGroup.getGroupId());
                 startActivity(intent);
             }
@@ -339,9 +346,11 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
     private void initRecyclerViewAdapter(RecyclerView recyclerView) {
         Log.d(TAG, "initRecyclerViewAdapter");
 
-        Log.d(TAG, "conversationMessagesHandler.getMessages().size() is " + conversationMessagesHandler.getMessages().size());
+        Log.d(TAG, "conversationMessagesHandler.getMessages(): " +
+                "size() is " + conversationMessagesHandler.getMessages().size());
 
-        messageListAdapter = new MessageListAdapter(this, conversationMessagesHandler.getMessages());
+        messageListAdapter = new MessageListAdapter(this,
+                conversationMessagesHandler.getMessages());
         messageListAdapter.setMessageClickListener(this.onMessageClickListener);
         recyclerView.setAdapter(messageListAdapter);
 
@@ -404,9 +413,12 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
             }
         });
 
-        emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
-        attachButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
-        sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+        emojiButton.setColorFilter(ContextCompat
+                .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+        attachButton.setColorFilter(ContextCompat
+                .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+        sendButton.setColorFilter(ContextCompat
+                .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
 
         emojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
