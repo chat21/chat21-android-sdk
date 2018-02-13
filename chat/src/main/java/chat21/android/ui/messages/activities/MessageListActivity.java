@@ -621,7 +621,7 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
 
         StorageHandler.uploadFile(this, file, new OnUploadedCallback() {
             @Override
-            public void onUploadSuccess(final String uid, final Uri downloadUrl, String type) {
+            public void onUploadSuccess(final String uid, final Uri downloadUrl, final String type) {
                 Log.d(TAG, "uploadFile.onUploadSuccess - downloadUrl: " + downloadUrl);
 
                 progressDialog.dismiss(); // bugfix Issue #45
@@ -647,8 +647,17 @@ public class MessageListActivity extends AppCompatActivity implements Conversati
                                 Log.d(TAG, " MessageListActivity.uploadFile:" +
                                         " metadata == " + metadata);
 
+                                // get the localized type
+                                String lastMessageText = "";
+                                if (type.toLowerCase().equals(StorageHandler.Type.Image.toString().toLowerCase())) {
+                                    lastMessageText = getString(R.string.activity_message_list_type_image_label);
+                                } else if (type.equals(StorageHandler.Type.File)) {
+                                    lastMessageText = getString(R.string.activity_message_list_type_file_label);
+                                }
+
+                                // TODO: 13/02/18 add image message to the adapter  (like text message)
                                 ChatManager.getInstance().sendImageMessage(recipient.getId(),
-                                        recipient.getFullName(), "", channelType,
+                                        recipient.getFullName(), lastMessageText, channelType,
                                         metadata, null);
                             }
                         });

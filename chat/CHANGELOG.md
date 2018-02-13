@@ -41,11 +41,11 @@
 - bugfix menu crea gruppo
 - integrato pannello emoji direttamente in chat
 
-## 0.8.2 
+## 0.8.2
 - aggiunto timestamp a users in fase di login
 - bugfix crash per immagini remote di google foto
 
-## 0.8.1 
+## 0.8.1
 - bugfix recipient metadata non esistente
 - bugfix crash tablet ( IllegalStateException: Can not perform this action after onSaveInstanceState)
 - firebase disk persistence
@@ -53,13 +53,13 @@
 - bugfix lettura conversazione (se il mittente è l'utente loggato viene aggiornata direttamente)
 - bugfix strings - traduzioni
 
-## 0.8 
+## 0.8
 - cancellazione conversazione
 - bottom sheet allegati (immagini e documenti)
 - progress per carimento conversazioni
 - progress per carimento i miei gruppi
 
-## 0.7 
+## 0.7
 - aggiornate dipendenze google
 - bugfix messageListActivity displayName
 - bugfix conversationListAdapter displayName
@@ -70,17 +70,17 @@
 - progettato pulsante "i miei gruppi" nell'elenco delle conversazioni
 - progettato facebook group grid adapter (non in uso)
 
-## 0.6.1 
+## 0.6.1
 - rimosso _GROUP dall'id della conversazione
 - bugfix back MessageListActivity
 - bugfix bold
 - rimossi chat settings deprecati
 
-## 0.6 
+## 0.6
 - new firebase data schema
 - dialog conferma upload immagine
 
-## 0.5.1 
+## 0.5.1
 - bugfix logged user
 - bugfix contentProvider real path
 - added background to conversation
@@ -89,7 +89,7 @@
 - removed unused gladle dependencies
 - added setOnMessageClickListener method
 
-## 0.5 
+## 0.5
 - messageDAO per disaccoppiare firebase dalla chat
 - nodeDAO per disaccoppiare firebase dalla chat
 - error view per quando di viene rimossi da un gruppo
@@ -97,7 +97,7 @@
 - bugfix contentProvider real path
 - added background to conversation
 
-## 0.4.2 
+## 0.4.2
 - rimosse risorse "dimens" inutilizzate
 - aggiornate risorse "dimens"
 - rimossi SenderViewHolder/RecipientViewHolder senza immagini e relativi settings
@@ -110,7 +110,7 @@
 - gli utenti rimossi dal gruppo non possono più leggere i messaggi
 - bugfix layout sender/recipient
 
-## 0.4.1 
+## 0.4.1
 - bugfix rendering immagine destinatario
 - bugfix: a partire dal pannello di amministrazione di un gruppo un utente non può più avviare una conversazione con se stesso
 - aggiunta progress dialog durante il logout
@@ -122,7 +122,7 @@
 - bugfix backpress
 - nascosto il pulsante "invia" se il messaggio di testo è composto solo da "\n" and "\r" (uno o più)
 
-## 0.4 
+## 0.4
 - rendering url immagini in MessageListActivity
 - bugfix crash MessageListActivity per group == null
 - bugfix crash GroupAdminPanelActivity per group == null
@@ -141,7 +141,7 @@
 - aggiornato firebaseUI da 0.6.2 a 2.0.1
 - rimosso metodo setToolbar()
 
-## 0.3 
+## 0.3
 - rimozione utente da gruppo
 - avvia conversazione privata con utente del gruppo
 - bugfix conversationId per gruppo
@@ -152,36 +152,36 @@
 - alleggerita user profile activity (UserProfileActivity diventa UserProfileActivity)
 - membri del gruppo nel sotto-titolo della toolbar in MessageListaActivity
 
-## 0.2.4 
+## 0.2.4
 - bugfix crash decodifica conversazione
 
-## 0.2.3 
+## 0.2.3
 - gestita eccezione certificati ssl
 - aggiungi membro nel pannello di amministrazione del gruppo
 - bottom sheet fragment nel pannello di amministrazione del gruppo
 - i dati del nodo /users/tenant/tenant_userId/instanceId è stato spostato ora vengono
   scritti nel nodo /tenantUsers/tenant-userId/instanceId
 
-## 0.2.2 
+## 0.2.2
 - gestite notifiche push per i gruppi
 - nuova icona gruppi
 
-## 0.2.1 
+## 0.2.1
 - bugfix lista membri in pannello amministrazione gruppo
 - icone vettoriali ad alta definizione
 - bugfix rimozione contatto (aggiungi membri)
 - bugfix scroll lista conversazioni quando si aggiunge un nuovo gruppo
 
-## 0.2.0 
+## 0.2.0
 - aggiornamento buildtools e librerie android alla versione 26
 - migliorata selezione contatti del gruppo
 - aggiunto pulsante "crea gruppo" in elenco contatti
 - migliorato pannello amministrazione gruppo
 
-## 0.1.0 
+## 0.1.0
 - supporto ai gruppi
 
-## 0.0.3 
+## 0.0.3
 - rifattorizzata classe "Chat"
 - aggiunti listeners per click su contatto
 - il tenant può essere impostato in fase di configurazione
@@ -192,7 +192,7 @@
 - gestione notifiche push con app in foreground
 - bugfix tenant on refresh firebase token
 
-## 0.0.2 
+## 0.0.2
 - aggiornamento sdk firebase
 - rifattorizato modulo conversations
 - rifattorizato modulo messages
@@ -206,7 +206,7 @@
 - cambiato avatar utente
 - rimosse icone non usate
 
-## 0.0.1 
+## 0.0.1
 - creata lista dei contatti
 - creata lista delle conversazioni
 - creata lista dei messaggi

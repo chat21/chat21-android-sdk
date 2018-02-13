@@ -75,6 +75,8 @@
     <string name="activity_message_list_no_message_error_subtitle_label">Contatta l\'amministratore per ulteriori dettagli</string>
     <string name="activity_message_list_confirm_dialog_upload_title_label">Invio immagine</string>
     <string name="activity_message_list_confirm_dialog_upload_message_label">Vuoi mandare questa immagine?</string>
+    <string name="activity_message_list_type_image_label">immagine</string>
+    <string name="activity_message_list_type_file_label">file</string>
 
     <!--fragment_bottom_sheet_attach-->
     <string name="bottom_sheet_attach_images_label">Immagini</string>
