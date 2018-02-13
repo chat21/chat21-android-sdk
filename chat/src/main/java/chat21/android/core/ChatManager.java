@@ -47,7 +47,6 @@ public class ChatManager {
 
     private static ChatManager mInstance;
 
-
     private IChatUser loggedUser;
     private String appId;
     private Context mContext;
@@ -139,7 +138,6 @@ public class ChatManager {
 
                     }
                 });
-
     }
 
 

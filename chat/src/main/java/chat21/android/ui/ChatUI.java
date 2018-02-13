@@ -28,8 +28,6 @@ import chat21.android.ui.messages.listeners.OnAttachClickListener;
 import chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
 
-import static chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
-
 /**
  * Created by andrealeo on 04/12/17.
  */
