@@ -2,8 +2,8 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_marginBottom="@dimen/chat_margin_x_small"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/chat_margin_x_small">
 
     <TextView
         android:id="@+id/date"
@@ -27,7 +27,6 @@
         android:id="@+id/message_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date">
 
@@ -38,7 +37,7 @@
             android:layout_height="wrap_content"
             android:padding="0dp"
             android:textColor="@color/background_bubble_text_recipient"
-            android:textSize="@dimen/chat_row_recipient_text_size"
+            android:textSize="15sp"
             android:textStyle="bold|italic"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent" />
@@ -79,8 +78,8 @@
             android:layout_height="wrap_content"
             android:autoLink="web|email"
             android:linksClickable="true"
-            android:padding="0dp"
             android:maxWidth="300dp"
+            android:padding="0dp"
             android:textColor="@color/background_bubble_text_recipient"
             android:textColorLink="@color/color_clickable_link_recipient"
             android:textSize="@dimen/chat_row_recipient_text_size"
