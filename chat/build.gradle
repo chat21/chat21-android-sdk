@@ -27,6 +27,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.support:design:27.0.2'
     compile 'com.android.support:cardview-v7:27.0.2'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     // firebase sdk
     compile 'com.google.firebase:firebase-core:11.8.0'
@@ -66,12 +67,12 @@ configurations.all {
             }
         }
 
-//        // firebase resolution
-//        // source : https://github.com/firebase/FirebaseUI-Android/issues/218
-//        if (details.requested.group == 'com.google.firebase' ||
-//                details.requested.group == 'com.google.android.gms') {
-//            details.useVersion '11.6.0'
-//        }
+        // firebase resolution
+        // source : https://github.com/firebase/FirebaseUI-Android/issues/218
+        if (details.requested.group == 'com.google.firebase' ||
+                details.requested.group == 'com.google.android.gms') {
+            details.useVersion '11.6.0'
+        }
     }
 }
 
