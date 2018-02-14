@@ -38,7 +38,7 @@
             android:padding="0dp"
             android:textColor="@color/background_bubble_text_recipient"
             android:textSize="15sp"
-            android:textStyle="bold|italic"
+            android:textStyle="italic"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent" />
 
