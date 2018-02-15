@@ -6,7 +6,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -26,7 +25,6 @@ import chat21.android.core.messages.models.Message;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.messages.activities.ImageDetailsActivity;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
-import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.ImageUtils;
 import chat21.android.utils.views.TextViewLinkHandler;
@@ -34,46 +32,43 @@ import chat21.android.utils.views.TextViewLinkHandler;
 /**
  * Created by stefano on 25/11/2016.
  */
-
-class RecipientConstraintViewHolder extends RecyclerView.ViewHolder {
+class SenderConstraintViewHolder extends RecyclerView.ViewHolder {
 
     private final EmojiTextView mMessage;
     private final TextView mDate;
     private final TextView mTimestamp;
     private final ConstraintLayout mBackgroundBubble;
-    private final TextView mSenderDisplayName;
     private final ImageView mPreview; // Resolve Issue #32
+    private final ImageView mMessageStatus;
     private final ProgressBar mProgressBar;   // Resolve Issue #52
 
-    RecipientConstraintViewHolder(View itemView) {
+    SenderConstraintViewHolder(View itemView) {
         super(itemView);
         mMessage = (EmojiTextView) itemView.findViewById(R.id.message);
         mDate = (TextView) itemView.findViewById(R.id.date);
         mTimestamp = (TextView) itemView.findViewById(R.id.timestamp);
-        mBackgroundBubble = itemView.findViewById(R.id.message_group);
-        mSenderDisplayName = (TextView) itemView.findViewById(R.id.sender_display_name);
         mPreview = (ImageView) itemView.findViewById(R.id.preview); // Resolve Issue #32
-        mProgressBar = (ProgressBar) itemView.findViewById(R.id.progress);  // Resolve Issue #52
+        mBackgroundBubble = itemView.findViewById(R.id.message_group);
+        mMessageStatus = (ImageView) itemView.findViewById(R.id.status);
+        mProgressBar = (ProgressBar) itemView.findViewById(R.id.progress);   // Resolve Issue #52
     }
 
     void bind(final Message previousMessage, final Message message,
               int position, OnMessageClickListener onMessageClickListener) {
 
-        Log.d("TAG", "RecipientConstraintViewHolder");
-
         if (message.getType().equals(Message.TYPE_IMAGE)) {
             mMessage.setVisibility(View.GONE);
             mPreview.setVisibility(View.VISIBLE);
-            setPreview(message);
+
+            setImagePreview(message);
 
         } else if (message.getType().equals(Message.TYPE_FILE)) {
             mMessage.setVisibility(View.GONE);
             mPreview.setVisibility(View.VISIBLE);
 
             setFilePreview(message);
-
         } else if (message.getType().equals(Message.TYPE_TEXT)) {
-            mProgressBar.setVisibility(View.GONE);  // Resolve Issue #52
+            mProgressBar.setVisibility(View.GONE);   // Resolve Issue #52
             mMessage.setVisibility(View.VISIBLE);
             mPreview.setVisibility(View.GONE);
             setMessage(message);
@@ -85,7 +80,8 @@ class RecipientConstraintViewHolder extends RecyclerView.ViewHolder {
 
         setTimestamp(message);
 
-        setSenderDisplayName(message);
+        // message status icon
+        setStatus(message.getStatus());
 
         // click on the item
         setOnMessageClickListener(onMessageClickListener);
@@ -103,7 +99,7 @@ class RecipientConstraintViewHolder extends RecyclerView.ViewHolder {
     }
 
     // Resolve Issue #32
-    private void setPreview(final Message message) {
+    private void setImagePreview(final Message message) {
 
         // Resolve Issue #52
         mProgressBar.setVisibility(View.VISIBLE);
@@ -134,7 +130,6 @@ class RecipientConstraintViewHolder extends RecyclerView.ViewHolder {
                 })
                 .into(mPreview);
 
-
         mPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,7 +139,6 @@ class RecipientConstraintViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setFilePreview(final Message message) {
-
         Glide.with(itemView.getContext())
                 .load(message.getText())
                 .placeholder(R.drawable.ic_placeholder_file_recipient_24dp)
@@ -209,34 +203,56 @@ class RecipientConstraintViewHolder extends RecyclerView.ViewHolder {
 
     private void setBubble() {
         // set bubble color and background
-        Drawable drawable = ImageUtils.changeDrawableColor(itemView.getContext(),
-                R.color.background_bubble_recipient, R.drawable.balloon_recipient);
-        mBackgroundBubble.setBackground(drawable);
+        Drawable bubble = ImageUtils.changeDrawableColor(itemView.getContext(),
+                R.color.background_bubble_sender, R.drawable.balloon_sender);
+        mBackgroundBubble.setBackground(bubble);
     }
 
-    private void setSenderDisplayName(Message message) {
 
-        if (message.isGroupChannel()) {
-            mSenderDisplayName.setVisibility(View.VISIBLE);
+    private void setStatus(long status) {
 
-            String senderDisplayName = StringUtils.isValid(message.getSenderFullname()) ?
-                    message.getSenderFullname() : message.getSender();
-            mSenderDisplayName.setText(senderDisplayName);
-        } else if (message.isDirectChannel()) {
-            mSenderDisplayName.setVisibility(View.GONE);
+        Drawable drawableStatus;
+        boolean visible;
+
+        if (status == Message.STATUS_SENDING) {
+            drawableStatus = itemView.getContext()
+                    .getResources()
+                    .getDrawable(R.drawable.ic_message_sending_16dp);
+            visible = true;
+        } else if (status == Message.STATUS_SENT) {
+            drawableStatus = itemView.getContext()
+                    .getResources()
+                    .getDrawable(R.drawable.ic_message_sent_16dp);
+            visible = true;
+        } else if (status == Message.STATUS_RETURN_RECEIPT) {
+            drawableStatus = itemView.getContext()
+                    .getResources()
+                    .getDrawable(R.drawable.ic_message_receipt_16dp);
+            visible = true;
         } else {
-            // default case: consider it as direct message
-            mSenderDisplayName.setVisibility(View.GONE);
+            // status not valid or undefined
+            drawableStatus = null;
+            visible = false;
+        }
+
+        if (drawableStatus != null && visible) {
+            mMessageStatus.setBackground(drawableStatus);
         }
     }
 
-    private void setOnMessageClickListener(final OnMessageClickListener callback) {
 
+    private void setOnMessageClickListener(final OnMessageClickListener callback) {
         mMessage.setMovementMethod(new TextViewLinkHandler() {
             @Override
             public void onLinkClick(ClickableSpan clickableSpan) {
                 callback.onMessageLinkClick(mMessage, clickableSpan);
             }
+
+            //mMessage.setMovementMethod(new TextViewLinkHandler(callback.getUrlToListenTo()) {
+//            @Override
+//            public void onLinkClick(String url) {
+//                callback.onMessageClick(mMessage);
+//            }
         });
     }
 }
