@@ -71,10 +71,8 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
         LayoutInflater inflater = LayoutInflater.from(getContext());
 
         if (viewType == R.id.row_sender) {
-//            return new SenderViewHolder(
-//                    inflater.inflate(R.layout.row_sender, parent, false));
-            return new SenderConstraintViewHolder(
-                    inflater.inflate(R.layout.row_sender_constraint, parent, false));
+            return new SenderViewHolder(
+                    inflater.inflate(R.layout.row_sender, parent, false));
         } else if (viewType == R.id.row_recipient) {
             return new RecipientViewHolder(
                     inflater.inflate(R.layout.row_recipient, parent, false));
@@ -92,11 +90,8 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
             previousMessage = getItem(position - 1);
         }
 
-//        if (holder instanceof SenderViewHolder) {
-//            ((SenderViewHolder) holder).bind(previousMessage, message,
-//                    position, onMessageClickListener);
-        if (holder instanceof SenderConstraintViewHolder) {
-            ((SenderConstraintViewHolder) holder).bind(previousMessage, message,
+        if (holder instanceof SenderViewHolder) {
+            ((SenderViewHolder) holder).bind(previousMessage, message,
                     position, onMessageClickListener);
         } else if (holder instanceof RecipientViewHolder) {
             ((RecipientViewHolder) holder).bind(previousMessage, message,
