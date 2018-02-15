@@ -41,7 +41,7 @@ import chat21.android.utils.image.ImageCompressor;
 public class StorageHandler {
     private static final String TAG = StorageHandler.class.getName();
 
-    public static void uploadFile(Context context, File fileToUpload, final OnUploadedCallback callback) {
+    public static void  uploadFile(Context context, File fileToUpload, final OnUploadedCallback callback) {
         Log.d(TAG, "uploadFile");
 
         Uri file = Uri.fromFile(fileToUpload);
@@ -55,7 +55,7 @@ public class StorageHandler {
             compressImage(context, file, typeStr, callback); // compress and upload
         } else {
             // its a file
-            performUpload(context, file, typeStr, callback); // just upload
+            performUpload(file, typeStr, callback); // just upload
         }
     }
 
@@ -65,13 +65,13 @@ public class StorageHandler {
         ImageCompressor.compress(context.getContentResolver(), file, new ImageCompressor.OnImageCompressListener() {
             @Override
             public void onImageCompressed(Uri path) {
-                performUpload(context, path, type, callback);
+                performUpload(path, type, callback);
             }
         });
     }
 
     // execute the upload
-    private static void performUpload(Context context, Uri file, final String type,
+    private static void performUpload(Uri file, final String type,
                                       final OnUploadedCallback callback) {
         // public storage folder
         StorageReference storageReference;
@@ -93,6 +93,8 @@ public class StorageHandler {
         // upload to /public/images/uuid/file.ext
         StorageReference riversRef = storageReference.child(type.toString() + "/" + uuid + "/" +
                 file.getLastPathSegment());
+        Log.d(TAG, "riversRef ==" + riversRef);
+
         UploadTask uploadTask = riversRef.putFile(file);
 
         // Register observers to listen for when the download is done or if it fails
