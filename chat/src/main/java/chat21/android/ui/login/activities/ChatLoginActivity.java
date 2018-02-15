@@ -64,7 +64,7 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
     private Button vSignUp;
     private FirebaseAuth mAuth;
 
-    private String email, username, password;
+//    private String email, username, password;
 
     private interface OnUserLookUpComplete {
         void onUserRetrievedSuccess(IChatUser loggedUser);
@@ -297,13 +297,15 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
         boolean valid = true;
 
         String email = vEmail.getText().toString();
-        if (TextUtils.isEmpty(email)) {
+        if (!StringUtils.isValid(email)) {
             vEmail.setError("Required.");
+            valid = false;
+        } else if (StringUtils.isValid(email) && !StringUtils.validateEmail(email)) {
+            vEmail.setError("Not valid email.");
             valid = false;
         } else {
             vEmail.setError(null);
         }
-
         String password = vPassword.getText().toString();
         if (TextUtils.isEmpty(password)) {
             vPassword.setError("Required.");

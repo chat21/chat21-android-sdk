@@ -168,7 +168,7 @@ public class ChatSignUpActivity extends AppCompatActivity {
 
     // email validation
     private boolean validateEmail(String email) {
-        if (!StringUtils.isValid(email)) {
+        if (!StringUtils.isValid(email) || (StringUtils.isValid(email) && !StringUtils.validateEmail(email))) {
             Toast.makeText(getApplicationContext(),
                     getString(R.string.chat_signup_activity_not_valid_email_label),
                     Toast.LENGTH_SHORT).show();

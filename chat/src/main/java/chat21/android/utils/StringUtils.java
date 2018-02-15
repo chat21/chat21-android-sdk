@@ -1,6 +1,6 @@
 package chat21.android.utils;
 
-import android.util.Log;
+import java.util.regex.Pattern;
 
 /**
  * Created by stefano on 18/05/2016.
@@ -49,5 +49,12 @@ public class StringUtils {
 
     public static String[] splitByChar(String toSplit, String criteria) {
         return toSplit.split(criteria);
+    }
+
+    public static boolean validateEmail(String email) {
+        Pattern pattern = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+        return pattern.matcher(email).matches() ? true : false;
+
     }
 }
