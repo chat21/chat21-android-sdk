@@ -1,6 +1,6 @@
 ﻿# CHANGELOG
 
-## 2.0
+## v.: 1.0 b.: 27
 - full refactoring
 
 ## 0.10.2
