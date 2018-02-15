@@ -37,8 +37,9 @@
     <!--activity_group_admin_panel-->
     <string name="activity_group_admin_panel_members_label">Membri</string>
     <string name="activity_group_admin_panel_group_admin_label">Amministratore gruppo</string>
-    <string name="activity_group_admin_panel_formatted_created_by_label">Creato da %1$s</string>
-    <string name="activity_group_admin_panel_formatted_created_on_label">Creato il %1$s</string>
+    <string name="activity_group_admin_panel_created_by_label">Creato da</string>
+    <string name="activity_group_admin_panel_created_on_label">Creato il</string>
+    <string name="activity_group_admin_panel_group_id_label">id</string>
     <string name="activity_group_admin_panel_not_available_members_label">Le informazioni sui membri non sono dispobiili</string>
     <string name="activity_group_admin_panel_add_member_title">Aggiungi membro</string>
     <string name="menu_activity_group_admin_panel_activity_cannot_add_member_offline">Non puoi aggiungere un membro se sei offline</string>

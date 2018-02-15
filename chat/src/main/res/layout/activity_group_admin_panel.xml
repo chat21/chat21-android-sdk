@@ -200,17 +200,91 @@
                     android:paddingRight="@dimen/chat_padding_normal"
                     android:paddingTop="@dimen/chat_padding_normal">
 
-                    <TextView
-                        android:id="@+id/created_by"
-                        style="@style/TextAppearance.AppCompat.Medium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                    <!--<TextView-->
+                    <!--android:id="@+id/created_by"-->
+                    <!--style="@style/TextAppearance.AppCompat.Medium"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
 
-                    <TextView
-                        android:id="@+id/created_on"
-                        style="@style/TextAppearance.AppCompat.Medium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                    <!--<TextView-->
+                    <!--android:id="@+id/created_on"-->
+                    <!--style="@style/TextAppearance.AppCompat.Medium"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/group_id"-->
+                    <!--style="@style/TextAppearance.AppCompat.Medium"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
+
+                    <!--created buy-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/chat_padding_xx_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/activity_group_admin_panel_created_by_label"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                            android:textSize="15dp" />
+
+                        <TextView
+                            android:id="@+id/created_by"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/chat_margin_normal"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textSize="15dp" />
+                    </LinearLayout>
+
+                    <!--created on-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/activity_group_admin_panel_created_on_label"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                            android:textSize="15dp" />
+
+                        <TextView
+                            android:id="@+id/created_on"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/chat_margin_normal"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textSize="15dp" />
+                    </LinearLayout>
+
+                    <!--group id-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="@dimen/chat_padding_xx_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/activity_group_admin_panel_group_id_label"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                            android:textSize="15dp" />
+
+                        <TextView
+                            android:id="@+id/group_id"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/chat_margin_normal"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textSize="15dp" />
+                    </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>

@@ -33,7 +33,6 @@ import chat21.android.ui.chat_groups.adapters.GroupMembersListAdapter;
 import chat21.android.ui.chat_groups.fragments.BottomSheetGroupAdminPanelMember;
 import chat21.android.ui.chat_groups.listeners.OnGroupMemberClickListener;
 import chat21.android.utils.TimeUtils;
-import chat21.android.utils.image.CropCircleTransformation;
 
 import static chat21.android.ui.ChatUI.BUNDLE_CHAT_GROUP;
 import static chat21.android.ui.ChatUI.BUNDLE_GROUP_ID;
@@ -82,6 +81,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         setToolbar();
         setCreatedBy();
         setCreatedOn();
+        setGroupId();
         initRecyclerViewMembers();
         toggleAddMemberButton();
     }
@@ -158,22 +158,27 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
             }
         }
 
-        String createdBy = getString(R.string.activity_group_admin_panel_formatted_created_by_label, creator);
-        createdByView.setText(createdBy);
+//        String createdBy = getString(R.string.activity_group_admin_panel_formatted_created_by_label, creator);
+        createdByView.setText(creator);
     }
 
     private void setCreatedOn() {
-
         TextView createdOnView = (TextView) findViewById(R.id.created_on);
 
         // retrieve the creation date
         String timestamp = TimeUtils.getFormattedTimestamp(chatGroup.getCreatedOnLong());
 
         // format the user creator and creating date string
-        String createOn = getString(R.string.activity_group_admin_panel_formatted_created_on_label, timestamp);
+//        String createOn = getString(R.string.activity_group_admin_panel_formatted_created_on_label, timestamp);
 
         // show the text
-        createdOnView.setText(createOn);
+        createdOnView.setText(timestamp);
+    }
+
+    private void setGroupId() {
+        TextView groupIdView = findViewById(R.id.group_id);
+//        String groupId = getString(R.string.activity_group_admin_panel_formatted_group_id_label, chatGroup.getGroupId());
+        groupIdView.setText(chatGroup.getGroupId());
     }
 
     private void initRecyclerViewMembers() {
