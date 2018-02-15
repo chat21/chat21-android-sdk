@@ -49,16 +49,16 @@
                 android:id="@+id/texts_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/buttons_container"
+                android:layout_toStartOf="@+id/buttons_container"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/image_title"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -68,7 +68,7 @@
                         android:id="@+id/sender"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
                         android:ellipsize="end"
                         android:maxLength="30"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
@@ -79,7 +79,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -89,7 +88,7 @@
                 android:id="@+id/buttons_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:orientation="horizontal"
                 android:visibility="gone">
@@ -105,30 +104,30 @@
 
 
     <!--<LinearLayout-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
-        <!--android:orientation="horizontal"-->
-        <!--app:layout_anchor="@id/toolbar"-->
-        <!--app:layout_anchorGravity="right|end|bottom">-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
+    <!--android:orientation="horizontal"-->
+    <!--app:layout_anchor="@id/toolbar"-->
+    <!--app:layout_anchorGravity="right|end|bottom">-->
 
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/download"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_vertical"-->
-            <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
-            <!--android:src="@drawable/ic_file_download_white_24dp"-->
-            <!--app:backgroundTint="@color/colorAccent"-->
-            <!--app:fabSize="mini" />-->
+    <!--<android.support.design.widget.FloatingActionButton-->
+    <!--android:id="@+id/download"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_vertical"-->
+    <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
+    <!--android:src="@drawable/ic_file_download_white_24dp"-->
+    <!--app:backgroundTint="@color/colorAccent"-->
+    <!--app:fabSize="mini" />-->
 
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/share"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_vertical"-->
-            <!--android:src="@drawable/ic_share_white_48dp"-->
-            <!--app:backgroundTint="@color/colorAccent"-->
-            <!--app:fabSize="normal" />-->
+    <!--<android.support.design.widget.FloatingActionButton-->
+    <!--android:id="@+id/share"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_vertical"-->
+    <!--android:src="@drawable/ic_share_white_48dp"-->
+    <!--app:backgroundTint="@color/colorAccent"-->
+    <!--app:fabSize="normal" />-->
     <!--</LinearLayout>-->
 </android.support.design.widget.CoordinatorLayout>

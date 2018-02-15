@@ -25,7 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:ellipsize="end"
         android:gravity="center_horizontal"
@@ -36,7 +35,6 @@
         android:layout_height="@dimen/chat_row_selected_contact_list_remove_size"
         android:layout_above="@+id/username"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:background="@drawable/circle_shape"
         android:orientation="vertical">
 

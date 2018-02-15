@@ -96,4 +96,8 @@
     <string name="bottom_sheet_conversation_list_confirm_delete_conversation_button_label">Delete chat</string>
     <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_label">delete chat</string>
     <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_negative">cancel</string>
+
+    <!--activity_chat_login-->
+    <string name="activity_chat_login_no_account_label">No account?</string>
+    <string name="activity_chat_login_signup_label">Sign up</string>
 </resources>

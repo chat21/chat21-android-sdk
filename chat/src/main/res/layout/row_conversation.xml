@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/chat_margin_small"
+        android:layout_marginStart="@dimen/chat_margin_small"
         android:orientation="vertical">
 
         <!-- messageRecipient information -->
@@ -47,9 +47,8 @@
                 android:id="@+id/last_text_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/last_message_timestamp"
+                android:layout_toStartOf="@+id/last_message_timestamp"
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -60,7 +59,7 @@
                 android:id="@+id/last_message_timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginLeft="@dimen/chat_margin_small"
                 android:layout_marginRight="@dimen/chat_margin_small" />
         </RelativeLayout>

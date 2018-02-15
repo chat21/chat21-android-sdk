@@ -120,7 +120,7 @@
                 android:id="@+id/signup"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/chat_login_activity_chat_login_button_login_height"
-                android:background="@color/chat_signup_activity_chat_signup_button_signup_background_color"
+                android:backgroundTint="@color/chat_signup_activity_chat_signup_button_signup_background_color"
                 android:text="@string/chat_signup_activity_signup_button_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/chat_signup_activity_chat_signup_button_signup_text_color" />

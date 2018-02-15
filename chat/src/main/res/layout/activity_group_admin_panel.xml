@@ -46,19 +46,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/conversation_image"
+                    android:layout_toEndOf="@id/conversation_image"
                     android:orientation="vertical"
                     android:paddingBottom="2.0dip"
-                    android:paddingLeft="4.0dip"
-                    android:paddingRight="0.0dip"
+                    android:paddingEnd="0.0dip"
+                    android:paddingStart="4.0dip"
                     android:paddingTop="0.0dip">
 
                     <TextView
                         android:id="@+id/toolbar_title"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="@dimen/chat_margin_x_small"
+                        android:layout_marginStart="@dimen/chat_margin_x_small"
                         android:layout_weight="0.6"
                         android:ellipsize="end"
                         android:gravity="center_vertical"
@@ -129,7 +129,8 @@
                             android:layout_margin="@dimen/chat_margin_small"
                             android:orientation="horizontal"
                             android:paddingBottom="@dimen/chat_padding_small"
-                            android:paddingLeft="@dimen/chat_padding_small"
+                            android:paddingEnd="@dimen/chat_padding_small"
+                            android:paddingStart="@dimen/chat_padding_small"
                             android:visibility="gone">
 
                             <ImageView
@@ -142,9 +143,10 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
-                                android:layout_marginLeft="@dimen/chat_margin_small"
+                                android:layout_marginStart="@dimen/chat_margin_small"
                                 android:orientation="vertical"
-                                android:paddingLeft="@dimen/chat_padding_small">
+                                android:paddingEnd="@dimen/chat_padding_small"
+                                android:paddingStart="@dimen/chat_padding_small">
 
                                 <TextView
                                     android:id="@+id/add_member_title"
@@ -230,15 +232,15 @@
                             android:layout_height="wrap_content"
                             android:text="@string/activity_group_admin_panel_created_by_label"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/created_by"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/chat_margin_normal"
+                            android:layout_marginStart="@dimen/chat_margin_normal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
                     </LinearLayout>
 
                     <!--created on-->
@@ -252,15 +254,15 @@
                             android:layout_height="wrap_content"
                             android:text="@string/activity_group_admin_panel_created_on_label"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/created_on"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/chat_margin_normal"
+                            android:layout_marginStart="@dimen/chat_margin_normal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
                     </LinearLayout>
 
                     <!--group id-->
@@ -275,15 +277,15 @@
                             android:layout_height="wrap_content"
                             android:text="@string/activity_group_admin_panel_group_id_label"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/group_id"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/chat_margin_normal"
+                            android:layout_marginStart="@dimen/chat_margin_normal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>

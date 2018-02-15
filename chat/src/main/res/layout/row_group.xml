@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/chat_margin_small"
+            android:layout_marginStart="@dimen/chat_margin_small"
             android:orientation="vertical">
 
 
