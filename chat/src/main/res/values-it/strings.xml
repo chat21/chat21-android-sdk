@@ -52,7 +52,6 @@
     <string name="bottom_sheet_group_admin_panel_member_btn_cancel_label">Annulla</string>
 
     <!--activity_conversation_list-->
-    <string name="activity_conversation_list_cannot_open_converation_label">Impossibile aprire la conversazione selezioanta</string>
     <string name="activity_conversation_list_adapter_you_label">Tu</string>
 
     <!--fragment_conversation_list-->

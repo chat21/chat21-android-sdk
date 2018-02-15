@@ -51,7 +51,6 @@
     <string name="bottom_sheet_group_admin_panel_member_btn_cancel_label">Cancel</string>
 
     <!--activity_conversation_list-->
-    <string name="activity_conversation_list_cannot_open_converation_label">cannot open the selected chat.</string>
     <string name="activity_conversation_list_adapter_you_label">you</string>
 
     <!--fragment_conversation_list-->

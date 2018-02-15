@@ -2,7 +2,6 @@ package chat21.android.ui.messages.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -78,7 +77,7 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
 //            return new RecipientViewHolder(
 //                    inflater.inflate(R.layout.row_recipient, parent, false));
             return new RecipientConstraintViewHolder(
-                    inflater.inflate(R.layout.row_recipient_constraint, parent, false));
+                    inflater.inflate(R.layout.row_recipient, parent, false));
         }
         return null;
     }
