@@ -25,6 +25,7 @@ import chat21.android.core.messages.models.Message;
 import chat21.android.ui.ChatUI;
 import chat21.android.ui.messages.activities.ImageDetailsActivity;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
+import chat21.android.ui.messages.listeners.OnMessageLongClickListener;
 import chat21.android.utils.TimeUtils;
 import chat21.android.utils.image.ImageUtils;
 import chat21.android.utils.views.TextViewLinkHandler;
@@ -54,7 +55,8 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
     }
 
     void bind(final Message previousMessage, final Message message,
-              int position, OnMessageClickListener onMessageClickListener) {
+              int position, OnMessageClickListener onMessageClickListener,
+              OnMessageLongClickListener onMessageLongClickListener) {
 
         if (message.getType().equals(Message.TYPE_IMAGE)) {
             mMessage.setVisibility(View.GONE);
@@ -85,6 +87,9 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
 
         // click on the item
         setOnMessageClickListener(onMessageClickListener);
+
+        // long click on the item
+        setOnMessageLongCLickListener(message, position, onMessageLongClickListener);
     }
 
     private String getImageUrl(Message message) {
@@ -255,4 +260,23 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
 //            }
         });
     }
+
+    private void setOnMessageLongCLickListener(final Message message, final int position,
+                                               final OnMessageLongClickListener callback) {
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (callback != null) {
+                    callback.onMessageLongClick(itemView, message, position);
+
+                    // source :
+                    // https://stackoverflow.com/questions/18911290/perform-both-the-normal-click-and-long-click-at-button
+                    return true; // event triggered
+                }
+
+                return false; // event not triggered
+            }
+        });
+    }
+
 }

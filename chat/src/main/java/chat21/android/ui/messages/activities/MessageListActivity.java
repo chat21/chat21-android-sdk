@@ -2,6 +2,9 @@ package chat21.android.ui.messages.activities;
 
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -45,6 +48,9 @@ import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
+import org.bitbucket.stefanodp91.FloatingContextualItem;
+import org.bitbucket.stefanodp91.FloatingContextualMenu;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +73,7 @@ import chat21.android.ui.chat_groups.activities.GroupAdminPanelActivity;
 import chat21.android.ui.messages.adapters.MessageListAdapter;
 import chat21.android.ui.messages.fragments.BottomSheetAttach;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
+import chat21.android.ui.messages.listeners.OnMessageLongClickListener;
 import chat21.android.ui.users.activities.PublicProfileActivity;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
@@ -107,6 +114,8 @@ public class MessageListActivity extends AppCompatActivity
     private ImageView attachButton;
     private ImageView sendButton;
     private LinearLayout mEmojiBar;
+
+    private FloatingContextualMenu longPressMenu;
 
     /**
      * {@code recipient} is the real contact whom is talking with.
@@ -352,6 +361,7 @@ public class MessageListActivity extends AppCompatActivity
         messageListAdapter = new MessageListAdapter(this,
                 conversationMessagesHandler.getMessages());
         messageListAdapter.setMessageClickListener(this.onMessageClickListener);
+        messageListAdapter.setOnMessageLongClickListener(this.onMessageLongClickListener);
         recyclerView.setAdapter(messageListAdapter);
 
         // scroll to last position
@@ -364,22 +374,45 @@ public class MessageListActivity extends AppCompatActivity
     /**
      * Listener called when a message is clicked.
      */
-    public OnMessageClickListener onMessageClickListener =
-            new OnMessageClickListener() {
-                @Override
-                public void onMessageLinkClick(TextView messageView, ClickableSpan clickableSpan) {
-                    Log.d(TAG, "onMessageClickListener.onMessageLinkClick");
-                    Log.d(TAG, "text: " + messageView.getText().toString());
+    public OnMessageClickListener onMessageClickListener = new OnMessageClickListener() {
+        @Override
+        public void onMessageLinkClick(TextView messageView, ClickableSpan clickableSpan) {
+            Log.d(TAG, "onMessageClickListener.onMessageLinkClick");
+            Log.d(TAG, "text: " + messageView.getText().toString());
 
-                    if (ChatUI.getInstance().getOnMessageClickListener() != null) {
-                        ChatUI.getInstance().getOnMessageClickListener()
-                                .onMessageLinkClick(messageView, clickableSpan);
-                    } else {
-                        Log.d(TAG, "Chat.Configuration.getMessageClickListener() == null");
-                    }
-                }
-            };
+            if (ChatUI.getInstance().getOnMessageClickListener() != null) {
+                ChatUI.getInstance().getOnMessageClickListener()
+                        .onMessageLinkClick(messageView, clickableSpan);
+            } else {
+                Log.d(TAG, "Chat.Configuration.getMessageClickListener() == null");
+            }
+        }
+    };
 
+    public OnMessageLongClickListener onMessageLongClickListener = new OnMessageLongClickListener() {
+        @Override
+        public void onMessageLongClick(final View view, final Message message, int position) {
+
+            longPressMenu = new FloatingContextualMenu.Builder(getApplicationContext())
+                    .add(new FloatingContextualItem.Builder("Copy", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ClipboardManager clipboard =
+                                    (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                            ClipData clip = ClipData.newPlainText("Copied Text", message.getText());
+                            clipboard.setPrimaryClip(clip);
+                            longPressMenu.dismiss();
+                        }
+                    })
+                            .icon(R.drawable.ic_copy)
+                            .visible(true)
+                            .build())
+                    .anchor(view) // set the view to be anchored
+                    .build();
+            longPressMenu.show();
+
+        }
+    };
 
     private void initInputPanel() {
         Log.d(TAG, "initInputPanel");

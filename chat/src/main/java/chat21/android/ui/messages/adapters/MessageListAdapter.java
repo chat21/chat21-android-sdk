@@ -13,6 +13,7 @@ import chat21.android.core.messages.models.Message;
 import chat21.android.core.users.models.IChatUser;
 import chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
+import chat21.android.ui.messages.listeners.OnMessageLongClickListener;
 
 /**
  * Created by stefano on 31/08/2015.
@@ -22,6 +23,7 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
     private IChatUser loggedUser;
     private String sender;
     private OnMessageClickListener onMessageClickListener;
+    private OnMessageLongClickListener onMessageLongClickListener;
 
     private static final String TAG = MessageListAdapter.class.getName();
 
@@ -40,6 +42,13 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
         this.onMessageClickListener = onMessageClickListener;
     }
 
+    public void setOnMessageLongClickListener(OnMessageLongClickListener onMessageLongClickListener) {
+        this.onMessageLongClickListener = onMessageLongClickListener;
+    }
+
+    public OnMessageLongClickListener getOnMessageLongClickListener() {
+        return onMessageLongClickListener;
+    }
 
     @Override
     public int getItemViewType(int position) {
@@ -92,10 +101,10 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
 
         if (holder instanceof SenderViewHolder) {
             ((SenderViewHolder) holder).bind(previousMessage, message,
-                    position, onMessageClickListener);
+                    position, onMessageClickListener, getOnMessageLongClickListener());
         } else if (holder instanceof RecipientViewHolder) {
             ((RecipientViewHolder) holder).bind(previousMessage, message,
-                    position, onMessageClickListener);
+                    position, onMessageClickListener, getOnMessageLongClickListener());
         }
     }
 
