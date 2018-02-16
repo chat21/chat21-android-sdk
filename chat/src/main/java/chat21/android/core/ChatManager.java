@@ -227,7 +227,7 @@ public class ChatManager {
     public void dispose() {
 
         // dispose myPresenceHandler
-        myPresenceHandler.disconnect(); // disconnect all listeners
+        myPresenceHandler.dispose(); // disconnect all listeners
         myPresenceHandler = null; // destroy it
 
         // dispose all presenceHandlerMap

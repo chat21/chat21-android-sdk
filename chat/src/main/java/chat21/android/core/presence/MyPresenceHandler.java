@@ -159,7 +159,7 @@ public class MyPresenceHandler {
         return valueEventListener;
     }
 
-    public void disconnect() {
+    public void dispose() {
         if (myPresenceListeners != null && myPresenceListeners.size() > 0) {
             myPresenceListeners.clear();
             Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect:" +
@@ -183,6 +183,7 @@ public class MyPresenceHandler {
         // detach all listeners
         if (connectedRef != null && valueEventListener != null) {
             connectedRef.removeEventListener(valueEventListener);
+            valueEventListener = null;
             Log.d(DEBUG_MY_PRESENCE, "MyPresenceHandler.disconnect: " +
                     "connectedRef valueEventListener has been detached");
         }
