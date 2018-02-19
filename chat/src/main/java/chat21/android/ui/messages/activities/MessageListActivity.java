@@ -2,9 +2,6 @@ package chat21.android.ui.messages.activities;
 
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -47,9 +44,6 @@ import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
 import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
-
-import org.bitbucket.stefanodp91.FloatingContextualItem;
-import org.bitbucket.stefanodp91.FloatingContextualMenu;
 
 import java.io.File;
 import java.util.HashMap;
@@ -113,8 +107,6 @@ public class MessageListActivity extends AppCompatActivity
     private ImageView attachButton;
     private ImageView sendButton;
     private LinearLayout mEmojiBar;
-
-    private FloatingContextualMenu longPressMenu;
 
     /**
      * {@code recipient} is the real contact whom is talking with.
