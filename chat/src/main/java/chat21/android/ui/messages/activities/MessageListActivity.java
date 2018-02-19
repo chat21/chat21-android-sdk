@@ -73,7 +73,6 @@ import chat21.android.ui.chat_groups.activities.GroupAdminPanelActivity;
 import chat21.android.ui.messages.adapters.MessageListAdapter;
 import chat21.android.ui.messages.fragments.BottomSheetAttach;
 import chat21.android.ui.messages.listeners.OnMessageClickListener;
-import chat21.android.ui.messages.listeners.OnMessageLongClickListener;
 import chat21.android.ui.users.activities.PublicProfileActivity;
 import chat21.android.utils.StringUtils;
 import chat21.android.utils.TimeUtils;
@@ -361,7 +360,6 @@ public class MessageListActivity extends AppCompatActivity
         messageListAdapter = new MessageListAdapter(this,
                 conversationMessagesHandler.getMessages());
         messageListAdapter.setMessageClickListener(this.onMessageClickListener);
-        messageListAdapter.setOnMessageLongClickListener(this.onMessageLongClickListener);
         recyclerView.setAdapter(messageListAdapter);
 
         // scroll to last position
@@ -386,31 +384,6 @@ public class MessageListActivity extends AppCompatActivity
             } else {
                 Log.d(TAG, "Chat.Configuration.getMessageClickListener() == null");
             }
-        }
-    };
-
-    public OnMessageLongClickListener onMessageLongClickListener = new OnMessageLongClickListener() {
-        @Override
-        public void onMessageLongClick(final View view, final Message message, int position) {
-
-            longPressMenu = new FloatingContextualMenu.Builder(getApplicationContext())
-                    .add(new FloatingContextualItem.Builder("Copy", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ClipboardManager clipboard =
-                                    (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData clip = ClipData.newPlainText("Copied Text", message.getText());
-                            clipboard.setPrimaryClip(clip);
-                            longPressMenu.dismiss();
-                        }
-                    })
-                            .icon(R.drawable.ic_copy)
-                            .visible(true)
-                            .build())
-                    .anchor(view) // set the view to be anchored
-                    .build();
-            longPressMenu.show();
-
         }
     };
 

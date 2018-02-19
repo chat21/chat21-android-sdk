@@ -53,8 +53,6 @@ dependencies {
 //    // file picker
 //    // source: https://github.com/Angads25/android-filepicker
 //    compile 'com.github.angads25:filepicker:1.1.1'
-
-    compile 'org.bitbucket.stefanodp91:fcm:0.1.2' // add this
 }
 
 // resolve conflicts
