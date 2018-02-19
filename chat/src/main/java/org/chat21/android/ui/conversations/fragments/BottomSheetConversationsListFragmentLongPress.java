@@ -16,7 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.conversations.models.Conversation;
 import org.chat21.android.core.users.models.IChatUser;

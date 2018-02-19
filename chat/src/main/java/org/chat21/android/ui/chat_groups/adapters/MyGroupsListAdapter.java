@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.chat_groups.models.ChatGroup;
 import org.chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import org.chat21.android.ui.chat_groups.listeners.OnGroupClickListener;

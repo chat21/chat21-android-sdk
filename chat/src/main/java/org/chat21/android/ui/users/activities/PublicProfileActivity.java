@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.presence.PresenceHandler;
 import org.chat21.android.core.presence.listeners.PresenceListener;

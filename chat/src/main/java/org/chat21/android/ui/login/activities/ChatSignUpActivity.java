@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.utils.StringUtils;
 

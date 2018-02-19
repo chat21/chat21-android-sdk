@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 
 import java.util.List;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.chat_groups.listeners.ChatGroupsListener;
 import org.chat21.android.core.chat_groups.models.ChatGroup;

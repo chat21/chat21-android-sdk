@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.chat_groups.models.ChatGroup;
 import org.chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;

@@ -15,7 +15,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Date;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.core.users.models.ChatUser;

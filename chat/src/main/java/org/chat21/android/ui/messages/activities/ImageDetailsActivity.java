@@ -15,7 +15,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.Map;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.ui.ChatUI;
 import org.chat21.android.utils.StringUtils;

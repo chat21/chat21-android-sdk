@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.conversations.ConversationsHandler;
 import org.chat21.android.core.conversations.listeners.ConversationsListener;

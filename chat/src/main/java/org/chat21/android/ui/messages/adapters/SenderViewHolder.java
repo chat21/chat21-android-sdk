@@ -20,7 +20,7 @@ import com.vanniktech.emoji.EmojiTextView;
 import java.util.Date;
 import java.util.Map;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.ui.ChatUI;
 import org.chat21.android.ui.messages.activities.ImageDetailsActivity;

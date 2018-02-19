@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import chat21.android.R;
+import org.chat21.android.R;
 
 import org.chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 import org.chat21.android.ui.ChatUI;

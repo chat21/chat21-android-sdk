@@ -13,7 +13,7 @@ import android.widget.EditText;
 
 import java.util.Map;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.chat_groups.listeners.ChatGroupCreatedListener;
 import org.chat21.android.core.chat_groups.models.ChatGroup;

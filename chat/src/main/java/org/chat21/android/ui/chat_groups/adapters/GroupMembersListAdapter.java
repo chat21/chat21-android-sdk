@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import org.chat21.android.ui.chat_groups.listeners.OnGroupMemberClickListener;

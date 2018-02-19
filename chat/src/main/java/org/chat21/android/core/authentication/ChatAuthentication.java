@@ -27,7 +27,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.authentication.task.GetCustomTokenTask;
 import org.chat21.android.core.authentication.task.OnCustomAuthTokenCallback;
 import org.chat21.android.core.authentication.task.RefreshFirebaseInstanceIdTask;

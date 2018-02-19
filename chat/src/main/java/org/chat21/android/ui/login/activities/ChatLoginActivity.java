@@ -33,7 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.authentication.task.RefreshFirebaseInstanceIdTask;
 import org.chat21.android.core.exception.ChatFieldNotFoundException;

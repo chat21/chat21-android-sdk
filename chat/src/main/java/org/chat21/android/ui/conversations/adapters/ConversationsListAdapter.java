@@ -16,7 +16,7 @@ import com.vanniktech.emoji.EmojiTextView;
 
 import java.util.List;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.chat_groups.models.ChatGroup;
 import org.chat21.android.core.conversations.models.Conversation;

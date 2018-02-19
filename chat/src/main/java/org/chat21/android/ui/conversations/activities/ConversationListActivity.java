@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import chat21.android.R;
+import org.chat21.android.R;
 import org.chat21.android.ui.conversations.fragments.ConversationListFragment;
 
 /**
