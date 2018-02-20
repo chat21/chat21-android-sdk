@@ -67,8 +67,7 @@ public class ChatManager {
     }
 
     public void setLoggedUser(IChatUser loggedUser) {
-        this.loggedUser = loggedUser;
-        Log.d(TAG, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
+        this.loggedUser = loggedUser;Log.d(TAG, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
         // serialize on disk
         IOUtils.saveObjectToFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, loggedUser);
     }

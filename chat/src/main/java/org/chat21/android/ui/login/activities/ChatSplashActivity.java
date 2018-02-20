@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.chat21.android.R;
+import org.chat21.android.utils.ChatUtils;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
@@ -40,7 +44,11 @@ public abstract class ChatSplashActivity extends AppCompatActivity {
     @Override
     final protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chat_splash);
         Log.d(DEBUG_LOGIN, "ChatSplashActivity.onCreate");
+
+        TextView title = findViewById(R.id.title);
+        title.setText(ChatUtils.getApplicationName(this));
 
         runDispatch();
     }
@@ -62,7 +70,7 @@ public abstract class ChatSplashActivity extends AppCompatActivity {
         Log.d(DEBUG_LOGIN, "ChatSplashActivity.runDispatch");
         // If current user has already logged in launch the target activity,
         // else launch the login activity
-        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             Log.d(DEBUG_LOGIN, "ChatSplashActivity.runDispatch: user is logged in. Goto : " + getTargetClass().getName());
             Intent targetIntent = new Intent(this, getTargetClass());
             Bundle extras = getIntent().getExtras();
