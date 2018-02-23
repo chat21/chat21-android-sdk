@@ -20,16 +20,10 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
@@ -41,7 +35,13 @@ import org.chat21.android.ui.chat_groups.WizardNewGroup;
 import org.chat21.android.ui.chat_groups.adapters.SelectedContactListAdapter;
 import org.chat21.android.ui.chat_groups.listeners.OnRemoveClickListener;
 import org.chat21.android.ui.contacts.listeners.OnContactClickListener;
+import org.chat21.android.ui.decorations.ItemDecoration;
 import org.chat21.android.utils.image.CropCircleTransformation;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.chat21.android.ui.ChatUI.BUNDLE_CHAT_GROUP;
 import static org.chat21.android.ui.ChatUI.REQUEST_CODE_CREATE_GROUP;
@@ -116,6 +116,8 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
     }
 
     private void setupContactList() {
+        contactsListView.addItemDecoration(new ItemDecoration(this,
+                getResources().getDrawable(R.drawable.decorator_activity_add_members_to_groups)));
         contactsListView.setLayoutManager(new LinearLayoutManager(this));
 //        DividerItemDecoration itemDecorator = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
 //        itemDecorator.setDrawable(getResources().getDrawable(R.drawable.decorator_add_filtered_member));
@@ -507,16 +509,14 @@ public class AddMembersToGroupActivity extends AppCompatActivity implements OnCo
             public final TextView mFullname;
             public final TextView mUsername;
             public final TextView mAlreadyAddedLabel;
-            public final LinearLayout mAlreadyAddedIcon;
 //            public IChatUser mItem;
 
             public ViewHolder(View view) {
                 super(view);
-                mImageView = (ImageView) view.findViewById(R.id.profile_picture);
-                mFullname = (TextView) view.findViewById(R.id.fullname);
-                mUsername = (TextView) view.findViewById(R.id.username);
+                mImageView = (ImageView) view.findViewById(R.id.recipient_picture);
+                mFullname = (TextView) view.findViewById(R.id.recipient_display_name);
+                mUsername = (TextView) view.findViewById(R.id.recipient_username);
                 mAlreadyAddedLabel = (TextView) view.findViewById(R.id.already_added_label);
-                mAlreadyAddedIcon = (LinearLayout) view.findViewById(R.id.already_added_icon);
             }
 
             @Override

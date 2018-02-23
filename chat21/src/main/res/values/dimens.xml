@@ -56,13 +56,21 @@
     <dimen name="chat_row_group_recipient_fullname_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
     <dimen name="chat_row_group_recipient_members_text_size">@dimen/chat_recipient_last_message_text_size</dimen>
 
+    <!--chat_row_add_member-->
+    <dimen name="chat_row_add_member_recipient_picture_size">@dimen/chat_recipient_picture_size</dimen>
+    <dimen name="chat_row_add_member_recipient_fullname_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
+    <dimen name="chat_row_add_member_recipient_username_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
+    <dimen name="chat_row_add_member_recipient_already_added_text_size">@dimen/chat_row_add_member_recipient_username_text_size</dimen>
+
+    <!--chat_row_selected_contact_list-->
+    <dimen name="chat_row_selected_contact_list_view_size">86dp</dimen>
+    <dimen name="chat_row_selected_contact_list_remove_box_size">24dp</dimen>
+    <dimen name="chat_row_selected_contact_list_remove_view_size">24dp</dimen>
+    <dimen name="chat_row_selected_contact_list_recipient_picture_size">@dimen/chat_recipient_picture_size</dimen>
 
 
 
-
-
-
-    <dimen name="chat_profile_picture_size">48dp</dimen>
+    <!--<dimen name="chat_profile_picture_size">48dp</dimen>-->
     <dimen name="chat_profile_picture_toolbar_size">40dp</dimen>
 
 
@@ -71,13 +79,9 @@
     <dimen name="chat_group_icon_size">48dp</dimen>
     <dimen name="chat_group_icon_label_size">60dp</dimen>
 
-    <!--chat_row_selected_contact_list-->
-    <dimen name="chat_row_selected_contact_list_box_size">86dp</dimen>
-    <dimen name="chat_row_selected_contact_list_remove_size">24dp</dimen>
 
-    <!--chat_row_add_member-->
-    <dimen name="chat_row_add_member_box_size">76dp</dimen>
-    <dimen name="chat_row_add_member_remove_size">24dp</dimen>
+
+
 
     <dimen name="chat_activity_group_admin_panel_image_height">280dp</dimen>
 
