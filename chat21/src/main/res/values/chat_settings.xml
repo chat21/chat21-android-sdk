@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--firebase database reference (optional)-->
+    <string name="chat_firebase_url" translatable="false"></string>
+
+    <!--firebase storage reference (optional)-->
+    <string name="chat_firebase_storage_bucket" translatable="false"></string>
+
+    <!--unique identifier of the app in which it is messaging-->
+    <string name="chat_firebase_appId" translatable="false"></string>
+
+    <string name="custom_auth_verify_token_url" translatable="false">https://chat21-custom-firebase-auth.appspot.com/verifyToken?username=</string>
+
+    <!--&lt;!&ndash;bugfix Issue #4&ndash;&gt;-->
+    <!--&lt;!&ndash;target_chat_firebase_messaging_service&ndash;&gt;-->
+    <!--<string name="target_notification_parent_activity" translatable="false"></string>-->
+</resources>

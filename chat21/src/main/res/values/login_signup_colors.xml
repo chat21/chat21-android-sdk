@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--activity_chat_login-->
+    <color name="chat_login_activity_chat_login_button_login_background_color">@color/colorPrimary
+    </color>
+    <color name="chat_login_activity_chat_login_button_login_text_color">@color/white</color>
+
+    <!--activity_chat_signup-->
+    <color name="chat_signup_activity_chat_signup_button_signup_background_color">
+        @color/colorPrimary
+    </color>
+    <color name="chat_signup_activity_chat_signup_button_signup_text_color">@color/white</color>
+
+</resources>

@@ -1,0 +1,103 @@
+<resources>
+
+    <!--dates-->
+    <string name="today">today</string>
+
+    <string name="string_contact_list_activity_title">Contacts</string>
+    <string name="string_conversation_list_activity_title">Conversations</string>
+    <string name="string_create_group_activity_title">New Group</string>
+    <string name="string_add_members_activity_title">Add members</string>
+
+    <string name="label_no_conversation_error_title">No conversation!</string>
+    <string name="label_no_conversation_error_subtitle">Press the below button to start a new chat!</string>
+
+    <string name="action_create_group">Create group</string>
+
+    <!--create_group_activity-->
+    <string name="create_group_activity_add_group_icon_label">Add\nphoto</string>
+    <string name="create_group_activity_add_group_group_name_hint_label">Set a group name</string>
+    <string name="menu_create_group_action_next">Next</string>
+
+    <!--add_members_activity-->
+    <string name="add_members_activity_searchview_query_hint">Search contact</string>
+    <string name="add_members_activity_contact_already_added_label">Already added to the group</string>
+    <string name="add_members_activity_contact_not_added_label">contact is not present in the list</string>
+    <string name="add_members_activity_selected_contacts_title">Selected contacts</string>
+    <string name="add_members_activity_contacts_title">Contact List</string>
+    <string name="menu_add_members_action_create">Create</string>
+    <string name="menu_add_members_action_add_member">@string/activity_group_admin_panel_add_member_title</string>
+    <string name="menu_add_members_action_next">Next</string>
+
+    <!--activity contact list -->
+    <string name="label_no_contacts_error_title">No contact found</string>
+    <string name="label_no_contacts_error_subtitle">Change the search parameters</string>
+    <string name="activity_contact_list_error_cannot_create_group_offline_label">You can not create the group if you are offline</string>
+
+    <!--activity_group_admin_panel-->
+    <string name="activity_group_admin_panel_members_label">Members</string>
+    <string name="activity_group_admin_panel_group_admin_label">Group Admin</string>
+    <string name="activity_group_admin_panel_created_by_label">Created by </string>
+    <string name="activity_group_admin_panel_created_on_label">Created on </string>
+    <string name="activity_group_admin_panel_group_id_label">id </string>
+    <string name="activity_group_admin_panel_not_available_members_label">Information about members are now unavailable</string>
+    <string name="activity_group_admin_panel_add_member_title">Add member</string>
+    <string name="menu_activity_group_admin_panel_activity_cannot_add_member_offline">Cannot add a member if you are offline</string>
+
+    <!--bottom_sheet_group_admin_panel_member-->
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_btn_label">Remove member</string>
+    <string name="bottom_sheet_group_admin_panel_member_leave_group_btn_label">Leave group</string>
+    <string name="bottom_sheet_group_admin_panel_member_see_profile_btn_label">See profile</string>
+    <string name="bottom_sheet_group_admin_panel_member_send_message_btn_label">Send message</string>
+    <string name="bottom_sheet_group_admin_panel_member_btn_cancel_label">Cancel</string>
+
+    <!--activity_conversation_list-->
+    <string name="activity_conversation_list_adapter_you_label">you</string>
+
+    <!--fragment_conversation_list-->
+    <string name="fragment_conversation_list_my_group_label">Groups</string>
+
+    <!--bottom_sheet_group_admin_panel_member-->
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_alert_title">Remove member</string>
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_alert_message">Do you really want to remove <b>%1$s</b> from the group?</string>
+    <string name="bottom_sheet_group_admin_panel_member_leave_group_alert_message">Do you really want to leave the group</string>
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_alert_positive_click">Remove</string>
+    <string name="bottom_sheet_group_admin_panel_member_leave_group_alert_positive_click">Leave</string>
+    <string name="bottom_sheet_group_admin_panel_member_remove_member_alert_negative_click">Cancel</string>
+
+    <!--activity_message_list-->
+    <string name="activity_message_list_group_info_you_label">you</string>
+    <string name="activity_message_list_convers_with_presence_online">Online</string>
+    <string name="activity_message_list_convers_with_presence_offline">Offline</string>
+    <string name="activity_message_list_progress_dialog_upload">Upload in progress..</string>
+    <string name="activity_message_list_progress_dialog_upload_failed">Cannot complete the upload</string>
+    <string name="activity_message_list_no_message_error_title_label">You have been removed from the group</string>
+    <string name="activity_message_list_no_message_error_subtitle_label">Contact the administrator for more details</string>
+    <string name="activity_message_list_confirm_dialog_upload_title_label">Send image</string>
+    <string name="activity_message_list_confirm_dialog_upload_message_label">Do you want to send this image?</string>
+    <string name="activity_message_list_type_image_label">image</string>
+    <string name="activity_message_list_type_file_label">file</string>
+
+    <!--bottom_sheet_attach-->
+    <string name="bottom_sheet_attach_images_label">Images</string>
+    <string name="bottom_sheet_attach_documents_label">Documents</string>
+
+    <!--activity_public_profile-->
+    <string name="activity_public_profile_presence_online">Online</string>
+    <string name="activity_public_profile_presence_offline">Offline</string>
+
+    <!--activity_group_list-->
+    <string name="activity_group_list_activity_title">My groups</string>
+    <string name="activity_my_groups_list_error_title">No groups</string>
+    <string name="activity_my_groups_list_error_subtitle">You are not a member of any group</string>
+
+    <!--bottom_sheet_conversation_list-->
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_title">Delete chat</string>
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_message">Do you really want to delete the chat?\n The operation cannot be cancelled.</string>
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_button_label">Delete chat</string>
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_label">delete chat</string>
+    <string name="bottom_sheet_conversation_list_confirm_delete_conversation_alert_positive_button_negative">cancel</string>
+
+    <!--activity_chat_login-->
+    <string name="activity_chat_login_no_account_label">No account?</string>
+    <string name="activity_chat_login_signup_label">Sign up</string>
+</resources>

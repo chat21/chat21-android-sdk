@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/add_members_activity_searchview_query_hint"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_create"
+        android:orderInCategory="1"
+        android:title="@string/menu_add_members_action_create"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_add_member"
+        android:icon="@drawable/ic_add_member_white_24dp"
+        android:orderInCategory="1"
+        android:title="@string/menu_add_members_action_add_member"
+        android:visible="false"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_next"
+        android:orderInCategory="1"
+        android:title="@string/menu_add_members_action_next"
+        android:visible="false"
+        app:showAsAction="always" />
+</menu>

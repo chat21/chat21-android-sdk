@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--activity_chat_login-->
+    <string name="chat_login_activity_chat_login_email_hint">Email</string>
+    <string name="chat_login_activity_password_hint">Password</string>
+    <string name="chat_login_activity_login_button_label">Login</string>
+
+    <!--activity_chat_signup-->
+    <string name="chat_signup_activity_signup_button_label">Sign up</string>
+    <string name="chat_signup_activity_not_valid_email_label">Email is no valid</string>
+    <string name="chat_signup_activity_not_valid_first_name_label">First name is no valid</string>
+    <string name="chat_signup_activity_not_valid_last_name_label">Last name is no valid</string>
+    <string name="chat_signup_activity_not_valid_password_label">Password is not valid</string>
+    <string name="chat_signup_activity_not_valid_password_length_label">Password too short, enter minimum %1$d characters</string>
+    <string name="chat_signup_activity_not_valid_repeated_password_label">Repeated password is not valid</string>
+    <string name="chat_signup_activity_not_valid_repeated_password_length_label">Repeated password too short, enter minimum %1$d characters</string>
+    <string name="chat_signup_activity_passwords_mismatch_label">Password and repeat password mismatch</string>
+    <string name="chat_signup_activity_email_hint_label">Email</string>
+    <string name="chat_signup_activity_first_name_hint_label">First name</string>
+    <string name="chat_signup_activity_last_name_hint_label">Last name</string>
+    <string name="chat_signup_activity_password_hint_label">Password</string>
+    <string name="chat_signup_activity_repeat_password_hint_label">Repeat password</string>
+</resources>
