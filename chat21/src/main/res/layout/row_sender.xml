@@ -38,7 +38,7 @@
 
             <ImageView
                 android:id="@+id/preview"
-                android:layout_width="200dp"
+                android:layout_width="@dimen/chat_row_sender_preview_size"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -65,12 +65,12 @@
             android:layout_height="wrap_content"
             android:autoLink="web|email"
             android:linksClickable="true"
-            android:maxWidth="300dp"
+            android:maxWidth="@dimen/chat_row_sender_last_message_text_view_max_width"
             android:padding="0dp"
             android:textColor="@color/background_bubble_text_recipient"
             android:textColorLink="@color/color_clickable_link_recipient"
-            android:textSize="@dimen/chat_row_recipient_text_size"
-            app:emojiSize="@dimen/chat_emoji_size"
+            android:textSize="@dimen/chat_row_sender_last_message_text_size"
+            app:emojiSize="@dimen/chat_row_sender_last_message_emoji_size"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/box_image" />
 
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:padding="0dp"
             android:textColor="@color/background_bubble_timestamp_recipient"
-            android:textSize="12sp"
+            android:textSize="@dimen/chat_row_sender_timestamp_size"
             app:layout_constraintRight_toLeftOf="@id/status"
             app:layout_constraintTop_toBottomOf="@+id/message" />
 

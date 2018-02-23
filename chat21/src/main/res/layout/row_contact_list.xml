@@ -8,8 +8,8 @@
     <!-- profile picture -->
     <ImageView
         android:id="@+id/profile_picture"
-        android:layout_width="@dimen/chat_profile_picture_size"
-        android:layout_height="@dimen/chat_profile_picture_size" />
+        android:layout_width="@dimen/chat_row_contact_list_recipient_picture_size"
+        android:layout_height="@dimen/chat_row_contact_list_recipient_picture_size" />
 
     <!-- messageRecipient and message group -->
     <LinearLayout
@@ -24,6 +24,7 @@
             android:id="@+id/fullname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/chat_row_contact_list_recipient_fullname_text_size"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
         <!-- username -->
@@ -39,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:textSize="@dimen/chat_row_contact_list_recipient_last_message_text_size"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         </RelativeLayout>
 

@@ -9,8 +9,8 @@
     <!-- profile picture -->
     <ImageView
         android:id="@+id/recipient_picture"
-        android:layout_width="@dimen/chat_profile_picture_size"
-        android:layout_height="@dimen/chat_profile_picture_size" />
+        android:layout_width="@dimen/chat_row_conversation_recipient_picture_size"
+        android:layout_height="@dimen/chat_row_conversation_recipient_picture_size" />
 
     <!-- messageRecipient and message group -->
     <LinearLayout
@@ -26,14 +26,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textSize="16.5dp" />
+            android:textSize="@dimen/chat_row_conversation_recipient_fullname_text_size" />
 
         <TextView
             android:id="@+id/sender_display_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="14.5dp"
+            android:textSize="@dimen/chat_row_conversation_sender_fullname_text_size"
             android:visibility="gone" />
 
         <!-- message information -->
@@ -42,7 +42,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!--bugfix Issue #48-->
             <com.vanniktech.emoji.EmojiTextView
                 android:id="@+id/last_text_message"
                 android:layout_width="wrap_content"
@@ -52,8 +51,8 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textSize="14.5dp"
-                app:emojiSize="@dimen/chat_row_conversation_emoji_size" />
+                android:textSize="@dimen/chat_row_conversation_recipient_last_message_text_size"
+                app:emojiSize="@dimen/chat_row_conversation_recipient_last_message_emoji_size" />
 
             <TextView
                 android:id="@+id/last_message_timestamp"
