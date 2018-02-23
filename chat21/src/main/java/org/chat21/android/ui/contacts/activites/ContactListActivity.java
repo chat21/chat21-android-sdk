@@ -36,6 +36,7 @@ import org.chat21.android.ui.ChatUI;
 import org.chat21.android.ui.chat_groups.activities.AddMembersToGroupActivity;
 import org.chat21.android.ui.contacts.adapters.ContactListAdapter;
 import org.chat21.android.ui.contacts.listeners.OnContactClickListener;
+import org.chat21.android.ui.decorations.ItemDecoration;
 import org.chat21.android.ui.messages.activities.MessageListActivity;
 import org.chat21.android.utils.image.CropCircleTransformation;
 
@@ -88,6 +89,8 @@ public class ContactListActivity extends AppCompatActivity implements OnContactC
 
         // recyclerview
         recyclerView = findViewById(R.id.user_list);
+        recyclerView.addItemDecoration(new ItemDecoration(this,
+                getResources().getDrawable(R.drawable.decorator_activity_contact_list)));
         RecyclerView.LayoutManager mLayoutManager =
                 new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
