@@ -74,26 +74,17 @@
     <dimen name="chat_row_group_members_recipient_admin_text_size">@dimen/chat_recipient_last_message_text_size</dimen>
 
 
-
-    <dimen name="chat_profile_picture_size">48dp</dimen>
+    <!--activity_message_list-->
     <dimen name="chat_profile_picture_toolbar_size">40dp</dimen>
-
+    <dimen name="chat_emoji_size">20sp</dimen>
 
 
 
     <dimen name="chat_group_icon_size">48dp</dimen>
     <dimen name="chat_group_icon_label_size">60dp</dimen>
-
-
-
-
-
     <dimen name="chat_activity_group_admin_panel_image_height">280dp</dimen>
-
-    <!--<dimen name="chat_row_group_image_size">48dp</dimen>-->
-
     <!--shape_row_chat_timestamp-->
     <dimen name="shape_row_chat_timestamp_radius">32dp</dimen>
 
-    <dimen name="chat_emoji_size">20sp</dimen>
+
 </resources>
