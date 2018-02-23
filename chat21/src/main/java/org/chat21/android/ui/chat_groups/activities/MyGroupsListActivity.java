@@ -26,6 +26,7 @@ import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.ChatUI;
 import org.chat21.android.ui.chat_groups.adapters.MyGroupsListAdapter;
 import org.chat21.android.ui.chat_groups.listeners.OnGroupClickListener;
+import org.chat21.android.ui.decorations.ItemDecoration;
 import org.chat21.android.ui.messages.activities.MessageListActivity;
 
 import static org.chat21.android.ui.ChatUI.BUNDLE_CHANNEL_TYPE;
@@ -63,6 +64,8 @@ public class MyGroupsListActivity extends AppCompatActivity implements OnGroupCl
 
         //////// recycler view
         mMyGroupsListRecyclerView = (RecyclerView) findViewById(R.id.list);
+        mMyGroupsListRecyclerView.addItemDecoration(new ItemDecoration(this,
+                getResources().getDrawable(R.drawable.decorator_activity_my_groups_list)));
         mMyGroupsListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         updateAdapter(groupsSyncronizer.getChatGroups());
         //////// end recycler view

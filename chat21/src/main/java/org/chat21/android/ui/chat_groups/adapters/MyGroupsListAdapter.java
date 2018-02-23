@@ -132,9 +132,9 @@ public class MyGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, MyGr
 
         public ViewHolder(View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.name);
+            name = (TextView) itemView.findViewById(R.id.recipient_display_name);
 //            createdOn = (TextView) itemView.findViewById(R.id.created_on);
-            image = (ImageView) itemView.findViewById(R.id.image);
+            image = (ImageView) itemView.findViewById(R.id.recipient_picture);
             members = (TextView) itemView.findViewById(R.id.members);
         }
     }

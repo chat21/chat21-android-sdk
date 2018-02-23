@@ -51,6 +51,11 @@
     <dimen name="chat_row_recipient_timestamp_size">12sp</dimen>
     <dimen name="chat_row_recipient_preview_size">200dp</dimen>
 
+    <!--row_group-->
+    <dimen name="chat_row_group_recipient_picture_size">@dimen/chat_recipient_picture_size</dimen>
+    <dimen name="chat_row_group_recipient_fullname_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
+    <dimen name="chat_row_group_recipient_members_text_size">@dimen/chat_recipient_last_message_text_size</dimen>
+
 
 
 
@@ -76,7 +81,7 @@
 
     <dimen name="chat_activity_group_admin_panel_image_height">280dp</dimen>
 
-    <dimen name="chat_row_group_image_size">48dp</dimen>
+    <!--<dimen name="chat_row_group_image_size">48dp</dimen>-->
 
     <!--shape_row_chat_timestamp-->
     <dimen name="shape_row_chat_timestamp_radius">32dp</dimen>
