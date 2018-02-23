@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/chat_margin_small"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="@dimen/chat_padding_small">
 
     <!-- profile picture -->
     <ImageView
-        android:id="@+id/contact_profile_picture"
-        android:layout_width="@dimen/chat_profile_picture_size"
-        android:layout_height="@dimen/chat_profile_picture_size"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:id="@+id/recipient_picture"
+        android:layout_width="@dimen/chat_row_group_members_recipient_picture_size"
+        android:layout_height="@dimen/chat_row_group_members_recipient_picture_size" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/chat_margin_small"
-        android:layout_toEndOf="@+id/contact_profile_picture"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/fullname"
-            android:layout_width="wrap_content"
+            android:id="@+id/recipient_display_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingEnd="2dp"
-            android:paddingStart="2dp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textSize="@dimen/chat_row_group_members_recipient_fullname_text_size" />
 
         <TextView
             android:id="@+id/label_admin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/border_group_admin"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:padding="2dp"
             android:text="@string/activity_group_admin_panel_group_admin_label"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/green_500"
+            android:textSize="@dimen/chat_row_group_members_recipient_admin_text_size"
             android:visibility="gone" />
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

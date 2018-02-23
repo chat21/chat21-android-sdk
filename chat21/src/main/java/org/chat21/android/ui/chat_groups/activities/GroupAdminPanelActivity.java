@@ -32,6 +32,7 @@ import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.chat_groups.adapters.GroupMembersListAdapter;
 import org.chat21.android.ui.chat_groups.fragments.BottomSheetGroupAdminPanelMember;
 import org.chat21.android.ui.chat_groups.listeners.OnGroupMemberClickListener;
+import org.chat21.android.ui.decorations.ItemDecoration;
 import org.chat21.android.utils.TimeUtils;
 
 import static org.chat21.android.ui.ChatUI.BUNDLE_CHAT_GROUP;
@@ -183,7 +184,8 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
 
     private void initRecyclerViewMembers() {
         Log.d(TAG, "initRecyclerViewMembers");
-
+        mMemberList.addItemDecoration(new ItemDecoration(this,
+                getResources().getDrawable(R.drawable.decorator_activity_group_admin_panel_members_list)));
         mMemberList.setLayoutManager(new LinearLayoutManager(this));
         updateGroupMemberListAdapter(chatGroup.getMembersList());
     }

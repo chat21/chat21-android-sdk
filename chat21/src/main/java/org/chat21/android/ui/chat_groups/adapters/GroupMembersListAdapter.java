@@ -116,8 +116,8 @@ public class GroupMembersListAdapter extends AbstractRecyclerAdapter<IChatUser,
 
         public ViewHolder(View itemView) {
             super(itemView);
-            contact = (TextView) itemView.findViewById(R.id.fullname);
-            profilePicture = (ImageView) itemView.findViewById(R.id.contact_profile_picture);
+            contact = (TextView) itemView.findViewById(R.id.recipient_display_name);
+            profilePicture = (ImageView) itemView.findViewById(R.id.recipient_picture);
             mGroupAdminLabel = (TextView) itemView.findViewById(R.id.label_admin);
         }
     }
