@@ -233,7 +233,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/activity_group_admin_panel_created_by_label"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="@dimen/chat_activity_group_admin_panel_admin_created_by_text_size" />
+                            android:textSize="@dimen/chat_activity_group_admin_created_by_text_size" />
 
                         <TextView
                             android:id="@+id/created_by"
@@ -241,7 +241,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/chat_margin_normal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textSize="@dimen/chat_activity_group_admin_panel_admin_created_by_text_size" />
+                            android:textSize="@dimen/chat_activity_group_admin_created_by_text_size" />
                     </LinearLayout>
 
                     <!--created on-->
