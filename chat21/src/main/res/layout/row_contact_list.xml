@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/windowBackground"
     android:layout_margin="@dimen/chat_margin_small"
     android:orientation="horizontal">
 

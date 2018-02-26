@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator"
+    android:background="@color/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -23,7 +24,7 @@
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/chat_activity_group_admin_panel_image_height"
+                android:layout_height="@dimen/chat_activity_group_admin_panel_recipient_picture_size"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
 
@@ -220,7 +221,7 @@
                     <!--android:layout_width="wrap_content"-->
                     <!--android:layout_height="wrap_content" />-->
 
-                    <!--created buy-->
+                    <!--created by-->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -232,7 +233,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/activity_group_admin_panel_created_by_label"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/chat_activity_group_admin_panel_admin_created_by_text_size" />
 
                         <TextView
                             android:id="@+id/created_by"
@@ -240,7 +241,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/chat_margin_normal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/chat_activity_group_admin_panel_admin_created_by_text_size" />
                     </LinearLayout>
 
                     <!--created on-->
@@ -254,7 +255,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/activity_group_admin_panel_created_on_label"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/chat_activity_group_admin_panel_admin_created_on_text_size" />
 
                         <TextView
                             android:id="@+id/created_on"
@@ -262,7 +263,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/chat_margin_normal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/chat_activity_group_admin_created_on_text_size" />
                     </LinearLayout>
 
                     <!--group id-->
@@ -277,7 +278,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/activity_group_admin_panel_group_id_label"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/chat_activity_group_admin_group_id_text_size" />
 
                         <TextView
                             android:id="@+id/group_id"
@@ -285,7 +286,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/chat_margin_normal"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textSize="15sp" />
+                            android:textSize="@dimen/chat_activity_group_admin_group_id_text_size" />
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>

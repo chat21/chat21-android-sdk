@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@color/windowBackground"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -66,8 +67,8 @@
                         <ImageView
                             android:id="@+id/group_icon"
                             style="@style/Base.TextAppearance.AppCompat.Small"
-                            android:layout_width="@dimen/chat_group_icon_size"
-                            android:layout_height="@dimen/chat_group_icon_size"
+                            android:layout_width="@dimen/chat_activity_new_group_recipient_picture_size"
+                            android:layout_height="@dimen/chat_activity_new_group_recipient_picture_size"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="@dimen/chat_margin_normal"
                             android:visibility="gone" />
@@ -75,8 +76,8 @@
                         <TextView
                             android:id="@+id/group_icon_label"
                             style="@style/Base.TextAppearance.AppCompat.Small"
-                            android:layout_width="@dimen/chat_group_icon_label_size"
-                            android:layout_height="@dimen/chat_group_icon_size"
+                            android:layout_width="@dimen/chat_activity_new_group_group_icon_label_width"
+                            android:layout_height="@dimen/chat_activity_new_group_group_icon_label_height"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="@dimen/chat_margin_normal"
                             android:gravity="center"

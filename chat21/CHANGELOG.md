@@ -1,5 +1,13 @@
 ﻿# CHANGELOG
 
+## v.: 1.0.1 b.: 28
+- improved layouts
+- fixed dimens
+- conversations item decorator
+- contacts item decorator
+- groups item decorator
+- group members item decorator
+
 ## v.: 1.0 b.: 27
 - full refactoring
 

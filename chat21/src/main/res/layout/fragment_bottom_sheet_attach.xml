@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/windowBackground"
     android:paddingBottom="@dimen/chat_margin_normal"
     android:paddingLeft="@dimen/chat_margin_normal"
     android:paddingRight="@dimen/chat_margin_normal"

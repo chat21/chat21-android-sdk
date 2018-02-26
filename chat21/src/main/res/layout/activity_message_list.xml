@@ -74,7 +74,7 @@
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/main_activity_chat_bottom_message_edittext"
             android:layout_width="0dp"
-            app:emojiSize="@dimen/chat_emoji_size"
+            app:emojiSize="@dimen/chat_activity_message_list_last_message_emoji_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:imeOptions="actionSend|flagNoExtractUi"

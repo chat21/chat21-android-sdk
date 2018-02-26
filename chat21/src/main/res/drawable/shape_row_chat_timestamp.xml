@@ -5,7 +5,7 @@
         android:width="1dp"
         android:color="@color/blue_300" />
 
-    <corners android:radius="@dimen/shape_row_chat_timestamp_radius" />
+    <corners android:radius="@dimen/chat_shape_row_chat_timestamp_radius" />
 
     <padding
         android:bottom="0dp"

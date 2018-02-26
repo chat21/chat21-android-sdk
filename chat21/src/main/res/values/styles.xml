@@ -16,4 +16,11 @@
         <item name="android:textSize">22dp</item>
     </style>
 
+    <!--v21-->
+    <style name="AppTheme.Button.Flat" parent="Theme.AppCompat.Light">
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
+        <item name="colorControlHighlight">@color/grey_200</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
 </resources>

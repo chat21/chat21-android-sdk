@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/toolbar_picture"
-            android:layout_width="@dimen/chat_profile_picture_toolbar_size"
-            android:layout_height="@dimen/chat_profile_picture_toolbar_size"
+            android:layout_width="@dimen/chat_activity_message_list_toolbar_recipient_picture_size"
+            android:layout_height="@dimen/chat_activity_message_list_toolbar_recipient_picture_size"
             android:scaleType="centerCrop" />
     </LinearLayout>
 

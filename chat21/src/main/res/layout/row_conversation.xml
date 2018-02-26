@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:background="@color/windowBackground"
     android:padding="@dimen/chat_padding_small">
 
     <!-- profile picture -->
