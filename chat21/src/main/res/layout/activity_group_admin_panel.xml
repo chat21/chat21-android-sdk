@@ -255,7 +255,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/activity_group_admin_panel_created_on_label"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            android:textSize="@dimen/chat_activity_group_admin_panel_admin_created_on_text_size" />
+                            android:textSize="@dimen/chat_activity_group_admin_created_on_text_size" />
 
                         <TextView
                             android:id="@+id/created_on"
