@@ -177,7 +177,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     // show the last sent message timestamp
     private void setTimestamp(ViewHolder holder, boolean hasNewMessages, long timestamp) {
         // format the timestamp to a pretty visible format
-        String formattedTimestamp = TimeUtils.getFormattedTimestamp(timestamp);
+        String formattedTimestamp = TimeUtils.getFormattedTimestamp(holder.itemView.getContext(), timestamp);
 
         if (hasNewMessages) {
             // show bold text

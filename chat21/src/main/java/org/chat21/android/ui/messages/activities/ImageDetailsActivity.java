@@ -76,7 +76,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
         TextView mTimestamp = findViewById(R.id.timestamp);
         try {
             long timestamp = message.getTimestamp();
-            String formattedTimestamp = TimeUtils.getFormattedTimestamp(timestamp);
+            String formattedTimestamp = TimeUtils.getFormattedTimestamp(this, timestamp);
             mTimestamp.setText(formattedTimestamp);
         } catch (Exception e) {
             Log.e(TAG, "cannot retrieve the timestamp. " + e.getMessage());

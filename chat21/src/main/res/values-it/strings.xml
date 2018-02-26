@@ -2,6 +2,7 @@
 
     <!--dates-->
     <string name="today">oggi</string>
+    <string name="yesterday">ieri</string>
 
     <string name="string_contact_list_activity_title">Contatti</string>
     <string name="string_conversation_list_activity_title">Conversazioni</string>

@@ -47,7 +47,7 @@ dependencies {
     // image loading and caching
     implementation 'com.github.bumptech.glide:glide:3.7.0'
 
-    implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+//    implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
     implementation 'org.apache.httpcomponents:httpcore:4.3'
 
     // send message panel

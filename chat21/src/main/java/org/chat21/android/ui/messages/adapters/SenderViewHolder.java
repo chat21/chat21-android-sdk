@@ -170,7 +170,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setTimestamp(Message message) {
-        mTimestamp.setText(TimeUtils.timestampToHour(message.getTimestamp()));
+        mTimestamp.setText(TimeUtils.formatTimestamp(message.getTimestamp(), "HH:mm"));
     }
 
     private void setDate(Message previousMessage, Message message, int position) {
@@ -185,7 +185,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
             mDate.setText(itemView.getContext().getString(R.string.today));
         } else {
             // it's not today. shows the week of day label
-            mDate.setText(TimeUtils.timestampToStrDate(message.getTimestamp()));
+            mDate.setText(TimeUtils.getFormattedTimestamp(itemView.getContext(), message.getTimestamp()));
         }
 
         // hides or shows the date label

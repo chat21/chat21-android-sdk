@@ -167,7 +167,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
         TextView createdOnView = (TextView) findViewById(R.id.created_on);
 
         // retrieve the creation date
-        String timestamp = TimeUtils.getFormattedTimestamp(chatGroup.getCreatedOnLong());
+        String timestamp = TimeUtils.getFormattedTimestamp(this, chatGroup.getCreatedOnLong());
 
         // format the user creator and creating date string
 //        String createOn = getString(R.string.activity_group_admin_panel_formatted_created_on_label, timestamp);

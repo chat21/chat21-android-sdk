@@ -7,6 +7,9 @@
 - contacts item decorator
 - groups item decorator
 - group members item decorator
+- fixed timestamp for conversations
+- fixed timestamp for messages
+- fixed timestamp for last online
 
 ## v.: 1.0 b.: 27
 - full refactoring

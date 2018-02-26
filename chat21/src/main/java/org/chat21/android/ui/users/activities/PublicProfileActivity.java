@@ -116,7 +116,7 @@ public class PublicProfileActivity extends AppCompatActivity implements Presence
             conversWithOnline = false;
 
             if (conversWithLastOnline != PresenceHandler.LAST_ONLINE_UNDEFINED) {
-                mToolbarSubTitle.setText(TimeUtils.getFormattedTimestamp(conversWithLastOnline));
+                mToolbarSubTitle.setText(TimeUtils.getFormattedTimestamp(this, conversWithLastOnline));
                 Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.isUserOnline: " +
                         "conversWithLastOnline == " + conversWithLastOnline);
             } else {
@@ -133,7 +133,7 @@ public class PublicProfileActivity extends AppCompatActivity implements Presence
         conversWithLastOnline = lastOnline;
 
         if (!conversWithOnline) {
-            mToolbarSubTitle.setText(TimeUtils.getFormattedTimestamp(lastOnline));
+            mToolbarSubTitle.setText(TimeUtils.getFormattedTimestamp(this, lastOnline));
         }
 
         if (!conversWithOnline && lastOnline == PresenceHandler.LAST_ONLINE_UNDEFINED) {
