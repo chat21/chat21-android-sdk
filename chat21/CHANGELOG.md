@@ -1,5 +1,8 @@
 ﻿# CHANGELOG
 
+## v.: 1.0.2 b.: 29
+- fixed conversation list item decorator
+
 ## v.: 1.0.1 b.: 28
 - improved layouts
 - fixed dimens
