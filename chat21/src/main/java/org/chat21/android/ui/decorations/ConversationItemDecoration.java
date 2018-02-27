@@ -5,20 +5,30 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
 
 /**
- * Created by stefanodp91 on 23/02/18.
+ * Created by stefanodp91 on 27/02/18.
  */
 
-public class ItemDecoration extends RecyclerView.ItemDecoration {
+public class ConversationItemDecoration extends DividerItemDecoration {
+
     private Context mContext;
     private Drawable mDivider;
     private final Rect mBounds = new Rect();
 
-    public ItemDecoration(Context context, Drawable divider) {
+    /**
+     * Creates a divider {@link RecyclerView.ItemDecoration} that can be used with a
+     * {@link android.support.v7.widget.LinearLayoutManager}.
+     *
+     * @param context     Current context, it will be used to access resources.
+     * @param orientation Divider orientation. Should be {@link #HORIZONTAL} or {@link #VERTICAL}.
+     */
+    public ConversationItemDecoration(Context context, int orientation, Drawable divider) {
+        super(context, orientation);
         mContext = context;
         mDivider = divider;
     }
