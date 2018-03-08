@@ -470,12 +470,9 @@ public final class ChatAuthentication {
 //                };
 
                 if (logoutException == null) {
-                    // bugfix Issue #16
-//                    if (StringUtils.isValid(ChatManager.getPresenceDeviceInstance())) {
-//                        PresenceManger.logout(ChatManager.getInstance().getAppId(),
-//                                ChatManager.getPresenceDeviceInstance(),
-//                                ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
-//                    }
+                    //always destroy authInstance
+                    destroyInstance();
+                    onChatLogoutCallback.onChatLogoutSuccess();
 
                 } else {
                     Log.e(DEBUG_LOGIN, "cannot sign outfrom firebase. " + logoutException.getMessage());
