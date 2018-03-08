@@ -4,21 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.chat21.android.core.authentication.ChatAuthentication;
 import org.chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
+import org.chat21.android.core.contacts.listeners.OnContactCreatedCallback;
 import org.chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import org.chat21.android.core.conversations.ConversationsHandler;
+import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import org.chat21.android.core.messages.listeners.SendMessageListener;
 import org.chat21.android.core.messages.models.Message;
@@ -28,6 +26,12 @@ import org.chat21.android.core.users.models.ChatUser;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.utils.IOUtils;
 import org.chat21.android.utils.StringUtils;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
@@ -67,7 +71,8 @@ public class ChatManager {
     }
 
     public void setLoggedUser(IChatUser loggedUser) {
-        this.loggedUser = loggedUser;Log.d(TAG, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
+        this.loggedUser = loggedUser;
+        Log.d(TAG, "ChatManager.setloggedUser: loggedUser == " + loggedUser.toString());
         // serialize on disk
         IOUtils.saveObjectToFile(mContext, _SERIALIZED_CHAT_CONFIGURATION_LOGGED_USER, loggedUser);
     }
@@ -97,6 +102,42 @@ public class ChatManager {
     public Context getContext() {
         return mContext;
     }
+
+    public void createContactFor(String uid, String email,
+                                 String firstName, String lastName,
+                                 final OnContactCreatedCallback callback) {
+        final Map<String, Object> user = new HashMap<>();
+        user.put("uid", uid);
+        user.put("email", email);
+        user.put("firstname", firstName);
+        user.put("lastname", lastName);
+        user.put("timestamp", new Date().getTime());
+        user.put("imageurl", "");
+
+        DatabaseReference contactsNode;
+        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+            contactsNode = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
+                    .child("/apps/" + ChatManager.Configuration.appId + "/contacts");
+        } else {
+            contactsNode = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("/apps/" + ChatManager.Configuration.appId + "/contacts");
+        }
+
+        // save the user on contacts node
+        contactsNode.child(uid).setValue(user, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError == null) {
+                    callback.onContactCreatedSuccess(null);
+                } else {
+                    callback.onContactCreatedSuccess(new ChatRuntimeException(databaseError.toException()));
+                }
+            }
+        });
+    }
+
 
     /**
      * It initializes the SDK Anonymously using  DEFAULT appId.
@@ -139,6 +180,36 @@ public class ChatManager {
                 });
     }
 
+    public static void startWithEmailAndPassword(
+            final Activity loginActivity,
+            final String appId,
+            String email, String password,
+            final ChatAuthentication.OnChatLoginCallback onChatLoginCallback) {
+
+        //getting context from loginActivity
+        final Context context = loginActivity.getApplicationContext();
+
+        ChatAuthentication.getInstance()
+                .signInWithEmailAndPassword(loginActivity, email, password,
+                        new ChatAuthentication.OnChatLoginCallback() {
+                            @Override
+                            public void onChatLoginSuccess(IChatUser currentUser) {
+
+                                start(context, appId, currentUser);
+
+                                Log.i(TAG, "chat has been initialized with success");
+
+                                onChatLoginCallback.onChatLoginSuccess(currentUser);
+                            }
+
+                            @Override
+                            public void onChatLoginError(Exception e) {
+                                Log.e(TAG, "onChatLoginError", e);
+                                onChatLoginCallback.onChatLoginError(e);
+
+                            }
+                        });
+    }
 
     /**
      * It initializes the SDK using DEFAULT appId and a current user.
