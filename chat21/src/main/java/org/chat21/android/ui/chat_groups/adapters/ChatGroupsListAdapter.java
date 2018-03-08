@@ -10,20 +10,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import org.chat21.android.R;
 import org.chat21.android.core.chat_groups.models.ChatGroup;
 import org.chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import org.chat21.android.ui.chat_groups.listeners.OnGroupClickListener;
 import org.chat21.android.utils.image.CropCircleTransformation;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Created by stefano on 29/06/2017.
  */
-public class MyGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, MyGroupsListAdapter.ViewHolder> {
+public class ChatGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, ChatGroupsListAdapter.ViewHolder> {
 
     private OnGroupClickListener onGroupClickListener;
 
@@ -35,7 +35,7 @@ public class MyGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, MyGr
         this.onGroupClickListener = onGroupClickListener;
     }
 
-    public MyGroupsListAdapter(Context context, List<ChatGroup> mList) {
+    public ChatGroupsListAdapter(Context context, List<ChatGroup> mList) {
         super(context, mList);
         setList(mList);
     }
@@ -57,14 +57,14 @@ public class MyGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, MyGr
     }
 
     @Override
-    public MyGroupsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ChatGroupsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.row_group, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MyGroupsListAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(ChatGroupsListAdapter.ViewHolder holder, final int position) {
         ChatGroup chatGroup = getItem(position);
 
         setName(holder, chatGroup.getName());
@@ -79,7 +79,7 @@ public class MyGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, MyGr
     }
 
 
-    private void setName(MyGroupsListAdapter.ViewHolder holder, String name) {
+    private void setName(ChatGroupsListAdapter.ViewHolder holder, String name) {
         holder.name.setText(name);
     }
 
@@ -92,7 +92,7 @@ public class MyGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, MyGr
 //        holder.createdOn.setText(timestampStr);
 //    }
 
-    private void setImage(MyGroupsListAdapter.ViewHolder holder, String imageUrl) {
+    private void setImage(ChatGroupsListAdapter.ViewHolder holder, String imageUrl) {
         Glide.with(holder.itemView.getContext())
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_group_avatar)
@@ -100,7 +100,7 @@ public class MyGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, MyGr
                 .into(holder.image);
     }
 
-    private void setMembers(MyGroupsListAdapter.ViewHolder holder, ChatGroup chatGroup) {
+    private void setMembers(ChatGroupsListAdapter.ViewHolder holder, ChatGroup chatGroup) {
 
         String members;
         if (chatGroup.getMembersList() != null && chatGroup.getMembersList().size() > 0) {
@@ -113,9 +113,11 @@ public class MyGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, MyGr
         holder.members.setText(members);
     }
 
-    private void setOnGroupClickListener(MyGroupsListAdapter.ViewHolder holder, final ChatGroup chatGroup,
-                                         final int position,
-                                         final OnGroupClickListener callback) {
+    private void setOnGroupClickListener(
+            ChatGroupsListAdapter.ViewHolder holder,
+            final ChatGroup chatGroup,
+            final int position,
+            final OnGroupClickListener callback) {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

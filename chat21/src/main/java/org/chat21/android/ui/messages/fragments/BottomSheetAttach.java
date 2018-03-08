@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.chat21.android.R;
-
-import org.chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
+import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.ChatUI;
+import org.chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 
 import static org.chat21.android.ui.messages.activities.MessageListActivity._INTENT_ACTION_GET_PICTURE;
 
@@ -26,20 +26,21 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
 
     private static final String DEBUG_TAG = BottomSheetAttach.class.getName();
 
-    private static final String _BOTTOM_SHEET_ATTACH_CONVERSATION =
-            "_BOTTOM_SHEET_ATTACH_CONVERSATION";
+    private static final String BOTTOM_SHEET_ATTACH_RECIPIENT = "BOTTOM_SHEET_ATTACH_RECIPIENT";
+    private static final String BOTTOM_SHEET_ATTACH_CHANNEL_TYPE = "BOTTOM_SHEET_ATTACH_CHANNEL_TYPE";
 
-//    private Conversation mConversation;
-//    private IChatUser mLoggedUser;
+    private IChatUser recipient;
+    private String channelType;
 
     private Button mAttachImagesView;
     private Button mAttachDocumentsView;
 
-    public static BottomSheetAttach newInstance() {
+    public static BottomSheetAttach newInstance(IChatUser recipient, String channelType) {
         BottomSheetAttach f = new BottomSheetAttach();
-//        Bundle args = new Bundle();
-//        args.putSerializable(_BOTTOM_SHEET_ATTACH_CONVERSATION, conversation);
-//        f.setArguments(args);
+        Bundle args = new Bundle();
+        args.putSerializable(BOTTOM_SHEET_ATTACH_RECIPIENT, recipient);
+        args.putString(BOTTOM_SHEET_ATTACH_CHANNEL_TYPE, channelType);
+        f.setArguments(args);
         return f;
     }
 
@@ -47,20 +48,13 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        mConversation = (Conversation) getArguments()
-//                .getSerializable(_BOTTOM_SHEET_ATTACH_CONVERSATION);
-//        Log.d(DEBUG_TAG, "BottomSheetAttach.onCreate: mConversationId == " + mConversation.toString());
-
-//        mLoggedUser = Chat.Configuration.getLoggedUser();
-//        Log.d(DEBUG_TAG, "BottomSheetAttach.onCreate:  mLoggedUser == " + mLoggedUser.toString());
+        recipient = (IChatUser) getArguments().getSerializable(BOTTOM_SHEET_ATTACH_RECIPIENT);
+        channelType = getArguments().getString(BOTTOM_SHEET_ATTACH_CHANNEL_TYPE);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater
-                .inflate(R.layout.fragment_bottom_sheet_attach,
-                        container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_bottom_sheet_attach, container, false);
 
         registerViews(rootView);
         initViews();
@@ -99,30 +93,27 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
     }
 
     private void onAttachImagesActionListener() {
-//        mLoggedUser = Chat.Configuration.getLoggedUser();
         Log.d(DEBUG_TAG, "BottomSheetAttach.onAttachImagesActionListener");
 
-        // bugfix Issue #15
         showFilePickerDialog();
     }
 
     private void onAttachDocumentsActionListener() {
-//        mLoggedUser = Chat.Configuration.getLoggedUser();
         Log.d(DEBUG_TAG, "BottomSheetAttach.onAttachDocumentsActionListener");
 
         // call the click listener defined in Chat.Configuration
         OnAttachDocumentsClickListener onAttachDocumentsClickListener =
-
                 ChatUI.getInstance().getOnAttachDocumentsClickListener();
+
         if (onAttachDocumentsClickListener != null) {
-            onAttachDocumentsClickListener.onAttachDocumentsClicked(null);
+            onAttachDocumentsClickListener.onAttachDocumentsClicked(recipient, channelType,null);
         }
 
         // dismiss the bottomsheet
         getDialog().dismiss();
     }
 
-    // bugfix Issue #15
+
     private void showFilePickerDialog() {
         Log.d(DEBUG_TAG, "BottomSheetAttach.showFilePickerDialog");
 
@@ -136,7 +127,7 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
         // show only local files
         // TODO: 07/09/17 settare a false per inviare anche files remoti
         // TODO: 07/09/17 fare un setting per l'invio di file remoti
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true); // bugfix Issue #53
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         // set MIME type for image

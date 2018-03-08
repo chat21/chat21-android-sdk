@@ -3,9 +3,9 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator"
-    android:background="@color/windowBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/windowBackground">
 
     <!-- toolbar -->
     <android.support.design.widget.AppBarLayout
@@ -21,14 +21,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary" />
     </android.support.design.widget.AppBarLayout>
-
-    <include
-        android:id="@+id/layout_no_contacts"
-        layout="@layout/layout_no_contacts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"></include>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -71,10 +63,10 @@
             android:layout_height="0.5dp"
             android:background="@color/grey_300"></View>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/user_list"
+        <FrameLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:layout_height="match_parent" />
+
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

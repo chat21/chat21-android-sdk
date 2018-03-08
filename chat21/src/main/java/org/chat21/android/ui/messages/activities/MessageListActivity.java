@@ -45,10 +45,6 @@ import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.chat_groups.models.ChatGroup;
@@ -71,6 +67,10 @@ import org.chat21.android.ui.users.activities.PublicProfileActivity;
 import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
 import org.chat21.android.utils.image.CropCircleTransformation;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.chat21.android.ui.ChatUI.BUNDLE_CHANNEL_TYPE;
 import static org.chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
@@ -538,7 +538,7 @@ public class MessageListActivity extends AppCompatActivity
         Log.d(TAG, "MessageListActivity.onAttachClicked");
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        BottomSheetAttach dialog = BottomSheetAttach.newInstance();
+        BottomSheetAttach dialog = BottomSheetAttach.newInstance(recipient, channelType);
         dialog.show(ft, BottomSheetAttach.class.getName());
     }
 //

@@ -282,7 +282,8 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private void startAddMemberActivity() {
         Log.d(TAG, "startAddMemberActivity");
 
-        Intent intent = new Intent(this, AddMembersToGroupActivity.class);
+//        Intent intent = new Intent(this, AddMembersToGroupActivity.class);
+        Intent intent = new Intent(this, AddMemberToChatGroupActivity.class);
         intent.putExtra(BUNDLE_CHAT_GROUP, chatGroup);
         startActivity(intent);
     }

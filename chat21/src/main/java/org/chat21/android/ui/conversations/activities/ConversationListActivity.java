@@ -12,34 +12,23 @@ import org.chat21.android.ui.conversations.fragments.ConversationListFragment;
  */
 public class ConversationListActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_conversation_list);
-        registerViews();
-        initViews();
-    }
 
-    private void registerViews() {
-        mToolbar = findViewById(R.id.toolbar);
-    }
-
-    private void initViews() {
-        initToolbar();
-        initContainer();
-    }
-
-    private void initToolbar() {
-        setSupportActionBar(mToolbar);
+        // #### BEGIN TOOLBAR ####
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-    }
+        // #### END  TOOLBAR ####
 
-    private void initContainer() {
+        // #### BEGIN CONTAINER ####
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, new ConversationListFragment())
                 .commit();
+        // #### BEGIN CONTAINER ####
     }
 }

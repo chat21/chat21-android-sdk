@@ -37,8 +37,6 @@ public class NewGroupActivity extends AppCompatActivity {
     private EditText groupNameView;
     private MenuItem actionNextMenuItem;
 
-//    private AlertDialog progressDialog;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +72,6 @@ public class NewGroupActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        progressDialog = createProgress();
     }
 
     // check if the group name is valid
@@ -110,8 +106,6 @@ public class NewGroupActivity extends AppCompatActivity {
 
     private void onActionNextClicked() {
 
-//        showProgress();
-
         final String chatGroupName = WizardNewGroup.getInstance().getTempChatGroup().getName();
         Map<String, Integer> chatGroupMembers = WizardNewGroup.getInstance().getTempChatGroup().getMembers();
 
@@ -122,8 +116,6 @@ public class NewGroupActivity extends AppCompatActivity {
 
                 // clear the wizard
                 WizardNewGroup.getInstance().dispose();
-
-//                dismissProgress();
 
                 if (chatException == null) {
                     Log.d(DEBUG_GROUPS, "NewGroupActivity.onActionNextClicked" +
@@ -162,22 +154,4 @@ public class NewGroupActivity extends AppCompatActivity {
                 ".onChatGroupCreated: it has been created on the fly the conversation == " + conversation.toString());
         return conversation;
     }
-
-//    private AlertDialog createProgress() {
-//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-//        // custom layout
-//        View dialogView = getLayoutInflater()
-//                .inflate(R.layout.layout_progress_alert_dialog, null);
-//        dialogBuilder.setView(dialogView);
-//        dialogBuilder.setCancelable(false); // user cannot dismiss the progress
-//        return dialogBuilder.create();
-//    }
-//
-//    private void showProgress() {
-//        if (progressDialog != null) progressDialog.show();
-//    }
-//
-//    private void dismissProgress() {
-//        if (progressDialog != null) progressDialog.dismiss();
-//    }
 }

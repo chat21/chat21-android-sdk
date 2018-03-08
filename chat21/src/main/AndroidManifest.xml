@@ -24,11 +24,10 @@
             </intent-filter>
 
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
-
         </activity>
 
         <!--display the list of all active conversation-->
@@ -39,9 +38,9 @@
         <!--display the list of all messages into a specific conversation-->
         <activity android:name="org.chat21.android.ui.messages.activities.MessageListActivity">
 
-           <!-- http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification
-            from notification
-            bugfix Issue #39-->
+            <!-- http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification
+             from notification
+             bugfix Issue #39-->
             <intent-filter>
                 <action android:name="ACTION_DEFAULT_CHAT_INTENT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -55,17 +54,19 @@
             android:label="@string/string_create_group_activity_title"></activity>
 
         <activity
-            android:name="org.chat21.android.ui.chat_groups.activities.AddMembersToGroupActivity"
+            android:name="org.chat21.android.ui.chat_groups.activities.AddMemberToChatGroupActivity"
             android:label="@string/string_add_members_activity_title"></activity>
+
 
         <activity android:name="org.chat21.android.ui.chat_groups.activities.GroupAdminPanelActivity"></activity>
 
-        <activity
-            android:name="org.chat21.android.ui.chat_groups.activities.MyGroupsListActivity"
-            android:label="@string/activity_group_list_activity_title"></activity>
-
         <!--display the user profile-->
         <activity android:name="org.chat21.android.ui.users.activities.PublicProfileActivity" />
+
+        <activity
+            android:name="org.chat21.android.ui.chat_groups.activities.ChatGroupsListActivity"
+            android:label="@string/activity_group_list_activity_title"></activity>
+
 
         <!--https://firebase.google.com/docs/notifications/android/console-audience-->
         <service android:name="org.chat21.android.notifications.ChatFirebaseMessagingService">

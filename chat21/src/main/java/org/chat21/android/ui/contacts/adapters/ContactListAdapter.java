@@ -39,6 +39,10 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         this.contactListFiltered = contactList;
     }
 
+    public void setList(List<IChatUser> list) {
+        this.contactList = list;
+    }
+
     public void setOnContactClickListener(OnContactClickListener onContactClickListener) {
         this.onContactClickListener = onContactClickListener;
     }

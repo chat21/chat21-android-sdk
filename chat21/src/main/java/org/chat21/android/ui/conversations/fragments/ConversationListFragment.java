@@ -27,7 +27,7 @@ import org.chat21.android.core.presence.listeners.MyPresenceListener;
 import org.chat21.android.core.users.models.ChatUser;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.ChatUI;
-import org.chat21.android.ui.chat_groups.activities.MyGroupsListActivity;
+import org.chat21.android.ui.chat_groups.activities.ChatGroupsListActivity;
 import org.chat21.android.ui.conversations.adapters.ConversationsListAdapter;
 import org.chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import org.chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
@@ -200,7 +200,7 @@ public class ConversationListFragment extends Fragment implements
             currentUserGroups.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), MyGroupsListActivity.class);
+                    Intent intent = new Intent(getActivity(), ChatGroupsListActivity.class);
                     startActivity(intent);
                 }
             });

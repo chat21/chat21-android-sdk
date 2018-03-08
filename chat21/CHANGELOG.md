@@ -1,9 +1,15 @@
 ﻿# CHANGELOG
 
+## v.: 1.0.3 b.: 30
+- designed login with Email and Password within ChatManager
+- fixed logout
+- fixed empty conversation list label position
+- modularized contacts fragment
+- modularized chat groups fragment
+
 ## v.: 1.0.2 b.: 29
 - fixed conversation list item decorator
 - changed max lines within row_conversation from 2 to 1
--
 
 ## v.: 1.0.1 b.: 28
 - improved layouts

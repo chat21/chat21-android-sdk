@@ -81,7 +81,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="@dimen/chat_margin_normal"
                             android:gravity="center"
-                            android:text="@string/create_group_activity_add_group_icon_label" />
+                            android:text="@string/activity_new_group_icon_label" />
                     </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -108,7 +108,7 @@
                             android:id="@+id/group_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/create_group_activity_add_group_group_name_hint_label" />
+                            android:hint="@string/activity_new_group_group_name_hint_label" />
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>

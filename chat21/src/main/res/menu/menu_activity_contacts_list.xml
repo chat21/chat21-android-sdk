@@ -6,7 +6,7 @@
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white_24dp"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         android:title="Cerca contatto"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always" />

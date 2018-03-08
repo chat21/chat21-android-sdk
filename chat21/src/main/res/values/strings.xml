@@ -15,15 +15,15 @@
     <string name="action_create_group">Create group</string>
 
     <!--create_group_activity-->
-    <string name="create_group_activity_add_group_icon_label">Add\nphoto</string>
-    <string name="create_group_activity_add_group_group_name_hint_label">Set a group name</string>
-    <string name="menu_create_group_action_next">Next</string>
+    <string name="activity_new_group_icon_label">Add\nphoto</string>
+    <string name="activity_new_group_group_name_hint_label">Set a group name</string>
+    <string name="menu_activity_new_group_action_next">Next</string>
 
     <!--add_members_activity-->
     <string name="add_members_activity_searchview_query_hint">Search contact</string>
     <string name="add_members_activity_contact_already_added_label">Already added to the group</string>
     <string name="add_members_activity_contact_not_added_label">contact is not present in the list</string>
-    <string name="add_members_activity_selected_contacts_title">Selected contacts</string>
+    <string name="activity_add_member_to_chat_group_selected_contacts_title">Selected contacts</string>
     <string name="add_members_activity_contacts_title">Contact List</string>
     <string name="menu_add_members_action_create">Create</string>
     <string name="menu_add_members_action_add_member">@string/activity_group_admin_panel_add_member_title</string>
@@ -101,4 +101,7 @@
     <!--activity_chat_login-->
     <string name="activity_chat_login_no_account_label">No account?</string>
     <string name="activity_chat_login_signup_label">Sign up</string>
+
+    <!--activity_choose_chat_group_activity-->
+    <string name="activity_choose_chat_group_activity_activity_title">Groups</string>
 </resources>

@@ -5,7 +5,7 @@
     <item
         android:id="@+id/action_next"
         android:orderInCategory="1"
-        android:title="@string/menu_create_group_action_next"
+        android:title="@string/menu_activity_new_group_action_next"
         android:visible="false"
         app:showAsAction="always" />
 

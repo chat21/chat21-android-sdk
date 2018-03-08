@@ -130,12 +130,12 @@ public class ChatUI implements Serializable {
     }
 
     public OnContactClickListener getOnContactClickListener() {
-        Log.d(TAG, "getOnContactClickListener");
+        Log.d(TAG, "getOnChatGroupClickListener");
         return onContactClickListener;
     }
 
     public void setOnContactClickListener(OnContactClickListener onContactClickListener) {
-        Log.d(TAG, "setOnContactClickListener");
+        Log.d(TAG, "setOnChatGroupClickListener");
         this.onContactClickListener = onContactClickListener;
     }
 

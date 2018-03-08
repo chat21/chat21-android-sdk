@@ -9,11 +9,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.chat21.android.core.exception.ChatFieldNotFoundException;
 import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.messages.listeners.ConversationMessagesListener;
@@ -21,6 +16,11 @@ import org.chat21.android.core.messages.listeners.SendMessageListener;
 import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.utils.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -32,14 +32,14 @@ public class ConversationMessagesHandler {
 
     private List<Message> messages = new ArrayList<Message>(); // messages in memory
 
-    IChatUser currentUser;
-    IChatUser recipient;
+    private IChatUser currentUser;
+    private IChatUser recipient;
 
-    DatabaseReference conversationMessagesNode;
+    private DatabaseReference conversationMessagesNode;
 
-    ChildEventListener conversationMessagesChildEventListener;
+    private ChildEventListener conversationMessagesChildEventListener;
 
-    List<ConversationMessagesListener> conversationMessagesListeners;
+    private List<ConversationMessagesListener> conversationMessagesListeners;
 
     public ConversationMessagesHandler(String firebaseUrl, String appId, IChatUser currentUser, IChatUser recipient) {
 
@@ -66,9 +66,8 @@ public class ConversationMessagesHandler {
 //        this.conversationMessagesListeners.add(conversationMessagesListener);
     }
 
-    public void sendMessage(String type, String text, String channelType,
-                            final Map<String, Object> metadata,
-                            final SendMessageListener sendMessageListener) {
+    public void sendMessage(String type, String text, String channelType, final Map<String,
+            Object> metadata, final SendMessageListener sendMessageListener) {
         Log.v(TAG, "sendMessage called");
 
         // the message to send
@@ -86,7 +85,6 @@ public class ConversationMessagesHandler {
         message.setType(type);
 
         message.setChannelType(channelType);
-
 
 //        message.setStatus(Message.STATUS_SENDING);
         message.setTimestamp(new Date().getTime());
@@ -141,14 +139,12 @@ public class ConversationMessagesHandler {
                     }
                 }); // save message on db
 
-
         if (sendMessageListener != null) {
             //set sender and recipiet because MessageListActivity use this message to update the view immediatly and MessageListAdapter use message.sender
             Log.d(TAG, "onBeforeMessageSent called with message : " + message);
 
             sendMessageListener.onBeforeMessageSent(message, null);
         }
-
     }
 
     private Message createMessageForFirebase(Message message) {
@@ -191,7 +187,6 @@ public class ConversationMessagesHandler {
     public List<Message> getMessages() {
         return messages;
     }
-
 
     public ChildEventListener connect(ConversationMessagesListener conversationMessagesListener) {
         this.upsertConversationMessagesListener(conversationMessagesListener);
@@ -324,7 +319,6 @@ public class ConversationMessagesHandler {
             throw new ChatFieldNotFoundException("Required recipient field is null for message id : " + messageId);
         }
 
-
         String sender_fullname = (String) map.get("sender_fullname");
         String recipient_fullname = (String) map.get("recipient_fullname");
 
@@ -378,7 +372,6 @@ public class ConversationMessagesHandler {
     public void setConversationMessagesListeners(List<ConversationMessagesListener> conversationMessagesListeners) {
         this.conversationMessagesListeners = conversationMessagesListeners;
         Log.i(TAG, "  ConversationMessagesListeners setted");
-
     }
 
     public void addConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
@@ -386,7 +379,6 @@ public class ConversationMessagesHandler {
 
         this.conversationMessagesListeners.add(conversationMessagesListener);
         Log.i(TAG, "  conversationMessagesListener with hashCode: " + conversationMessagesListener.hashCode() + " added");
-
     }
 
     public void upsertConversationMessagesListener(ConversationMessagesListener conversationMessagesListener) {
@@ -407,15 +399,12 @@ public class ConversationMessagesHandler {
 
         this.conversationMessagesListeners.remove(conversationMessagesListener);
         Log.i(TAG, "  conversationMessagesListener with hashCode: " + conversationMessagesListener.hashCode() + " removed");
-
     }
 
     public void removeAllConversationMessagesListeners() {
         this.conversationMessagesListeners = null;
         Log.i(TAG, "Removed all ConversationMessagesListeners");
-
     }
-
 
     public ChildEventListener getConversationMessagesChildEventListener() {
         return conversationMessagesChildEventListener;
@@ -425,6 +414,4 @@ public class ConversationMessagesHandler {
         this.conversationMessagesNode.removeEventListener(conversationMessagesChildEventListener);
         this.removeAllConversationMessagesListeners();
     }
-
-
 }
