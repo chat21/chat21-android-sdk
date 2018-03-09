@@ -31,9 +31,9 @@ See the sample app [source code](https://github.com/chat21/chat21-android-demo)
 
 Before you begin, you need a few things to set up in your environment:
 
-* a Firebase project correctly configured and the Chat21 Firebase cloud functions installed. Detailed instructions[here](https://github.com/chat21/chat21-cloud-functions)
+* a Firebase project correctly configured and the Chat21 Firebase cloud functions installed. See detailed [instructions](https://github.com/chat21/chat21-cloud-functions)
 
-* google-services.json for you app. For detailed instructions follow the [Official Documentation](https://developers.google.com/android/guides/google-services-plugin)
+* google-services.json for you app. See official [documentation](https://developers.google.com/android/guides/google-services-plugin)
 
 ## Firebase libs
 
@@ -84,10 +84,10 @@ apply plugin: 'com.google.gms.google-services'
 
 ```
 
-<div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/development_v2/app/build.gradle">/app/build.gradle
+<div style="text-align:right;">
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/build.gradle">build.gradle
         <span>
-            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
         </span>
     </a>
 </div>
@@ -124,21 +124,21 @@ configurations.all {
     }
 }
 ```
-<div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/development_v2/app/build.gradle">/app/build.gradle
+<div style="text-align:right;">
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/build.gradle">build.gradle
         <span>
-            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
         </span>
     </a>
 </div>
 
 ### Google Play Services plugin
 
-Finally, as described in the [Firebase documentation](https://firebase.google.com/docs/android/setup#manually_add_firebase), paste this statement as the last line of the file:
+Finally, as described in the [documentation](https://firebase.google.com/docs/android/setup#manually_add_firebase), paste this statement as the last line of the file:
 
 `apply plugin: 'com.google.gms.google-services'`
 
-At the end, you'll download a `google-services.json` file. For more informations refer to the relative [Firebase documentation](https://support.google.com/firebase/answer/7015592)
+At the end, you'll download a `google-services.json` file. For more informations refer to the relative [documentation](https://support.google.com/firebase/answer/7015592)
 
 
 ### Application
@@ -156,6 +156,14 @@ protected void attachBaseContext(Context base) {
 }
 ```
 
+<div style="text-align:right;">
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/java/chat21/android/demo/AppContext.java">AppContext.java
+        <span>
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
+        </span>
+    </a>
+</div>
+
 and add it to the Manifest.xml
 
 ```
@@ -169,35 +177,46 @@ and add it to the Manifest.xml
 
 ```
 
+<div style="text-align:right;">
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/AndroidManifest.xml">AndroidManifest.xml
+        <span>
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
+        </span>
+    </a>
+</div>
+
 ### Style
 
 Replace the default parent theme in your styles.xml
 
 ```
 <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
 ```
 
 to 
 
 ```
 <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
- ```
+
+```
  
- you will obtain something like :
- 
- ```
+you will obtain something like :
+
+```
   <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
    <!-- Customize your theme here. -->
    <item name="colorPrimary">@color/colorPrimary</item>
    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
    <item name="colorAccent">@color/colorAccent</item>
 </style> 
+
 ```
 
-<div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/development_v2/app/src/main/res/values/strings.xml">styles.xml
+<div style="text-align:right;">
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/res/values/styles.xml">styles.xml
         <span>
-            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
         </span>
     </a>
 </div>
@@ -220,22 +239,25 @@ Chat21 SDK Chat.Configuration.Builder) and use it as paramater for the method `C
     // mandatory
     // it creates the chat configurations
     ChatManager.Configuration mChatConfiguration =
-            new ChatManager.Configuration.Builder(<APP_ID>).build();
+            new ChatManager.Configuration.Builder(<APP_ID>)
+                    .firebaseUrl(<FIREBASE_DATABASE_URL>)
+                    .storageBucket(<STORAGE_BUCKET>)
+                    .build();
+            
     ChatManager.start(<CONTEXT>, mChatConfiguration, <LOGGED_USER>);
-
-    // init the contacts list
-    ChatManager.getInstance().initContactsSyncronizer();
 
 ```
 
 Replace:
 
 - `<APP_ID>` with your appId;
+- `<FIREBASE_URL>` with your Firebae Database URL of your Firebase App;
+- `<STORAGE_BUCKET>` with your Firebae Storage Bucket URL of your Firebase App;
 - `<CONTEXT>` with your Context;
 - `<LOGGED_USER>` with your current logged user, assuming it is an instance of IChatUser
 
 <div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/java/it/chat21/android/demo/AppContext.java">AppContext.java
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/development_v2/app/src/main/java/chat21/android/demo/AppContext.java">AppContext.java
        <span>
            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
        </span>
@@ -264,11 +286,11 @@ It starts a new activity that contains the list of conversations.
 ```
 
 <div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/java/it/chat21/android/demo/HomeFragment.java">Example.java
-        <span>
-            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-        </span>
-    </a>
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/java/chat21/android/demo/HomeFragment.java">Example.java
+       <span>
+           <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
+       </span>
+   </a>
 </div>
 
 ##### Launch with a fragment
@@ -299,11 +321,11 @@ Now you can show your chat with the following method:
 ```
 
 <div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/java/it/chat21/android/demo/ChatFragment.java">ChatFragment.java
-        <span>
-            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-        </span>
-    </a>
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/java/chat21/android/demo/ChatFragment.java">ChatFragment.java
+       <span>
+           <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
+       </span>
+   </a>
 </div>
 
 
@@ -326,7 +348,7 @@ Now you can show your chat with the following method:
             def requested = details.requested
             if (requested.group == 'com.android.support') {
                 if (!requested.name.startsWith("multidex")) {
-                    details.useVersion '25.3.0'
+                    details.useVersion '26.1.0'
                 }
             }
         }
@@ -393,10 +415,10 @@ Now you can show your chat with the following method:
         </application>
         ```
 
-        <div style="text-align:right">
-              <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/AndroidManifest.xml">AndroidManifest.xml
-                  <span>
-                      <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-                  </span>
-              </a>
-          </div>
+<div style="text-align:right;">
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/AndroidManifest.xml">AndroidManifest.xml
+        <span>
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
+        </span>
+    </a>
+</div>
