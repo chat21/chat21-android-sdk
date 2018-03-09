@@ -29,51 +29,39 @@ See the sample app [source code](https://github.com/chat21/chat21-android-demo)
 
 ## Pre requisites
 
-Build and deploy chat21-cloud-functions project on Firebase as described here: [chat21-cloud-functions Readme](https://github.com/chat21/chat21-cloud-functions)
+Before you begin, you need a few things to set up in your environment:
 
+* a Firebase project correctly configured and the Chat21 Firebase cloud functions installed. Detailed instructions[here](https://github.com/chat21/chat21-cloud-functions)
 
-## Add Chat21 SDK dependencies
+* google-services.json for you app. For detailed instructions follow the [Official Documentation](https://developers.google.com/android/guides/google-services-plugin)
 
-### Gradle Scripts
+## Firebase libs
 
-Download the Chat21 SDK in your work directory. 
+### /project/build.gradle
 
-#### /project/build.gradle
-
-add Google Play Service classpath and Google dependencies and sync.
-
+First, include the google-services plugin and the Google’s Maven repository to your root-level build.gradle file:
 
 ```
 buildscript {
-
-    repositories {
-        jcenter()
-        google()
-    }
-
+    // ...
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        // ...
         classpath 'com.google.gms:google-services:3.1.1'
     }
 }
 
 allprojects {
+    // ...
     repositories {
-        jcenter()
+        // ...
         google()
-
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
     }
 }
-
-. . . 
 
 ```
 
 <div style="text-align:right;">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/build.gradle">build.gradle
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/development_v2/build.gradle">build.gradle
         <span>
             <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
         </span>
@@ -81,82 +69,70 @@ allprojects {
 </div>
 
 
-#### /project/settings.gradle
-
-Open your settings.gradle, paste these two lines and sync
+### /project/app/build.gradle
+Then, in your module Gradle file (usually the app/build.gradle), add the apply plugin line at the bottom of the file to enable the Gradle plugin:
 
 ```
-include ':chat'
-project(':chat').projectDir = new File('<CHAT_LIBRARY_FOLDER_PATH>/chat21-android-sdk/chat/')
+apply plugin: 'com.android.application'
+// ...
+dependencies {
+    // ...
+    implementation "com.google.android.gms:play-services:11.8.0"
+}
+// ... 
+apply plugin: 'com.google.gms.google-services'
+
 ```
-replace `<CHAT_LIBRARY_FOLDER_PATH>` with your Chat21 SDK folder path.
 
 <div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/settings.gradle">settings.gradle
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/development_v2/app/build.gradle">/app/build.gradle
         <span>
             <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
         </span>
     </a>
 </div>
 
+## Install Chat21 libraries
+Set:
+* minimun SDK at least at ***API 19*** 
+* targetSdkVersion at ***API 22*** 
 
-#### /project/app/build.gradle
-
-##### Basic configurations
-Set yout minimun SDK at least at ***API 19*** 
-
-Your android should be like this: 
+Add the following to your app/build.gradle file:
 
 ```
-android {
-   . . . 
-    
-    defaultConfig {
-    
-        . . . 
-        
-        minSdkVersion 19
-        targetSdkVersion 22
-        
-         . . .
-        
-        // multidex support
-        multiDexEnabled true
-    }
-
-    
-    packagingOptions {
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/DEPENDENCIES'
-    }
-    
-    dependencies {
-    
-        // multidex
-        implementation 'com.android.support:multidex:1.0.1'
-
-        // google play service
-        implementation 'com.google.android.gms:play-services:11.8.0'
-   
-        // chat
-        implementation project(':chat')
-        
-        . . . 
+defaultConfig {
+// ...
+multiDexEnabled true
+}
+dependencies {
+// ...
+compile 'com.android.support:multidex:1.0.1'
+compile "com.google.android.gms:play-services:11.8.0"
+compile 'com.android.support:design:26.1.0'
+compile 'org.chat21.android:chat21:1.0.4'
+compile 'com.vanniktech:emoji-ios:0.5.1'
+}
+// ...
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '26.1.0'
+            }
+        }
     }
 }
 ```
 <div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/build.gradle">/app/build.gradle
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/development_v2/app/build.gradle">/app/build.gradle
         <span>
             <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
         </span>
     </a>
 </div>
 
-##### Google Play Services plugin
+### Google Play Services plugin
 
 Finally, as described in the [Firebase documentation](https://firebase.google.com/docs/android/setup#manually_add_firebase), paste this statement as the last line of the file:
 
@@ -165,42 +141,66 @@ Finally, as described in the [Firebase documentation](https://firebase.google.co
 At the end, you'll download a `google-services.json` file. For more informations refer to the relative [Firebase documentation](https://support.google.com/firebase/answer/7015592)
 
 
-### AndroidManifest.xml
+### Application
 
-Let's set up  the AndroidManifest.xml
+Create a custom Application class
 
-#### Permissions
+```
+public class AppContext extends Application {
 
-Runtime permissions are currently not supported.
+@Override
+protected void attachBaseContext(Context base) {
+    super.attachBaseContext(base);
+           MultiDex.install(this); // add this
+    }
+}
+```
 
-Then you must declare the permissions in the manifest and set the targetSdkVersion at ***API 22*** 
+and add it to the Manifest.xml
 
-The Chat21 SDK needs the following permissions: 
+```
+ <application
+             android:name=".AppContext"
+             android:icon="@mipmap/ic_launcher"
+             android:label="@string/app_name"
+             android:theme="@style/AppTheme"
+             ...
+</application> 
 
+```
 
-    ```
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    ```
-    
+### Style
+
+Replace the default parent theme in your styles.xml
+
+```
+<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+```
+
+to 
+
+```
+<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+ ```
+ 
+ you will obtain something like :
+ 
+ ```
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+   <!-- Customize your theme here. -->
+   <item name="colorPrimary">@color/colorPrimary</item>
+   <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+   <item name="colorAccent">@color/colorAccent</item>
+</style> 
+```
+
 <div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/AndroidManifest.xml">AndroidManifest.xml
+    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/development_v2/app/src/main/res/values/strings.xml">styles.xml
         <span>
             <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
         </span>
     </a>
 </div>
-
-#### Application
-
-In your `<application></application>` :
-
-- define your custom application class:
-    
-    ***this is a mandatory step***. You have to create your own application class in which we'll 
-     initialize and add extra customization for the Chat21 SDK
 
 ### Chat21 SDK initialization
 
@@ -306,29 +306,7 @@ Now you can show your chat with the following method:
     </a>
 </div>
 
-### Style.xml
 
-The Chat21 SDk supports most customizable android [Toolbar](https://developer.android.com/training/appbar/setting-up.html) instead of old ActionBar.
-
-In your style.xml change your parent theme from 
-
-```
-<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-
-``` 
-
-to 
-```
- <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
- ```
-
-<div style="text-align:right">
-    <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/res/values/styles.xml">styles.xml
-        <span>
-            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-        </span>
-    </a>
-</div>
 
 ### Common Issues
 
