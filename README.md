@@ -256,12 +256,12 @@ Replace:
 - `<CONTEXT>` with your Context;
 - `<LOGGED_USER>` with your current logged user, assuming it is an instance of IChatUser
 
-<div style="text-align:right">
+<div style="text-align:right;">
     <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/development_v2/app/src/main/java/chat21/android/demo/AppContext.java">AppContext.java
-       <span>
-           <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-       </span>
-   </a>
+        <span>
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
+        </span>
+    </a>
 </div>
 
 #### ChatUI
@@ -285,12 +285,12 @@ It starts a new activity that contains the list of conversations.
 
 ```
 
-<div style="text-align:right">
+<div style="text-align:right;">
     <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/java/chat21/android/demo/HomeFragment.java">Example.java
-       <span>
-           <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-       </span>
-   </a>
+        <span>
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
+        </span>
+    </a>
 </div>
 
 ##### Launch with a fragment
@@ -320,15 +320,13 @@ Now you can show your chat with the following method:
 
 ```
 
-<div style="text-align:right">
+<div style="text-align:right;">
     <a target="_top" href="https://github.com/chat21/chat21-android-demo/blob/master/app/src/main/java/chat21/android/demo/ChatFragment.java">ChatFragment.java
-       <span>
-           <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/android-sdk/blob/0.10.x/resources/ic_open_in_new_white_24px.svg" alt="open">
-       </span>
-   </a>
+        <span>
+            <img style="vertical-align:middle;color:#0566D6;" src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/ic_open_in_new_white_24px.svg" alt="open">
+        </span>
+    </a>
 </div>
-
-
 
 ### Common Issues
 
