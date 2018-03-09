@@ -7,8 +7,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
 
-        versionCode 29
-        versionName "1.0.2"
+        versionCode 30
+        versionName "1.0.3"
     }
 
     buildTypes {
@@ -93,7 +93,7 @@ ext {
     siteUrl = 'http://www.chat21.org/'
     gitUrl = 'https://github.com/chat21/chat21-android-sdk.git'
 
-    libraryVersion = '1.0.2'
+    libraryVersion = '1.0.3'
     developerId = 'frontiere21'
     developerName = 'Stefano De Pascalis'
     developerEmail = 'stefano.depascalis@frontiere21.it'
