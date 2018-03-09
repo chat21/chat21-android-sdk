@@ -61,8 +61,7 @@ gradlew.bat
 
 #gradle wrapper
 gradle/wrapper
-ContactsFirestoreSynchronizer.java
-ContactsSynchronizer.java
+
 Database.java
 DbContentProvider.java
 IUserDao.java
