@@ -18,14 +18,18 @@ With Chat21 Android SDK you can:
 - Signup with fullname, email, password and profile picture
 - Contacts list view with fulltext search for fullname field
 
-## Let's see it in action
+## Sample
 
-See the sample app [source code](https://github.com/chat21/chat21-android-demo) 
+### Screenshots
+<img src="https://lh3.googleusercontent.com/x2IvSFft3oqvs52pmDeO1kPHAinVBCW2XzsyGUW0AZLSdLhquv-YsFNWL_H-Jgt9Wos2=h900-rw" width="250"> | <img src="https://lh3.googleusercontent.com/k-ERWxCCHOMzOmirAOxYjcrJbPDhMgsYDCV-8llbdq00YMrdKcwITne_1FZWKBkPBA=h900-rw" width="250"> | <img src="https://lh3.googleusercontent.com/4jjkM4v9uSDza24t-A5_jZw1jTtuBqmKnYXpr5Ypnb__gpcaXkyNbxzP2ukE0nRf4u0=h900-rw" width="250">
 
-<img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen1.png" width="250"> | <img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen2.png" width="250"> | <img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen3.png" width="250">
+<img src="https://lh3.googleusercontent.com/CYVUF9T-d7FMy2d0HoHqoc3xbLVncDDd3i0QeVeZZj7pM1KbRCgy_Igejcn6TP9HX_g=h900-rw" width="250"> | <img src="https://lh3.googleusercontent.com/0VHUIoROVommtLNTeEATbl8bwlaD4s8sK8G2ZvOx1MQjgJp696Or680A3fUQYyD6FYI=h900-rw" width="250">
 
-<img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen4.png" width="250"> | <img src="https://github.com/chat21/chat21-android-sdk/blob/master/resources/screen5.png" width="250">
+### Google Play Demo
+[![get_it](http://evolvex.it/mobyx/images/nav/gplay-blk.png)](https://play.google.com/store/apps/details?id=chat21.android.demo)
 
+### Source
+Demo app source code is available [here](https://github.com/chat21/chat21-android-demo) 
 
 ## Pre requisites
 
