@@ -59,7 +59,9 @@ public class AddMemberToChatGroupActivity extends AppCompatActivity implements O
         selectedList = new ArrayList<>();
         cvSelectedContacts = findViewById(R.id.cardview_selected_contacts);
         rvSelectedList = findViewById(R.id.selected_list);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this,
+                        LinearLayoutManager.HORIZONTAL, false);
         rvSelectedList.setLayoutManager(layoutManager);
         rvSelectedList.setItemAnimator(new DefaultItemAnimator());
         updateSelectedContactListAdapter(selectedList, 0);
@@ -231,5 +233,16 @@ public class AddMemberToChatGroupActivity extends AppCompatActivity implements O
         // close search view on back button pressed
         contactsListFragment.onBackPressed();
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CREATE_GROUP) {
+            if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        }
     }
 }

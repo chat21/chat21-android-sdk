@@ -118,7 +118,8 @@ public class ConversationMessagesHandler {
                             Log.e(TAG, errorMessage);
                             FirebaseCrash.report(new Exception(errorMessage));
                             if (sendMessageListener != null) {
-                                sendMessageListener.onMessageSentComplete(null, new ChatRuntimeException(databaseError.toException()));
+                                sendMessageListener.onMessageSentComplete(null,
+                                        new ChatRuntimeException(databaseError.toException()));
                             }
 
                         } else {
@@ -203,7 +204,8 @@ public class ConversationMessagesHandler {
         if (conversationMessagesChildEventListener == null) {
             Log.d(TAG, "creating a new conversationMessagesChildEventListener");
 
-            conversationMessagesChildEventListener = conversationMessagesNode.orderByChild(Message.TIMESTAMP_FIELD_KEY).addChildEventListener(new ChildEventListener() {
+            conversationMessagesChildEventListener = conversationMessagesNode.orderByChild(Message.TIMESTAMP_FIELD_KEY)
+                    .addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                     Log.v(TAG, "ConversationMessagesHandler.connect.onChildAdded");
@@ -217,8 +219,11 @@ public class ConversationMessagesHandler {
                                 && !message.getSender().equals(currentUser.getId())
                                 && message.isDirectChannel()) {
 
-                            dataSnapshot.getRef().child(Message.STATUS_FIELD_KEY).setValue(Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
-                            Log.d(TAG, "Message with id : " + message.getId() + " is received from the recipient client and the status field of the message has beed set to " + Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
+                            dataSnapshot.getRef().child(Message.STATUS_FIELD_KEY)
+                                    .setValue(Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
+                            Log.d(TAG, "Message with id : " + message.getId() +
+                                    " is received from the recipient client and the status field of the message has beed set to " +
+                                    Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
                         }
 
                         saveOrUpdateMessageInMemory(message);

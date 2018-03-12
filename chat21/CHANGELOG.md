@@ -3,6 +3,7 @@
 ## v.: 1.0.5 b.: 32
 - show user id if username is not available
 - fixed autologin after signup
+- fixed finish activity on group creation
 
 ## v.: 1.0.4 b.: 31
 - fixed contact syncronizer
