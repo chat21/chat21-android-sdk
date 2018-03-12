@@ -1,5 +1,11 @@
 ﻿# CHANGELOG
 
+## v.: 1.0.5 b.: 32
+- show user id if username is not available
+
+## v.: 1.0.4 b.: 31
+- fixed contact syncronizer
+
 ## v.: 1.0.3 b.: 30
 - designed login with Email and Password within ChatManager
 - fixed logout

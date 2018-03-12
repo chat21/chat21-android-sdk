@@ -14,8 +14,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.vanniktech.emoji.EmojiTextView;
 
-import java.util.List;
-
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.chat_groups.models.ChatGroup;
@@ -28,10 +26,13 @@ import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
 import org.chat21.android.utils.image.CropCircleTransformation;
 
+import java.util.List;
+
 /**
  * Created by stefanodp91 on 18/12/17.
  */
-public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversation, ConversationsListAdapter.ViewHolder> {
+public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversation,
+        ConversationsListAdapter.ViewHolder> {
     private static final String TAG = ConversationsListAdapter.class.getName();
 
     private OnConversationClickListener onConversationClickListener;
@@ -49,7 +50,8 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
         return onConversationLongClickListener;
     }
 
-    public void setOnConversationLongClickListener(OnConversationLongClickListener onConversationLongClickListener) {
+    public void setOnConversationLongClickListener(
+            OnConversationLongClickListener onConversationLongClickListener) {
         this.onConversationLongClickListener = onConversationLongClickListener;
     }
 
@@ -75,7 +77,8 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
 
         setRecipientPicture(holder, conversation);
 
-        setRecipientDisplayName(holder, conversation.getConvers_with_fullname(), conversation.getConvers_with());
+        setRecipientDisplayName(holder, conversation.getConvers_with_fullname(),
+                conversation.getConvers_with());
 
         setGroupSenderName(holder, conversation);
 
@@ -126,7 +129,10 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);
         } else {
-            Toast.makeText(holder.itemView.getContext(), "channel type is undefined", Toast.LENGTH_SHORT).show();
+            Toast.makeText(holder.itemView.getContext(),
+                    "channel type is undefined",
+                    Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 
@@ -157,7 +163,8 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
 
             // retrieve the sender
             String sender = conversation.getSender();
-            if (conversation.getSender() != null && conversation.getSender().equals(ChatManager.getInstance().getLoggedUser().getId())) {
+            if (conversation.getSender() != null && conversation.getSender()
+                    .equals(ChatManager.getInstance().getLoggedUser().getId())) {
                 sender = holder.itemView.getContext().getString(R.string.activity_conversation_list_adapter_you_label);
             } else {
                 if (StringUtils.isValid(conversation.getSender())) {
@@ -189,14 +196,16 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     }
 
     // set on row click listener
-    private void setConversationCLickAction(ViewHolder holder, final Conversation conversation, final int position) {
+    private void setConversationCLickAction(ViewHolder holder,
+                                            final Conversation conversation, final int position) {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (getOnConversationClickListener() != null) {
                     getOnConversationClickListener().onConversationClicked(conversation, position);
                 } else {
-                    Log.w(TAG, "ConversationsListAdapter.setConversationCLickAction: getOnConversationClickListener() is null. " +
+                    Log.w(TAG, "ConversationsListAdapter.setConversationCLickAction:" +
+                            " getOnConversationClickListener() is null. " +
                             "set it with setOnConversationClickListener method. ");
                 }
             }
@@ -204,7 +213,8 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
     }
 
     // set on row long click listener
-    private void setConversationLongCLickAction(ViewHolder holder, final Conversation conversation, final int position) {
+    private void setConversationLongCLickAction(ViewHolder holder,
+                                                final Conversation conversation, final int position) {
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -215,7 +225,8 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
                     // https://stackoverflow.com/questions/18911290/perform-both-the-normal-click-and-long-click-at-button
                     return true; // event triggered
                 } else {
-                    Log.w(TAG, "ConversationsListAdapter.setConversationLongCLickAction: getOnConversationLongClickListener is null. " +
+                    Log.w(TAG, "ConversationsListAdapter.setConversationLongCLickAction:" +
+                            " getOnConversationLongClickListener is null. " +
                             "set it with setOnConversationLongClickListener method. ");
                 }
 

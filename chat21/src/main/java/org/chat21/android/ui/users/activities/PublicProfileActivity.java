@@ -17,6 +17,7 @@ import org.chat21.android.core.presence.PresenceHandler;
 import org.chat21.android.core.presence.listeners.PresenceListener;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.ChatUI;
+import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
@@ -52,7 +53,8 @@ public class PublicProfileActivity extends AppCompatActivity implements Presence
 
         // fullname as title
         TextView mToolbarTitle = findViewById(R.id.toolbar_title);
-        mToolbarTitle.setText(contact.getFullName());
+        mToolbarTitle.setText(StringUtils.isValid(contact.getFullName()) ?
+                contact.getFullName() : contact.getId());
 
         // connection status (online/offline) as subtitle
         mToolbarSubTitle = findViewById(R.id.toolbar_subtitle);
@@ -116,7 +118,8 @@ public class PublicProfileActivity extends AppCompatActivity implements Presence
             conversWithOnline = false;
 
             if (conversWithLastOnline != PresenceHandler.LAST_ONLINE_UNDEFINED) {
-                mToolbarSubTitle.setText(TimeUtils.getFormattedTimestamp(this, conversWithLastOnline));
+                mToolbarSubTitle.setText(TimeUtils
+                        .getFormattedTimestamp(this, conversWithLastOnline));
                 Log.d(DEBUG_USER_PRESENCE, "PublicProfileActivity.isUserOnline: " +
                         "conversWithLastOnline == " + conversWithLastOnline);
             } else {

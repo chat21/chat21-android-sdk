@@ -11,13 +11,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.chat21.android.R;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.contacts.listeners.OnContactClickListener;
+import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.image.CropCircleTransformation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //import static org.chat21.android.ui.contacts.activites.ContactListActivity.TAG_CONTACTS_SEARCH;
 
@@ -61,7 +62,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     @Override
     public void onBindViewHolder(ContactListAdapter.ViewHolder holder, final int position) {
         final IChatUser contact = contactListFiltered.get(position);
-        holder.mContactFullName.setText(contact.getFullName());
+        holder.mContactFullName.setText(StringUtils.isValid(contact.getFullName()) ?
+                contact.getFullName() : contact.getId());
         holder.mContactUsername.setText(contact.getId());
 
         Glide.with(holder.itemView.getContext())
