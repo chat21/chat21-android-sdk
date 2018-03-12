@@ -166,6 +166,10 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
 
     private void signIn(String email, String password) {
         Log.d(TAG, "signIn:" + email);
+
+        vEmail.setText(email);
+        vPassword.setText(password);
+
         if (!validateForm()) {
             return;
         }
