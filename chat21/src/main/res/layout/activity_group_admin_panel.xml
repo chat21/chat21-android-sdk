@@ -108,6 +108,7 @@
                     android:orientation="vertical">
 
                     <LinearLayout
+                        android:focusableInTouchMode="true"
                         android:id="@+id/box_members"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -160,6 +161,7 @@
 
                         <!--line separator-->
                         <View
+                            android:focusableInTouchMode="true"
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
                             android:background="@color/grey_300"></View>

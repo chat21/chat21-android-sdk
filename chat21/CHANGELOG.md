@@ -2,8 +2,9 @@
 
 ## v.: 1.0.5 b.: 32
 - show user id if username is not available
-- fixed autologin after signup
-- fixed finish activity on group creation
+- fixed autologin after signup - ChatLoginActivity
+- fixed finish activity on group creation - AddMemberToChatGroupActivity
+- fixed members label visibility issue - GroupPanelAdminActivity
 
 ## v.: 1.0.4 b.: 31
 - fixed contact syncronizer
