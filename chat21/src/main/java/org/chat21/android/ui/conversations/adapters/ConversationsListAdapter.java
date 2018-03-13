@@ -77,8 +77,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
 
         setRecipientPicture(holder, conversation);
 
-        setRecipientDisplayName(holder, conversation.getConvers_with_fullname(),
-                conversation.getConvers_with());
+        setRecipientDisplayName(holder, conversation.getConvers_with_fullname(), conversation.getConvers_with());
 
         setGroupSenderName(holder, conversation);
 
@@ -174,8 +173,12 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
                 }
             }
 
-            holder.senderDisplayName.setText(sender + ": "); // set it
-            holder.senderDisplayName.setVisibility(View.VISIBLE); // show it
+            if(sender != null) {
+                holder.senderDisplayName.setText(sender + ": "); // set it
+                holder.senderDisplayName.setVisibility(View.VISIBLE); // show it
+            } else {
+                holder.senderDisplayName.setVisibility(View.GONE); // hide it
+            }
         } else {
             holder.senderDisplayName.setVisibility(View.GONE);
         }

@@ -5,6 +5,8 @@
 - fixed autologin after signup - ChatLoginActivity
 - fixed finish activity on group creation - AddMemberToChatGroupActivity
 - fixed members label visibility issue - GroupPanelAdminActivity
+- fixed null label when create a new group - ConversationListAdapter
+- fixed input panel visibility when group is created - ConversationListFragment
 
 ## v.: 1.0.4 b.: 31
 - fixed contact syncronizer

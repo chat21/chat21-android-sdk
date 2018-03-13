@@ -47,7 +47,9 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
+import org.chat21.android.core.chat_groups.listeners.ChatGroupsListener;
 import org.chat21.android.core.chat_groups.models.ChatGroup;
+import org.chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import org.chat21.android.core.messages.listeners.ConversationMessagesListener;
@@ -80,7 +82,7 @@ import static org.chat21.android.utils.DebugConstants.DEBUG_USER_PRESENCE;
  * Created by stefano on 31/08/2015.
  */
 public class MessageListActivity extends AppCompatActivity
-        implements ConversationMessagesListener, PresenceListener {
+        implements ConversationMessagesListener, PresenceListener, ChatGroupsListener {
     private static final String TAG = MessageListActivity.class.getName();
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
@@ -89,6 +91,8 @@ public class MessageListActivity extends AppCompatActivity
     private ConversationMessagesHandler conversationMessagesHandler;
     private boolean conversWithOnline = false;
     private long conversWithLastOnline = -1;
+
+    private GroupsSyncronizer groupsSyncronizer = null;
 
     private RecyclerView recyclerView;
     private LinearLayoutManager mLinearLayoutManager;
@@ -195,7 +199,14 @@ public class MessageListActivity extends AppCompatActivity
                 presenceHandler.upsertPresenceListener(this);
                 presenceHandler.connect();
             }
+        } else {
+            if (recipient != null) {
+                groupsSyncronizer = ChatManager.getInstance().getGroupsSyncronizer();
+                groupsSyncronizer.upsertGroupsListener(this);
+                groupsSyncronizer.connect();
+            }
         }
+
 
         // panel which contains the edittext, the emoji button and the attach button
         initInputPanel();
@@ -245,8 +256,14 @@ public class MessageListActivity extends AppCompatActivity
 
         if (presenceHandler != null) {
             presenceHandler.removePresenceListener(this);
-            Log.d(DEBUG_USER_PRESENCE, "MessageListActivity.onDestroy:" +
+            Log.d(TAG, "MessageListActivity.onDestroy:" +
                     " presenceHandler detached");
+        }
+
+        if(groupsSyncronizer != null) {
+            groupsSyncronizer.removeGroupsListener(this);
+            Log.d(TAG, "MessageListActivity.onDestroy:" +
+                    " groupsSyncronizer detached");
         }
 
         // unset the active conversation
@@ -848,5 +865,32 @@ public class MessageListActivity extends AppCompatActivity
         Log.e(DEBUG_USER_PRESENCE, "MessageListActivity.onMyPresenceError: " + e.toString());
 
         mSubTitleTextView.setText(getString(R.string.activity_message_list_convers_with_presence_offline));
+    }
+
+    @Override
+    public void onGroupAdded(ChatGroup chatGroup, ChatRuntimeException e) {
+        if (e == null) {
+            this.chatGroup = chatGroup;
+            initGroupToolbar(chatGroup);
+            initInputPanel();
+        } else {
+            Log.e(TAG, "MessageListActivity.onGroupAdded: " + e.toString());
+        }
+    }
+
+    @Override
+    public void onGroupChanged(ChatGroup chatGroup, ChatRuntimeException e) {
+        if (e == null) {
+            this.chatGroup = chatGroup;
+            initGroupToolbar(chatGroup);
+            initInputPanel();
+        } else {
+            Log.e(TAG, "MessageListActivity.onGroupChanged: " + e.toString());
+        }
+    }
+
+    @Override
+    public void onGroupRemoved(ChatRuntimeException e) {
+        Log.e(TAG, "MessageListActivity.onGroupRemoved: " + e.toString());
     }
 }
