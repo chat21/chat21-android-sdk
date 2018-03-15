@@ -1,5 +1,11 @@
 apply plugin: 'com.android.library'
 
+// source:
+// https://stackoverflow.com/questions/21329849/set-android-app-version-using-gradle
+def computeVersionName() {
+    return "1.0.6"
+}
+
 android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
@@ -7,8 +13,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
 
-        versionCode 32
-        versionName "1.0.5"
+        versionCode 33
+        versionName computeVersionName()
     }
 
     buildTypes {
@@ -75,7 +81,7 @@ configurations.all {
         // source : https://github.com/firebase/FirebaseUI-Android/issues/218
         if (details.requested.group == 'com.google.firebase' ||
                 details.requested.group == 'com.google.android.gms') {
-            details.useVersion '11.6.0'
+            details.useVersion '11.8.0'
         }
     }
 }
@@ -93,7 +99,7 @@ ext {
     siteUrl = 'http://www.chat21.org/'
     gitUrl = 'https://github.com/chat21/chat21-android-sdk.git'
 
-    libraryVersion = '1.0.5'
+    libraryVersion = computeVersionName()
     developerId = 'frontiere21'
     developerName = 'Stefano De Pascalis'
     developerEmail = 'stefano.depascalis@frontiere21.it'
