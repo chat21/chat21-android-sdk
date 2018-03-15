@@ -173,7 +173,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
                 }
             }
 
-            if(sender != null) {
+            if (sender != null) {
                 holder.senderDisplayName.setText(sender + ": "); // set it
                 holder.senderDisplayName.setVisibility(View.VISIBLE); // show it
             } else {

@@ -669,7 +669,8 @@ public class MessageListActivity extends AppCompatActivity
                                 metadata.put("width", width);
                                 metadata.put("height", height);
                                 metadata.put("src", downloadUrl.toString());
-                                metadata.put("uid", uid);
+//                                metadata.put("uid", uid);
+                                metadata.put("description", "");
 
                                 Log.d(TAG, " MessageListActivity.uploadFile:" +
                                         " metadata == " + metadata);
@@ -684,7 +685,7 @@ public class MessageListActivity extends AppCompatActivity
 
                                 // TODO: 13/02/18 add image message to the adapter  (like text message)
                                 ChatManager.getInstance().sendImageMessage(recipient.getId(),
-                                        recipient.getFullName(), lastMessageText, channelType,
+                                        recipient.getFullName(), lastMessageText + ": " + downloadUrl.toString(), channelType,
                                         metadata, null);
                             }
                         });
