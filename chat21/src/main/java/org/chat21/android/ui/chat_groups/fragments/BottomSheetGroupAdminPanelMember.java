@@ -18,10 +18,12 @@ import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.chat_groups.models.ChatGroup;
 import org.chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
+import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.messages.activities.MessageListActivity;
 import org.chat21.android.ui.users.activities.PublicProfileActivity;
 
+import static org.chat21.android.ui.ChatUI.BUNDLE_CHANNEL_TYPE;
 import static org.chat21.android.ui.ChatUI.BUNDLE_RECIPIENT;
 
 /**
@@ -128,6 +130,7 @@ public class BottomSheetGroupAdminPanelMember extends BottomSheetDialogFragment 
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), MessageListActivity.class);
                     intent.putExtra(BUNDLE_RECIPIENT, groupMember);
+                    intent.putExtra(BUNDLE_CHANNEL_TYPE, Message.DIRECT_CHANNEL_TYPE);
                     getActivity().startActivity(intent);
 
                     // dismiss the bottomsheet
