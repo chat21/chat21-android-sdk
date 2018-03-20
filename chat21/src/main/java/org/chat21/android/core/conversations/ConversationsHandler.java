@@ -10,20 +10,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.chat21.android.core.ChatManager;
+import org.chat21.android.core.conversations.listeners.ConversationsListener;
+import org.chat21.android.core.conversations.listeners.UnreadConversationsListener;
+import org.chat21.android.core.conversations.models.Conversation;
+import org.chat21.android.core.exception.ChatRuntimeException;
+import org.chat21.android.utils.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.chat21.android.core.ChatManager;
-import org.chat21.android.core.conversations.listeners.ConversationsListener;
-import org.chat21.android.core.conversations.models.Conversation;
-import org.chat21.android.core.exception.ChatRuntimeException;
-import org.chat21.android.utils.StringUtils;
-
 /**
  * Created by andrealeo on 18/12/17.
+ * Modified by stefanodp91 on 19/03/18.
  */
 
 public class ConversationsHandler {
@@ -39,9 +41,16 @@ public class ConversationsHandler {
 
     private String currentOpenConversationId;
 
+    private List<Conversation> unreadConversations;
+    private List<UnreadConversationsListener> unreadConversationsListeners;
+    private ValueEventListener unreadConversationsValueEventListener;
+
     public ConversationsHandler(String firebaseUrl, String appId, String currentUserId) {
         conversationsListeners = new ArrayList<ConversationsListener>();
         conversations = new ArrayList<>(); // conversations in memory
+
+        unreadConversationsListeners = new ArrayList<>();
+        unreadConversations = new ArrayList<>(); // unread conversation in memory
 
         this.appId = appId;
         this.currentUserId = currentUserId;
@@ -80,6 +89,63 @@ public class ConversationsHandler {
 
     public ChildEventListener connect() {
 
+        if (this.unreadConversationsValueEventListener == null) {
+            // count the number of conversation unread
+            unreadConversationsValueEventListener = conversationsNode.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        try {
+                            // decode the conversation
+                            Conversation conversation = decodeConversationFromSnapshot(postSnapshot);
+
+                            // if the conversation is new add it to the unread conversations list
+                            // otherwise remove it from the unread conversations list
+                            if (conversation.getIs_new()) {
+                                if (!unreadConversations.contains(conversation)) {
+                                    // add the conversation to the unread conversations list
+                                    unreadConversations.add(conversation);
+                                } else {
+                                    // update the conversation within the conversations list
+                                    int index = unreadConversations.indexOf(conversation);
+                                    unreadConversations.set(index, conversation);
+                                }
+                            } else {
+                                // if the unread conversations list contains
+                                // the conversation remove it
+                                if (unreadConversations.contains(conversation)) {
+                                    unreadConversations.remove(conversation);
+                                }
+                            }
+
+                            // notify to all subscribers that the unread conversations list changed
+                            for (UnreadConversationsListener listener : unreadConversationsListeners) {
+                                listener.onUnreadConversationCounted(unreadConversations.size(), null);
+                            }
+
+                        } catch (Exception e) {
+                            // notify to all subscribers that an error occurred
+                            for (UnreadConversationsListener listener : unreadConversationsListeners) {
+                                listener.onUnreadConversationCounted(-1, new ChatRuntimeException(e));
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // notify to all subscribers that an error occurred
+                    for (UnreadConversationsListener listener : unreadConversationsListeners) {
+                        listener.onUnreadConversationCounted(-1,
+                                new ChatRuntimeException(databaseError.toException()));
+                    }
+                }
+            });
+        } else {
+            Log.i(TAG, "ConversationsHandler.connect.valueEventListener: valueEventListener already connected.");
+        }
+
+        // subscribe on conversations add/change/remove
         if (this.conversationsChildEventListener == null) {
 
             this.conversationsChildEventListener = conversationsNode.addChildEventListener(new ChildEventListener() {
@@ -99,31 +165,6 @@ public class ConversationsHandler {
                     } catch (Exception e) {
                         notifyConversationAdded(null, new ChatRuntimeException(e));
                     }
-
-//                    try {
-//                        Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
-//
-//                        // it sets the conversation as read if the person whom are talking to is the current user
-//                        if (currentUserId.equals(conversation.getSender())) {
-//                            setConversationRead(conversation.getConversationId());
-//                        }
-//
-//                        saveOrUpdateConversationInMemory(conversation);
-//                        sortConversationsInMemory();
-//
-//                        if (conversationsListeners != null) {
-//                            for (ConversationsListener conversationsListener : conversationsListeners) {
-//                                conversationsListener.onConversationAdded(conversation, null);
-//                            }
-//                        }
-//
-//                    } catch (Exception e) {
-//                        if (conversationsListeners != null) {
-//                            for (ConversationsListener conversationsListener : conversationsListeners) {
-//                                conversationsListener.onConversationAdded(null, new ChatRuntimeException(e));
-//                            }
-//                        }
-//                    }
                 }
 
                 //for return receipt
@@ -137,26 +178,6 @@ public class ConversationsHandler {
                     } catch (Exception e) {
                         notifyConversationChanged(null, new ChatRuntimeException(e));
                     }
-
-//                    try {
-//                        Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
-//
-//                        saveOrUpdateConversationInMemory(conversation);
-//                        sortConversationsInMemory();
-//
-//                        if (conversationsListeners != null) {
-//                            for (ConversationsListener conversationsListener : conversationsListeners) {
-//                                conversationsListener.onConversationChanged(conversation, null);
-//                            }
-//                        }
-//
-//                    } catch (Exception e) {
-//                        if (conversationsListeners != null) {
-//                            for (ConversationsListener conversationsListener : conversationsListeners) {
-//                                conversationsListener.onConversationChanged(null, new ChatRuntimeException(e));
-//                            }
-//                        }
-//                    }
                 }
 
                 @Override
@@ -164,22 +185,6 @@ public class ConversationsHandler {
                     Log.d(TAG, "observeMessages.onChildRemoved");
 
 //                Log.d(TAG, "observeMessages.onChildRemoved: dataSnapshot == " + dataSnapshot.toString());
-
-//                try {
-//                    Conversation conversation = decodeGroupFromSnapshot(dataSnapshot);
-//
-//                    deleteConversationFromMemory(conversation);
-//                    sortConversationsInMemory();
-//
-//                    for (ConversationsListener conversationsListener : conversationsListeners) {
-//                        conversationsListener.onConversationRemoved(null);
-//                    }
-//
-//                } catch (Exception e) {
-//                    for (ConversationsListener conversationsListener : conversationsListeners) {
-//                        conversationsListener.onConversationRemoved(new ChatRuntimeException(e));
-//                    }
-//                }
                 }
 
                 @Override
@@ -432,6 +437,10 @@ public class ConversationsHandler {
         }
     }
 
+    public List<UnreadConversationsListener> getUnreadConversationsListeners() {
+        return unreadConversationsListeners;
+    }
+
     public List<ConversationsListener> getConversationsListener() {
         return conversationsListeners;
     }
@@ -449,6 +458,15 @@ public class ConversationsHandler {
                 conversationsListener.hashCode() + " added");
     }
 
+    public void addUnreadConversationsListener(UnreadConversationsListener unreadConversationsListener) {
+        Log.v(TAG, "ConversationsHandler.addGroupsListener: called");
+
+        this.unreadConversationsListeners.add(unreadConversationsListener);
+
+        Log.i(TAG, "ConversationsHandler.addUnreadConversationsListener: unreadConversationsListener with hashCode: " +
+                unreadConversationsListener.hashCode() + " added");
+    }
+
     public void removeConversationsListener(ConversationsListener conversationsListener) {
         Log.v(TAG, "  removeGroupsListener called");
 
@@ -459,10 +477,20 @@ public class ConversationsHandler {
                 conversationsListener.hashCode() + " removed");
     }
 
+    public void removeUnreadConversationsListener(UnreadConversationsListener unreadConversationsListener) {
+        Log.v(TAG, "ConversationsHandler.removeUnreadConversationsListener: called");
+
+        if (unreadConversationsListener != null)
+            this.unreadConversationsListeners.remove(unreadConversationsListener);
+
+        Log.i(TAG, "ConversationsHandler.removeUnreadConversationsListener: unreadConversationsListener with hashCode: " +
+                unreadConversationsListener.hashCode() + " removed");
+    }
+
     public void upsertConversationsListener(ConversationsListener conversationsListener) {
         Log.v(TAG, "  upsertGroupsListener called");
 
-        if (conversations.contains(conversationsListener)) {
+        if (conversationsListeners.contains(conversationsListener)) {
             this.removeConversationsListener(conversationsListener);
             this.addConversationsListener(conversationsListener);
             Log.i(TAG, "  conversationsListener with hashCode: " +
@@ -475,18 +503,47 @@ public class ConversationsHandler {
         }
     }
 
+    public void upsetUnreadConversationsListener(UnreadConversationsListener unreadConversationsListener) {
+        Log.v(TAG, "ConversationsHandler.upsetUnreadConversationsListener: called");
+
+        if (unreadConversationsListeners.contains(unreadConversationsListener)) {
+            this.removeUnreadConversationsListener(unreadConversationsListener);
+            this.addUnreadConversationsListener(unreadConversationsListener);
+            Log.i(TAG, "ConversationsHandler.upsetUnreadConversationsListener: unreadConversationsListener with hashCode: " +
+                    unreadConversationsListener.hashCode() + " updated");
+
+        } else {
+            this.addUnreadConversationsListener(unreadConversationsListener);
+            Log.i(TAG, "ConversationsHandler.upsetUnreadConversationsListener: unreadConversationsListener with hashCode: " +
+                    unreadConversationsListener.hashCode() + " added");
+        }
+    }
+
     public void removeAllConversationsListeners() {
         this.conversationsListeners = null;
         Log.i(TAG, "Removed all ConversationsListeners");
+    }
+
+    public void removeAllUnreadConversationsListeners() {
+        if (unreadConversationsListeners != null) unreadConversationsListeners.clear();
+        unreadConversationsListeners = null;
+        Log.i(TAG, "ConversationsHandler.removeAllUnreadConversationsListeners: Removed all ConversationsListeners");
     }
 
     public ChildEventListener getConversationsChildEventListener() {
         return conversationsChildEventListener;
     }
 
+    public ValueEventListener getUnreadConversationsValueEventListener() {
+        return unreadConversationsValueEventListener;
+    }
+
     public void disconnect() {
         this.conversationsNode.removeEventListener(this.conversationsChildEventListener);
         this.removeAllConversationsListeners();
+
+        this.conversationsNode.removeEventListener(unreadConversationsValueEventListener);
+        this.removeAllUnreadConversationsListeners();
     }
 
 //    public void deleteConversation(String recipientId, final ConversationsListener conversationsListener) {
