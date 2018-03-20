@@ -127,6 +127,9 @@ public class MessageListActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        groupsSyncronizer = ChatManager.getInstance().getGroupsSyncronizer();
+
         setContentView(R.layout.activity_message_list);
 
         registerViews();
@@ -141,33 +144,45 @@ public class MessageListActivity extends AppCompatActivity
             channelType = Message.DIRECT_CHANNEL_TYPE;
         }
 
-        if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
-            // retrieve group
-            chatGroup = ChatManager.getInstance().getGroupsSyncronizer().getById(recipient.getId());
-        } else {
-            // retrive contact
-            String recipientId;
-            if (recipient != null) {
-                recipientId = recipient.getId();
-            } else {
-                if (StringUtils.isValid(getIntent().getStringExtra("sender"))) {
-                    recipientId = getIntent().getStringExtra("sender");
-                    Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate:" +
-                            " recipientId == " + recipientId);
-                } else {
-                    throw new ChatRuntimeException("Recipient can not be retrieved! " +
-                            "Did you pass it correctly?");
-                }
-            }
-
-            // retrieve the updated recipient
-            recipient = ChatManager.getInstance().getContactsSynchronizer()
-                    .findById(recipientId);
+        // get the recipient from background notification
+        if (isFromBackgroundNotification()) {
+            recipient = getUserFromBackgroundNotification();
         }
 
+        if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+            chatGroup = ChatManager.getInstance().getGroupsSyncronizer().getById(recipient.getId());
+        } else {
+            // default case : DIRECT_CHANNEL_TYPE
+        }
+
+
+//        if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+//            // retrieve group
+//            chatGroup = ChatManager.getInstance().getGroupsSyncronizer().getById(recipient.getId());
+//        } else {
+//            // retrive contact
+//            String recipientId;
+//            if (recipient != null) {
+//                recipientId = recipient.getId();
+//            } else {
+//                if (StringUtils.isValid(getIntent().getStringExtra("sender"))) {
+//                    recipientId = getIntent().getStringExtra("sender");
+//                    Log.d(DEBUG_NOTIFICATION, "MessageListActivity.onCreate:" +
+//                            " recipientId == " + recipientId);
+//                } else {
+//                    throw new ChatRuntimeException("Recipient can not be retrieved! " +
+//                            "Did you pass it correctly?");
+//                }
+//            }
+//
+//            // retrieve the updated recipient
+//            recipient = ChatManager.getInstance().getContactsSynchronizer().findById(recipientId);
+//        }
+
+
+
         // ######### begin conversation messages handler
-        conversationMessagesHandler = ChatManager.getInstance()
-                .getConversationMessagesHandler(recipient);
+        conversationMessagesHandler = ChatManager.getInstance().getConversationMessagesHandler(recipient);
         conversationMessagesHandler.upsertConversationMessagesListener(this);
         Log.d(TAG, "MessageListActivity.onCreate: conversationMessagesHandler attached");
         conversationMessagesHandler.connect();
@@ -210,11 +225,42 @@ public class MessageListActivity extends AppCompatActivity
 
         // panel which contains the edittext, the emoji button and the attach button
         initInputPanel();
+
+
+    }
+
+    // if the calling intent contains the
+    private boolean isFromBackgroundNotification() {
+
+        if (getIntent() == null) {
+            return false;
+        } else {
+            if (!getIntent().hasExtra("sender")) {
+                return false;
+            } else {
+                String recipient = getIntent().getStringExtra("sender");
+                return StringUtils.isValid(recipient) ? true : false;
+            }
+        }
+    }
+
+    private IChatUser getUserFromBackgroundNotification() {
+        if (StringUtils.isValid(getIntent().getStringExtra("sender"))) {
+            String recipientId = getIntent().getStringExtra("sender");
+            Log.d(DEBUG_NOTIFICATION, "MessageListActivity.findUserByBackgroundPushRecicpientId:" +
+                    " recipientId == " + recipientId);
+
+            return ChatManager.getInstance().getContactsSynchronizer().findById(recipientId);
+        } else {
+            throw new ChatRuntimeException("Recipient can not be retrieved! " +
+                    "Did you pass it correctly?");
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         // set the active conversation
         ChatManager.getInstance().getConversationsHandler()
                 .setCurrentOpenConversationId(recipient.getId());
@@ -260,7 +306,7 @@ public class MessageListActivity extends AppCompatActivity
                     " presenceHandler detached");
         }
 
-        if(groupsSyncronizer != null) {
+        if (groupsSyncronizer != null) {
             groupsSyncronizer.removeGroupsListener(this);
             Log.d(TAG, "MessageListActivity.onDestroy:" +
                     " groupsSyncronizer detached");

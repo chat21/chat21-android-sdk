@@ -9,10 +9,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.contacts.listeners.ContactListener;
 import org.chat21.android.core.exception.ChatFieldNotFoundException;
@@ -20,6 +16,11 @@ import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.users.models.ChatUser;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.utils.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_CONTACTS_SYNC;
 
@@ -55,8 +56,20 @@ public class ContactsSynchronizer {
         Log.d(DEBUG_CONTACTS_SYNC, "contactsNode : " + contactsNode.toString());
     }
 
-    public ChildEventListener connect() {
+    public synchronized ChildEventListener connect() {
         Log.d(DEBUG_CONTACTS_SYNC, "connecting  for contacts ");
+
+//        contactsNode.orderByChild("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//               Log.d("TAG", dataSnapshot.toString());
+//               Log.d("TAG", "We're done loading the initial " + dataSnapshot.getChildrenCount() + " items");
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
         if (contactsChildEventListener == null) {
 
@@ -65,26 +78,28 @@ public class ContactsSynchronizer {
             contactsChildEventListener = contactsNode.orderByChild("firstname").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-
                     new AsyncTask<DataSnapshot, Void, Void>() {
-
                         @Override
-                        protected Void doInBackground(DataSnapshot... snapshots) {
-                            Log.v(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildAdded");
+                        protected Void doInBackground(final DataSnapshot... snapshots) {
+                            new Thread(new Runnable() {
+                                public void run() {
+                                    Log.v(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildAdded");
 
-                            try {
-                                IChatUser contact = decodeContactSnapShop(snapshots[0]);
-                                Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildAdded.contact : " + contact);
-                                addContact(contact);
-                            } catch (ChatFieldNotFoundException cfnfe) {
-                                Log.w(DEBUG_CONTACTS_SYNC, "Error decoding contact on onChildAdded " + cfnfe.getMessage());
+                                    try {
+                                        IChatUser contact = decodeContactSnapShop(snapshots[0]);
+                                        Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildAdded.contact : " + contact);
+                                        addContact(contact);
+                                    } catch (ChatFieldNotFoundException cfnfe) {
+                                        Log.w(DEBUG_CONTACTS_SYNC, "Error decoding contact on onChildAdded " + cfnfe.getMessage());
 //                                notifySubscriberAdded(null, new ChatRuntimeException(cfnfe));
-                            } catch (Exception e) {
-                                notifySubscriberAdded(null, new ChatRuntimeException(e));
-                            }
+                                    } catch (Exception e) {
+                                        notifySubscriberAdded(null, new ChatRuntimeException(e));
+                                    }
+                                }
+                            }).start();
+
                             return null;
                         }
-
                     }.execute(dataSnapshot);
                 }
 
@@ -97,17 +112,17 @@ public class ContactsSynchronizer {
 //                        protected Void doInBackground(DataSnapshot... snapshots) {
 //                            Log.v(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildChanged");
 
-                            try {
-                                IChatUser contact = decodeContactSnapShop(dataSnapshot);
-                                updateLoggedUser(contact);
-                                Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildChanged.contact : " + contact);
-                                updateContact(contact);
-                            } catch (ChatFieldNotFoundException cfnfe) {
-                                Log.w(DEBUG_CONTACTS_SYNC, "Error decoding contact on onChildChanged " + cfnfe.getMessage());
+                    try {
+                        IChatUser contact = decodeContactSnapShop(dataSnapshot);
+                        updateLoggedUser(contact);
+                        Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildChanged.contact : " + contact);
+                        updateContact(contact);
+                    } catch (ChatFieldNotFoundException cfnfe) {
+                        Log.w(DEBUG_CONTACTS_SYNC, "Error decoding contact on onChildChanged " + cfnfe.getMessage());
 //                                notifySubscriberChanged(null, new ChatRuntimeException(cfnfe));
-                            } catch (Exception e) {
-                                notifySubscriberChanged(null, new ChatRuntimeException(e));
-                            }
+                    } catch (Exception e) {
+                        notifySubscriberChanged(null, new ChatRuntimeException(e));
+                    }
 //                            return null;
 //                        }
 //                    }.execute(dataSnapshot);
@@ -289,12 +304,19 @@ public class ContactsSynchronizer {
      * @param contactId the contact id to looking for
      * @return the contact if exists, null otherwise
      */
-    public IChatUser findById(String contactId) {
-        for (IChatUser contact : contacts) {
-            if (contact.getId().equals(contactId)) {
-                return contact;
-            }
+    public synchronized IChatUser findById(String contactId) {
+//        for (IChatUser contact : contacts) {
+//            if (contact.getId().equals(contactId)) {
+//                return contact;
+//            }
+//        }
+//        return null;
+
+        for (Iterator<IChatUser> iterator = contacts.iterator(); iterator.hasNext(); ) {
+            IChatUser contact = iterator.next();
+            if (contact.getId().equals(contactId)) return contact;
         }
+
         return null;
     }
 
