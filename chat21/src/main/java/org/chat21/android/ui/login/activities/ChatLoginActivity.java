@@ -31,8 +31,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Map;
-
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.authentication.task.RefreshFirebaseInstanceIdTask;
@@ -43,6 +41,8 @@ import org.chat21.android.ui.ChatUI;
 import org.chat21.android.ui.contacts.activites.ContactListActivity;
 import org.chat21.android.ui.conversations.listeners.OnNewConversationClickListener;
 import org.chat21.android.utils.StringUtils;
+
+import java.util.Map;
 
 import static org.chat21.android.ui.ChatUI.BUNDLE_SIGNED_UP_USER_EMAIL;
 import static org.chat21.android.ui.ChatUI.BUNDLE_SIGNED_UP_USER_PASSWORD;
@@ -204,7 +204,7 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                                     ChatManager.start(ChatLoginActivity.this, mChatConfiguration, loggedUser);
                                     Log.i(TAG, "chat has been initialized with success");
 
-                                    // get device token
+//                                    // get device token
                                     new RefreshFirebaseInstanceIdTask().execute();
 
                                     ChatUI.getInstance().setContext(ChatLoginActivity.this);
@@ -263,9 +263,9 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
                             try {
                                 FirebaseDatabase.getInstance().setPersistenceEnabled(true);
                             } catch (DatabaseException databaseException) {
-                                Log.e(TAG, databaseException.toString());
+                                Log.w(TAG, databaseException.toString());
                             } catch (Exception e) {
-                                Log.e(TAG, e.toString());
+                                Log.w(TAG, e.toString());
                             }
                         } else {
                             // If sign in fails, display a message to the user.
