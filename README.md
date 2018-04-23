@@ -114,7 +114,7 @@ compile 'com.android.support:multidex:1.0.1'
 compile "com.google.android.gms:play-services:11.8.0"
 compile 'com.android.support:design:26.1.0'
 
-compile 'org.chat21.android:chat21:1.0.4'
+compile 'org.chat21.android:chat21:1.0.6'
 compile 'com.vanniktech:emoji-ios:0.5.1'
 }
 // ...

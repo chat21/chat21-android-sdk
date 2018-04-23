@@ -1,12 +1,10 @@
 ﻿# CHANGELOG
 
-## v.: 1.0.7 b.: 34
-- multi device instance support
-- fixed retrieving user - PublicProfileActivity, MessageListActivity
-
 ## v.: 1.0.6 b.: 33
 - updated attachments metadata
 - update firebase dependencies resolution (from 11.6.0 to 11.8.0)
+- multi device instance support
+- fixed retrieving user - PublicProfileActivity, MessageListActivity
 
 ## v.: 1.0.5 b.: 32
 - show user id if username is not available
