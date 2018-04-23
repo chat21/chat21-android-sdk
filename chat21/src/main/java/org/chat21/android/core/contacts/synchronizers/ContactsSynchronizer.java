@@ -103,7 +103,7 @@ public class ContactsSynchronizer {
                     }.execute(dataSnapshot);
                 }
 
-                //for return recepit
+                //for return receipt
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
 

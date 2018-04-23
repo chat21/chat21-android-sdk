@@ -50,6 +50,7 @@ import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.chat_groups.listeners.ChatGroupsListener;
 import org.chat21.android.core.chat_groups.models.ChatGroup;
 import org.chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
+import org.chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.messages.handlers.ConversationMessagesHandler;
 import org.chat21.android.core.messages.listeners.ConversationMessagesListener;
@@ -136,6 +137,17 @@ public class MessageListActivity extends AppCompatActivity
 
         // retrieve recipient
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.BUNDLE_RECIPIENT);
+
+        // BEGIN contactsSynchronizer
+        ContactsSynchronizer contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
+        if (contactsSynchronizer != null) {
+            IChatUser matchedContact = contactsSynchronizer.findById(recipient.getId());
+
+            if(matchedContact != null) {
+                recipient = matchedContact;
+            }
+        }
+        // END contactsSynchronizer
 
         // retrieve channel type
         channelType = (String) getIntent().getExtras().get(BUNDLE_CHANNEL_TYPE);

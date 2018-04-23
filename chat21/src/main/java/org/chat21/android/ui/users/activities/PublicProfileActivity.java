@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
+import org.chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import org.chat21.android.core.presence.PresenceHandler;
 import org.chat21.android.core.presence.listeners.PresenceListener;
 import org.chat21.android.core.users.models.IChatUser;
@@ -45,6 +46,17 @@ public class PublicProfileActivity extends AppCompatActivity implements Presence
         contact = (IChatUser) getIntent().getSerializableExtra(ChatUI.BUNDLE_RECIPIENT);
 
         presenceHandler = ChatManager.getInstance().getPresenceHandler(contact.getId());
+
+        // BEGIN contactsSynchronizer
+        ContactsSynchronizer contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
+        if (contactsSynchronizer != null) {
+            IChatUser matchedContact = contactsSynchronizer.findById(contact.getId());
+
+            if(matchedContact != null) {
+                contact = matchedContact;
+            }
+        }
+        // END contactsSynchronizer
 
         // set toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

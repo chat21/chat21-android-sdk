@@ -2,6 +2,7 @@
 
 ## v.: 1.0.7 b.: 34
 - multi device instance support
+- fixed retrieving user - PublicProfileActivity, MessageListActivity
 
 ## v.: 1.0.6 b.: 33
 - updated attachments metadata
