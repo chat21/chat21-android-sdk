@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.os.Build;
 
 
 /**
@@ -72,6 +74,21 @@ public class ChatUtils {
 //        Log.d(TAG, "Language: " + lang);
 //        return lang;
 //    }
+
+    public static String getDeviceModel() {
+        return android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL;
+    }
+
+    public static String getSystemVersion() {
+        String release = Build.VERSION.RELEASE;
+//        int sdkVersion = Build.VERSION.SDK_INT;
+//        return release + " - " + sdkVersion;
+        return release;
+    }
+
+    public static String getSystemLanguage(Resources resources) {
+        return resources.getConfiguration().locale.toString();
+    }
 
     @Deprecated
     public static String normalizeUsername(String username) {

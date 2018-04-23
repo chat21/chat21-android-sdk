@@ -13,6 +13,9 @@ import org.chat21.android.core.ChatManager;
 import org.chat21.android.utils.ChatUtils;
 import org.chat21.android.utils.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
 /*
@@ -21,6 +24,7 @@ import static org.chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
 //https://github.com/MahmoudAlyuDeen/FirebaseIM/blob/master/app/src/main/java/afterapps/com/firebaseim/login/LoginActivity.java
 public class SaveFirebaseInstanceIdService extends FirebaseInstanceIdService {
+    private static final String TAG_TOKEN = "TAG_TOKEN";
 
     @Override
     public void onTokenRefresh() {
@@ -28,54 +32,43 @@ public class SaveFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
         Log.d(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh");
 
-        String instanceId = FirebaseInstanceId.getInstance().getToken();
-        Log.d(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh: called with instanceId: " + instanceId);
+        String token = FirebaseInstanceId.getInstance().getToken();
+        Log.d(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh:" +
+                " called with instanceId: " + token);
+        Log.i(TAG_TOKEN, "SaveFirebaseInstanceIdService: token == " + token);
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-//        String tenant = ChatAuthentication.getInstance().getTenant();
-//        Log.i(DEBUG_LOGIN, "authTenant == " + tenant);
 
         String appId = ChatManager.Configuration.appId;
 
         if (firebaseUser != null && StringUtils.isValid(appId)) {
 
-//            DatabaseReference root;
-//            if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
-//                root = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
-//            } else {
-//                root = FirebaseDatabase.getInstance().getReference();
-//            }
-//
-//            DatabaseReference firebaseUsersPath = root
-//                    .child("apps/" + appId + "/users/" + ChatUtils.normalizeUsername(firebaseUser.getUid()) + "/instanceId/" + instanceId);
-//            firebaseUsersPath.setValue(instanceId);
-
-//            DatabaseReference firebaseUsersPath = FirebaseDatabase.getInstance().getReference()
-//                    .child("apps")
-//                    .child(appId)
-//                    .child("users")
-////                    .child(tenant + "-" + userId)
-//                    .child(ChatUtils.normalizeUsername(firebaseUser.getUid()))
-//                    .child("instanceId");
-//            firebaseUsersPath.setValue(instanceId);
-
             DatabaseReference root;
             if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
-                root = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
+                root = FirebaseDatabase.getInstance()
+                        .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
             } else {
                 root = FirebaseDatabase.getInstance().getReference();
             }
 
-            // remove the instanceId for the logged user
             DatabaseReference firebaseUsersPath = root
-                    .child("apps/" + ChatManager.Configuration.appId + "/users/" + ChatUtils.normalizeUsername(firebaseUser.getUid()) + "/instanceId");
-            firebaseUsersPath.setValue(instanceId);
+                    .child("apps/" + ChatManager.Configuration.appId +
+                            "/users/" + firebaseUser.getUid() + "/instances/" + token);
 
-            Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh:  saved with instanceId: " + instanceId +
+            Map<String, Object> device = new HashMap<>();
+            device.put("device_model", ChatUtils.getDeviceModel());
+            device.put("platform", "Android");
+            device.put("platform_version", ChatUtils.getSystemVersion());
+            device.put("language", ChatUtils.getSystemLanguage(getResources()));
+
+            firebaseUsersPath.setValue(device); // placeholder value
+
+            Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh: " +
+                    "saved with token: " + token +
                     ", appId: " + appId + ", firebaseUsersPath: " + firebaseUsersPath);
         } else {
-            Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh: user is null. instanceId == " + instanceId + ", appId == " + appId);
+            Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh:" +
+                    "user is null. token == " + token + ", appId == " + appId);
         }
     }
 }

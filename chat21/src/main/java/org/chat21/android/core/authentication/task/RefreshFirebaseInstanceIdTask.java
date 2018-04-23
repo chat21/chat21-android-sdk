@@ -13,6 +13,7 @@ import static org.chat21.android.utils.DebugConstants.DEBUG_LOGIN;
  * Created by andrealeo
  */
 public class RefreshFirebaseInstanceIdTask extends AsyncTask<Object, Object, Void> {
+    private static final String TAG_TOKEN = "TAG_TOKEN";
 
     public RefreshFirebaseInstanceIdTask() {
         Log.d(DEBUG_LOGIN, "RefreshFirebaseInstanceIdTask");
@@ -26,7 +27,8 @@ public class RefreshFirebaseInstanceIdTask extends AsyncTask<Object, Object, Voi
 
             // Now manually call onTokenRefresh()
             Log.d(DEBUG_LOGIN, "RefreshFirebaseInstanceIdTask.doInBackground: Getting new token");
-            FirebaseInstanceId.getInstance().getToken();
+            String token = FirebaseInstanceId.getInstance().getToken();
+            Log.i(TAG_TOKEN, "RefreshFirebaseInstanceIdTask: token == " + token);
 
         } catch (IOException e) {
             Log.e(DEBUG_LOGIN, "RefreshFirebaseInstanceIdTask.doInBackground: deleteInstanceIdCatch: " + e.getMessage());

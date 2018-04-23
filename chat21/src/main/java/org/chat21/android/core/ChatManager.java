@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -40,6 +41,7 @@ import static org.chat21.android.utils.DebugConstants.DEBUG_LOGIN;
  */
 public class ChatManager {
     private static final String TAG = ChatManager.class.getName();
+    private static final String TAG_TOKEN = "TAG_TOKEN";
 
     private static final String _SERIALIZED_CHAT_CONFIGURATION_TENANT =
             "_SERIALIZED_CHAT_CONFIGURATION_TENANT";
@@ -342,6 +344,29 @@ public class ChatManager {
         removeLoggedUser();
     }
 
+//    private void deleteInstanceId() {
+//
+//        DatabaseReference root;
+//        if (StringUtils.isValid(Configuration.firebaseUrl)) {
+//            root = FirebaseDatabase.getInstance().getReferenceFromUrl(Configuration.firebaseUrl);
+//        } else {
+//            root = FirebaseDatabase.getInstance().getReference();
+//        }
+//
+//        // remove the instanceId for the logged user
+//        DatabaseReference firebaseUsersPath = root
+//                .child("apps/" + ChatManager.Configuration.appId + "/users/" +
+//                        loggedUser.getId() + "/instanceId");
+//        firebaseUsersPath.removeValue();
+//
+//        try {
+//            FirebaseInstanceId.getInstance().deleteInstanceId();
+//        } catch (IOException e) {
+//            Log.e(DEBUG_LOGIN, "cannot delete instanceId. " + e.getMessage());
+//            return;
+//        }
+//    }
+
     private void deleteInstanceId() {
 
         DatabaseReference root;
@@ -351,10 +376,13 @@ public class ChatManager {
             root = FirebaseDatabase.getInstance().getReference();
         }
 
+        String token = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG_TOKEN, "ChatManager.deleteInstanceId: token ==  " + token);
+
         // remove the instanceId for the logged user
         DatabaseReference firebaseUsersPath = root
                 .child("apps/" + ChatManager.Configuration.appId + "/users/" +
-                        loggedUser.getId() + "/instanceId");
+                        loggedUser.getId() + "/instances/" + token);
         firebaseUsersPath.removeValue();
 
         try {

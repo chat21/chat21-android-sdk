@@ -25,9 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.io.IOException;
-
 import org.chat21.android.R;
+import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.authentication.task.GetCustomTokenTask;
 import org.chat21.android.core.authentication.task.OnCustomAuthTokenCallback;
 import org.chat21.android.core.authentication.task.RefreshFirebaseInstanceIdTask;
@@ -36,6 +35,8 @@ import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.instanceid.receiver.TokenBroadcastReceiver;
 import org.chat21.android.utils.ChatUtils;
 import org.chat21.android.utils.StringUtils;
+
+import java.io.IOException;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 
@@ -427,7 +428,7 @@ public final class ChatAuthentication {
                             .getUid();
 
                     // fix Issue #5
-                    removeInstanceId(appId, userId);  // fix Issue #23
+                    deleteInstanceId(userId);  // fix Issue #23
 
                     FirebaseInstanceId.getInstance().deleteInstanceId();
                 } catch (IOException e) {
@@ -486,15 +487,30 @@ public final class ChatAuthentication {
         }.execute();
     }
 
-    // remove the instanceId for an user on a tenant
-    // fix Issue #5
-    // fix Issue #23
-    private void removeInstanceId(String appId, String userId) {
-        Log.d(DEBUG_LOGIN, "removeInstanceId");
+    private void deleteInstanceId(String userId) {
 
-        DatabaseReference firebaseUsersPath = FirebaseDatabase.getInstance().getReference()
-                .child("apps/" + appId + "/users/" + userId + "/instanceId");
+        DatabaseReference root;
+        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+            root = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
+        } else {
+            root = FirebaseDatabase.getInstance().getReference();
+        }
+
+        String token = FirebaseInstanceId.getInstance().getToken();
+        Log.d(DEBUG_LOGIN, "ChatAuthentication.deleteInstanceId: token ==  " + token);
+
+        // remove the instanceId for the logged user
+        DatabaseReference firebaseUsersPath = root
+                .child("apps/" + ChatManager.Configuration.appId + "/users/" +
+                        userId + "/instances/" + token);
         firebaseUsersPath.removeValue();
+
+        try {
+            FirebaseInstanceId.getInstance().deleteInstanceId();
+        } catch (IOException e) {
+            Log.e(DEBUG_LOGIN, "cannot delete instanceId. " + e.getMessage());
+            return;
+        }
     }
 
     private void setCustomToken(String token) {
