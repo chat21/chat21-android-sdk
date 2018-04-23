@@ -17,6 +17,7 @@ import org.chat21.android.R;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import org.chat21.android.ui.chat_groups.listeners.OnGroupMemberClickListener;
+import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.image.CropCircleTransformation;
 
 /**
@@ -56,7 +57,7 @@ public class GroupMembersListAdapter extends AbstractRecyclerAdapter<IChatUser,
 //        Log.d(TAG, "onBindViewHolder");
         IChatUser contact = getItem(position);
 
-        holder.contact.setText(contact.getFullName());
+        holder.contact.setText(StringUtils.isValid(contact.getFullName()) ? contact.getFullName() : contact.getId());
 
         loadProfileImage(holder, contact);
 

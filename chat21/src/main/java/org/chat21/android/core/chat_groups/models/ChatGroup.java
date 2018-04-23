@@ -1,7 +1,13 @@
 package org.chat21.android.core.chat_groups.models;
 
+import android.util.Log;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
+
+import org.chat21.android.core.ChatManager;
+import org.chat21.android.core.users.models.IChatUser;
+import org.chat21.android.utils.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,9 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.chat21.android.core.ChatManager;
-import org.chat21.android.core.users.models.IChatUser;
 
 /**
  * Created by stefanodp91 on 16/01/17.
@@ -127,14 +130,27 @@ public class ChatGroup implements Serializable {
 
     public String printMembersListWithSeparator(String separator) {
         String delimitedList = "";
+        String usersWithoutDisplayName = "";
 
         if (getMembersList() != null && getMembersList().size() > 0) {
             // append chat users
             Iterator<IChatUser> it = getMembersList().iterator();
 
             while (it.hasNext()) {
-                delimitedList += separator + it.next().getFullName();
+                IChatUser usr = it.next();
+                String userId = usr.getId();
+                String fullName = usr.getFullName();
+
+                if (StringUtils.isValid(fullName)) {
+                    delimitedList += separator + fullName;
+                } else {
+                    usersWithoutDisplayName += separator + userId;
+                }
             }
+
+            // append the list of the user without the fullName to the list of the user with a
+            // valid fullName
+            delimitedList = delimitedList + usersWithoutDisplayName;
 
             // if the string starts with separator remove it
             if (delimitedList.startsWith(separator)) {
