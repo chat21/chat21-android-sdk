@@ -1,5 +1,8 @@
 ﻿# CHANGELOG
 
+## v.: 1.0.7 b.: 34
+- fixed findById user with concurrent arraylist - ContactsSynchronizer
+
 ## v.: 1.0.6 b.: 33
 - updated attachments metadata
 - update firebase dependencies resolution (from 11.6.0 to 11.8.0)

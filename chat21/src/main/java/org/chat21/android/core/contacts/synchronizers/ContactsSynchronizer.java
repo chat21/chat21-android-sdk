@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_CONTACTS_SYNC;
 
@@ -30,7 +31,8 @@ import static org.chat21.android.utils.DebugConstants.DEBUG_CONTACTS_SYNC;
 
 public class ContactsSynchronizer {
 
-    private List<IChatUser> contacts = new ArrayList<>(); // contacts in memory
+    private CopyOnWriteArrayList<IChatUser> contacts = new CopyOnWriteArrayList<>(); // contacts in memory
+    private Iterator<IChatUser> contactsIterator;
 
     private DatabaseReference contactsNode;
 
@@ -39,6 +41,8 @@ public class ContactsSynchronizer {
     private List<ContactListener> contactListeners;
 
     public ContactsSynchronizer(String firebaseUrl, String appId) {
+
+        contactsIterator = contacts.iterator();
 
         contactListeners = new ArrayList<>();
 
@@ -211,11 +215,11 @@ public class ContactsSynchronizer {
 //        }
 //    }
 
-    public List<IChatUser> getContacts() {
+    public CopyOnWriteArrayList<IChatUser> getContacts() {
         return contacts;
     }
 
-    public void setContacts(List<IChatUser> contacts) {
+    public void setContacts(CopyOnWriteArrayList<IChatUser> contacts) {
         this.contacts = contacts;
     }
 
@@ -312,8 +316,10 @@ public class ContactsSynchronizer {
 //        }
 //        return null;
 
-        for (Iterator<IChatUser> iterator = contacts.iterator(); iterator.hasNext(); ) {
-            IChatUser contact = iterator.next();
+//        Iterator<IChatUser> iterator = contacts.iterator();
+
+        while (contactsIterator.hasNext()) {
+            IChatUser contact = contactsIterator.next();
             if (contact.getId().equals(contactId)) return contact;
         }
 
