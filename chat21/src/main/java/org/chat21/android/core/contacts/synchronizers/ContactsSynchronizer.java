@@ -32,7 +32,6 @@ import static org.chat21.android.utils.DebugConstants.DEBUG_CONTACTS_SYNC;
 public class ContactsSynchronizer {
 
     private CopyOnWriteArrayList<IChatUser> contacts = new CopyOnWriteArrayList<>(); // contacts in memory
-    private Iterator<IChatUser> contactsIterator;
 
     private DatabaseReference contactsNode;
 
@@ -41,8 +40,6 @@ public class ContactsSynchronizer {
     private List<ContactListener> contactListeners;
 
     public ContactsSynchronizer(String firebaseUrl, String appId) {
-
-        contactsIterator = contacts.iterator();
 
         contactListeners = new ArrayList<>();
 
@@ -316,11 +313,18 @@ public class ContactsSynchronizer {
 //        }
 //        return null;
 
-//        Iterator<IChatUser> iterator = contacts.iterator();
 
-        while (contactsIterator.hasNext()) {
-            IChatUser contact = contactsIterator.next();
-            if (contact.getId().equals(contactId)) return contact;
+
+//        Iterator<IChatUser> contactsIterator = contacts.iterator();
+//        if (contactsIterator.hasNext()) {
+//            IChatUser contact = contactsIterator.next();
+//            if (contact.getId().equals(contactId)) return contact;
+//        }
+
+        for (IChatUser contact : contacts) {
+            if (contact.getId().equals(contactId)) {
+                return contact;
+            }
         }
 
         return null;
