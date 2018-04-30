@@ -1,7 +1,7 @@
 ﻿# CHANGELOG
 
 ## v.: 1.0.8 b.: 35
--fixed groups members
+- fixed groups members
 
 ## v.: 1.0.7 b.: 34
 - fixed findById user with concurrent arraylist - ContactsSynchronizer

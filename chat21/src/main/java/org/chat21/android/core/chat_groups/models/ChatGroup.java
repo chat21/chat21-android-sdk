@@ -119,7 +119,7 @@ public class ChatGroup implements Serializable {
             } else {
                 // add user id
                 // TODO: 30/04/18 hardcoded username "system"
-                Log.d("entry", entry.toString());
+//                Log.d("entry", entry.toString());
                 if(!entry.getKey().equals("system")) {
                     patchedMembers.add(new ChatUser(entry.getKey(), ""));
                 }

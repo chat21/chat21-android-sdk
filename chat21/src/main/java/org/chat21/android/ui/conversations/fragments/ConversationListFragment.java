@@ -147,7 +147,6 @@ public class ConversationListFragment extends Fragment implements
         Log.d(DEBUG_MY_PRESENCE, "ConversationListFragment.onCreateView: myPresenceHandler attached");
         myPresenceHandler.connect();
 
-
 //        // subscribe for current user presence changes
 //        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
 //                ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
