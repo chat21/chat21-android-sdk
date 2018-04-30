@@ -3,6 +3,7 @@ package org.chat21.android.ui.chat_groups.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -62,7 +63,8 @@ public class ChatGroupsListFragment extends Fragment implements ChatGroupsListen
 
         // init RecyclerView
         recyclerViewChatGroups = view.findViewById(R.id.chat_groups_list);
-        recyclerViewChatGroups.addItemDecoration(new ItemDecoration(getActivity().getApplicationContext(),
+        recyclerViewChatGroups.addItemDecoration(new ItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL,
                 getResources().getDrawable(R.drawable.decorator_activity_my_groups_list)));
         lmRvChatGroups = new LinearLayoutManager(getActivity());
         recyclerViewChatGroups.setLayoutManager(lmRvChatGroups);

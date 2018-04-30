@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## v.: 1.0.8.1 b.: 36
+- fixed item divider for chat group list- ChatGroupsListFragment, ItemDecoration
+- fixed item divider for chat group member list- GroupAdminPanelActivity, ItemDecoration
+- fixed crash on contact search - ContactListAdapter, ContactsListFragment
+
 ## v.: 1.0.8 b.: 35
 - fixed groups members
 

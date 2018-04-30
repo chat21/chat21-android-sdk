@@ -31,7 +31,7 @@ import org.chat21.android.ui.chat_groups.activities.ChatGroupsListActivity;
 import org.chat21.android.ui.conversations.adapters.ConversationsListAdapter;
 import org.chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import org.chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
-import org.chat21.android.ui.decorations.ConversationItemDecoration;
+import org.chat21.android.ui.decorations.ItemDecoration;
 import org.chat21.android.ui.messages.activities.MessageListActivity;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
@@ -108,7 +108,7 @@ public class ConversationListFragment extends Fragment implements
         recyclerViewConversations = view.findViewById(R.id.conversations_list);
 //        recyclerViewConversations.addItemDecoration(new ItemDecoration(getActivity(),
 //                getResources().getDrawable(R.drawable.decorator_fragment_conversation_list)));
-        recyclerViewConversations.addItemDecoration(new ConversationItemDecoration(getContext(),
+        recyclerViewConversations.addItemDecoration(new ItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL,
                 getResources().getDrawable(R.drawable.decorator_fragment_conversation_list)));
         rvConversationsLayoutManager = new LinearLayoutManager(getActivity());

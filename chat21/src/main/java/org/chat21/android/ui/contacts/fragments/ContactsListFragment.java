@@ -23,7 +23,7 @@ import org.chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.contacts.adapters.ContactListAdapter;
 import org.chat21.android.ui.contacts.listeners.OnContactClickListener;
-import org.chat21.android.ui.decorations.ConversationItemDecoration;
+import org.chat21.android.ui.decorations.ItemDecoration;
 
 import java.util.List;
 
@@ -69,9 +69,9 @@ public class ContactsListFragment extends Fragment {
 
         // init RecyclerView
         recyclerViewContacts = view.findViewById(R.id.contacts_list);
-        recyclerViewContacts.addItemDecoration(new ConversationItemDecoration(getContext(), // TODO: 02/03/18 change this
+        recyclerViewContacts.addItemDecoration(new ItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL,
-                getResources().getDrawable(R.drawable.decorator_fragment_conversation_list)));
+                getResources().getDrawable(R.drawable.decorator_activity_contact_list)));
         lmRvContacts = new LinearLayoutManager(getActivity());
         recyclerViewContacts.setLayoutManager(lmRvContacts);
         updateContactListAdapter(contactsSynchronizer.getContacts());

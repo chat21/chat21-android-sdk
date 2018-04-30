@@ -17,8 +17,8 @@ import org.chat21.android.ui.contacts.listeners.OnContactClickListener;
 import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.image.CropCircleTransformation;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 //import static org.chat21.android.ui.contacts.activites.ContactListActivity.TAG_CONTACTS_SEARCH;
 
@@ -96,7 +96,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
                 if (charString.isEmpty()) {
                     contactListFiltered = contactList;
                 } else {
-                    List<IChatUser> filteredList = new ArrayList<>();
+                    List<IChatUser> filteredList = new CopyOnWriteArrayList<>();
                     for (IChatUser row : contactList) {
                         // search on the user fullname
                         if (row.getFullName().toLowerCase().contains(charString.toLowerCase())) {
@@ -114,7 +114,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                contactListFiltered = (ArrayList<IChatUser>) filterResults.values;
+                contactListFiltered = (CopyOnWriteArrayList<IChatUser>) filterResults.values;
                 notifyDataSetChanged();
             }
         };

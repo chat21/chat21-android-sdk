@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -185,6 +186,7 @@ public class GroupAdminPanelActivity extends AppCompatActivity implements
     private void initRecyclerViewMembers() {
         Log.d(TAG, "initRecyclerViewMembers");
         mMemberList.addItemDecoration(new ItemDecoration(this,
+                DividerItemDecoration.VERTICAL,
                 getResources().getDrawable(R.drawable.decorator_activity_group_admin_panel_members_list)));
         mMemberList.setLayoutManager(new LinearLayoutManager(this));
         updateGroupMemberListAdapter(chatGroup.getMembersList());
