@@ -16,6 +16,7 @@
         android:layout_marginTop="@dimen/chat_margin_xx_small"
         android:background="@drawable/shape_row_chat_timestamp"
         android:gravity="center"
+        android:textSize="@dimen/chat_row_system_last_message_text_size"
         android:paddingLeft="@dimen/chat_padding_small"
         android:paddingRight="@dimen/chat_padding_small"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"

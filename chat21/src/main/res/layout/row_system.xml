@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/row_system"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/chat_margin_x_small">
+
+    <!--<TextView-->
+    <!--android:id="@+id/date"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="@dimen/chat_margin_xx_small"-->
+    <!--android:layout_marginLeft="0dp"-->
+    <!--android:layout_marginRight="0dp"-->
+    <!--android:layout_marginTop="@dimen/chat_margin_xx_small"-->
+    <!--android:background="@drawable/shape_row_chat_timestamp"-->
+    <!--android:gravity="center"-->
+    <!--android:paddingLeft="@dimen/chat_padding_small"-->
+    <!--android:paddingRight="@dimen/chat_padding_small"-->
+    <!--android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
+    <!--android:textColor="@color/blue_grey_900"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <!--<android.support.constraint.ConstraintLayout-->
+    <!--android:id="@+id/message_group"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/date">-->
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/message_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!--<android.support.constraint.ConstraintLayout-->
+        <!--android:id="@+id/box_image"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/preview"-->
+        <!--android:layout_width="@dimen/chat_row_sender_preview_size"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+        <!--<ProgressBar-->
+        <!--android:id="@+id/progress"-->
+        <!--style="?android:attr/progressBarStyle"-->
+        <!--android:layout_width="@dimen/chat_progress_bar_size"-->
+        <!--android:layout_height="@dimen/chat_progress_bar_size"-->
+        <!--android:visibility="gone"-->
+
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+        <!--</android.support.constraint.ConstraintLayout>-->
+
+        <!--<com.vanniktech.emoji.EmojiTextView-->
+        <!--android:id="@+id/message"-->
+        <!--style="@style/Base.TextAppearance.AppCompat.Medium"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:autoLink="web|email"-->
+        <!--android:linksClickable="true"-->
+        <!--android:maxWidth="@dimen/chat_row_sender_last_message_text_view_max_width"-->
+        <!--android:padding="0dp"-->
+        <!--android:textColor="@color/background_bubble_text_recipient"-->
+        <!--android:textColorLink="@color/color_clickable_link_recipient"-->
+        <!--android:textSize="@dimen/chat_row_sender_last_message_text_size"-->
+        <!--app:emojiSize="@dimen/chat_row_sender_last_message_emoji_size"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/box_image" />-->
+
+        <com.vanniktech.emoji.EmojiTextView
+            android:id="@+id/message"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web|email"
+            android:background="@color/background_bubble_system"
+            android:gravity="center"
+            android:linksClickable="true"
+            android:maxWidth="@dimen/chat_row_system_last_message_text_view_max_width"
+            android:paddingBottom="@dimen/chat_padding_xx_small"
+            android:paddingLeft="@dimen/chat_padding_normal"
+            android:paddingRight="@dimen/chat_padding_normal"
+            android:paddingTop="@dimen/chat_padding_xx_small"
+            android:textColor="@color/background_bubble_text_system"
+            android:textColorLink="@color/color_clickable_link_system"
+            android:textSize="@dimen/chat_row_system_last_message_text_size"
+            app:emojiSize="@dimen/chat_row_system_last_message_emoji_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!--<TextView-->
+        <!--android:id="@+id/timestamp"-->
+        <!--style="@style/Base.TextAppearance.AppCompat.Small"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:padding="0dp"-->
+        <!--android:textColor="@color/background_bubble_timestamp_recipient"-->
+        <!--android:textSize="@dimen/chat_row_sender_timestamp_size"-->
+        <!--app:layout_constraintRight_toLeftOf="@id/status"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/message" />-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/status"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/message" />-->
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

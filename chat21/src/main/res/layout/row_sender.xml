@@ -13,6 +13,7 @@
         android:layout_marginBottom="@dimen/chat_margin_xx_small"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
+        android:textSize="@dimen/chat_row_system_last_message_text_size"
         android:layout_marginTop="@dimen/chat_margin_xx_small"
         android:background="@drawable/shape_row_chat_timestamp"
         android:gravity="center"

@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## v.: 1.0.9 b.: 37
+- designed method to open chat with group directly - ChatUI
+- changed saveOrUpdateGroupInMemory method's scope - GroupsSyncronizer
+- designed system's message - SystemViewHolder, MessageListAdapter, row_system, ConversationMessagesHandler, Message
+
 ## v.: 1.0.8.1 b.: 36
 - fixed item divider for chat group list- ChatGroupsListFragment, ItemDecoration
 - fixed item divider for chat group member list- GroupAdminPanelActivity, ItemDecoration

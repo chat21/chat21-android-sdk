@@ -349,6 +349,12 @@ public class ConversationMessagesHandler {
             metadata = (Map<String, Object>) map.get("metadata");
         }
 
+        // if metadata is a string ignore it
+        Map<String, Object> attributes = null;
+        if (map.containsKey("attributes") && !(map.get("attributes") instanceof String)) {
+            attributes = (Map<String, Object>) map.get("attributes");
+        }
+
         Message message = new Message();
 
         message.setId(messageId);
@@ -362,6 +368,7 @@ public class ConversationMessagesHandler {
         message.setType(type);
         message.setChannelType(channelType);
         if (metadata != null) message.setMetadata(metadata);
+        if (attributes != null) message.setAttributes(attributes);
 
         Log.v(TAG, "decodeMessageSnapShop.message : " + message);
 

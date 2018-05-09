@@ -66,6 +66,9 @@ public class Message implements Serializable, Cloneable {
     @PropertyName("metadata")
     Map<String, Object> metadata;
 
+    @PropertyName("attributes")
+    Map<String, Object> attributes;
+
 
     public Message() {
 
@@ -204,6 +207,17 @@ public class Message implements Serializable, Cloneable {
         this.metadata = metadata;
     }
 
+
+    @PropertyName("attributes")
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @PropertyName("attributes")
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
     @Override
     @Exclude
     public boolean equals(Object object) {
@@ -243,6 +257,7 @@ public class Message implements Serializable, Cloneable {
                 ", type='" + type + '\'' +
                 ", channelType='" + channelType + '\'' +
                 ", metadata=" + metadata +
+                ", attributes=" + attributes +
                 '}';
     }
 }

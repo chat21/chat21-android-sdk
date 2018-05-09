@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 // source:
 // https://stackoverflow.com/questions/21329849/set-android-app-version-using-gradle
 def computeVersionName() {
-    return "1.0.8.1"
+    return "1.0.9"
 }
 
 android {
@@ -13,7 +13,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
 
-        versionCode 36
+        versionCode 37
         versionName computeVersionName()
     }
 

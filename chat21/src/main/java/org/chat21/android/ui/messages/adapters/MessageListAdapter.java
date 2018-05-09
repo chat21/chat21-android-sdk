@@ -5,14 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.adapters.AbstractRecyclerAdapter;
 import org.chat21.android.ui.messages.listeners.OnMessageClickListener;
+import org.chat21.android.utils.StringUtils;
+
+import java.util.List;
 
 /**
  * Created by stefano on 31/08/2015.
@@ -44,25 +45,26 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
     public int getItemViewType(int position) {
 //        Log.d(TAG, "position: " + position);
 
-        Message message = getItems().get(position);
-//        Log.d(TAG, "message.id: " + message.getId());
-//        Log.d(TAG, "message.sender: " + message.getSender());
+        int viewType = -1;
 
+        Message message = getItems().get(position);
+
+        String messageSubType = message.getAttributes() != null &&
+                StringUtils.isValid((String) message.getAttributes().get("subtype")) ?
+                (String) message.getAttributes().get("subtype") : null;
 
         sender = message.getSender();
 
-//        if(loggedUser != null) {
-//            Log.d(TAG, "loggedUser: " + loggedUser.toString());
-//        } else {
-//            Log.d(TAG, "loggedUser is null");
-//        }
-
-
         if (sender.compareTo(loggedUser.getId()) == 0) {
-            return R.id.row_sender;
+            viewType = R.id.row_sender;
+        } else if (message.getType().equals("info") ||
+                StringUtils.isValid(messageSubType) && messageSubType.equals("info")) {
+            viewType = R.id.row_system;
         } else {
-            return R.id.row_recipient;
+            viewType = R.id.row_recipient;
         }
+
+        return viewType;
     }
 
     @Override
@@ -75,6 +77,9 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
         } else if (viewType == R.id.row_recipient) {
             return new RecipientViewHolder(
                     inflater.inflate(R.layout.row_recipient, parent, false));
+        } else if (viewType == R.id.row_system) {
+            return new SystemViewHolder(
+                    inflater.inflate(R.layout.row_system, parent, false));
         }
         return null;
     }
@@ -95,6 +100,8 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
         } else if (holder instanceof RecipientViewHolder) {
             ((RecipientViewHolder) holder).bind(previousMessage, message,
                     position, onMessageClickListener);
+        } else if (holder instanceof SystemViewHolder) {
+            ((SystemViewHolder) holder).bind(message);
         }
     }
 
