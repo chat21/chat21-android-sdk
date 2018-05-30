@@ -1,5 +1,9 @@
 ﻿# CHANGELOG
 
+## v.: 1.0.10 b.: 38
+- fixed remove conversation - ConversationsHandler, ConversationsListener, BottomSheetConversationsListFragmentLongPress, ConversationListFragment
+- fixed auth expiring issue - ChatSplashActivity, ChatAuthentication
+
 ## v.: 1.0.9 b.: 37
 - designed method to open chat with group directly - ChatUI
 - changed saveOrUpdateGroupInMemory method's scope - GroupsSyncronizer
