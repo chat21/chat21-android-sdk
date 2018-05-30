@@ -117,7 +117,7 @@ public final class ChatAuthentication {
         context.registerReceiver(mTokenReceiver, TokenBroadcastReceiver.getFilter());
     }
 
-    public void createAuthListener() {
+    public void createAuthListener(final OnAuthStateChangeListener onAuthStateChangeListener) {
         Log.d(DEBUG_LOGIN, "createAuthListener");
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -136,9 +136,13 @@ public final class ChatAuthentication {
                     if (!isUserProfileUpdated)
                         updateUserProfile(getFullName(), null);
 
+                    onAuthStateChangeListener.onAuthStateChanged(user);
+
                 } else {
                     // User is signed out
                     Log.i(DEBUG_LOGIN, "onAuthStateChanged:signed_out");
+
+                    onAuthStateChangeListener.onAuthStateChanged(null);
                 }
             }
         };
@@ -662,5 +666,9 @@ public final class ChatAuthentication {
     public void destroyInstance() {
         authInstance = null;
         Log.d(DEBUG_LOGIN, "authInstance destroyed");
+    }
+
+    public interface OnAuthStateChangeListener {
+        void onAuthStateChanged(FirebaseUser user);
     }
 }

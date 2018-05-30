@@ -7,8 +7,11 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.chat21.android.R;
+import org.chat21.android.core.ChatManager;
+import org.chat21.android.core.authentication.ChatAuthentication;
 import org.chat21.android.utils.ChatUtils;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_LOGIN;
@@ -41,16 +44,48 @@ public abstract class ChatSplashActivity extends AppCompatActivity {
     private static final int LOGIN_REQUEST = 0;
     private static final int TARGET_REQUEST = 1;
 
+    private ChatAuthentication.OnAuthStateChangeListener onAuthStateChangeListener =
+            new ChatAuthentication.OnAuthStateChangeListener() {
+        @Override
+        public void onAuthStateChanged(FirebaseUser user) {
+            runDispatch();
+        }
+    };
+
     @Override
     final protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_splash);
         Log.d(DEBUG_LOGIN, "ChatSplashActivity.onCreate");
 
+        ChatAuthentication.getInstance().setTenant(ChatManager.Configuration.appId);
+        ChatAuthentication.getInstance().createAuthListener(onAuthStateChangeListener);
+
         TextView title = findViewById(R.id.title);
         title.setText(ChatUtils.getApplicationName(this));
 
-        runDispatch();
+//        runDispatch();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+
+        // Check if user is signed in (non-null) and update UI accordingly.
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+        ChatAuthentication.getInstance().getFirebaseAuth()
+                .addAuthStateListener(ChatAuthentication.getInstance().getAuthListener());
+
+        Log.d(DEBUG_LOGIN, "ChatLoginActivity.onStart: auth state listener attached ");
+    }
+
+    @Override
+    public void onStop() {
+        ChatAuthentication.getInstance().removeAuthStateListener();
+        Log.d(DEBUG_LOGIN, "ChatLoginActivity.onStart: auth state listener detached ");
+
+        super.onStop();
     }
 
     @Override
