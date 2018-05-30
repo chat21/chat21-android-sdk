@@ -236,8 +236,13 @@ public class ConversationListFragment extends Fragment implements
 
     @Override
     public void onConversationRemoved(ChatRuntimeException e) {
-        conversationsListAdapter.notifyDataSetChanged();
-        toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
+        Log.d(TAG, "ConversationListFragment.onConversationRemoved");
+        if(e == null) {
+            conversationsListAdapter.notifyDataSetChanged();
+            toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
+        } else {
+            Log.d(TAG, "ConversationListFragment.onConversationRemoved: " + e.toString());
+        }
     }
 
     @Override
@@ -258,6 +263,7 @@ public class ConversationListFragment extends Fragment implements
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         BottomSheetConversationsListFragmentLongPress dialog =
                 BottomSheetConversationsListFragmentLongPress.newInstance(conversation);
+        dialog.setConversationsHandler(conversationsHandler);
         dialog.show(ft, BottomSheetConversationsListFragmentLongPress.class.getName());
     }
 

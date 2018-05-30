@@ -1,6 +1,7 @@
 package org.chat21.android.core.conversations;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.ChildEventListener;
@@ -240,22 +241,41 @@ public class ConversationsHandler {
         }
     }
 
-    // it checks if the conversation already exists.
+//    // it checks if the conversation already exists.
+//    // if the conversation exists delete it
+//    private void deleteConversationFromMemory(Conversation conversationToDelete) {
+//        // look for the conversation
+//        int index = -1;
+//        for (Conversation tempConversation : conversations) {
+//            if (tempConversation.equals(conversationToDelete)) {
+//                index = conversations.indexOf(tempConversation);
+//                break;
+//            }
+//        }
+//
+//        if (index != -1) {
+//            // conversation already exists
+//            conversations.remove(index); // delete existing conversation
+//        }
+//    }
+
+    // it checks if the conversation already exists through its conversationId
     // if the conversation exists delete it
-    private void deleteConversationFromMemory(Conversation conversationToDelete) {
-        // look for the conversation
+    private void deleteConversationFromMemory(String conversationId) {
         int index = -1;
-        for (Conversation tempConversation : conversations) {
-            if (tempConversation.equals(conversationToDelete)) {
+        for(Conversation tempConversation : conversations) {
+            if(tempConversation.getConversationId().equals(conversationId)) {
                 index = conversations.indexOf(tempConversation);
                 break;
             }
         }
 
-        if (index != -1) {
-            // conversation already exists
-            conversations.remove(index); // delete existing conversation
+        if(index != -1) {
+            conversations.remove(index);
+            sortConversationsInMemory();
+            notifyConversationRemoved(null);
         }
+
     }
 
     private void sortConversationsInMemory() {
@@ -302,6 +322,14 @@ public class ConversationsHandler {
         if (conversationsListeners != null) {
             for (ConversationsListener conversationsListener : conversationsListeners) {
                 conversationsListener.onConversationChanged(conversation, exception);
+            }
+        }
+    }
+
+    private void notifyConversationRemoved(ChatRuntimeException exception) {
+        if (conversationsListeners != null) {
+            for (ConversationsListener conversationsListener : conversationsListeners) {
+                conversationsListener.onConversationRemoved(exception);
             }
         }
     }
@@ -546,31 +574,24 @@ public class ConversationsHandler {
         this.removeAllUnreadConversationsListeners();
     }
 
-//    public void deleteConversation(String recipientId, final ConversationsListener conversationsListener) {
-//        DatabaseReference.CompletionListener onConversationRemoved
-//                = new DatabaseReference.CompletionListener() {
-//            @Override
-//            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//
-//                if (databaseError == null) {
-//                    // conversation deleted with success
-//                    conversationsListener.onConversationRemoved(null);
-//                } else {
-//                    // there are error
-//                    // conversation not deleted
-//                    conversationsListener.onConversationRemoved(new ChatRuntimeException(databaseError.toException()));
-//                }
-//            }
-//        };
-//
-//        // remove the conversation with recipientId
-//        this.conversationsNode.child(recipientId).removeValue(onConversationRemoved);
-//    }
+    public void deleteConversation(final String conversationId, final ConversationsListener conversationsListener) {
 
-//    public DatabaseReference getConversationsNode() {
-//        return conversationsNode;
-//    }
+        // the node of the conversation with conversationId
+        DatabaseReference nodeConversation = conversationsNode.child(conversationId);
 
+        nodeConversation.removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                if (databaseError == null) {
+                    deleteConversationFromMemory(conversationId);
+                    conversationsListener.onConversationRemoved(null);
+                } else {
+                    conversationsListener.onConversationRemoved(new ChatRuntimeException(databaseError.toException()));
+                }
+            }
+        });
+    }
 
     /**
      * It looks for the conversation with {@code conversationId}

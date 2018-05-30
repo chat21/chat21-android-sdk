@@ -18,7 +18,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
+import org.chat21.android.core.conversations.ConversationsHandler;
+import org.chat21.android.core.conversations.listeners.ConversationsListener;
 import org.chat21.android.core.conversations.models.Conversation;
+import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.utils.StringUtils;
 
@@ -38,7 +41,7 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
 
     private Button mDeleteConversationView;
 
-//    private ConversationsHandler conversationsHandler;
+    private ConversationsHandler conversationsHandler;
 
     public static BottomSheetConversationsListFragmentLongPress
     newInstance(Conversation conversation) {
@@ -50,13 +53,19 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
         return f;
     }
 
+    public ConversationsHandler getConversationsHandler() {
+        return this.conversationsHandler;
+    }
+
+    public void setConversationsHandler(ConversationsHandler conversationsHandler) {
+        this.conversationsHandler = conversationsHandler;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        conversationsHandler = ChatManager.getInstance().getConversationsHandler();
-//        conversationsHandler.connect();
-//        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onCreate: conversationsHandler connected");
+        conversationsHandler = getConversationsHandler();
 
         mConversation = (Conversation) getArguments()
                 .getSerializable(_BOTTOM_SHEET_CONVERSATIONS_LIST_FRAGMENT_LONG_PRESS_EXTRAS_CONVERSATION);
@@ -73,23 +82,11 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bottom_sheet_conversation_list_long_press, container, false);
 
-//        conversationsHandler.addGroupsListener(this);
-//        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onCreateView: conversationsHandler attached");
-
         mDeleteConversationView = view.findViewById(R.id.btn_delete_conversation);
         mDeleteConversationView.setOnClickListener(this);
 
         return view;
     }
-
-//    @Override
-//    public void onDestroy() {
-//
-//        conversationsHandler.removeGroupsListener(this);
-//        Log.d(DEBUG_TAG, "  BottomSheetConversationsListFragmentLongPress.onDestroy: conversationMessagesHandler detached");
-//
-//        super.onDestroy();
-//    }
 
     @Override
     public void onClick(View view) {
@@ -138,68 +135,37 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
     private void perfomDeleteConversation() {
         Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.perfomDeleteConversation");
 
-//        conversationsHandler.deleteConversation(mConversation.getConversationId(),
-//                BottomSheetConversationsListFragmentLongPress.this);
-
         String conversationId = mConversation.getConversationId();
 
-//TODO move to ChatManager conversation API
-        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
-                ".perfomDeleteConversation: conversationId == " + conversationId);
-
-        DatabaseReference nodeConversation;
-        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
-            nodeConversation = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.Configuration.firebaseUrl)
-                    .child("apps/" + ChatManager.getInstance().getAppId() + "/users/" + mLoggedUser.getId() + "/conversations/" + conversationId);
-        } else {
-            nodeConversation = FirebaseDatabase.getInstance().getReference()
-                    .child("apps/" + ChatManager.getInstance().getAppId() + "/users/" + mLoggedUser.getId() + "/conversations/" + conversationId);
+        if(getConversationsHandler() != null) {
+            getConversationsHandler().deleteConversation(conversationId, conversationsListener);
         }
-
-        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
-                ".perfomDeleteConversation: nodeConversation == " + nodeConversation.toString());
-
-        nodeConversation.removeValue(onConversationRemoved);
     }
 
-//    @Override
-//    public void onConversationAdded(Conversation conversation, ChatRuntimeException e) {
-//        // TODO: 20/12/17
-//    }
-//
-//    @Override
-//    public void onConversationChanged(Conversation conversation, ChatRuntimeException e) {
-//        // TODO: 20/12/17
-//    }
-//
-//    @Override
-//    public void onConversationRemoved(ChatRuntimeException e) {
-//        Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onConversationRemoved");
-//
-//        if (e == null) {
-//            // dismiss the bottomsheet
-//            getDialog().dismiss();
-//        } else {
-//            Log.e(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress.onConversationRemoved cannot delete conversation.", e);
-//        }
-//    }
+    private ConversationsListener conversationsListener = new ConversationsListener() {
 
-    private DatabaseReference.CompletionListener onConversationRemoved
-            = new DatabaseReference.CompletionListener() {
         @Override
-        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+        public void onConversationAdded(Conversation conversation, ChatRuntimeException e) {
+            // do nothing
+        }
 
-            if (databaseError == null) {
-                // no errors
+        @Override
+        public void onConversationChanged(Conversation conversation, ChatRuntimeException e) {
+            // do nothing
+        }
+
+        @Override
+        public void onConversationRemoved(ChatRuntimeException e) {
+            if(e == null) {
                 Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
-                        ".onConversationRemoved: no errors");
+                        ".conversationsListener.onConversationRemoved: no errors");
 
                 // dismiss the bottomsheet
                 getDialog().dismiss();
             } else {
                 // there are error
                 Log.d(DEBUG_TAG, "BottomSheetConversationsListFragmentLongPress" +
-                        ".onConversationRemoved: " + databaseError.toString());
+                        ".conversationsListener.onConversationRemoved: " + e.toString());
 
                 Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT).show();
             }
