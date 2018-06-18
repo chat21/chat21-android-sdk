@@ -321,7 +321,7 @@ The chat will start inside this container where the list of conversations is sho
 Now you can show your chat with the following method:
 
 ```
-  ChatUI.getInstance().showConversationsListFragment(getChildFragmentManager(), R.id.container);
+  ChatUI.getInstance().openConversationsListFragment(getChildFragmentManager(), R.id.container);
 
 ```
 
