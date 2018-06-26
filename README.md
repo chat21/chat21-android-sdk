@@ -28,8 +28,11 @@ With Chat21 Android SDK you can:
 ### Google Play Demo
 [![get_it](http://evolvex.it/mobyx/images/nav/gplay-blk.png)](https://play.google.com/store/apps/details?id=chat21.android.demo)
 
-### Source
+### Demo
+
 Demo app source code is available [here](https://github.com/chat21/chat21-android-demo) 
+
+Yo can build your own chat following our [official tutorial](http://www.chat21.org/docs/android/get-started/)
 
 ## Pre requisites
 
