@@ -11,8 +11,6 @@ import android.util.Log;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
-import java.io.Serializable;
-
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.core.users.models.ChatUser;
@@ -27,6 +25,8 @@ import org.chat21.android.ui.messages.activities.MessageListActivity;
 import org.chat21.android.ui.messages.listeners.OnAttachClickListener;
 import org.chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 import org.chat21.android.ui.messages.listeners.OnMessageClickListener;
+
+import java.io.Serializable;
 
 /**
  * Created by andrealeo on 04/12/17.
@@ -206,6 +206,18 @@ public class ChatUI implements Serializable {
         // launch the chat
         Intent intent = new Intent(mContext, MessageListActivity.class);
         intent.putExtra(BUNDLE_RECIPIENT, recipient);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
+    }
+
+    public void openChatWithGroup(String groupId, String groupName) {
+        openChatWithGroup(new ChatUser(groupId, groupName));
+    }
+
+    public void openChatWithGroup(IChatUser group) {
+        Intent intent = new Intent(mContext, MessageListActivity.class);
+        intent.putExtra(BUNDLE_RECIPIENT, group);
+        intent.putExtra(BUNDLE_CHANNEL_TYPE, Message.GROUP_CHANNEL_TYPE);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
