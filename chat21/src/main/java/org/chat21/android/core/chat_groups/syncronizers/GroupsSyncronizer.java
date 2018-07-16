@@ -179,7 +179,7 @@ public class GroupsSyncronizer {
 
     // it checks if the group already exists.
     // if the group exists update it, add it otherwise
-    private void saveOrUpdateGroupInMemory(ChatGroup newChatGroup) {
+    public void saveOrUpdateGroupInMemory(ChatGroup newChatGroup) {
 
         // look for the group
         int index = -1;
