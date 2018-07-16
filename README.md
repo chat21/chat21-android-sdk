@@ -28,15 +28,18 @@ With Chat21 Android SDK you can:
 ### Google Play Demo
 [![get_it](http://evolvex.it/mobyx/images/nav/gplay-blk.png)](https://play.google.com/store/apps/details?id=chat21.android.demo)
 
-### Source
+### Demo
+
 Demo app source code is available [here](https://github.com/chat21/chat21-android-demo) 
+
+Yo can build your own chat following our [official tutorial](http://www.chat21.org/docs/android/get-started/)
 
 ## Pre requisites
 
 Before you begin, you need a few things to set up in your environment:
 
-* a Firebase project correctly configured and the Chat21 Firebase cloud functions installed. See detailed [instructions](https://github.com/chat21/chat21-cloud-functions)
-
+* a Firebase project correctly configured  
+* Chat21 Firebase cloud functions installed. See detailed [instructions](https://github.com/chat21/chat21-cloud-functions)
 * google-services.json for you app. See official [documentation](https://developers.google.com/android/guides/google-services-plugin)
 
 ## Firebase libs
