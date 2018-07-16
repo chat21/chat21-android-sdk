@@ -16,7 +16,7 @@
     <color name="chat_input_background">@color/grey_100</color>
 
     <!--system-->
-<color name="background_bubble_system">#C9E4F6</color>
+    <color name="background_bubble_system">#C9E4F6</color>
     <color name="background_bubble_text_system">@color/black</color>
     <color name="color_clickable_link_system">@color/black</color>
 
