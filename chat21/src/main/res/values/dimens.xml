@@ -28,7 +28,7 @@
     <!--row_conversation-->
     <dimen name="chat_row_conversation_recipient_picture_size">@dimen/chat_recipient_picture_size</dimen>
     <dimen name="chat_row_conversation_recipient_fullname_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
-    <dimen name="chat_row_conversation_sender_fullname_text_size">14.5dp</dimen>
+    <dimen name="chat_row_conversation_sender_fullname_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
     <dimen name="chat_row_conversation_recipient_last_message_text_size">@dimen/chat_recipient_last_message_text_size</dimen>
     <dimen name="chat_row_conversation_recipient_last_message_emoji_size">18sp</dimen>
 
@@ -46,13 +46,13 @@
 
     <!--row_system-->
     <dimen name="chat_row_system_last_message_text_view_max_width">300dp</dimen>
-    <dimen name="chat_row_system_last_message_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
+    <dimen name="chat_row_system_last_message_text_size">12.5dp</dimen>
     <dimen name="chat_row_system_last_message_emoji_size">@dimen/chat_recipient_last_message_emoji_size</dimen>
 
     <!--row_recipient-->
     <dimen name="chat_row_recipient_last_message_text_view_max_width">300dp</dimen>
     <dimen name="chat_row_recipient_sender_fullname_text_size">@dimen/chat_text_size</dimen>
-    <dimen name="chat_row_recipient_last_message_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
+    <dimen name="chat_row_recipient_last_message_text_size">@dimen/chat_recipient_last_message_text_size</dimen>
     <dimen name="chat_row_recipient_last_message_emoji_size">@dimen/chat_recipient_last_message_emoji_size</dimen>
     <dimen name="chat_row_recipient_timestamp_size">12sp</dimen>
     <dimen name="chat_row_recipient_preview_size">200dp</dimen>
