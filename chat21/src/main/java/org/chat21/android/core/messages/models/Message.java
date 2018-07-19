@@ -265,18 +265,31 @@ public class Message implements Serializable, Cloneable {
                 '}';
     }
 
+//    String id;
+//    @PropertyName("sender")
+//    @PropertyName("sender_fullname")
+//    @PropertyName("recipient")
+//    @PropertyName("recipient_fullname")
+//    @PropertyName("text")
+//    @PropertyName("status")
+//    @PropertyName("timestamp")
+//    @PropertyName("type")
+//    @PropertyName("channel_type")
+//    @PropertyName("metadata")
+//    @PropertyName("attributes")
+
     public Map asFirebaseMap() {
         Map map = new HashMap();
         map.put("id",id);
         map.put("sender",null);
-        map.put("senderFullname",senderFullname);
+        map.put("sender_fullname",senderFullname);
         map.put("recipient",null);
-        map.put("recipientFullname",recipientFullname);
+        map.put("recipient_fullname",recipientFullname);
         map.put("text",text);
         map.put("status",null);
         map.put("timestamp", ServerValue.TIMESTAMP);
         map.put("type",type);
-        map.put("channelType",channelType);
+        map.put("channel_type",channelType);
         map.put("metadata",metadata);
         map.put("attributes",attributes);
 
