@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 import org.chat21.android.core.exception.ChatFieldNotFoundException;
 import org.chat21.android.core.exception.ChatRuntimeException;
@@ -103,7 +104,8 @@ public class ConversationMessagesHandler {
 
 //        conversationMessagesNode
 //                .push()
-        Message messageForSending = createMessageForFirebase(message);
+//        Message messageForSending = createMessageForFirebase(message);
+        Map messageForSending = message.asFirebaseMap();
         Log.d(TAG, "sendMessage.messageForSending: " + messageForSending.toString());
 
         newMessageReference
@@ -148,14 +150,15 @@ public class ConversationMessagesHandler {
         }
     }
 
-    private Message createMessageForFirebase(Message message) {
-        Message messageForFirebase = (Message) message.clone();
-        messageForFirebase.setSender(null);
-        messageForFirebase.setRecipient(null);
-        messageForFirebase.setStatus(null);
-        messageForFirebase.setTimestamp(null);
-        return messageForFirebase;
-    }
+//    private Message createMessageForFirebase(Message message) {
+//        Message messageForFirebase = (Message) message.clone();
+//        messageForFirebase.setSender(null);
+//        messageForFirebase.setRecipient(null);
+//        messageForFirebase.setStatus(null);
+//        messageForFirebase.setTimestamp(ServerValue.TIMESTAMP);
+//
+//        return messageForFirebase;
+//    }
 
     // it checks if the message already exists.
     // if the message exists update it, add it otherwise
