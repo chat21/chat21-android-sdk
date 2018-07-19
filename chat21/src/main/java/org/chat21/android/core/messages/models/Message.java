@@ -280,7 +280,6 @@ public class Message implements Serializable, Cloneable {
 
     public Map asFirebaseMap() {
         Map map = new HashMap();
-        map.put("id",id);
         map.put("sender",null);
         map.put("sender_fullname",senderFullname);
         map.put("recipient",null);
