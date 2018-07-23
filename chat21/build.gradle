@@ -63,6 +63,10 @@ dependencies {
 //    // file picker
 //    // source: https://github.com/Angads25/android-filepicker
 //    compile 'com.github.angads25:filepicker:1.1.1'
+
+    // swipe layout
+    // source : https://github.com/daimajia/AndroidSwipeLayout
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
 }
 
 // resolve conflicts

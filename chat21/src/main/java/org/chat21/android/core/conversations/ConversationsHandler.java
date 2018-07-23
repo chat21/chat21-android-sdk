@@ -215,7 +215,7 @@ public class ConversationsHandler {
     }
 
     public List<Conversation> getConversations() {
-        sortConversationsInMemory(); // ensure to return a sorted list
+//        sortConversationsInMemory(); // ensure to return a sorted list
         return conversations;
     }
 
@@ -261,7 +261,7 @@ public class ConversationsHandler {
 
     // it checks if the conversation already exists through its conversationId
     // if the conversation exists delete it
-    private void deleteConversationFromMemory(String conversationId) {
+    public void deleteConversationFromMemory(String conversationId) {
         int index = -1;
         for(Conversation tempConversation : conversations) {
             if(tempConversation.getConversationId().equals(conversationId)) {

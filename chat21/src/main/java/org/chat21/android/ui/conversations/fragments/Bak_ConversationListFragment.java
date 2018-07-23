@@ -31,30 +31,21 @@ import org.chat21.android.ui.chat_groups.activities.ChatGroupsListActivity;
 import org.chat21.android.ui.conversations.adapters.ConversationsListAdapter;
 import org.chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import org.chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
-import org.chat21.android.ui.conversations.listeners.OnSwipeMenuCloseClickListener;
-import org.chat21.android.ui.conversations.listeners.OnSwipeMenuUnreadClickListener;
 import org.chat21.android.ui.decorations.ItemDecoration;
 import org.chat21.android.ui.messages.activities.MessageListActivity;
-import org.chat21.android.utils.http_manager.HttpManager;
-import org.chat21.android.utils.http_manager.OnResponseRetrievedCallback;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
 
 /**
  * Created by stefano on 15/10/2016.
  */
-public class ConversationListFragment extends Fragment implements
+public class Bak_ConversationListFragment extends Fragment implements
         ConversationsListener,
         OnConversationClickListener,
         OnConversationLongClickListener,
-        OnSwipeMenuCloseClickListener,
-        OnSwipeMenuUnreadClickListener,
         MyPresenceListener {
 
-    private static final String TAG = ConversationListFragment.class.getName();
+    private static final String TAG = Bak_ConversationListFragment.class.getName();
 
     private ConversationsHandler conversationsHandler;
     private MyPresenceHandler myPresenceHandler;
@@ -71,7 +62,8 @@ public class ConversationListFragment extends Fragment implements
 
     private TextView currentUserGroups;
 
-    private HttpManager httpManager;
+//    private SwipeHelper swipeHelper;
+//    private List<UnderlayButton> swipeableMenu;
 
 //    // current user presence listener
 //    private OnPresenceListener onMyPresenceListener = new OnPresenceListener() {
@@ -95,7 +87,7 @@ public class ConversationListFragment extends Fragment implements
 //    };
 
     public static Fragment newInstance() {
-        Fragment mFragment = new ConversationListFragment();
+        Fragment mFragment = new Bak_ConversationListFragment();
         return mFragment;
     }
 
@@ -103,10 +95,10 @@ public class ConversationListFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        swipeableMenu = new ArrayList<>();
+
         conversationsHandler = ChatManager.getInstance().getConversationsHandler();
         myPresenceHandler = ChatManager.getInstance().getMyPresenceHandler();
-
-        httpManager = new HttpManager(getActivity());
 
     }
 
@@ -127,12 +119,13 @@ public class ConversationListFragment extends Fragment implements
         rvConversationsLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewConversations.setLayoutManager(rvConversationsLayoutManager);
 
+//        initSwipeableMenu();
+//        attachSwipe(recyclerViewConversations);
+
         // init RecyclerView adapter
         conversationsListAdapter = new ConversationsListAdapter(getActivity(), conversationsHandler.getConversations());
         conversationsListAdapter.setOnConversationClickListener(this);
         conversationsListAdapter.setOnConversationLongClickListener(this);
-        conversationsListAdapter.setOnSwipeMenuCloseClickListener(this);
-        conversationsListAdapter.setOnSwipeMenuUnreadClickListener(this);
         recyclerViewConversations.setAdapter(conversationsListAdapter);
 
         // no conversations layout
@@ -305,62 +298,71 @@ public class ConversationListFragment extends Fragment implements
         Log.e(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceError: " + e.toString());
     }
 
-    @Override
-    public void onSwipeMenuClosed(Conversation conversation, int position) {
-        Log.i(TAG, "onSwipeMenuClosed: conversation: " + conversation.toString() + " position: " + position);
-
-        String conversationId = conversation.getConversationId();
-        boolean isSupportConversation = conversationId.startsWith("support-group");
-
-        if (!isSupportConversation) {
-            // is not support group
-            deleteConversation(conversationId);
-        } else {
-            // is support group
-            closeSupportGroup(conversationId);
-        }
-    }
-
-    @Override
-    public void onSwipeMenuUnread(Conversation conversation, int position) {
-        Log.i(TAG, "onSwipeMenuUnread: conversation: " + conversation.toString() + " position: " + position);
-    }
-
-    private void deleteConversation(String conversationId) {
-        // TODO: 23/07/18  chiamare servizio prima di rimuovere dalla memoria
-
-//        OnResponseRetrievedCallback<String> callback = new OnResponseRetrievedCallback<String>() {
-//            @Override
-//            public void onSuccess(String response) {
+//    private void attachSwipe(RecyclerView recyclerView) {
 //
-//            }
+//        // attach only if the menu has button
+//        if (swipeableMenu != null && swipeableMenu.size() > 0) {
+//            swipeHelper = new SwipeHelper(getActivity(), recyclerView) {
+//                @Override
+//                public float getButtonWidth() {
 //
-//            @Override
-//            public void onError(Exception e) {
+//                    // 2/3 of the screen size
+//                    double width = Resources.getSystem().getDisplayMetrics().widthPixels * 0.6;
 //
-//            }
-//        };
+//                    // number of items
+//                    int numberOfItems = swipeableMenu.size();
 //
-//        String url = "";
+//                    // calculate the item width based on the map size
+//                    return (float) (width / numberOfItems);
+//                }
 //
-//        String userToken = "";
+//                @Override
+//                public void instantiateUnderlayButton(RecyclerView.ViewHolder viewHolder, List<UnderlayButton> underlayButtons) {
+//                    // add all the custom actions to the menu
+//                    for (UnderlayButton button : swipeableMenu) {
+//                        underlayButtons.add(button);
+//                    }
+//                }
+//            };
 //
-//        Map<String, String> headerParams = new HashMap<>();
-//        headerParams.put("Accept", "application/json");
-//        headerParams.put("Content-Type", "application/json");
-//        headerParams.put("Authorization", "Bearer " + userToken);
+//            swipeHelper.attachSwipe();
+//        }
+//    }
+//    private void initSwipeableMenu() {
+//        swipeableMenu.add(new UnderlayButton(
+//                getActivity(),
+//                "Chiudi",
+//                0,
+//                Color.parseColor("#4970A3"),
+//                new UnderlayButton.UnderlayButtonClickListener() {
+//                    @Override
+//                    public void onClick(int pos) {
+//                        // TODO
 //
+//                        if (swipeHelper != null)
+//                            swipeHelper.recoverSwipedItem();
+//                        else
+//                            Log.d(TAG, "LOL");
+//                    }
+//                }
+//        ));
 //
-//        httpManager.makeHttpPOSTCall(callback, url,headerParams, String queryParams);
-
-
-
-        conversationsHandler.deleteConversationFromMemory(conversationId);
-
-    }
-
-    private void closeSupportGroup(String conversationId) {
-        // TODO: 23/07/18  chiamare servizio prima di rimuovere dalla memoria
-        conversationsHandler.deleteConversationFromMemory(conversationId);
-    }
+//        swipeableMenu.add(new UnderlayButton(
+//                getActivity(),
+//                "Non letto",
+//                0,
+//                Color.parseColor("#2200FF"),
+//                new UnderlayButton.UnderlayButtonClickListener() {
+//                    @Override
+//                    public void onClick(int pos) {
+//                        // TODO
+//
+//                        if (swipeHelper != null)
+//                            swipeHelper.recoverSwipedItem();
+//                        else
+//                            Log.d(TAG, "LOL");
+//                    }
+//                }
+//        ));
+//    }
 }
