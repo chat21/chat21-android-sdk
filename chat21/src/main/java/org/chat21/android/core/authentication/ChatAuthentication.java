@@ -148,6 +148,7 @@ public final class ChatAuthentication {
         };
     }
 
+    @Deprecated
     public void signInWithUid(final Activity loginActivity, final String appId,
                               String uid, final OnChatLoginCallback onChatLoginCallback) {
         Log.d(DEBUG_LOGIN, "signInWithUid");
@@ -389,6 +390,7 @@ public final class ChatAuthentication {
             }
         });
     }
+
 
     /*
      * Method to check whether to check Google Play Services is up to date.

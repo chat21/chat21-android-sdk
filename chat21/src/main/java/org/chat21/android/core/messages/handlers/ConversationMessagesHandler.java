@@ -8,7 +8,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import org.chat21.android.core.exception.ChatFieldNotFoundException;
 import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.messages.listeners.ConversationMessagesListener;
@@ -18,6 +17,8 @@ import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,8 @@ public class ConversationMessagesHandler {
 
     private List<ConversationMessagesListener> conversationMessagesListeners;
 
+    private Comparator<Message> messageComparator;
+
     public ConversationMessagesHandler(String firebaseUrl, String appId, IChatUser currentUser, IChatUser recipient) {
 
         conversationMessagesListeners = new ArrayList<>();
@@ -61,6 +64,19 @@ public class ConversationMessagesHandler {
 
         this.conversationMessagesNode.keepSynced(true);
         Log.d(TAG, "conversationMessagesNode : " + conversationMessagesNode.toString());
+
+        messageComparator = new Comparator<Message>() {
+            @Override
+            public int compare(Message m1, Message m2) {
+                try {
+                    return m2.getTimestamp().compareTo(m1.getTimestamp());
+                } catch (Exception e) {
+                    Log.e(TAG, "ConversationMessagesHandler.sortMessagesInMemory: " +
+                            "cannot compare messages timestamp", e);
+                    return 0;
+                }
+            }
+        };
 
 //        this.conversationMessagesListeners = new ArrayList<ConversationsListener>();
 //        this.conversationMessagesListeners.add(conversationMessagesListener);
@@ -103,7 +119,8 @@ public class ConversationMessagesHandler {
 
 //        conversationMessagesNode
 //                .push()
-        Message messageForSending = createMessageForFirebase(message);
+//        Message messageForSending = createMessageForFirebase(message);
+        Map messageForSending = message.asFirebaseMap();
         Log.d(TAG, "sendMessage.messageForSending: " + messageForSending.toString());
 
         newMessageReference
@@ -148,14 +165,15 @@ public class ConversationMessagesHandler {
         }
     }
 
-    private Message createMessageForFirebase(Message message) {
-        Message messageForFirebase = (Message) message.clone();
-        messageForFirebase.setSender(null);
-        messageForFirebase.setRecipient(null);
-        messageForFirebase.setStatus(null);
-        messageForFirebase.setTimestamp(null);
-        return messageForFirebase;
-    }
+//    private Message createMessageForFirebase(Message message) {
+//        Message messageForFirebase = (Message) message.clone();
+//        messageForFirebase.setSender(null);
+//        messageForFirebase.setRecipient(null);
+//        messageForFirebase.setStatus(null);
+//        messageForFirebase.setTimestamp(ServerValue.TIMESTAMP);
+//
+//        return messageForFirebase;
+//    }
 
     // it checks if the message already exists.
     // if the message exists update it, add it otherwise
@@ -182,6 +200,16 @@ public class ConversationMessagesHandler {
             messages.add(newMessage); // insert a new message
             Log.v(TAG, "message " + newMessage + "is not found into messages. The message was added at the end of the list");
 
+        }
+
+        sortMessagesInMemory();
+
+    }
+
+    private void sortMessagesInMemory() {
+        if (messages.size() > 1) {
+            Collections.sort(messages, messageComparator);
+            Collections.reverse(messages);
         }
     }
 

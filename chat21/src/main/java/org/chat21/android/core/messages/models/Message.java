@@ -2,8 +2,11 @@ package org.chat21.android.core.messages.models;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
+import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -168,6 +171,7 @@ public class Message implements Serializable, Cloneable {
     }
 
 
+
     @PropertyName("type")
     public String getType() {
         return type;
@@ -260,4 +264,37 @@ public class Message implements Serializable, Cloneable {
                 ", attributes=" + attributes +
                 '}';
     }
+
+//    String id;
+//    @PropertyName("sender")
+//    @PropertyName("sender_fullname")
+//    @PropertyName("recipient")
+//    @PropertyName("recipient_fullname")
+//    @PropertyName("text")
+//    @PropertyName("status")
+//    @PropertyName("timestamp")
+//    @PropertyName("type")
+//    @PropertyName("channel_type")
+//    @PropertyName("metadata")
+//    @PropertyName("attributes")
+
+    public Map asFirebaseMap() {
+        Map map = new HashMap();
+        map.put("sender",null);
+        map.put("sender_fullname",senderFullname);
+        map.put("recipient",null);
+        map.put("recipient_fullname",recipientFullname);
+        map.put("text",text);
+        map.put("status",null);
+        map.put("timestamp", ServerValue.TIMESTAMP);
+        map.put("type",type);
+        map.put("channel_type",channelType);
+        map.put("metadata",metadata);
+        map.put("attributes",attributes);
+
+        return map;
+
+    }
+
+
 }
