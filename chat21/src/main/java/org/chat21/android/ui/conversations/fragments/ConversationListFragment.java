@@ -1,6 +1,8 @@
 package org.chat21.android.ui.conversations.fragments;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -27,12 +29,18 @@ import org.chat21.android.core.presence.listeners.MyPresenceListener;
 import org.chat21.android.core.users.models.ChatUser;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.ChatUI;
+import org.chat21.android.ui.SwipeHelper;
+import org.chat21.android.ui.UnderlayButton;
 import org.chat21.android.ui.chat_groups.activities.ChatGroupsListActivity;
 import org.chat21.android.ui.conversations.adapters.ConversationsListAdapter;
 import org.chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import org.chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
 import org.chat21.android.ui.decorations.ItemDecoration;
 import org.chat21.android.ui.messages.activities.MessageListActivity;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.chat21.android.utils.DebugConstants.DEBUG_MY_PRESENCE;
 
@@ -62,6 +70,7 @@ public class ConversationListFragment extends Fragment implements
 
     private TextView currentUserGroups;
 
+    private List<UnderlayButton> swipeableMenu;
 
 //    // current user presence listener
 //    private OnPresenceListener onMyPresenceListener = new OnPresenceListener() {
@@ -93,8 +102,11 @@ public class ConversationListFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        swipeableMenu = new ArrayList<>();
+
         conversationsHandler = ChatManager.getInstance().getConversationsHandler();
         myPresenceHandler = ChatManager.getInstance().getMyPresenceHandler();
+
     }
 
 
@@ -114,6 +126,10 @@ public class ConversationListFragment extends Fragment implements
         rvConversationsLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewConversations.setLayoutManager(rvConversationsLayoutManager);
 
+        initSwipeableMenu();
+
+        attachSwipe(recyclerViewConversations);
+
         // init RecyclerView adapter
         conversationsListAdapter = new ConversationsListAdapter(getActivity(), conversationsHandler.getConversations());
         conversationsListAdapter.setOnConversationClickListener(this);
@@ -132,6 +148,34 @@ public class ConversationListFragment extends Fragment implements
         showCurrentUserGroups();
 
         return view;
+    }
+
+    private void initSwipeableMenu() {
+        swipeableMenu.add(new UnderlayButton(
+                getActivity(),
+                "Chiudi",
+                0,
+                Color.parseColor("#4970A3"),
+                new UnderlayButton.UnderlayButtonClickListener() {
+                    @Override
+                    public void onClick(int pos) {
+                        // TODO
+                    }
+                }
+        ));
+
+        swipeableMenu.add(new UnderlayButton(
+                getActivity(),
+                "Non letto",
+                0,
+                Color.parseColor("#2200FF"),
+                new UnderlayButton.UnderlayButtonClickListener() {
+                    @Override
+                    public void onClick(int pos) {
+                        // TODO
+                    }
+                }
+        ));
     }
 
     @Override
@@ -237,7 +281,7 @@ public class ConversationListFragment extends Fragment implements
     @Override
     public void onConversationRemoved(ChatRuntimeException e) {
         Log.d(TAG, "ConversationListFragment.onConversationRemoved");
-        if(e == null) {
+        if (e == null) {
             conversationsListAdapter.notifyDataSetChanged();
             toggleNoConversationLayoutVisibility(conversationsListAdapter.getItemCount());
         } else {
@@ -288,5 +332,36 @@ public class ConversationListFragment extends Fragment implements
     public void onMyPresenceError(Exception e) {
         // TODO: 09/01/18
         Log.e(DEBUG_MY_PRESENCE, "ConversationListFragment.onMyPresenceError: " + e.toString());
+    }
+
+    private void attachSwipe(RecyclerView recyclerView) {
+
+        // attach only if the menu has button
+        if (swipeableMenu != null && swipeableMenu.size() > 0) {
+            SwipeHelper swipeHelper = new SwipeHelper(getActivity(), recyclerView) {
+                @Override
+                public float getButtonWidth() {
+
+                    // 2/3 of the screen size
+                    double width = Resources.getSystem().getDisplayMetrics().widthPixels * 0.6;
+
+                    // number of items
+                    int numberOfItems = swipeableMenu.size();
+
+                    // calculate the item width based on the map size
+                    return (float) (width / numberOfItems);
+                }
+
+                @Override
+                public void instantiateUnderlayButton(RecyclerView.ViewHolder viewHolder, List<UnderlayButton> underlayButtons) {
+                    // add all the custom actions to the menu
+                    for (UnderlayButton button : swipeableMenu){
+                        underlayButtons.add(button);
+                    }
+                }
+            };
+
+            swipeHelper.attachSwipe();
+        }
     }
 }
