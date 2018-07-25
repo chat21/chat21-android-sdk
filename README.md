@@ -1,4 +1,4 @@
-Chat21 is the core of the open source livechat platform [Tiledesk.com](http://www.tiledesk.com).
+Chat21 is the core of the open source live chat platform [Tiledesk.com](http://www.tiledesk.com).
 
 # Chat21 SDK Documentation 
  
