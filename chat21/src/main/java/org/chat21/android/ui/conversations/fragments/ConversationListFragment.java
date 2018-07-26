@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GetTokenResult;
+
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.conversations.ConversationsHandler;
@@ -307,17 +310,27 @@ public class ConversationListFragment extends Fragment implements
 
     @Override
     public void onSwipeMenuClosed(Conversation conversation, int position) {
-        Log.i(TAG, "onSwipeMenuClosed: conversation: " + conversation.toString() + " position: " + position);
+//        Log.i(TAG, "onSwipeMenuClosed: conversation: " + conversation.toString() + " position: " + position);
 
         String conversationId = conversation.getConversationId();
         boolean isSupportConversation = conversationId.startsWith("support-group");
 
+        // retrieve the firebase user token
+        GetTokenResult task = FirebaseAuth.getInstance().getCurrentUser().getIdToken(false).getResult();
+        String token = task.getToken();
+
+        // create the header parameters
+        Map<String, String> headerParams = new HashMap<>();
+        headerParams.put("Accept", "application/json");
+        headerParams.put("Content-Type", "application/json");
+        headerParams.put("Authorization", "Bearer " + token);
+
         if (!isSupportConversation) {
             // is not support group
-            deleteConversation(conversationId);
+            deleteConversation(conversationId, headerParams);
         } else {
             // is support group
-            closeSupportGroup(conversationId);
+            closeSupportGroup(conversationId, headerParams);
         }
     }
 
@@ -326,41 +339,69 @@ public class ConversationListFragment extends Fragment implements
         Log.i(TAG, "onSwipeMenuUnread: conversation: " + conversation.toString() + " position: " + position);
     }
 
-    private void deleteConversation(String conversationId) {
-        // TODO: 23/07/18  chiamare servizio prima di rimuovere dalla memoria
+    // delete a conversation form the personal timeline
+    // more details availables at
+    // https://github.com/chat21/chat21-cloud-functions/blob/master/docs/api.md#delete-a-conversation
+    private void deleteConversation(final String conversationId, Map<String, String> headerParams) {
+        Log.d(TAG, "ConversationListFragment::deleteConversation");
 
-//        OnResponseRetrievedCallback<String> callback = new OnResponseRetrievedCallback<String>() {
-//            @Override
-//            public void onSuccess(String response) {
-//
-//            }
-//
-//            @Override
-//            public void onError(Exception e) {
-//
-//            }
-//        };
-//
-//        String url = "";
-//
-//        String userToken = "";
-//
-//        Map<String, String> headerParams = new HashMap<>();
-//        headerParams.put("Accept", "application/json");
-//        headerParams.put("Content-Type", "application/json");
-//        headerParams.put("Authorization", "Bearer " + userToken);
-//
-//
-//        httpManager.makeHttpPOSTCall(callback, url,headerParams, String queryParams);
+        // callback called when the conversation is deleted
+        OnResponseRetrievedCallback<String> callback = new OnResponseRetrievedCallback<String>() {
+            @Override
+            public void onSuccess(String response) {
+                Log.i(TAG, "ConversationListFragment::deleteConversation::" +
+                        " conversation with uid " + conversationId + " deleted with success");
+            }
 
+            @Override
+            public void onError(Exception e) {
+                Log.e(TAG, "ConversationListFragment::deleteConversation::" +
+                        " cannot delete conversation with uid " + conversationId + ": " + e.toString());
+            }
+        };
 
+        // service to call to delete the conversation
+        String url = getString(R.string.chat_firebase_cloud_functions_url) +
+                "/api/" + ChatManager.getInstance().getAppId() +
+                "/conversations/" + conversationId;
 
+        // perform remote deletion
+        httpManager.makeHttpDELETECall(callback, url, headerParams, "");
+
+        // perform deletion in memory
         conversationsHandler.deleteConversationFromMemory(conversationId);
 
     }
 
-    private void closeSupportGroup(String conversationId) {
-        // TODO: 23/07/18  chiamare servizio prima di rimuovere dalla memoria
-        conversationsHandler.deleteConversationFromMemory(conversationId);
+    // close the support group
+    // more details availables at
+    // https://github.com/chat21/chat21-cloud-functions/blob/master/docs/api.md#close-support-group
+    private void closeSupportGroup(final String groupId, Map<String, String> headerParams) {
+        Log.d(TAG, "ConversationListFragment::closeSupportGroup");
+
+        // callback called when the group is closed
+        OnResponseRetrievedCallback<String> callback = new OnResponseRetrievedCallback<String>() {
+            @Override
+            public void onSuccess(String response) {
+                Log.i(TAG, "ConversationListFragment::closeSupportGroup::" +
+                        " group with uid " + groupId + " closed with success");
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e(TAG, "ConversationListFragment::closeSupportGroup::" +
+                        " cannot close group with uid " + groupId + ": " + e.toString());
+            }
+        };
+
+        // service to call to close the group
+        String url = getString(R.string.chat_firebase_cloud_functions_url) + "/supportapi/" +
+                ChatManager.getInstance().getAppId() + "/groups/" + groupId;
+
+        // perform remote deletion
+        httpManager.makeHttpPUTCall(callback, url, headerParams, "");
+
+        // perform deletion in memory
+        conversationsHandler.deleteConversationFromMemory(groupId);
     }
 }

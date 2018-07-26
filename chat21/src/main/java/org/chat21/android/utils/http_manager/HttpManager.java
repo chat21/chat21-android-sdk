@@ -67,6 +67,58 @@ public class HttpManager {
         httpPOSTTask.execute(url);
     }
 
+    public void makeHttpDELETECall(final OnResponseRetrievedCallback<String> callback, String url,
+                                 Map<String, String> headerParams, String queryParams) {
+
+        OnResponseRetrievedCallback<String> mCallback = new OnResponseRetrievedCallback<String>() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d(TAG, "makeHttpDELETECall.onSuccess");
+
+//                Log.d(TAG, "response == " + response);
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.d(TAG, "makeHttpDELETECall.onError");
+
+                Log.e(TAG, e.getMessage());
+                callback.onError(e);
+            }
+        };
+
+        HttpDELETETask httpDELETETask = new HttpDELETETask(queryParams, mCallback);
+        httpDELETETask.setHeaderParams(headerParams);
+        httpDELETETask.execute(url);
+    }
+
+    public void makeHttpPUTCall(final OnResponseRetrievedCallback<String> callback, String url,
+                                   Map<String, String> headerParams, String queryParams) {
+
+        OnResponseRetrievedCallback<String> mCallback = new OnResponseRetrievedCallback<String>() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d(TAG, "makeHttpPUTCall.onSuccess");
+
+//                Log.d(TAG, "response == " + response);
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.d(TAG, "makeHttpPUTCall.onError");
+
+                Log.e(TAG, e.getMessage());
+                callback.onError(e);
+            }
+        };
+
+        HttpPUTTask httpPUTTask = new HttpPUTTask(queryParams, mCallback);
+        httpPUTTask.setHeaderParams(headerParams);
+        httpPUTTask.execute(url);
+    }
+
     public void makeHttpGETCall(final OnResponseRetrievedCallback<String> callback, String url) {
         OnResponseRetrievedCallback<String> mCallback = new OnResponseRetrievedCallback<String>() {
             @Override

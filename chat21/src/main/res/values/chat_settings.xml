@@ -3,6 +3,8 @@
     <!--firebase database reference (optional)-->
     <string name="chat_firebase_url" translatable="false"></string>
 
+    <string name="chat_firebase_cloud_functions_url" translatable="false"></string>
+
     <!--firebase storage reference (optional)-->
     <string name="chat_firebase_storage_bucket" translatable="false"></string>
 
