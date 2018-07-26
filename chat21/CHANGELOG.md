@@ -4,6 +4,7 @@
 - close group - ConversationListFragment
 - delete conversation - ConversationListFragment
 - added /utils/httpmanager
+- toggle conversation read status
 
 ## v.: 1.0.10 b.: 38
 - fixed remove conversation - ConversationsHandler, ConversationsListener, BottomSheetConversationsListFragmentLongPress, ConversationListFragment

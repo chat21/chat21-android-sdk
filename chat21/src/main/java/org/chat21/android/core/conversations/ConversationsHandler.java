@@ -465,6 +465,39 @@ public class ConversationsHandler {
         }
     }
 
+    public void toggleConversationRead(final String recipientId) {
+
+        // retrieve the conversation by the conversationId
+        Conversation conversation = getById(recipientId);
+
+        // toggle the conversation status
+        boolean status = !conversation.getIs_new();
+
+        if (conversation != null) {
+            final boolean finalStatus = status;
+            conversationsNode.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    // check if the conversation exists to prevent conversation with only "is_new" value
+                    if (snapshot.hasChild(recipientId)) {
+                        // update the state
+                        conversationsNode.child(recipientId)
+                                .child("is_new")
+                                .setValue(finalStatus);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    String errorMessage = "cannot toggle the conversation read: " +
+                            databaseError.getMessage();
+                    Log.e(TAG, errorMessage);
+                    FirebaseCrash.report(new Exception(errorMessage));
+                }
+            });
+        }
+    }
+
     public List<UnreadConversationsListener> getUnreadConversationsListeners() {
         return unreadConversationsListeners;
     }

@@ -131,7 +131,8 @@ public class ConversationListFragment extends Fragment implements
         recyclerViewConversations.setLayoutManager(rvConversationsLayoutManager);
 
         // init RecyclerView adapter
-        conversationsListAdapter = new ConversationsListAdapter(getActivity(), conversationsHandler.getConversations());
+        conversationsListAdapter = new ConversationsListAdapter(
+                getActivity(), conversationsHandler.getConversations());
         conversationsListAdapter.setOnConversationClickListener(this);
         conversationsListAdapter.setOnConversationLongClickListener(this);
         conversationsListAdapter.setOnSwipeMenuCloseClickListener(this);
@@ -332,11 +333,22 @@ public class ConversationListFragment extends Fragment implements
             // is support group
             closeSupportGroup(conversationId, headerParams);
         }
+
+        // NOTE: dismiss is not necessary because the view disappears when the conversation is removed
+//        // dismiss the swipe menu
+//        conversationsListAdapter.dismissSwipeMenu(recyclerViewConversations, position);
+//        conversationsListAdapter.notifyItemChanged(position);
     }
 
     @Override
     public void onSwipeMenuUnread(Conversation conversation, int position) {
-        Log.i(TAG, "onSwipeMenuUnread: conversation: " + conversation.toString() + " position: " + position);
+//        Log.i(TAG, "onSwipeMenuUnread: conversation: " + conversation.toString() + " position: " + position);
+
+        conversationsHandler.toggleConversationRead(conversation.getConversationId());
+
+        // dismiss the swipe menu
+        conversationsListAdapter.dismissSwipeMenu(recyclerViewConversations, position);
+        conversationsListAdapter.notifyItemChanged(position);
     }
 
     // delete a conversation form the personal timeline
@@ -370,7 +382,6 @@ public class ConversationListFragment extends Fragment implements
 
         // perform deletion in memory
         conversationsHandler.deleteConversationFromMemory(conversationId);
-
     }
 
     // close the support group

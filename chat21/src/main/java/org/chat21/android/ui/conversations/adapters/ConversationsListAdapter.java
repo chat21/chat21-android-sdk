@@ -113,6 +113,8 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
         setOnCloseClickListener(holder, conversation, position);
 
         setOnUnreadClickListener(holder, conversation, position);
+
+        setTextButton(holder, conversation);
     }
 
     private void setRecipientPicture(ViewHolder holder, Conversation conversation) {
@@ -272,7 +274,6 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
             @Override
             public void onClick(View view) {
                 getOnSwipeMenuCloseClickListener().onSwipeMenuClosed(conversation, position);
-                holder.swipeItem.close(); // dismiss the menu
             }
         });
     }
@@ -281,10 +282,40 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
         holder.unread.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // update the text button
+                setTextButton(holder, conversation);
+
                 getOnSwipeMenuUnreadClickListener().onSwipeMenuUnread(conversation, position);
-                holder.swipeItem.close(); // dismiss the menu
             }
         });
+    }
+
+    /**
+     * Dismiss the swipe menu for the view at position
+     * @param position the position of the item to dismiss
+     */
+    public void dismissSwipeMenu(RecyclerView recyclerView, int position) {
+        // retrieve the viewholder at position
+        RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+
+        // check if the viewholder is an instance of ConversationListAdapter.ViewHolder
+        if(viewHolder instanceof ViewHolder) {
+
+            // cast the holder to ConversationListAdapter.ViewHolder
+            ViewHolder holder = (ViewHolder) viewHolder;
+
+            // dismiss the menu
+            holder.swipeItem.close();
+        }
+    }
+
+    private void setTextButton(ViewHolder holder, Conversation conversation) {
+        if(conversation.getIs_new()) {
+            holder.unread.setText("Read");
+        } else {
+            holder.unread.setText("Unread");
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
