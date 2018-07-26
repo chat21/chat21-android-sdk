@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## v.: 1.0.11 b.: 39
+- close group - ConversationListFragment
+- delete conversation - ConversationListFragment
+- added /utils/httpmanager
+
 ## v.: 1.0.10 b.: 38
 - fixed remove conversation - ConversationsHandler, ConversationsListener, BottomSheetConversationsListFragmentLongPress, ConversationListFragment
 - fixed auth expiring issue - ChatSplashActivity, ChatAuthentication
