@@ -430,3 +430,8 @@ Now you can show your chat with the following method:
         </span>
     </a>
 </div>
+
+
+## Deploy JCenter
+
+Follow this [guide](https://github.com/chat21/chat21-android-sdk/wiki/JCenter-Deploy) to deploy your own library to JCenter
