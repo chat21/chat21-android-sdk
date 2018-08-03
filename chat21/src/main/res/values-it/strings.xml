@@ -102,4 +102,14 @@
     <!--activity_chat_login-->
     <string name="activity_chat_login_no_account_label">Nessun account?</string>
     <string name="activity_chat_login_signup_label">Sign up</string>
+
+    <!--menu_fragment_conversations_list-->
+    <string name="menu_fragment_conversations_list_action_archived">Archived</string>
+
+    <!--activity_archived_conversation_list_title-->
+    <string name="activity_archived_conversation_list_title">Archiviate</string>
+
+    <!--row_archived_conversations-->
+    <string name="row_archived_conversations_textview_reopen">Riapri</string>
+    <string name="row_archived_conversations_closed_label">Chiusa</string>
 </resources>

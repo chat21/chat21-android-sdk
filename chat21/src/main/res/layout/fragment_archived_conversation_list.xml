@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinator"
+    android:background="@color/windowBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--<ProgressBar-->
+    <!--android:id="@+id/progress_bar"-->
+    <!--android:layout_width="@dimen/chat_progress_bar_size"-->
+    <!--android:layout_height="@dimen/chat_progress_bar_size"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:visibility="gone" />-->
+
+    <include
+        android:id="@+id/layout_no_conversations"
+        layout="@layout/layout_no_conversations"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"></include>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/conversations_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

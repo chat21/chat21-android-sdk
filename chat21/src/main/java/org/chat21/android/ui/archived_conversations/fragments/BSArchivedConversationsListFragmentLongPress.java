@@ -1,4 +1,5 @@
-package org.chat21.android.ui.conversations.fragments;
+package org.chat21.android.ui.archived_conversations.fragments;
+
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -12,26 +13,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
-import org.chat21.android.core.conversations.ConversationsHandler;
+import org.chat21.android.core.conversations.ArchivedConversationsHandler;
 import org.chat21.android.core.conversations.listeners.ConversationsListener;
 import org.chat21.android.core.conversations.models.Conversation;
 import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.users.models.IChatUser;
-import org.chat21.android.utils.StringUtils;
 
 /**
- * Created by stefanodp91 on 28/09/17.
+ * Created by stefano on 02/08/2018.
  */
-public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDialogFragment implements View.OnClickListener /**, ConversationsListener */
+public class BSArchivedConversationsListFragmentLongPress extends BottomSheetDialogFragment implements View.OnClickListener /**, ConversationsListener */
 {
 
-    private static final String DEBUG_TAG = BottomSheetConversationsListFragmentLongPress.class.getName();
+    private static final String DEBUG_TAG = BSArchivedConversationsListFragmentLongPress.class.getName();
 
     private static final String _BOTTOM_SHEET_CONVERSATIONS_LIST_FRAGMENT_LONG_PRESS_EXTRAS_CONVERSATION =
             "_BOTTOM_SHEET_CONVERSATIONS_LIST_FRAGMENT_LONG_PRESS_EXTRAS_CONVERSATION";
@@ -41,23 +37,23 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
 
     private Button mDeleteConversationView;
 
-    private ConversationsHandler conversationsHandler;
+    private ArchivedConversationsHandler conversationsHandler;
 
-    public static BottomSheetConversationsListFragmentLongPress
+    public static BSArchivedConversationsListFragmentLongPress
     newInstance(Conversation conversation) {
-        BottomSheetConversationsListFragmentLongPress f =
-                new BottomSheetConversationsListFragmentLongPress();
+        BSArchivedConversationsListFragmentLongPress f =
+                new BSArchivedConversationsListFragmentLongPress();
         Bundle args = new Bundle();
         args.putSerializable(_BOTTOM_SHEET_CONVERSATIONS_LIST_FRAGMENT_LONG_PRESS_EXTRAS_CONVERSATION, conversation);
         f.setArguments(args);
         return f;
     }
 
-    public ConversationsHandler getConversationsHandler() {
+    public ArchivedConversationsHandler getConversationsHandler() {
         return this.conversationsHandler;
     }
 
-    public void setConversationsHandler(ConversationsHandler conversationsHandler) {
+    public void setConversationsHandler(ArchivedConversationsHandler conversationsHandler) {
         this.conversationsHandler = conversationsHandler;
     }
 
@@ -80,7 +76,7 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_bottom_sheet_conversation_list_long_press, container, false);
+        View view = inflater.inflate(R.layout.fragment_bottom_sheet_archived_conversation_list_long_press, container, false);
 
         mDeleteConversationView = view.findViewById(R.id.btn_delete_conversation);
         mDeleteConversationView.setOnClickListener(this);

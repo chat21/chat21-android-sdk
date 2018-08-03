@@ -35,6 +35,11 @@
             android:name="org.chat21.android.ui.conversations.activities.ConversationListActivity"
             android:label="@string/string_conversation_list_activity_title" />
 
+        <!--display the list of all archived conversation-->
+        <activity
+            android:name="org.chat21.android.ui.archived_conversations.activities.ArchivedConversationListActivity"
+            android:label="@string/activity_archived_conversation_list_title" />
+
         <!--display the list of all messages into a specific conversation-->
         <activity android:name="org.chat21.android.ui.messages.activities.MessageListActivity">
 

@@ -16,6 +16,7 @@ import org.chat21.android.core.authentication.ChatAuthentication;
 import org.chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import org.chat21.android.core.contacts.listeners.OnContactCreatedCallback;
 import org.chat21.android.core.contacts.synchronizers.ContactsSynchronizer;
+import org.chat21.android.core.conversations.ArchivedConversationsHandler;
 import org.chat21.android.core.conversations.ConversationsHandler;
 import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.messages.handlers.ConversationMessagesHandler;
@@ -59,6 +60,7 @@ public class ChatManager {
 
     private Map<String, ConversationMessagesHandler> conversationMessagesHandlerMap;
     private ConversationsHandler conversationsHandler;
+    private ArchivedConversationsHandler archivedConversationsHandler;
     private MyPresenceHandler myPresenceHandler;
     private Map<String, PresenceHandler> presenceHandlerMap;
 
@@ -316,6 +318,10 @@ public class ChatManager {
         this.conversationsHandler.disconnect();
         this.conversationsHandler = null;
 
+        //dispose archivedConversationsHandler
+        this.archivedConversationsHandler.disconnect();
+        this.archivedConversationsHandler = null;
+
         //dispose all conversationMessagesHandlerMap
         for (Map.Entry<String, ConversationMessagesHandler> entry : conversationMessagesHandlerMap.entrySet()) {
 
@@ -476,6 +482,16 @@ public class ChatManager {
             this.conversationsHandler = new ConversationsHandler(Configuration.firebaseUrl,
                     this.getAppId(), this.getLoggedUser().getId());
             return conversationsHandler;
+        }
+    }
+
+  public ArchivedConversationsHandler getArchivedConversationsHandler() {
+        if (this.archivedConversationsHandler != null) {
+            return this.archivedConversationsHandler;
+        } else {
+            this.archivedConversationsHandler = new ArchivedConversationsHandler(Configuration.firebaseUrl,
+                    this.getAppId(), this.getLoggedUser().getId());
+            return archivedConversationsHandler;
         }
     }
 

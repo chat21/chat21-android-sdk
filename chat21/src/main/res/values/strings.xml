@@ -104,4 +104,14 @@
 
     <!--activity_choose_chat_group_activity-->
     <string name="activity_choose_chat_group_activity_activity_title">Groups</string>
+
+    <!--menu_fragment_conversations_list-->
+    <string name="menu_fragment_conversations_list_action_archived">Archived</string>
+
+    <!--activity_archived_conversation_list_title-->
+    <string name="activity_archived_conversation_list_title">Archived</string>
+
+    <!--row_archived_conversations-->
+    <string name="row_archived_conversations_textview_reopen">Reopen</string>
+    <string name="row_archived_conversations_closed_label">Closed</string>
 </resources>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_item"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    app:clickToClose="true">
+
+
+    <!--left swipe menu-->
+    <!--<LinearLayout-->
+    <!--android:id="@+id/swipe_left"-->
+    <!--android:layout_width="160dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@android:color/holo_red_dark"-->
+    <!--android:weightSum="1">-->
+
+    <!--<ImageView-->
+    <!--android:id="@+id/img_budget"-->
+    <!--android:layout_width="70dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:paddingLeft="25dp"-->
+    <!--android:paddingRight="25dp"-->
+    <!--android:src="@mipmap/money" />-->
+
+    <!--<ImageView-->
+    <!--android:id="@+id/photo"-->
+    <!--android:layout_width="70dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:paddingLeft="25dp"-->
+    <!--android:paddingRight="25dp"-->
+    <!--android:src="@mipmap/photo" />-->
+    <!--</LinearLayout>-->
+
+
+    <!--right swipe menu-->
+    <LinearLayout
+        android:id="@+id/swipe_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/reopen"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/blue_grey_500"
+            android:gravity="center"
+            android:paddingLeft="@dimen/chat_padding_small"
+            android:paddingRight="@dimen/chat_padding_small"
+            android:text="@string/row_archived_conversations_textview_reopen"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/windowBackground"
+        android:orientation="horizontal"
+        android:padding="@dimen/chat_padding_small">
+
+        <!-- profile picture -->
+        <ImageView
+            android:id="@+id/recipient_picture"
+            android:layout_width="@dimen/chat_row_conversation_recipient_picture_size"
+            android:layout_height="@dimen/chat_row_conversation_recipient_picture_size" />
+
+        <!-- messageRecipient and message group -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/chat_margin_small"
+            android:orientation="vertical">
+
+            <!-- messageRecipient information -->
+            <!--<TextView-->
+            <!--android:id="@+id/recipient_display_name"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="@style/TextAppearance.AppCompat.Title"-->
+            <!--android:textSize="@dimen/chat_row_conversation_recipient_fullname_text_size" />-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/recipient_display_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/closed_label"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:textSize="@dimen/chat_row_conversation_recipient_fullname_text_size" />
+
+                <TextView
+                    android:id="@+id/closed_label"
+                    android:paddingLeft="@dimen/chat_padding_x_small"
+                    android:paddingRight="@dimen/chat_padding_x_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="@dimen/chat_margin_small"
+                    android:layout_marginRight="@dimen/chat_margin_small"
+                    android:background="@drawable/border_row_closed_archived_conversation"
+                    android:text="@string/row_archived_conversations_closed_label"
+                    android:textAllCaps="true"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                    android:textColor="@color/white" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/sender_display_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textSize="@dimen/chat_row_conversation_sender_fullname_text_size"
+                android:visibility="gone" />
+
+            <!-- message information -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.vanniktech.emoji.EmojiTextView
+                    android:id="@+id/last_text_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/last_message_timestamp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textSize="@dimen/chat_row_conversation_recipient_last_message_text_size"
+                    app:emojiSize="@dimen/chat_row_conversation_recipient_last_message_emoji_size" />
+
+                <TextView
+                    android:id="@+id/last_message_timestamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="@dimen/chat_margin_small"
+                    android:layout_marginRight="@dimen/chat_margin_small" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+</com.daimajia.swipe.SwipeLayout>

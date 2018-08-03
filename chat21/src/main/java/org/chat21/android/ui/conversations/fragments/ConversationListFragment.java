@@ -11,10 +11,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GetTokenResult;
@@ -30,6 +34,7 @@ import org.chat21.android.core.presence.listeners.MyPresenceListener;
 import org.chat21.android.core.users.models.ChatUser;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.ChatUI;
+import org.chat21.android.ui.archived_conversations.activities.ArchivedConversationListActivity;
 import org.chat21.android.ui.chat_groups.activities.ChatGroupsListActivity;
 import org.chat21.android.ui.conversations.adapters.ConversationsListAdapter;
 import org.chat21.android.ui.conversations.listeners.OnConversationClickListener;
@@ -119,6 +124,8 @@ public class ConversationListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "ConversationListFragment.onCreateView");
         View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
+        setHasOptionsMenu(true);
+
 
         // init RecyclerView
         recyclerViewConversations = view.findViewById(R.id.conversations_list);
@@ -169,6 +176,30 @@ public class ConversationListFragment extends Fragment implements
 //        // subscribe for current user presence changes
 //        PresenceManger.observeUserPresenceChanges(ChatManager.getInstance().getTenant(),
 //                ChatManager.getInstance().getLoggedUser().getId(), onMyPresenceListener);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_fragment_conversations_list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+       int itemId =  item.getItemId();
+
+       if(itemId == R.id.action_archived) {
+
+//           Toast.makeText(getActivity(), "action archived clicked", Toast.LENGTH_SHORT).show();
+
+           Intent i = new Intent(getActivity(), ArchivedConversationListActivity.class);
+           startActivity(i);
+
+           return true;
+       }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

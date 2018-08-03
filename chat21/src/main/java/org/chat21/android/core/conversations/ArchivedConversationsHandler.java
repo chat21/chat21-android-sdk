@@ -1,7 +1,6 @@
 package org.chat21.android.core.conversations;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.ChildEventListener;
@@ -29,8 +28,8 @@ import java.util.Map;
  * Modified by stefanodp91 on 19/03/18.
  */
 
-public class ConversationsHandler {
-    private static final String TAG = ConversationsHandler.class.getName();
+public class ArchivedConversationsHandler {
+    private static final String TAG = ArchivedConversationsHandler.class.getName();
 
     private List<Conversation> conversations;
     private DatabaseReference conversationsNode;
@@ -46,7 +45,7 @@ public class ConversationsHandler {
     private List<UnreadConversationsListener> unreadConversationsListeners;
     private ValueEventListener unreadConversationsValueEventListener;
 
-    public ConversationsHandler(String firebaseUrl, String appId, String currentUserId) {
+    public ArchivedConversationsHandler(String firebaseUrl, String appId, String currentUserId) {
         conversationsListeners = new ArrayList<ConversationsListener>();
         conversations = new ArrayList<>(); // conversations in memory
 
@@ -59,11 +58,11 @@ public class ConversationsHandler {
         if (StringUtils.isValid(firebaseUrl)) {
             this.conversationsNode = FirebaseDatabase.getInstance()
                     .getReferenceFromUrl(firebaseUrl)
-                    .child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
+                    .child("/apps/" + appId + "/users/" + currentUserId + "/archived_conversations/");
         } else {
             this.conversationsNode = FirebaseDatabase.getInstance()
                     .getReference()
-                    .child("/apps/" + appId + "/users/" + currentUserId + "/conversations/");
+                    .child("/apps/" + appId + "/users/" + currentUserId + "/archived_conversations/");
         }
         this.conversationsNode.keepSynced(true);
 
@@ -143,7 +142,7 @@ public class ConversationsHandler {
                 }
             });
         } else {
-            Log.i(TAG, "ConversationsHandler.connect.valueEventListener: valueEventListener already connected.");
+            Log.i(TAG, "ArchivedConversationsHandler.connect.valueEventListener: valueEventListener already connected.");
         }
 
         // subscribe on conversations add/change/remove
@@ -152,7 +151,7 @@ public class ConversationsHandler {
             this.conversationsChildEventListener = conversationsNode.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.d(TAG, "ConversationsHandler.connect.onChildAdded");
+                    Log.d(TAG, "ArchivedConversationsHandler.connect.onChildAdded");
 
                     try {
                         Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
@@ -348,7 +347,7 @@ public class ConversationsHandler {
 
         // conversationId
         conversation.setConversationId(dataSnapshot.getKey());
-        Log.d(TAG, "ConversationsHandler.decodeConversationSnapshop: conversationId = " +
+        Log.d(TAG, "ArchivedConversationsHandler.decodeConversationSnapshop: conversationId = " +
                 conversation.getConversationId());
 
         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
@@ -358,7 +357,7 @@ public class ConversationsHandler {
             boolean is_new = (boolean) map.get("is_new");
             conversation.setIs_new(is_new);
         } catch (Exception e) {
-            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop:" +
+            Log.e(TAG, "ArchivedConversationsHandler.decodeConversationSnapshop:" +
                     " cannot retrieve is_new");
         }
 
@@ -367,7 +366,7 @@ public class ConversationsHandler {
             String last_message_text = (String) map.get("last_message_text");
             conversation.setLast_message_text(last_message_text);
         } catch (Exception e) {
-            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop: " +
+            Log.e(TAG, "ArchivedConversationsHandler.decodeConversationSnapshop: " +
                     "cannot retrieve last_message_text");
         }
 
@@ -376,7 +375,7 @@ public class ConversationsHandler {
             String recipient = (String) map.get("recipient");
             conversation.setRecipient(recipient);
         } catch (Exception e) {
-            Log.e(TAG, "ConversationsHandler.decodeConversationSnapshop:" +
+            Log.e(TAG, "ArchivedConversationsHandler.decodeConversationSnapshop:" +
                     " cannot retrieve recipient");
         }
 
@@ -527,11 +526,11 @@ public class ConversationsHandler {
     }
 
     public void addUnreadConversationsListener(UnreadConversationsListener unreadConversationsListener) {
-        Log.v(TAG, "ConversationsHandler.addGroupsListener: called");
+        Log.v(TAG, "ArchivedConversationsHandler.addGroupsListener: called");
 
         this.unreadConversationsListeners.add(unreadConversationsListener);
 
-        Log.i(TAG, "ConversationsHandler.addUnreadConversationsListener: unreadConversationsListener with hashCode: " +
+        Log.i(TAG, "ArchivedConversationsHandler.addUnreadConversationsListener: unreadConversationsListener with hashCode: " +
                 unreadConversationsListener.hashCode() + " added");
     }
 
@@ -546,12 +545,12 @@ public class ConversationsHandler {
     }
 
     public void removeUnreadConversationsListener(UnreadConversationsListener unreadConversationsListener) {
-        Log.v(TAG, "ConversationsHandler.removeUnreadConversationsListener: called");
+        Log.v(TAG, "ArchivedConversationsHandler.removeUnreadConversationsListener: called");
 
         if (unreadConversationsListener != null)
             this.unreadConversationsListeners.remove(unreadConversationsListener);
 
-        Log.i(TAG, "ConversationsHandler.removeUnreadConversationsListener: unreadConversationsListener with hashCode: " +
+        Log.i(TAG, "ArchivedConversationsHandler.removeUnreadConversationsListener: unreadConversationsListener with hashCode: " +
                 unreadConversationsListener.hashCode() + " removed");
     }
 
@@ -572,17 +571,17 @@ public class ConversationsHandler {
     }
 
     public void upsetUnreadConversationsListener(UnreadConversationsListener unreadConversationsListener) {
-        Log.v(TAG, "ConversationsHandler.upsetUnreadConversationsListener: called");
+        Log.v(TAG, "ArchivedConversationsHandler.upsetUnreadConversationsListener: called");
 
         if (unreadConversationsListeners.contains(unreadConversationsListener)) {
             this.removeUnreadConversationsListener(unreadConversationsListener);
             this.addUnreadConversationsListener(unreadConversationsListener);
-            Log.i(TAG, "ConversationsHandler.upsetUnreadConversationsListener: unreadConversationsListener with hashCode: " +
+            Log.i(TAG, "ArchivedConversationsHandler.upsetUnreadConversationsListener: unreadConversationsListener with hashCode: " +
                     unreadConversationsListener.hashCode() + " updated");
 
         } else {
             this.addUnreadConversationsListener(unreadConversationsListener);
-            Log.i(TAG, "ConversationsHandler.upsetUnreadConversationsListener: unreadConversationsListener with hashCode: " +
+            Log.i(TAG, "ArchivedConversationsHandler.upsetUnreadConversationsListener: unreadConversationsListener with hashCode: " +
                     unreadConversationsListener.hashCode() + " added");
         }
     }
@@ -595,7 +594,7 @@ public class ConversationsHandler {
     public void removeAllUnreadConversationsListeners() {
         if (unreadConversationsListeners != null) unreadConversationsListeners.clear();
         unreadConversationsListeners = null;
-        Log.i(TAG, "ConversationsHandler.removeAllUnreadConversationsListeners: Removed all ConversationsListeners");
+        Log.i(TAG, "ArchivedConversationsHandler.removeAllUnreadConversationsListeners: Removed all ConversationsListeners");
     }
 
     public ChildEventListener getConversationsChildEventListener() {

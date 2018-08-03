@@ -1,4 +1,5 @@
-package org.chat21.android.ui.conversations.adapters;
+package org.chat21.android.ui.archived_conversations.adapters;
+
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.daimajia.swipe.SwipeLayout;
 import com.vanniktech.emoji.EmojiTextView;
 
 import org.chat21.android.R;
@@ -20,8 +22,10 @@ import org.chat21.android.core.chat_groups.models.ChatGroup;
 import org.chat21.android.core.conversations.models.Conversation;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.adapters.AbstractRecyclerAdapter;
+import org.chat21.android.ui.archived_conversations.listeners.OnSwipeMenuReopenClickListener;
 import org.chat21.android.ui.conversations.listeners.OnConversationClickListener;
 import org.chat21.android.ui.conversations.listeners.OnConversationLongClickListener;
+import org.chat21.android.ui.conversations.listeners.OnSwipeMenuUnreadClickListener;
 import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
 import org.chat21.android.utils.image.CropCircleTransformation;
@@ -29,14 +33,15 @@ import org.chat21.android.utils.image.CropCircleTransformation;
 import java.util.List;
 
 /**
- * Created by stefanodp91 on 18/12/17.
+ * Created by stefano on 02/08/2018.
  */
-public class Bak_ConversationsListAdapter extends AbstractRecyclerAdapter<Conversation,
-        Bak_ConversationsListAdapter.ViewHolder> {
-    private static final String TAG = Bak_ConversationsListAdapter.class.getName();
+public class ArchivedConversationsListAdapter extends AbstractRecyclerAdapter<Conversation,
+        ArchivedConversationsListAdapter.ViewHolder> {
+    private static final String TAG = ArchivedConversationsListAdapter.class.getName();
 
     private OnConversationClickListener onConversationClickListener;
     private OnConversationLongClickListener onConversationLongClickListener;
+    private OnSwipeMenuReopenClickListener onSwipeMenuReopenClickListener;
 
     public OnConversationClickListener getOnConversationClickListener() {
         return onConversationClickListener;
@@ -55,7 +60,15 @@ public class Bak_ConversationsListAdapter extends AbstractRecyclerAdapter<Conver
         this.onConversationLongClickListener = onConversationLongClickListener;
     }
 
-    public Bak_ConversationsListAdapter(Context context, List<Conversation> conversations) {
+    public void setOnSwipeMenuReopenClickListener(OnSwipeMenuReopenClickListener onSwipeMenuReopenClickListener) {
+        this.onSwipeMenuReopenClickListener = onSwipeMenuReopenClickListener;
+    }
+
+    public OnSwipeMenuReopenClickListener getOnSwipeMenuReopenClickListener() {
+        return onSwipeMenuReopenClickListener;
+    }
+
+    public ArchivedConversationsListAdapter(Context context, List<Conversation> conversations) {
         super(context, conversations);
     }
 
@@ -65,14 +78,14 @@ public class Bak_ConversationsListAdapter extends AbstractRecyclerAdapter<Conver
     }
 
     @Override
-    public Bak_ConversationsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ArchivedConversationsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_conversation, parent, false);
+                .inflate(R.layout.row_archived_conversation, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(Bak_ConversationsListAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(ArchivedConversationsListAdapter.ViewHolder holder, final int position) {
         final Conversation conversation = getItem(position);
 
         setRecipientPicture(holder, conversation);
@@ -88,6 +101,8 @@ public class Bak_ConversationsListAdapter extends AbstractRecyclerAdapter<Conver
         setConversationCLickAction(holder, conversation, position);
 
         setConversationLongCLickAction(holder, conversation, position);
+
+        setOnReopenClickListener(holder, conversation, position);
     }
 
     private void setRecipientPicture(ViewHolder holder, Conversation conversation) {
@@ -201,13 +216,15 @@ public class Bak_ConversationsListAdapter extends AbstractRecyclerAdapter<Conver
     // set on row click listener
     private void setConversationCLickAction(ViewHolder holder,
                                             final Conversation conversation, final int position) {
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        // use the swipe item click listener to solve the open/close issue
+        // more details at https://github.com/daimajia/AndroidSwipeLayout/issues/403
+        holder.swipeItem.getSurfaceView().setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 if (getOnConversationClickListener() != null) {
                     getOnConversationClickListener().onConversationClicked(conversation, position);
                 } else {
-                    Log.w(TAG, "ConversationsListAdapter.setConversationCLickAction:" +
+                    Log.w(TAG, "ArchivedConversationsListAdapter.setConversationCLickAction:" +
                             " getOnConversationClickListener() is null. " +
                             "set it with setOnConversationClickListener method. ");
                 }
@@ -218,7 +235,9 @@ public class Bak_ConversationsListAdapter extends AbstractRecyclerAdapter<Conver
     // set on row long click listener
     private void setConversationLongCLickAction(ViewHolder holder,
                                                 final Conversation conversation, final int position) {
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        // use the swipe item click listener to solve the open/close issue
+        // more details at https://github.com/daimajia/AndroidSwipeLayout/issues/403
+        holder.swipeItem.getSurfaceView().setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 if (getOnConversationLongClickListener() != null) {
@@ -228,7 +247,7 @@ public class Bak_ConversationsListAdapter extends AbstractRecyclerAdapter<Conver
                     // https://stackoverflow.com/questions/18911290/perform-both-the-normal-click-and-long-click-at-button
                     return true; // event triggered
                 } else {
-                    Log.w(TAG, "ConversationsListAdapter.setConversationLongCLickAction:" +
+                    Log.w(TAG, "ArchivedConversationsListAdapter.setConversationLongCLickAction:" +
                             " getOnConversationLongClickListener is null. " +
                             "set it with setOnConversationLongClickListener method. ");
                 }
@@ -238,12 +257,43 @@ public class Bak_ConversationsListAdapter extends AbstractRecyclerAdapter<Conver
         });
     }
 
+    private void setOnReopenClickListener(final ViewHolder holder, final Conversation conversation, final int position) {
+        holder.reopen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                getOnSwipeMenuReopenClickListener().onSwipeMenuReopened(conversation, position);
+            }
+        });
+    }
+
+    /**
+     * Dismiss the swipe menu for the view at position
+     * @param position the position of the item to dismiss
+     */
+    public void dismissSwipeMenu(RecyclerView recyclerView, int position) {
+        // retrieve the viewholder at position
+        RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+
+        // check if the viewholder is an instance of ConversationListAdapter.ViewHolder
+        if(viewHolder instanceof ViewHolder) {
+
+            // cast the holder to ConversationListAdapter.ViewHolder
+            ViewHolder holder = (ViewHolder) viewHolder;
+
+            // dismiss the menu
+            holder.swipeItem.close();
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView recipientPicture;
         private TextView recipientDisplayName;
         private TextView senderDisplayName;
         private EmojiTextView lastTextMessage;
         private TextView lastMessageTimestamp;
+        private TextView reopen;
+        private SwipeLayout swipeItem;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -253,6 +303,13 @@ public class Bak_ConversationsListAdapter extends AbstractRecyclerAdapter<Conver
             senderDisplayName = itemView.findViewById(R.id.sender_display_name);
             lastTextMessage = itemView.findViewById(R.id.last_text_message);
             lastMessageTimestamp = itemView.findViewById(R.id.last_message_timestamp);
+
+            reopen = itemView.findViewById(R.id.reopen);
+
+            swipeItem = itemView.findViewById(R.id.swipe_item);
+            swipeItem.setShowMode(SwipeLayout.ShowMode.PullOut);
+//            swipeItem.addDrag(SwipeLayout.DragEdge.Left, swipeItem.findViewById(R.id.swipe_left));
+            swipeItem.addDrag(SwipeLayout.DragEdge.Right, swipeItem.findViewById(R.id.swipe_right));
         }
     }
 }

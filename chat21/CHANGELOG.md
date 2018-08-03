@@ -1,13 +1,14 @@
 ﻿# CHANGELOG
 
 ## v.: 1.0.11 b.: 39
-- close group - ConversationListFragment
-- delete conversation - ConversationListFragment
+- close group - ArchivedConversationListFragment
+- delete conversation - ArchivedConversationListFragment
 - added /utils/httpmanager
 - toggle conversation read status
+- added archived conversations activity 
 
 ## v.: 1.0.10 b.: 38
-- fixed remove conversation - ConversationsHandler, ConversationsListener, BottomSheetConversationsListFragmentLongPress, ConversationListFragment
+- fixed remove conversation - ConversationsHandler, ConversationsListener, BSArchivedConversationsListFragmentLongPress, ArchivedConversationListFragment
 - fixed auth expiring issue - ChatSplashActivity, ChatAuthentication
 
 ## v.: 1.0.9 b.: 37
@@ -38,7 +39,7 @@
 - fixed finish activity on group creation - AddMemberToChatGroupActivity
 - fixed members label visibility issue - GroupPanelAdminActivity
 - fixed null label when create a new group - ConversationListAdapter
-- fixed input panel visibility when group is created - ConversationListFragment
+- fixed input panel visibility when group is created - ArchivedConversationListFragment
 
 ## v.: 1.0.4 b.: 31
 - fixed contact syncronizer

@@ -236,7 +236,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
                 if (getOnConversationClickListener() != null) {
                     getOnConversationClickListener().onConversationClicked(conversation, position);
                 } else {
-                    Log.w(TAG, "ConversationsListAdapter.setConversationCLickAction:" +
+                    Log.w(TAG, "ArchivedConversationsListAdapter.setConversationCLickAction:" +
                             " getOnConversationClickListener() is null. " +
                             "set it with setOnConversationClickListener method. ");
                 }
@@ -259,7 +259,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
                     // https://stackoverflow.com/questions/18911290/perform-both-the-normal-click-and-long-click-at-button
                     return true; // event triggered
                 } else {
-                    Log.w(TAG, "ConversationsListAdapter.setConversationLongCLickAction:" +
+                    Log.w(TAG, "ArchivedConversationsListAdapter.setConversationLongCLickAction:" +
                             " getOnConversationLongClickListener is null. " +
                             "set it with setOnConversationLongClickListener method. ");
                 }
