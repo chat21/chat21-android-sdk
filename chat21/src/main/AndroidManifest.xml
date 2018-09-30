@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.chat21.android">
@@ -5,16 +6,13 @@
     <application
         android:allowBackup="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.login.activities.ChatLoginActivity" />
+        <activity android:name=".ui.login.activities.ChatSignUpActivity" />
 
-        <activity android:name="org.chat21.android.ui.login.activities.ChatLoginActivity"></activity>
-
-        <activity android:name="org.chat21.android.ui.login.activities.ChatSignUpActivity"></activity>
-
-        <!--display the contact list-->
+        <!-- display the contact list -->
         <activity
-            android:name="org.chat21.android.ui.contacts.activites.ContactListActivity"
+            android:name=".ui.contacts.activites.ContactListActivity"
             android:label="@string/string_contact_list_activity_title">
-
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable_contacts" />
@@ -23,96 +21,99 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
 
-        <!--display the list of all active conversation-->
+        <!-- display the list of all active conversation -->
         <activity
-            android:name="org.chat21.android.ui.conversations.activities.ConversationListActivity"
+            android:name=".ui.conversations.activities.ConversationListActivity"
             android:label="@string/string_conversation_list_activity_title" />
 
-        <!--display the list of all archived conversation-->
+        <!-- display the list of all archived conversation -->
         <activity
-            android:name="org.chat21.android.ui.archived_conversations.activities.ArchivedConversationListActivity"
+            android:name=".ui.archived_conversations.activities.ArchivedConversationListActivity"
             android:label="@string/activity_archived_conversation_list_title" />
 
-        <!--display the list of all messages into a specific conversation-->
-        <activity android:name="org.chat21.android.ui.messages.activities.MessageListActivity">
+        <!-- display the list of all messages into a specific conversation -->
+        <activity android:name=".ui.messages.activities.MessageListActivity">
 
-            <!-- http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification
+            <!--
+             http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification
              from notification
-             bugfix Issue #39-->
+             bugfix Issue #39
+            -->
             <intent-filter>
                 <action android:name="ACTION_DEFAULT_CHAT_INTENT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name="org.chat21.android.ui.messages.activities.ImageDetailsActivity" />
-
+        <activity android:name=".ui.messages.activities.ImageDetailsActivity" />
         <activity
-            android:name="org.chat21.android.ui.chat_groups.activities.NewGroupActivity"
-            android:label="@string/string_create_group_activity_title"></activity>
-
+            android:name=".ui.chat_groups.activities.NewGroupActivity"
+            android:label="@string/string_create_group_activity_title" />
         <activity
-            android:name="org.chat21.android.ui.chat_groups.activities.AddMemberToChatGroupActivity"
-            android:label="@string/string_add_members_activity_title"></activity>
+            android:name=".ui.chat_groups.activities.AddMemberToChatGroupActivity"
+            android:label="@string/string_add_members_activity_title" />
+        <activity android:name=".ui.chat_groups.activities.GroupAdminPanelActivity" />
 
-
-        <activity android:name="org.chat21.android.ui.chat_groups.activities.GroupAdminPanelActivity"></activity>
-
-        <!--display the user profile-->
-        <activity android:name="org.chat21.android.ui.users.activities.PublicProfileActivity" />
-
+        <!-- display the user profile -->
+        <activity android:name=".ui.users.activities.PublicProfileActivity" />
         <activity
-            android:name="org.chat21.android.ui.chat_groups.activities.ChatGroupsListActivity"
-            android:label="@string/activity_group_list_activity_title"></activity>
+            android:name=".ui.chat_groups.activities.ChatGroupsListActivity"
+            android:label="@string/activity_group_list_activity_title" />
 
-
-        <!--https://firebase.google.com/docs/notifications/android/console-audience-->
-        <service android:name="org.chat21.android.notifications.ChatFirebaseMessagingService">
+        <!-- https://firebase.google.com/docs/notifications/android/console-audience -->
+        <service android:name=".notifications.ChatFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
-        See README(https://goo.gl/l4GJaQ) for more. -->
+        <!--
+        Set custom default icon. This is used when no icon is set for incoming notification messages.
+        See README(https://goo.gl/l4GJaQ) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification_small" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-        notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <!--
+        Set color used with incoming notification messages. This is used when no color is set for the incoming
+        notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/blue_500" />
 
-        <!--A service that extends FirebaseInstanceIdService to handle the creation, rotation,
+        <!--
+        A service that extends FirebaseInstanceIdService to handle the creation, rotation,
         and updating of registration tokens.
-         This is required for sending to specific devices or for creating device groups.-->
+         This is required for sending to specific devices or for creating device groups.
+        -->
         <service
-            android:name="org.chat21.android.instanceid.service.SaveFirebaseInstanceIdService"
+            android:name=".instanceid.service.SaveFirebaseInstanceIdService"
             tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
-        <receiver android:name="org.chat21.android.connectivity.NetworkReceiver">
+        <receiver android:name=".connectivity.NetworkReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name="org.chat21.android.core.receivers.ShutdownReceiver">
+        <receiver android:name=".core.receivers.ShutdownReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
                 <action android:name="android.intent.action.QUICKBOOT_POWEROFF" />
             </intent-filter>
         </receiver>
     </application>
+
 </manifest>
