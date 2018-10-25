@@ -301,7 +301,9 @@ public class ChatManager {
     public void dispose() {
 
         // dispose myPresenceHandler
-        myPresenceHandler.dispose(); // disconnect all listeners
+        if (myPresenceHandler!=null) {
+            myPresenceHandler.dispose(); // disconnect all listeners
+        }
         myPresenceHandler = null; // destroy it
 
         // dispose all presenceHandlerMap
@@ -315,11 +317,15 @@ public class ChatManager {
         }
 
         //dispose conversationsHandler
-        this.conversationsHandler.disconnect();
+        if (this.conversationsHandler!=null){
+            this.conversationsHandler.disconnect();
+        }
         this.conversationsHandler = null;
 
         //dispose archivedConversationsHandler
-        this.archivedConversationsHandler.disconnect();
+        if (this.archivedConversationsHandler!=null) {   //can be already null
+            this.archivedConversationsHandler.disconnect();
+        }
         this.archivedConversationsHandler = null;
 
         //dispose all conversationMessagesHandlerMap
