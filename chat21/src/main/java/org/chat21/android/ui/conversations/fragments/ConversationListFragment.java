@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +77,8 @@ public class ConversationListFragment extends Fragment implements
     private RelativeLayout noConversationsLayout;
 
     private FloatingActionButton addNewConversation;
+
+    private LinearLayout subheader;
 
     private TextView currentUserGroups;
 
@@ -155,6 +158,7 @@ public class ConversationListFragment extends Fragment implements
         setAddNewConversationClickBehaviour();
 
         currentUserGroups = view.findViewById(R.id.groups);
+        subheader = view.findViewById(R.id.subheader);
         showCurrentUserGroups();
 
         return view;
@@ -254,11 +258,11 @@ public class ConversationListFragment extends Fragment implements
                 }
             });
 
-            currentUserGroups.setVisibility(View.VISIBLE);
+            subheader.setVisibility(View.VISIBLE);
         } else {
             // groups not enabled
 
-            currentUserGroups.setVisibility(View.GONE);
+            subheader.setVisibility(View.GONE);
         }
     }
 

@@ -7,6 +7,6 @@
         android:orderInCategory="100"
         android:icon="@drawable/baseline_history_white_24"
         android:title="@string/menu_fragment_conversations_list_action_archived"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
 </menu>
