@@ -8,6 +8,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+
 import org.chat21.android.core.exception.ChatFieldNotFoundException;
 import org.chat21.android.core.exception.ChatRuntimeException;
 import org.chat21.android.core.messages.listeners.ConversationMessagesListener;
@@ -103,7 +105,14 @@ public class ConversationMessagesHandler {
         message.setChannelType(channelType);
 
 //        message.setStatus(Message.STATUS_SENDING);
+
+        //problema se il client ha orologio sballato (avanti nel tempo rispetto a orario server)
         message.setTimestamp(new Date().getTime());
+        //oltre a questo caso devi sull'on update aggiornare il messaggio quando ti arriva prendendo il timestamp del server
+        //TODO
+        //message.setTimestamp(ServerValue.TIMESTAMP);
+
+
         message.setMetadata(metadata);
 
         Log.d(TAG, "sendMessage.message: " + message.toString());
