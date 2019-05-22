@@ -1,12 +1,13 @@
 package org.chat21.android.ui.chat_groups.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
@@ -84,7 +85,7 @@ public class SelectedContactListAdapter extends AbstractRecyclerAdapter<IChatUse
             Glide.with(itemView.getContext())
                     .load(url)
                     .placeholder(R.drawable.ic_person_avatar)
-                    .bitmapTransform(new CropCircleTransformation(itemView.getContext()))
+                    .transform(new CropCircleTransformation(itemView.getContext()))
                     .into(profilePicture);
         }
 

@@ -9,8 +9,10 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
+
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;

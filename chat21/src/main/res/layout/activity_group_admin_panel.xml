@@ -2,9 +2,9 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator"
-    android:background="@color/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/windowBackground"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
@@ -35,7 +35,7 @@
                 android:background="#90000000"
                 app:layout_collapseMode="pin" />
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,10 +49,10 @@
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/conversation_image"
                     android:orientation="vertical"
-                    android:paddingBottom="2.0dip"
-                    android:paddingEnd="0.0dip"
                     android:paddingStart="4.0dip"
-                    android:paddingTop="0.0dip">
+                    android:paddingTop="0.0dip"
+                    android:paddingEnd="0.0dip"
+                    android:paddingBottom="2.0dip">
 
                     <TextView
                         android:id="@+id/toolbar_title"
@@ -81,11 +81,11 @@
                     <!--android:textSize="14sp" />-->
                 </LinearLayout>
 
-            </android.support.v7.widget.Toolbar>
+            </androidx.appcompat.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -96,7 +96,7 @@
             android:orientation="vertical">
 
             <!--member list-->
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/cardview_members"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,10 +108,10 @@
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:focusableInTouchMode="true"
                         android:id="@+id/box_members"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:focusableInTouchMode="true"
                         android:orientation="vertical">
 
                         <TextView
@@ -130,9 +130,9 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/chat_margin_small"
                             android:orientation="horizontal"
-                            android:paddingBottom="@dimen/chat_padding_small"
-                            android:paddingEnd="@dimen/chat_padding_small"
                             android:paddingStart="@dimen/chat_padding_small"
+                            android:paddingEnd="@dimen/chat_padding_small"
+                            android:paddingBottom="@dimen/chat_padding_small"
                             android:visibility="gone">
 
                             <ImageView
@@ -147,8 +147,8 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="@dimen/chat_margin_small"
                                 android:orientation="vertical"
-                                android:paddingEnd="@dimen/chat_padding_small"
-                                android:paddingStart="@dimen/chat_padding_small">
+                                android:paddingStart="@dimen/chat_padding_small"
+                                android:paddingEnd="@dimen/chat_padding_small">
 
                                 <TextView
                                     android:id="@+id/add_member_title"
@@ -161,12 +161,12 @@
 
                         <!--line separator-->
                         <View
-                            android:focusableInTouchMode="true"
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
-                            android:background="@color/grey_300"></View>
+                            android:background="@color/grey_300"
+                            android:focusableInTouchMode="true" />
 
-                        <android.support.v7.widget.RecyclerView
+                        <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/members"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
@@ -187,10 +187,10 @@
                             android:text="@string/activity_group_admin_panel_not_available_members_label" />
                     </LinearLayout>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
             <!--created by and when-->
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/cardview_created_by_on"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -200,10 +200,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingBottom="@dimen/chat_padding_normal"
                     android:paddingLeft="@dimen/chat_padding_normal"
+                    android:paddingTop="@dimen/chat_padding_normal"
                     android:paddingRight="@dimen/chat_padding_normal"
-                    android:paddingTop="@dimen/chat_padding_normal">
+                    android:paddingBottom="@dimen/chat_padding_normal">
 
                     <!--<TextView-->
                     <!--android:id="@+id/created_by"-->
@@ -291,7 +291,7 @@
                             android:textSize="@dimen/chat_activity_group_admin_group_id_text_size" />
                     </LinearLayout>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

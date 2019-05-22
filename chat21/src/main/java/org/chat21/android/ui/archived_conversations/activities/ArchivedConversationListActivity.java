@@ -2,8 +2,9 @@ package org.chat21.android.ui.archived_conversations.activities;
 
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import org.chat21.android.R;
 import org.chat21.android.ui.archived_conversations.fragments.ArchivedConversationListFragment;

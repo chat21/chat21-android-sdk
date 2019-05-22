@@ -2,8 +2,6 @@ package org.chat21.android.ui.messages.adapters;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.style.ClickableSpan;
 import android.util.Log;
@@ -12,10 +10,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+//import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+//import com.bumptech.glide.request.RequestListener;
+//import com.bumptech.glide.request.target.Target;
 import com.vanniktech.emoji.EmojiTextView;
 
 import java.util.Date;
@@ -107,31 +108,32 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
         // Resolve Issue #52
         mProgressBar.setVisibility(View.VISIBLE);
 
-        Glide.with(itemView.getContext())
-                .load(getImageUrl(message))
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(
-                            Exception e,
-                            String model,
-                            Target<GlideDrawable> target,
-                            boolean isFirstResource) {
-                        mProgressBar.setVisibility(View.GONE);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(
-                            GlideDrawable resource,
-                            String model,
-                            Target<GlideDrawable> target,
-                            boolean isFromMemoryCache,
-                            boolean isFirstResource) {
-                        mProgressBar.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(mPreview);
+        // TODO:
+//        Glide.with(itemView.getContext())
+//                .load(getImageUrl(message))
+//                .listener(new RequestListener<String, GlideDrawable>() {
+//                    @Override
+//                    public boolean onException(
+//                            Exception e,
+//                            String model,
+//                            Target<GlideDrawable> target,
+//                            boolean isFirstResource) {
+//                        mProgressBar.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    public boolean onResourceReady(
+//                            GlideDrawable resource,
+//                            String model,
+//                            Target<GlideDrawable> target,
+//                            boolean isFromMemoryCache,
+//                            boolean isFirstResource) {
+//                        mProgressBar.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//                })
+//                .into(mPreview);
 
 
         mPreview.setOnClickListener(new View.OnClickListener() {

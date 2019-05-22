@@ -1,6 +1,5 @@
 package org.chat21.android.ui.contacts.adapters;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +7,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
@@ -69,7 +70,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         Glide.with(holder.itemView.getContext())
                 .load(contact.getProfilePictureUrl())
                 .placeholder(R.drawable.ic_person_avatar)
-                .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
+                .transform(new CropCircleTransformation(holder.itemView.getContext()))
                 .into(holder.mProfilePicture);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

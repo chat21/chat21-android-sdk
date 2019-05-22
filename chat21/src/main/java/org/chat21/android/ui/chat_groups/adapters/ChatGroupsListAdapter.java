@@ -1,12 +1,14 @@
 package org.chat21.android.ui.chat_groups.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
@@ -96,7 +98,7 @@ public class ChatGroupsListAdapter extends AbstractRecyclerAdapter<ChatGroup, Ch
         Glide.with(holder.itemView.getContext())
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_group_avatar)
-                .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
+                .transform(new CropCircleTransformation(holder.itemView.getContext()))
                 .into(holder.image);
     }
 

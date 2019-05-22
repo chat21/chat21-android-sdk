@@ -23,4 +23,10 @@
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
+
+    <style name="TextAppearance.AppCompat.Notification.Info" parent="@style/TextAppearance.Compat.Notification.Info" />
+    <style name="TextAppearance.AppCompat.Notification" parent="@style/TextAppearance.Compat.Notification" />
+    <style name="TextAppearance.AppCompat.Notification.Time" parent="@style/TextAppearance.Compat.Notification.Time" />
+    <style name="TextAppearance.AppCompat.Notification.Title" parent="@style/TextAppearance.Compat.Notification.Title" />
+
 </resources>

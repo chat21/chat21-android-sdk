@@ -2,10 +2,11 @@ package org.chat21.android.ui.chat_groups.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import org.chat21.android.R;
 import org.chat21.android.core.chat_groups.models.ChatGroup;

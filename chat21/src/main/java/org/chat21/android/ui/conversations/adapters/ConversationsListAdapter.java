@@ -1,7 +1,6 @@
 package org.chat21.android.ui.conversations.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.daimajia.swipe.SwipeLayout;
@@ -135,7 +136,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
             Glide.with(holder.itemView.getContext())
                     .load(picture)
                     .placeholder(R.drawable.ic_person_avatar)
-                    .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
+                    .transform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);
         } else if (conversation.isGroupChannel()) {
 
@@ -152,7 +153,7 @@ public class ConversationsListAdapter extends AbstractRecyclerAdapter<Conversati
             Glide.with(holder.itemView.getContext())
                     .load(picture)
                     .placeholder(R.drawable.ic_group_avatar)
-                    .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
+                    .transform(new CropCircleTransformation(holder.itemView.getContext()))
                     .into(holder.recipientPicture);
         } else {
             Toast.makeText(holder.itemView.getContext(),

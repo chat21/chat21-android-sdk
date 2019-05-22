@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/chat_margin_normal"
     android:paddingTop="@dimen/chat_margin_normal">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -33,9 +33,9 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="@dimen/chat_margin_normal"
                 android:layout_marginRight="@dimen/chat_margin_normal"
-                android:background="@color/grey_500"></View>
+                android:background="@color/grey_500"/>
 
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
