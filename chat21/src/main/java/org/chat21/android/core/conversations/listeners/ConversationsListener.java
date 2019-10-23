@@ -9,11 +9,11 @@ import org.chat21.android.core.exception.ChatRuntimeException;
 
 public interface ConversationsListener {
 
-    public void onConversationAdded(Conversation conversation, ChatRuntimeException e);
+    void onConversationAdded(Conversation conversation, ChatRuntimeException e);
 
-    public void onConversationChanged(Conversation conversation, ChatRuntimeException e);
+    void onConversationChanged(Conversation conversation, ChatRuntimeException e);
 
-    public void onConversationRemoved(ChatRuntimeException e);
+    void onConversationRemoved(Conversation conversation, ChatRuntimeException e);
 
 }
 

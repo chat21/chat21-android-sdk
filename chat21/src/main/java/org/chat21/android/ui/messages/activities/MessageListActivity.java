@@ -1,9 +1,11 @@
 package org.chat21.android.ui.messages.activities;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.net.Uri;
@@ -23,10 +25,12 @@ import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.Px;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -60,6 +64,7 @@ import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.core.presence.PresenceHandler;
 import org.chat21.android.core.presence.listeners.PresenceListener;
 import org.chat21.android.core.users.models.IChatUser;
+import org.chat21.android.storage.IStorageHandler;
 import org.chat21.android.storage.OnUploadedCallback;
 import org.chat21.android.storage.StorageHandler;
 import org.chat21.android.ui.ChatUI;
@@ -88,6 +93,7 @@ public class MessageListActivity extends AppCompatActivity
     private static final String TAG = MessageListActivity.class.getName();
 
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
+    public static final int _REQ_CODE_FILE_PERM = 442;
 
     private PresenceHandler presenceHandler = null;
     private ConversationMessagesHandler conversationMessagesHandler;
@@ -144,7 +150,7 @@ public class MessageListActivity extends AppCompatActivity
         if (contactsSynchronizer != null) {
             IChatUser matchedContact = contactsSynchronizer.findById(recipient.getId());
 
-            if(matchedContact != null) {
+            if (matchedContact != null) {
                 recipient = matchedContact;
             }
         }
@@ -191,7 +197,6 @@ public class MessageListActivity extends AppCompatActivity
 //            // retrieve the updated recipient
 //            recipient = ChatManager.getInstance().getContactsSynchronizer().findById(recipientId);
 //        }
-
 
 
         // ######### begin conversation messages handler
@@ -354,6 +359,12 @@ public class MessageListActivity extends AppCompatActivity
         mEmojiBar = (LinearLayout) findViewById(R.id.main_activity_emoji_bar);
     }
 
+    private boolean allowsToolbarClick = true;
+
+    public void setAllowsToolbarClick(boolean allowsToolbarClick) {
+        this.allowsToolbarClick = allowsToolbarClick;
+    }
+
     private void initDirectToolbar(final IChatUser recipient) {
         // toolbar picture
         setPicture(recipient.getProfilePictureUrl(), R.drawable.ic_person_avatar);
@@ -364,11 +375,13 @@ public class MessageListActivity extends AppCompatActivity
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MessageListActivity.this,
-                        PublicProfileActivity.class);
+                if (allowsToolbarClick) {
+                    Intent intent = new Intent(MessageListActivity.this,
+                            PublicProfileActivity.class);
 
-                intent.putExtra(ChatUI.BUNDLE_RECIPIENT, recipient);
-                startActivity(intent);
+                    intent.putExtra(ChatUI.BUNDLE_RECIPIENT, recipient);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -418,6 +431,12 @@ public class MessageListActivity extends AppCompatActivity
         recyclerView.setLayoutManager(mLinearLayoutManager);
         initRecyclerViewAdapter(recyclerView);
     }
+
+    public void setCustomStorageHandler(IStorageHandler customStorageHandler) {
+        this.customStorageHandler = customStorageHandler;
+    }
+
+    private IStorageHandler customStorageHandler;
 
     private void initRecyclerViewAdapter(RecyclerView recyclerView) {
         Log.d(TAG, "initRecyclerViewAdapter");
@@ -612,7 +631,49 @@ public class MessageListActivity extends AppCompatActivity
 
     private void showAttachBottomSheet() {
         Log.d(TAG, "MessageListActivity.onAttachClicked");
+        Log.d(TAG, "MessageListActivity.onAttachClicked");
 
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },
+                    _REQ_CODE_FILE_PERM);
+        } else {
+            presentBottomSheetAttach();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode,
+                permissions,
+                grantResults);
+
+        if (requestCode == _REQ_CODE_FILE_PERM) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                presentBottomSheetAttach();
+            } else {
+                Toast.makeText(this,
+                        "Storage Permission Denied",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    }
+
+    public void setShowsConfirmUploadDialogs(boolean showsConfirmUploadDialogs) {
+        this.showsConfirmUploadDialogs = showsConfirmUploadDialogs;
+    }
+
+    private void presentBottomSheetAttach() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         BottomSheetAttach dialog = BottomSheetAttach.newInstance(recipient, channelType);
         dialog.show(ft, BottomSheetAttach.class.getName());
@@ -672,27 +733,34 @@ public class MessageListActivity extends AppCompatActivity
         }
     }
 
+    private boolean showsConfirmUploadDialogs;
+
     // bugfix Issue #64
     private void showConfirmUploadDialog(
             final File file) {
         Log.d(TAG, "uploadFile");
 
-        new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.activity_message_list_confirm_dialog_upload_title_label))
-                .setMessage(getString(R.string.activity_message_list_confirm_dialog_upload_message_label))
-                .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // upload the file
-                        uploadFile(file);
-                    }
-                })
-                .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss(); // close the alert dialog
-                    }
-                }).show();
+        if (showsConfirmUploadDialogs) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.activity_message_list_confirm_dialog_upload_title_label))
+                    .setMessage(getString(R.string.activity_message_list_confirm_dialog_upload_message_label))
+                    .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // upload the file
+                            uploadFile(file);
+                        }
+                    })
+                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss(); // close the alert dialog
+                        }
+                    }).show();
+        } else {
+            // upload the file
+            uploadFile(file);
+        }
     }
 
     // bugfix Issue #15
@@ -705,20 +773,56 @@ public class MessageListActivity extends AppCompatActivity
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        StorageHandler.uploadFile(this, file, new OnUploadedCallback() {
+        final OnUploadedCallback uploadedCallback = new OnUploadedCallback() {
             @Override
             public void onUploadSuccess(final String uid, final Uri downloadUrl, final String type) {
                 Log.d(TAG, "uploadFile.onUploadSuccess - downloadUrl: " + downloadUrl);
 
                 progressDialog.dismiss(); // bugfix Issue #45
 
-                // TODO:
+                Glide.with(getApplicationContext())
+                        .asBitmap()
+                        .load(downloadUrl)
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+                                int width = bitmap.getWidth();
+                                int height = bitmap.getHeight();
+
+                                Log.d(TAG, " MessageListActivity.uploadFile:" +
+                                        " width == " + width + " - height == " + height);
+
+                                Map<String, Object> metadata = new HashMap<>();
+                                metadata.put("width", width);
+                                metadata.put("height", height);
+                                metadata.put("src", downloadUrl.toString());
+//                                metadata.put("uid", uid);
+                                metadata.put("description", "");
+
+                                Log.d(TAG, " MessageListActivity.uploadFile:" +
+                                        " metadata == " + metadata);
+
+                                // get the localized type
+                                String lastMessageText = "";
+                                if (type.toLowerCase().equals(StorageHandler.Type.Image.toString().toLowerCase())) {
+                                    lastMessageText = getString(R.string.activity_message_list_type_image_label);
+                                } else if (type.equals(StorageHandler.Type.File)) {
+                                    lastMessageText = getString(R.string.activity_message_list_type_file_label);
+                                }
+
+                                // TODO: 13/02/18 add image message to the adapter  (like text message)
+                                ChatManager.getInstance().sendImageMessage(recipient.getId(),
+                                        recipient.getFullName(), lastMessageText + ": " + downloadUrl.toString(), channelType,
+                                        metadata, null);
+                            }
+                        });
+
 //                Glide.with(getApplicationContext())
-//                        .load(downloadUrl)
 //                        .asBitmap()
+//                        .load(downloadUrl)
 //                        .into(new SimpleTarget<Bitmap>() {
 //                            @Override
-//                            public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> glideAnimation) {
+//                            public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
 //                                int width = bitmap.getWidth();
 //                                int height = bitmap.getHeight();
 //
@@ -771,7 +875,13 @@ public class MessageListActivity extends AppCompatActivity
                         getString(R.string.activity_message_list_progress_dialog_upload_failed),
                         Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+
+        if (customStorageHandler != null) {
+            customStorageHandler.uploadFile(getApplicationContext(), "image", file, recipient, uploadedCallback);
+        } else {
+            StorageHandler.uploadFile(getApplicationContext(), file, uploadedCallback);
+        }
     }
 
     @Override

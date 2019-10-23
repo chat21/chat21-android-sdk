@@ -190,7 +190,7 @@ public class ArchivedConversationsHandler {
                         Conversation conversation = decodeConversationFromSnapshot(dataSnapshot);
                         deleteConversationFromMemory(conversation.getConversationId());
                     } catch (Exception e) {
-                        notifyConversationRemoved(new ChatRuntimeException(e));
+                        notifyConversationRemoved(null, new ChatRuntimeException(e));
                     }
                 }
 
@@ -269,17 +269,18 @@ public class ArchivedConversationsHandler {
     // if the conversation exists delete it
     public void deleteConversationFromMemory(String conversationId) {
         int index = -1;
-        for(Conversation tempConversation : conversations) {
-            if(tempConversation.getConversationId().equals(conversationId)) {
+        for (Conversation tempConversation : conversations) {
+            if (tempConversation.getConversationId().equals(conversationId)) {
                 index = conversations.indexOf(tempConversation);
                 break;
             }
         }
 
-        if(index != -1) {
+        if (index != -1) {
+            Conversation cv = conversations.get(index);
             conversations.remove(index);
             sortConversationsInMemory();
-            notifyConversationRemoved(null);
+            notifyConversationRemoved(cv, null);
         }
 
     }
@@ -332,10 +333,10 @@ public class ArchivedConversationsHandler {
         }
     }
 
-    private void notifyConversationRemoved(ChatRuntimeException exception) {
+    private void notifyConversationRemoved(Conversation conversation, ChatRuntimeException exception) {
         if (conversationsListeners != null) {
             for (ConversationsListener conversationsListener : conversationsListeners) {
-                conversationsListener.onConversationRemoved(exception);
+                conversationsListener.onConversationRemoved(conversation, exception);
             }
         }
     }
@@ -613,20 +614,20 @@ public class ArchivedConversationsHandler {
         this.removeAllUnreadConversationsListeners();
     }
 
-    public void deleteConversation(final String conversationId, final ConversationsListener conversationsListener) {
+    public void deleteConversation(final Conversation conversation, final ConversationsListener conversationsListener) {
 
         // the node of the conversation with conversationId
-        DatabaseReference nodeConversation = conversationsNode.child(conversationId);
+        DatabaseReference nodeConversation = conversationsNode.child(conversation.getConversationId());
 
         nodeConversation.removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 
                 if (databaseError == null) {
-                    deleteConversationFromMemory(conversationId);
-                    conversationsListener.onConversationRemoved(null);
+                    deleteConversationFromMemory(conversation.getConversationId());
+                    conversationsListener.onConversationRemoved(conversation, null);
                 } else {
-                    conversationsListener.onConversationRemoved(new ChatRuntimeException(databaseError.toException()));
+                    conversationsListener.onConversationRemoved(null, new ChatRuntimeException(databaseError.toException()));
                 }
             }
         });

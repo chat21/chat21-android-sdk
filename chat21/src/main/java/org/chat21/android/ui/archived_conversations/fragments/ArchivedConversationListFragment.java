@@ -173,7 +173,7 @@ public class ArchivedConversationListFragment extends Fragment implements
     }
 
     @Override
-    public void onConversationRemoved(ChatRuntimeException e) {
+    public void onConversationRemoved(Conversation conversation, ChatRuntimeException e) {
         Log.d(TAG, "ArchivedConversationListFragment.onConversationRemoved");
         if (e == null) {
             conversationsListAdapter.notifyDataSetChanged();

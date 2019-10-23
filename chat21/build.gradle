@@ -7,11 +7,11 @@ static def computeVersionName() {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_COMPILE_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 22
+        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
 
         versionCode 40
         versionName computeVersionName()
@@ -34,18 +34,18 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // android framework
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha05'
-    implementation 'com.applandeo:material-calendar-view:1.4.0'
-    implementation 'com.google.android.material:material:1.1.0-alpha06'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.applandeo:material-calendar-view:1.7.0'
+    implementation 'com.google.android.material:material:1.1.0-beta01'
 
     // firebase sdk
-    implementation 'com.google.firebase:firebase-core:16.0.9'
-    implementation 'com.google.firebase:firebase-database:17.0.0'
-    implementation 'com.google.firebase:firebase-storage:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.2.0'
+    implementation 'com.google.firebase:firebase-database:19.2.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
     implementation 'com.google.firebase:firebase-crash:16.2.1'
-    implementation 'com.google.firebase:firebase-messaging:18.0.0'
-    implementation 'com.google.firebase:firebase-auth:17.0.0'
-    implementation 'com.google.firebase:firebase-firestore:19.0.0'
+    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+    implementation 'com.google.firebase:firebase-auth:19.1.0'
+    implementation 'com.google.firebase:firebase-firestore:21.2.0'
 
 
 //    compile 'com.firebaseui:firebase-ui:2.3.0'

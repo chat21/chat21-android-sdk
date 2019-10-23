@@ -150,7 +150,7 @@ class SystemViewHolder extends RecyclerView.ViewHolder {
 
     private void setMessage(Message message) {
         // set message text
-        mMessage.setText(Html.fromHtml(message.getText()));
+        mMessage.setText(Html.fromHtml(message.getActualText()));
         // clickable link support
 
         //        con LinkMovementMethod.getInstance() nn funziona

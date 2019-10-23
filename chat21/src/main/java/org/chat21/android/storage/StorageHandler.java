@@ -22,6 +22,10 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.chat21.android.core.ChatManager;
+import org.chat21.android.utils.StringUtils;
+import org.chat21.android.utils.image.ImageCompressor;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,10 +35,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.chat21.android.core.ChatManager;
-import org.chat21.android.utils.StringUtils;
-import org.chat21.android.utils.image.ImageCompressor;
-
 /**
  * Created by stefanodp91 on 02/08/17.
  * bugfix Issue #15
@@ -42,7 +42,7 @@ import org.chat21.android.utils.image.ImageCompressor;
 public class StorageHandler {
     private static final String TAG = StorageHandler.class.getName();
 
-    public static void  uploadFile(Context context, File fileToUpload, final OnUploadedCallback callback) {
+    public static void uploadFile(Context context, File fileToUpload, final OnUploadedCallback callback) {
         Log.d(TAG, "uploadFile");
 
         Uri file = Uri.fromFile(fileToUpload);
@@ -125,7 +125,7 @@ public class StorageHandler {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size,
                 // content-type, and download URL.
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                Uri downloadUrl = taskSnapshot.getUploadSessionUri();
                 Log.d(TAG, "addOnFailureListener.onSuccess - downloadUrl: " + downloadUrl);
 
                 callback.onUploadSuccess(uuid, downloadUrl, type);

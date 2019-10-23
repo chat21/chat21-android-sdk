@@ -14,13 +14,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-//import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-//import com.bumptech.glide.request.RequestListener;
-//import com.bumptech.glide.request.target.Target;
 import com.vanniktech.emoji.EmojiTextView;
 
-import java.util.Date;
-import java.util.Map;
 import org.chat21.android.R;
 import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.ui.ChatUI;
@@ -30,6 +25,13 @@ import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
 import org.chat21.android.utils.image.ImageUtils;
 import org.chat21.android.utils.views.TextViewLinkHandler;
+
+import java.util.Date;
+import java.util.Map;
+
+//import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+//import com.bumptech.glide.request.RequestListener;
+//import com.bumptech.glide.request.target.Target;
 
 /**
  * Created by stefano on 25/11/2016.
@@ -147,7 +149,7 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
     private void setFilePreview(final Message message) {
 
         Glide.with(itemView.getContext())
-                .load(message.getText())
+                .load(message.getActualText())
                 .placeholder(R.drawable.ic_placeholder_file_recipient_24dp)
                 .into(mPreview);
 
@@ -169,7 +171,7 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
 
     private void setMessage(Message message) {
         // set message text
-        mMessage.setText(Html.fromHtml(message.getText()));
+        mMessage.setText(Html.fromHtml(message.getActualText()));
         // clickable link support
 
         //        con LinkMovementMethod.getInstance() nn funziona

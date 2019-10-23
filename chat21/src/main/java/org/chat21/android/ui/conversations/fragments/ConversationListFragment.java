@@ -191,17 +191,17 @@ public class ConversationListFragment extends Fragment implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-       int itemId =  item.getItemId();
+        int itemId = item.getItemId();
 
-       if(itemId == R.id.action_archived) {
+        if (itemId == R.id.action_archived) {
 
 //           Toast.makeText(getActivity(), "action archived clicked", Toast.LENGTH_SHORT).show();
 
-           Intent i = new Intent(getActivity(), ArchivedConversationListActivity.class);
-           startActivity(i);
+            Intent i = new Intent(getActivity(), ArchivedConversationListActivity.class);
+            startActivity(i);
 
-           return true;
-       }
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -289,7 +289,7 @@ public class ConversationListFragment extends Fragment implements
     }
 
     @Override
-    public void onConversationRemoved(ChatRuntimeException e) {
+    public void onConversationRemoved(Conversation conversation, ChatRuntimeException e) {
         Log.d(TAG, "ConversationListFragment.onConversationRemoved");
         if (e == null) {
             conversationsListAdapter.notifyDataSetChanged();
