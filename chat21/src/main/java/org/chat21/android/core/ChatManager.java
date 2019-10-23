@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -301,7 +300,7 @@ public class ChatManager {
     public void dispose() {
 
         // dispose myPresenceHandler
-        if (myPresenceHandler!=null) {
+        if (myPresenceHandler != null) {
             myPresenceHandler.dispose(); // disconnect all listeners
         }
         myPresenceHandler = null; // destroy it
@@ -317,13 +316,13 @@ public class ChatManager {
         }
 
         //dispose conversationsHandler
-        if (this.conversationsHandler!=null){
+        if (this.conversationsHandler != null) {
             this.conversationsHandler.disconnect();
         }
         this.conversationsHandler = null;
 
         //dispose archivedConversationsHandler
-        if (this.archivedConversationsHandler!=null) {   //can be already null
+        if (this.archivedConversationsHandler != null) {   //can be already null
             this.archivedConversationsHandler.disconnect();
         }
         this.archivedConversationsHandler = null;
@@ -491,7 +490,7 @@ public class ChatManager {
         }
     }
 
-  public ArchivedConversationsHandler getArchivedConversationsHandler() {
+    public ArchivedConversationsHandler getArchivedConversationsHandler() {
         if (this.archivedConversationsHandler != null) {
             return this.archivedConversationsHandler;
         } else {
@@ -603,6 +602,7 @@ public class ChatManager {
         public static String appId;
         public static String firebaseUrl;
         public static String storageBucket;
+        public static String languageCode;
 
         public Configuration(Builder builder) {
             Log.v(TAG, "Configuration constructor called");
@@ -610,6 +610,7 @@ public class ChatManager {
             this.appId = builder.mAppId;
             this.firebaseUrl = builder.mFirebaseUrl;
             this.storageBucket = builder.mStorageBucket;
+            this.languageCode = builder.mLanguageCode;
         }
 
         /**
@@ -621,6 +622,7 @@ public class ChatManager {
             private String mAppId;
             private String mFirebaseUrl;
             private String mStorageBucket;
+            private String mLanguageCode;
 
             public Builder(String appId) {
                 Log.d(TAG, "Configuration.Builder: appId = " + appId);
@@ -641,6 +643,11 @@ public class ChatManager {
 
                 mStorageBucket = storageBucket;
 
+                return this;
+            }
+
+            public Builder languageCode(String languageCode) {
+                mLanguageCode = languageCode;
                 return this;
             }
 

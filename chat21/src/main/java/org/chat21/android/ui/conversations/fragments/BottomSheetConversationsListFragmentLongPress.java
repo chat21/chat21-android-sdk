@@ -133,10 +133,8 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
     private void perfomDeleteConversation() {
         Log.d(DEBUG_TAG, "BSArchivedConversationsListFragmentLongPress.perfomDeleteConversation");
 
-        String conversationId = mConversation.getConversationId();
-
-        if(getConversationsHandler() != null) {
-            getConversationsHandler().deleteConversation(conversationId, conversationsListener);
+        if (getConversationsHandler() != null) {
+            getConversationsHandler().deleteConversation(mConversation, conversationsListener);
         }
     }
 
@@ -153,8 +151,8 @@ public class BottomSheetConversationsListFragmentLongPress extends BottomSheetDi
         }
 
         @Override
-        public void onConversationRemoved(ChatRuntimeException e) {
-            if(e == null) {
+        public void onConversationRemoved(Conversation conversation, ChatRuntimeException e) {
+            if (e == null) {
                 Log.d(DEBUG_TAG, "BSArchivedConversationsListFragmentLongPress" +
                         ".conversationsListener.onConversationRemoved: no errors");
 

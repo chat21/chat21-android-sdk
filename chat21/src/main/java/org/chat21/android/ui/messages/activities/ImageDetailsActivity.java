@@ -1,6 +1,5 @@
 package org.chat21.android.ui.messages.activities;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -10,18 +9,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-
-import java.util.Map;
-
 import org.chat21.android.R;
 import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.ui.ChatUI;
 import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
 import org.chat21.android.utils.views.TouchImageView;
+
+import java.util.Map;
 
 /**
  * Created by stefanodp91 on 25/11/2016.
@@ -58,7 +53,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
         // ### end image
 
         // ### begin title
-        String title = message.getText();
+        String title = message.getActualText();
         if (StringUtils.isValid(title)) {
             TextView mTitle = findViewById(R.id.image_title);
             mTitle.setText(title);

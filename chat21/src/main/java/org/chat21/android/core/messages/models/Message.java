@@ -5,7 +5,6 @@ import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -145,6 +144,25 @@ public class Message implements Serializable, Cloneable {
         return text;
     }
 
+    public String getActualText() {
+        String ret = text;
+
+        if (type != null && type.equals(TYPE_IMAGE)) {
+            String txt = text;
+
+            if (txt != null) {
+                int ln = "image:".length();
+                String strp = txt.length() >= ln ? txt.substring(0, ln) : null;
+
+                if (strp != null && strp.equals("image:")) {
+                    ret = txt.substring(ln + 1);
+                }
+            }
+        }
+
+        return ret;
+    }
+
     @PropertyName("text")
     public void setText(String text) {
         this.text = text;
@@ -169,7 +187,6 @@ public class Message implements Serializable, Cloneable {
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
-
 
 
     @PropertyName("type")
@@ -280,17 +297,17 @@ public class Message implements Serializable, Cloneable {
 
     public Map asFirebaseMap() {
         Map map = new HashMap();
-        map.put("sender",null);
-        map.put("sender_fullname",senderFullname);
-        map.put("recipient",null);
-        map.put("recipient_fullname",recipientFullname);
-        map.put("text",text);
-        map.put("status",null);
+        map.put("sender", null);
+        map.put("sender_fullname", senderFullname);
+        map.put("recipient", null);
+        map.put("recipient_fullname", recipientFullname);
+        map.put("text", text);
+        map.put("status", null);
         map.put("timestamp", ServerValue.TIMESTAMP);
-        map.put("type",type);
-        map.put("channel_type",channelType);
-        map.put("metadata",metadata);
-        map.put("attributes",attributes);
+        map.put("type", type);
+        map.put("channel_type", channelType);
+        map.put("metadata", metadata);
+        map.put("attributes", attributes);
 
         return map;
 

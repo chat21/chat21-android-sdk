@@ -3,10 +3,10 @@ package org.chat21.android.core.conversations.models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
 
+import org.chat21.android.core.messages.models.Message;
+
 import java.io.Serializable;
 import java.util.Map;
-
-import org.chat21.android.core.messages.models.Message;
 
 /**
  * Created by stefano on 06/10/2015.
@@ -89,6 +89,21 @@ public class Conversation implements Serializable {
         this.last_message_text = last_message_text;
     }
 
+    public String getActualLast_message_text() {
+        String ret = last_message_text;
+
+        if (ret != null) {
+            int ln = "image:".length();
+            String strp = ret.length() >= ln ? ret.substring(0, ln) : null;
+
+            if (strp != null && strp.equals("image:")) {
+                ret = "IMAGE";
+            }
+        }
+
+        return ret;
+    }
+
     public String getRecipient() {
         return recipient;
     }
@@ -159,7 +174,7 @@ public class Conversation implements Serializable {
     }
 
     public boolean isGroupChannel() {
-        if (this.channelType!=null && this.channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
+        if (this.channelType != null && this.channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
             return true;
         } else {
             return false;
@@ -168,7 +183,7 @@ public class Conversation implements Serializable {
 
     @Exclude
     public boolean isDirectChannel() {
-        if (this.channelType==null || this.channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
+        if (this.channelType == null || this.channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
             return true;
         } else {
             return false;
