@@ -8,10 +8,10 @@ def computeVersionName() {
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 22
+        targetSdkVersion 26
 
         versionCode 40
         versionName computeVersionName()
@@ -67,7 +67,7 @@ dependencies {
 
     // swipe layout
     // source : https://github.com/daimajia/AndroidSwipeLayout
-    compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
 }
 
 // resolve conflicts
