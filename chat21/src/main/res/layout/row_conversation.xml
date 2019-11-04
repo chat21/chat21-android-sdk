@@ -4,7 +4,7 @@
     android:id="@+id/swipe_item"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    app:clickToClose="true">
+    clickToClose="true">
 
 
     <!--left swipe menu-->
@@ -48,7 +48,7 @@
             android:background="@color/blue_grey_500"
             android:paddingLeft="@dimen/chat_padding_small"
             android:paddingRight="@dimen/chat_padding_small"
-            android:text="Close"
+            android:text="@string/close"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:textColor="@color/white" />
 
@@ -61,7 +61,7 @@
             android:background="@color/blue_500"
             android:paddingLeft="@dimen/chat_padding_small"
             android:paddingRight="@dimen/chat_padding_small"
-            android:text="Unread"
+            android:text="@string/unread"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:textColor="@color/white" />
     </LinearLayout>
@@ -120,7 +120,7 @@
                     android:maxLines="1"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textSize="@dimen/chat_row_conversation_recipient_last_message_text_size"
-                    app:emojiSize="@dimen/chat_row_conversation_recipient_last_message_emoji_size" />
+                    emojiSize="@dimen/chat_row_conversation_recipient_last_message_emoji_size" />
 
                 <TextView
                     android:id="@+id/last_message_timestamp"

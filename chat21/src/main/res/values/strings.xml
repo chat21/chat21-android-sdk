@@ -84,6 +84,7 @@
 
     <!--activity_public_profile-->
     <string name="activity_public_profile_presence_online">Online</string>
+    <string name="activity_public_profile_presence_not_available">Offline</string>
     <string name="activity_public_profile_presence_offline">Offline</string>
 
     <!--activity_group_list-->
@@ -114,4 +115,6 @@
     <!--row_archived_conversations-->
     <string name="row_archived_conversations_textview_reopen">Reopen</string>
     <string name="row_archived_conversations_closed_label">Closed</string>
+    <string name="close">Close</string>
+    <string name="unread">Unread</string>
 </resources>

@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 // source:
 // https://stackoverflow.com/questions/21329849/set-android-app-version-using-gradle
 def computeVersionName() {
-    return "1.0.12"
+    return "1.0.15"
 }
 
 android {
@@ -13,7 +13,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
 
-        versionCode 40
+        versionCode 41
         versionName computeVersionName()
     }
 
@@ -59,7 +59,7 @@ dependencies {
 
     // send message panel
     implementation 'com.vanniktech:emoji-ios:0.5.1'
-//    compile 'com.vanniktech:emoji-google:0.5.1'
+    implementation 'com.vanniktech:emoji-google:0.5.1'
 
 //    // file picker
 //    // source: https://github.com/Angads25/android-filepicker

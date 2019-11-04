@@ -4,7 +4,7 @@
     android:id="@+id/swipe_item"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    app:clickToClose="true">
+    clickToClose="true">
 
 
     <!--left swipe menu-->
@@ -139,7 +139,7 @@
                     android:maxLines="1"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textSize="@dimen/chat_row_conversation_recipient_last_message_text_size"
-                    app:emojiSize="@dimen/chat_row_conversation_recipient_last_message_emoji_size" />
+                    emojiSize="@dimen/chat_row_conversation_recipient_last_message_emoji_size" />
 
                 <TextView
                     android:id="@+id/last_message_timestamp"

@@ -86,6 +86,7 @@
     <!--activity_public_profile-->
     <string name="activity_public_profile_presence_online">Online</string>
     <string name="activity_public_profile_presence_not_available">Offline</string>
+    <string name="activity_public_profile_presence_offline">Offline</string>
 
     <!--activity_group_list-->
     <string name="activity_group_list_activity_title">I miei gruppi</string>
@@ -103,6 +104,9 @@
     <string name="activity_chat_login_no_account_label">Nessun account?</string>
     <string name="activity_chat_login_signup_label">Sign up</string>
 
+    <!--activity_choose_chat_group_activity-->
+    <string name="activity_choose_chat_group_activity_activity_title">Gruppi</string>
+
     <!--menu_fragment_conversations_list-->
     <string name="menu_fragment_conversations_list_action_archived">Archived</string>
 
@@ -112,4 +116,7 @@
     <!--row_archived_conversations-->
     <string name="row_archived_conversations_textview_reopen">Riapri</string>
     <string name="row_archived_conversations_closed_label">Chiusa</string>
+
+    <string name="close">Chiudi</string>
+    <string name="unread">Non letto</string>
 </resources>
