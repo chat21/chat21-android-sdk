@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -477,6 +478,7 @@ public class MessageListActivity extends AppCompatActivity
     private void initInputPanel() {
         Log.d(TAG, "initInputPanel");
 
+        editText.setTypeface(Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Montserrat-Regular.otf"));
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
