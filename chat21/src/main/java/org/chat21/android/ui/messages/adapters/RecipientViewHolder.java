@@ -1,7 +1,8 @@
 package org.chat21.android.ui.messages.adapters;
 
 import android.content.Intent;
-import android.graphics.Typeface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.style.ClickableSpan;
@@ -11,10 +12,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.vanniktech.emoji.EmojiTextView;
 
 import org.chat21.android.R;
@@ -79,9 +85,6 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
             mProgressBar.setVisibility(View.GONE);  // Resolve Issue #52
             mMessage.setVisibility(View.VISIBLE);
             mPreview.setVisibility(View.GONE);
-
-            mMessage.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
-
             setMessage(message);
         }
 
@@ -90,10 +93,8 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
         setDate(previousMessage, message, position);
 
         setTimestamp(message);
-        mTimestamp.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
 
         setSenderDisplayName(message);
-        mSenderDisplayName.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
 
         // click on the item
         setOnMessageClickListener(onMessageClickListener);
@@ -116,33 +117,24 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
         // Resolve Issue #52
         mProgressBar.setVisibility(View.VISIBLE);
 
-        // TODO:
-//        Glide.with(itemView.getContext())
-//                .load(getImageUrl(message))
-//                .listener(new RequestListener<String, GlideDrawable>() {
-//                    @Override
-//                    public boolean onException(
-//                            Exception e,
-//                            String model,
-//                            Target<GlideDrawable> target,
-//                            boolean isFirstResource) {
-//                        mProgressBar.setVisibility(View.GONE);
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    public boolean onResourceReady(
-//                            GlideDrawable resource,
-//                            String model,
-//                            Target<GlideDrawable> target,
-//                            boolean isFromMemoryCache,
-//                            boolean isFirstResource) {
-//                        mProgressBar.setVisibility(View.GONE);
-//                        return false;
-//                    }
-//                })
-//                .into(mPreview);
+        Glide.with(itemView.getContext()).load(message.getActualText()).addListener(new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                mProgressBar.setVisibility(View.GONE);
+                return false;
+            }
 
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+                //if you want to convert the drawable to ImageView
+                Bitmap bitmapImage = ((BitmapDrawable) resource).getBitmap();
+
+                mProgressBar.setVisibility(View.GONE);
+
+                return false;
+            }
+        }).into(mPreview);
 
         mPreview.setOnClickListener(new View.OnClickListener() {
             @Override

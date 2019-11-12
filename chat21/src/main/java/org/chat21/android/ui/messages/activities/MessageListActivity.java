@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -348,6 +347,7 @@ public class MessageListActivity extends AppCompatActivity
         mPictureView = (ImageView) findViewById(R.id.toolbar_picture);
         mTitleTextView = (TextView) findViewById(R.id.toolbar_title);
         mSubTitleTextView = (TextView) findViewById(R.id.toolbar_subtitle);
+        mSubTitleTextView.setVisibility(View.GONE);
 
         mNoMessageLayout = (RelativeLayout) findViewById(R.id.no_messages_layout);
 
@@ -478,7 +478,6 @@ public class MessageListActivity extends AppCompatActivity
     private void initInputPanel() {
         Log.d(TAG, "initInputPanel");
 
-        editText.setTypeface(Typeface.createFromAsset(getApplicationContext().getAssets(), "fonts/Montserrat-Regular.otf"));
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
