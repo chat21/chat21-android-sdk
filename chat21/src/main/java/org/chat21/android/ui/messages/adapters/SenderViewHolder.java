@@ -2,6 +2,7 @@ package org.chat21.android.ui.messages.adapters;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -80,6 +81,9 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
             mProgressBar.setVisibility(View.GONE);   // Resolve Issue #52
             mMessage.setVisibility(View.VISIBLE);
             mPreview.setVisibility(View.GONE);
+
+            mMessage.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
+
             setMessage(message);
         }
 
@@ -88,6 +92,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         setDate(previousMessage, message, position);
 
         setTimestamp(message);
+        mTimestamp.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
 
         // message status icon
         setStatus(message.getStatus());

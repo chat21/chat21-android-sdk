@@ -1,5 +1,6 @@
 package org.chat21.android.ui.messages.adapters;
 
+import android.graphics.Typeface;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -57,6 +58,7 @@ class SystemViewHolder extends RecyclerView.ViewHolder {
 //        } else if (message.getType().equals(Message.TYPE_TEXT)) {
 //            mProgressBar.setVisibility(View.GONE);  // Resolve Issue #52
         mMessage.setVisibility(View.VISIBLE);
+        mMessage.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
 //            mPreview.setVisibility(View.GONE);
         setMessage(message);
 //        }

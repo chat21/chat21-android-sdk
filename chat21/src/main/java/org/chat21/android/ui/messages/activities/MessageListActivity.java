@@ -347,6 +347,7 @@ public class MessageListActivity extends AppCompatActivity
         mPictureView = (ImageView) findViewById(R.id.toolbar_picture);
         mTitleTextView = (TextView) findViewById(R.id.toolbar_title);
         mSubTitleTextView = (TextView) findViewById(R.id.toolbar_subtitle);
+        mSubTitleTextView.setVisibility(View.GONE);
 
         mNoMessageLayout = (RelativeLayout) findViewById(R.id.no_messages_layout);
 
