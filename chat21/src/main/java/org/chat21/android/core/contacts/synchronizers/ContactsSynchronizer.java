@@ -54,11 +54,11 @@ public class ContactsSynchronizer {
         }
         this.contactsNode.keepSynced(true);
 
-        Log.d(DEBUG_CONTACTS_SYNC, "contactsNode : " + contactsNode.toString());
+        //Log.d(DEBUG_CONTACTS_SYNC, "contactsNode : " + contactsNode.toString());
     }
 
     public synchronized ChildEventListener connect() {
-        Log.d(DEBUG_CONTACTS_SYNC, "connecting  for contacts ");
+        //Log.d(DEBUG_CONTACTS_SYNC, "connecting  for contacts ");
 
 //        contactsNode.orderByChild("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
 //            public void onDataChange(DataSnapshot dataSnapshot) {
@@ -74,7 +74,7 @@ public class ContactsSynchronizer {
 
         if (contactsChildEventListener == null) {
 
-            Log.d(DEBUG_CONTACTS_SYNC, "creating a new contactsChildEventListener");
+            //Log.d(DEBUG_CONTACTS_SYNC, "creating a new contactsChildEventListener");
 
             contactsChildEventListener = contactsNode.orderByChild("firstname").addChildEventListener(new ChildEventListener() {
                 @Override
@@ -84,11 +84,11 @@ public class ContactsSynchronizer {
                         protected Void doInBackground(final DataSnapshot... snapshots) {
                             new Thread(new Runnable() {
                                 public void run() {
-                                    Log.v(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildAdded");
+                                    //Log.v(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildAdded");
 
                                     try {
                                         IChatUser contact = decodeContactSnapShop(snapshots[0]);
-                                        Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildAdded.contact : " + contact);
+                                        //Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildAdded.contact : " + contact);
                                         addContact(contact);
                                     } catch (ChatFieldNotFoundException cfnfe) {
                                         Log.w(DEBUG_CONTACTS_SYNC, "Error decoding contact on onChildAdded " + cfnfe.getMessage());
@@ -116,10 +116,10 @@ public class ContactsSynchronizer {
                     try {
                         IChatUser contact = decodeContactSnapShop(dataSnapshot);
                         updateLoggedUser(contact);
-                        Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildChanged.contact : " + contact);
+                        //Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildChanged.contact : " + contact);
                         updateContact(contact);
                     } catch (ChatFieldNotFoundException cfnfe) {
-                        Log.w(DEBUG_CONTACTS_SYNC, "Error decoding contact on onChildChanged " + cfnfe.getMessage());
+                        //Log.w(DEBUG_CONTACTS_SYNC, "Error decoding contact on onChildChanged " + cfnfe.getMessage());
 //                                notifySubscriberChanged(null, new ChatRuntimeException(cfnfe));
                     } catch (Exception e) {
                         notifySubscriberChanged(null, new ChatRuntimeException(e));
@@ -136,7 +136,7 @@ public class ContactsSynchronizer {
                     try {
                         IChatUser contact = decodeContactSnapShop(dataSnapshot);
 
-                        Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildRemoved.contact : " + contact);
+                        //Log.d(DEBUG_CONTACTS_SYNC, "ContactsSynchronizer.connect.onChildRemoved.contact : " + contact);
 
                         contacts.remove(contact);
 
@@ -179,19 +179,19 @@ public class ContactsSynchronizer {
     }
 
     private void saveOrUpdateContactInMemory(IChatUser contact) {
-        Log.d(DEBUG_CONTACTS_SYNC, "saveOrUpdateContactInMemory  for contact : " + contact);
+        //Log.d(DEBUG_CONTACTS_SYNC, "saveOrUpdateContactInMemory  for contact : " + contact);
 
         int index = contacts.indexOf(contact);
 
         if (index > -1) {
             contacts.set(index, contact);
-            Log.v(DEBUG_CONTACTS_SYNC, "contact " + contact +
-                    "updated into contacts at position " + index);
+//            Log.v(DEBUG_CONTACTS_SYNC, "contact " + contact +
+//                    "updated into contacts at position " + index);
 
         } else {
             contacts.add(contact);
-            Log.v(DEBUG_CONTACTS_SYNC, "contact " + contact + "is not found into contacts." +
-                    " The contact was added at the end of the list");
+//            Log.v(DEBUG_CONTACTS_SYNC, "contact " + contact + "is not found into contacts." +
+//                    " The contact was added at the end of the list");
         }
     }
 
@@ -340,7 +340,7 @@ public class ContactsSynchronizer {
     }
 
     public static IChatUser decodeContactSnapShop(DataSnapshot dataSnapshot) throws ChatFieldNotFoundException {
-        Log.v(DEBUG_CONTACTS_SYNC, "decodeContactSnapShop called");
+        //Log.v(DEBUG_CONTACTS_SYNC, "decodeContactSnapShop called");
 
         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
@@ -368,7 +368,7 @@ public class ContactsSynchronizer {
         contact.setProfilePictureUrl(imageUrl);
         contact.setEmail(email);
 
-        Log.v(DEBUG_CONTACTS_SYNC, "decodeContactSnapShop.contact : " + contact);
+        //Log.v(DEBUG_CONTACTS_SYNC, "decodeContactSnapShop.contact : " + contact);
 
         return contact;
     }

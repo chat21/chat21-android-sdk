@@ -447,7 +447,7 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
     }
 
     private static IChatUser decodeContactSnapShop(DataSnapshot dataSnapshot) throws ChatFieldNotFoundException {
-        Log.v(TAG, "decodeContactSnapShop called");
+        //Log.v(TAG, "decodeContactSnapShop called");
 
         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
@@ -472,7 +472,7 @@ public class ChatLoginActivity extends AppCompatActivity implements View.OnClick
         contact.setFullName(firstname + " " + lastname);
         contact.setProfilePictureUrl(imageurl);
 
-        Log.v(TAG, "decodeContactSnapShop.contact : " + contact);
+        //Log.v(TAG, "decodeContactSnapShop.contact : " + contact);
 
         return contact;
     }
