@@ -62,7 +62,7 @@ public class MessageListAdapter extends AbstractRecyclerAdapter<Message, Recycle
                 StringUtils.isValid(messageSubType) && messageSubType.equals("info") ||
                 message.getType().equals("info/support") ||
                 StringUtils.isValid(messageSubType) && messageSubType.equals("info/support")
-                ) {
+        ) {
             viewType = R.id.row_system;
         } else {
             viewType = R.id.row_recipient;

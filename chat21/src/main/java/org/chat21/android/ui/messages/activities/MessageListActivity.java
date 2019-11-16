@@ -73,6 +73,7 @@ import org.chat21.android.ui.messages.adapters.MessageListAdapter;
 import org.chat21.android.ui.messages.fragments.BottomSheetAttach;
 import org.chat21.android.ui.messages.listeners.OnMessageClickListener;
 import org.chat21.android.ui.users.activities.PublicProfileActivity;
+import org.chat21.android.utils.PathUtil;
 import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
 import org.chat21.android.utils.image.CropCircleTransformation;
@@ -726,8 +727,14 @@ public class MessageListActivity extends AppCompatActivity
                 Uri uri = data.getData();
 
                 // convert the stream to a file
-                File fileToUpload = new File(StorageHandler.getFilePathFromUri(this, uri));
-                showConfirmUploadDialog(fileToUpload);
+                String ff = PathUtil.getPath(getApplicationContext(), uri);
+                File fileToUpload = ff != null ? new File(ff) : null;
+
+                //   File fileToUpload = new File(StorageHandler.getFilePathFromUri(this, uri));
+
+                if (fileToUpload != null) {
+                    showConfirmUploadDialog(fileToUpload);
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

@@ -79,6 +79,11 @@ public class Message implements Serializable, Cloneable {
     }
 
     @Exclude
+    public String getImageSrc() {
+        return (String) metadata.get("src");
+    }
+
+    @Exclude
     public String getId() {
         return id;
     }

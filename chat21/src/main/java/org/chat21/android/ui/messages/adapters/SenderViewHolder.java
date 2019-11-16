@@ -118,7 +118,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         // Resolve Issue #52
         mProgressBar.setVisibility(View.VISIBLE);
 
-        Glide.with(itemView.getContext()).load(message.getActualText()).addListener(new RequestListener<Drawable>() {
+        Glide.with(itemView.getContext()).load(message.getImageSrc()).addListener(new RequestListener<Drawable>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                 mProgressBar.setVisibility(View.GONE);
@@ -140,7 +140,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
 
     private void setFilePreview(final Message message) {
         Glide.with(itemView.getContext())
-                .load(message.getActualText())
+                .load(message.getImageSrc())
                 .placeholder(R.drawable.ic_placeholder_file_recipient_24dp)
                 .into(mPreview);
 

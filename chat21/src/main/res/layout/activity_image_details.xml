@@ -28,7 +28,13 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <org.chat21.android.utils.views.TouchImageView
+        <!--        <org.chat21.android.utils.views.TouchImageView-->
+        <!--            android:id="@+id/image"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:layout_centerInParent="true" />-->
+
+        <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -40,10 +46,10 @@
             android:layout_alignParentBottom="true"
             android:layout_gravity="bottom"
             android:background="#50000000"
-            android:paddingBottom="@dimen/chat_padding_small"
             android:paddingLeft="@dimen/chat_padding_normal"
+            android:paddingTop="@dimen/chat_padding_small"
             android:paddingRight="@dimen/chat_padding_normal"
-            android:paddingTop="@dimen/chat_padding_small">
+            android:paddingBottom="@dimen/chat_padding_small">
 
             <LinearLayout
                 android:id="@+id/texts_container"

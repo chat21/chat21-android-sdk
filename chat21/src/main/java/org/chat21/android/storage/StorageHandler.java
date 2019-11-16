@@ -198,10 +198,11 @@ public class StorageHandler {
             } else if ("com.android.providers.downloads.documents"
                     .equals(uri.getAuthority())) {
                 String id = DocumentsContract.getDocumentId(uri);
+                long idd = ContentUris.parseId(uri);
                 Uri contentUri = ContentUris
                         .withAppendedId(Uri
                                         .parse("content://downloads/public_downloads"),
-                                Long.valueOf(id));
+                                idd);
 
                 Cursor cursor = null;
                 String column = "_data";

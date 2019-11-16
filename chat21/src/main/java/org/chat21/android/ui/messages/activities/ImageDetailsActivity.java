@@ -3,11 +3,14 @@ package org.chat21.android.ui.messages.activities;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.bumptech.glide.Glide;
 
 import org.chat21.android.R;
 import org.chat21.android.core.messages.models.Message;
@@ -39,7 +42,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
         message = (Message) getIntent().getExtras().getSerializable(ChatUI.BUNDLE_MESSAGE);
 
         // ### begin toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // ### end toolbar
@@ -48,7 +51,7 @@ public class ImageDetailsActivity extends AppCompatActivity {
         registerViews();
 
         // ### begin image
-        String imgUrl = getImageUrl(message);
+        String imgUrl = message.getImageSrc();
         setImage(imgUrl);
         // ### end image
 
@@ -116,31 +119,24 @@ public class ImageDetailsActivity extends AppCompatActivity {
 //    };
 
 
-    private String getImageUrl(Message message) {
-        String imgUrl = "";
-
-        Map<String, Object> metadata = message.getMetadata();
-        if (metadata != null) {
-            imgUrl = (String) metadata.get("src");
-        }
-
-        return imgUrl;
-    }
-
     private void setImage(String imgUrl) {
         Log.i(TAG, "setImage");
 
-        final TouchImageView mImage = findViewById(R.id.image);
+        final ImageView mImage = findViewById(R.id.image);
 
-        mImage.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
-            @Override
-            public void onMove() {
-//                RectF rect = mImage.getZoomedRect();
-//                float currentZoom = mImage.getCurrentZoom();
-//                boolean isZoomed = mImage.isZoomed();
-            }
-        });
+//        mImage.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
+//            @Override
+//            public void onMove() {
+////                RectF rect = mImage.getZoomedRect();
+////                float currentZoom = mImage.getCurrentZoom();
+////                boolean isZoomed = mImage.isZoomed();
+//            }
+//        });
 
+
+        Glide.with(getApplicationContext())
+                .load(imgUrl)
+                .into(mImage);
 
         // TODO:
         // https://github.com/MikeOrtiz/TouchImageView/issues/135
