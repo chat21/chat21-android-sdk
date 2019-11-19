@@ -1,5 +1,7 @@
 package org.chat21.android.core.messages.models;
 
+import android.net.Uri;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
@@ -34,6 +36,7 @@ public class Message implements Serializable, Cloneable {
     public static final String TYPE_TEXT = "text";
     public static final String TYPE_IMAGE = "image";
     public static final String TYPE_FILE = "file";
+    public static final String TYPE_AUDIO = "audio";
 
     @Exclude
     String id;
@@ -76,6 +79,12 @@ public class Message implements Serializable, Cloneable {
 
         // this.status = STATUS_SENDING;
         //this.timestamp = new Date().getTime();
+    }
+
+    @Exclude
+    public Uri getAudioUri() {
+        String src = (String) metadata.get("src");
+        return Uri.parse(src);
     }
 
     @Exclude
@@ -152,15 +161,17 @@ public class Message implements Serializable, Cloneable {
     public String getActualText() {
         String ret = text;
 
-        if (type != null && type.equals(TYPE_IMAGE)) {
-            String txt = text;
+        if (type != null) {
+            if (type.equals(TYPE_IMAGE)) {
+                String txt = text;
 
-            if (txt != null) {
-                int ln = "image:".length();
-                String strp = txt.length() >= ln ? txt.substring(0, ln) : null;
+                if (txt != null) {
+                    int ln = "image:".length();
+                    String strp = txt.length() >= ln ? txt.substring(0, ln) : null;
 
-                if (strp != null && strp.equals("image:")) {
-                    ret = txt.substring(ln + 1);
+                    if (strp != null && strp.equals("image:")) {
+                        ret = txt.substring(ln + 1);
+                    }
                 }
             }
         }

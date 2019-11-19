@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.text.Html;
 import android.text.style.ClickableSpan;
 import android.util.Log;
@@ -25,6 +26,7 @@ import com.bumptech.glide.request.target.Target;
 import com.vanniktech.emoji.EmojiTextView;
 
 import org.chat21.android.R;
+import org.chat21.android.core.ChatManager;
 import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.ui.ChatUI;
 import org.chat21.android.ui.messages.activities.ImageDetailsActivity;
@@ -81,6 +83,12 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
             mPreview.setVisibility(View.VISIBLE);
 
             setFilePreview(message);
+
+        } else if (message.getType().equals(Message.TYPE_AUDIO)) {
+            mMessage.setVisibility(View.GONE);
+            mPreview.setVisibility(View.VISIBLE);
+
+            setAudioPreview(message);
 
         } else if (message.getType().equals(Message.TYPE_TEXT)) {
             mProgressBar.setVisibility(View.GONE);  // Resolve Issue #52
@@ -143,6 +151,22 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 startImagePreviewActivity(message);
+            }
+        });
+    }
+
+    private void setAudioPreview(final Message message) {
+
+        mPreview.setImageResource(R.drawable.play_circle_outline);
+
+        mPreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = message.getAudioUri();
+
+                if (uri != null) {
+                    ChatManager.getInstance().playAudio(uri);
+                }
             }
         });
     }

@@ -2,6 +2,8 @@ package org.chat21.android.core;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,6 +15,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
+import org.chat21.android.R;
 import org.chat21.android.core.authentication.ChatAuthentication;
 import org.chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import org.chat21.android.core.contacts.listeners.OnContactCreatedCallback;
@@ -152,6 +155,37 @@ public class ChatManager {
      */
     public static void startAnonymously(final Activity loginActivity, final ChatAuthentication.OnChatLoginCallback onChatLoginCallback) {
         startAnonymously(loginActivity, _DEFAULT_APP_ID_VALUE, onChatLoginCallback);
+    }
+
+    private MediaPlayer mediaPlayer;
+    private boolean isPlayingAudio;
+
+    public void playAudio(Uri uri) {
+        if (!isPlayingAudio) {
+            isPlayingAudio = true;
+
+            mediaPlayer = new MediaPlayer();
+
+            try {
+                mediaPlayer.setDataSource(mContext, uri);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException e) {
+                Log.e(TAG, "prepare() audio failed");
+            }
+
+        } else {
+            isPlayingAudio = false;
+            stopPlayingAudio();
+        }
+    }
+
+    public void stopPlayingAudio() {
+        if (isPlayingAudio) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+            isPlayingAudio = false;
+        }
     }
 
     /**
@@ -305,6 +339,8 @@ public class ChatManager {
     }
 
     public void dispose() {
+
+        stopPlayingAudio();
 
         // dispose myPresenceHandler
         if (myPresenceHandler != null) {
