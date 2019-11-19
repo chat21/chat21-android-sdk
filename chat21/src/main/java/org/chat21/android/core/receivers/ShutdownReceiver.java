@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.chat21.android.core.ChatManager;
+import org.chat21.android.core.conversations.ConversationsHandler;
+import org.chat21.android.core.presence.MyPresenceHandler;
 
 /**
  * Created by stefanodp91 on 19/02/18.
@@ -19,9 +21,21 @@ public class ShutdownReceiver extends BroadcastReceiver {
         if (Intent.ACTION_SHUTDOWN.equals(intent.getAction())) {
             Log.i(TAG, "System shutting down");
 
+            ChatManager chatManager = ChatManager.getInstance();
+
             // disconnect the current user when the phone shutdown
-            if(ChatManager.getInstance() != null) {
-                ChatManager.getInstance().getMyPresenceHandler().dispose();
+            if (chatManager != null && chatManager.isStarted()) {
+                MyPresenceHandler presenceHandler = chatManager.getMyPresenceHandler();
+
+                if (presenceHandler != null) {
+                    presenceHandler.dispose();
+                }
+
+                ConversationsHandler conversationsHandler = chatManager.getConversationsHandler();
+
+                if (conversationsHandler != null) {
+                    conversationsHandler.removeAllConversationsListeners();
+                }
             }
         }
     }

@@ -246,6 +246,10 @@ public class ChatManager {
         start(context, mChatConfiguration, currentUser);
     }
 
+    public boolean isStarted() {
+        return mInstance != null;
+    }
+
     /**
      * It initializes the SDK passing a configuration object and the current user.
      * It serializes the current user.
