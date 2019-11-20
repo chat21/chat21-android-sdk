@@ -121,7 +121,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
 
     private void setAudioPreview(final Message message) {
 
-        mPreview.setImageResource(R.drawable.play_circle_outline);
+        mPreview.setImageResource(R.drawable.play_circle_outline_black);
 
         mPreview.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -59,13 +59,13 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
 
     RecipientViewHolder(View itemView) {
         super(itemView);
-        mMessage = (EmojiTextView) itemView.findViewById(R.id.message);
-        mDate = (TextView) itemView.findViewById(R.id.date);
-        mTimestamp = (TextView) itemView.findViewById(R.id.timestamp);
+        mMessage = itemView.findViewById(R.id.message);
+        mDate = itemView.findViewById(R.id.date);
+        mTimestamp = itemView.findViewById(R.id.timestamp);
         mBackgroundBubble = itemView.findViewById(R.id.message_group);
-        mSenderDisplayName = (TextView) itemView.findViewById(R.id.sender_display_name);
-        mPreview = (ImageView) itemView.findViewById(R.id.preview); // Resolve Issue #32
-        mProgressBar = (ProgressBar) itemView.findViewById(R.id.progress);  // Resolve Issue #52
+        mSenderDisplayName = itemView.findViewById(R.id.sender_display_name);
+        mPreview = itemView.findViewById(R.id.preview); // Resolve Issue #32
+        mProgressBar = itemView.findViewById(R.id.progress);  // Resolve Issue #52
     }
 
     void bind(final Message previousMessage, final Message message,
@@ -73,29 +73,35 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
 
         Log.d("TAG", "RecipientViewHolder");
 
-        if (message.getType().equals(Message.TYPE_IMAGE)) {
-            mMessage.setVisibility(View.GONE);
-            mPreview.setVisibility(View.VISIBLE);
-            setPreview(message);
+        switch (message.getType()) {
+            case Message.TYPE_IMAGE:
+                mMessage.setVisibility(View.GONE);
+                mPreview.setVisibility(View.VISIBLE);
+                setPreview(message);
 
-        } else if (message.getType().equals(Message.TYPE_FILE)) {
-            mMessage.setVisibility(View.GONE);
-            mPreview.setVisibility(View.VISIBLE);
+                break;
+            case Message.TYPE_FILE:
+                mMessage.setVisibility(View.GONE);
+                mPreview.setVisibility(View.VISIBLE);
 
-            setFilePreview(message);
+                setFilePreview(message);
 
-        } else if (message.getType().equals(Message.TYPE_AUDIO)) {
-            mMessage.setVisibility(View.GONE);
-            mPreview.setVisibility(View.VISIBLE);
+                break;
+            case Message.TYPE_AUDIO:
+                mMessage.setVisibility(View.GONE);
+                mPreview.setVisibility(View.VISIBLE);
 
-            setAudioPreview(message);
+                setAudioPreview(message);
 
-        } else if (message.getType().equals(Message.TYPE_TEXT)) {
-            mProgressBar.setVisibility(View.GONE);  // Resolve Issue #52
-            mMessage.setVisibility(View.VISIBLE);
-            mMessage.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
-            mPreview.setVisibility(View.GONE);
-            setMessage(message);
+                break;
+            case Message.TYPE_TEXT:
+                mProgressBar.setVisibility(View.GONE);  // Resolve Issue #52
+
+                mMessage.setVisibility(View.VISIBLE);
+                mMessage.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
+                mPreview.setVisibility(View.GONE);
+                setMessage(message);
+                break;
         }
 
         setBubble();
@@ -157,7 +163,7 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
 
     private void setAudioPreview(final Message message) {
 
-        mPreview.setImageResource(R.drawable.play_circle_outline);
+        mPreview.setImageResource(R.drawable.play_circle_outline_black);
 
         mPreview.setOnClickListener(new View.OnClickListener() {
             @Override

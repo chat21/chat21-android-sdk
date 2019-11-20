@@ -2,9 +2,13 @@ package org.chat21.android.core;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -160,7 +164,7 @@ public class ChatManager {
     private MediaPlayer mediaPlayer;
     private boolean isPlayingAudio;
 
-    public void playAudio(Uri uri) {
+    public void playAudio(final @NonNull Uri uri) {
         if (!isPlayingAudio) {
             isPlayingAudio = true;
 
@@ -168,6 +172,7 @@ public class ChatManager {
 
             try {
                 mediaPlayer.setDataSource(mContext, uri);
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.prepare();
                 mediaPlayer.start();
             } catch (IOException e) {
