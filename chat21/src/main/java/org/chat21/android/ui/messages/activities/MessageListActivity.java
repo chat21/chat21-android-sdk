@@ -654,10 +654,6 @@ public class MessageListActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode,
-                permissions,
-                grantResults);
-
         if (requestCode == _REQ_CODE_FILE_PERM) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -668,6 +664,10 @@ public class MessageListActivity extends AppCompatActivity
                         Toast.LENGTH_SHORT)
                         .show();
             }
+        } else {
+            super.onRequestPermissionsResult(requestCode,
+                    permissions,
+                    grantResults);
         }
     }
 
