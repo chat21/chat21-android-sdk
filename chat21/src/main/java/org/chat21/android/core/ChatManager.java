@@ -668,6 +668,17 @@ public class ChatManager {
                 Message.TYPE_IMAGE, text, channelType, metadata, sendMessageListener);
     }
 
+    public void sendAudioMessage(String recipientId, String recipientFullName, String text, String channelType,
+                                 Map metadata, SendMessageListener sendMessageListener) {
+
+        Log.d(TAG, "sending audio message to recipientId : " + recipientId +
+                ", recipientFullName: " + recipientFullName + " with text : " +
+                text + " and metadata : " + metadata);
+
+        getConversationMessagesHandler(recipientId, recipientFullName).sendMessage(
+                Message.TYPE_AUDIO, text, channelType, metadata, sendMessageListener);
+    }
+
     public void sendFileMessage(String recipient_id, String text, String channelType, URL url, String fileName,
                                 Map metadata, SendMessageListener sendMessageListener) {
 

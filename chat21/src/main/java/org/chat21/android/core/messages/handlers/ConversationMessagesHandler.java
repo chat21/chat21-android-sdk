@@ -243,92 +243,92 @@ public class ConversationMessagesHandler {
 
             conversationMessagesChildEventListener = conversationMessagesNode.orderByChild(Message.TIMESTAMP_FIELD_KEY)
                     .addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.v(TAG, "ConversationMessagesHandler.connect.onChildAdded");
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                            Log.v(TAG, "ConversationMessagesHandler.connect.onChildAdded");
 
-                    try {
-                        Message message = decodeMessageSnapShop(dataSnapshot);
-                        Log.d(TAG, "ConversationMessagesHandler.connect.onChildAdded.message : " + message);
+                            try {
+                                Message message = decodeMessageSnapShop(dataSnapshot);
+                                Log.d(TAG, "ConversationMessagesHandler.connect.onChildAdded.message : " + message);
 
 
-                        if (message.getStatus() < Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT
-                                && !message.getSender().equals(currentUser.getId())
-                                && message.isDirectChannel()) {
+                                if (message.getStatus() < Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT
+                                        && !message.getSender().equals(currentUser.getId())
+                                        && message.isDirectChannel()) {
 
-                            dataSnapshot.getRef().child(Message.STATUS_FIELD_KEY)
-                                    .setValue(Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
-                            Log.d(TAG, "Message with id : " + message.getId() +
-                                    " is received from the recipient client and the status field of the message has beed set to " +
-                                    Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
-                        }
+                                    dataSnapshot.getRef().child(Message.STATUS_FIELD_KEY)
+                                            .setValue(Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
+                                    Log.d(TAG, "Message with id : " + message.getId() +
+                                            " is received from the recipient client and the status field of the message has beed set to " +
+                                            Message.STATUS_RECEIVED_FROM_RECIPIENT_CLIENT);
+                                }
 
-                        saveOrUpdateMessageInMemory(message);
+                                saveOrUpdateMessageInMemory(message);
 
-                        if (conversationMessagesListeners != null) {
-                            for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                                conversationMessagesListener.onConversationMessageReceived(message, null);
+                                if (conversationMessagesListeners != null) {
+                                    for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                                        conversationMessagesListener.onConversationMessageReceived(message, null);
+                                    }
+                                }
+
+                                //TODO settare status a 200 qui
+
+                            } catch (ChatFieldNotFoundException cfnfe) {
+                                Log.w(TAG, "Error decoding message on onChildAdded " + cfnfe.getMessage());
+                            } catch (Exception e) {
+                                if (conversationMessagesListeners != null) {
+                                    for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                                        conversationMessagesListener.onConversationMessageReceived(null, new ChatRuntimeException(e));
+                                    }
+                                }
                             }
                         }
 
-                        //TODO settare status a 200 qui
+                        //for return recepit
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
+                            Log.v(TAG, "ConversationMessagesHandler.connect.onChildChanged");
 
-                    } catch (ChatFieldNotFoundException cfnfe) {
-                        Log.w(TAG, "Error decoding message on onChildAdded " + cfnfe.getMessage());
-                    } catch (Exception e) {
-                        if (conversationMessagesListeners != null) {
-                            for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                                conversationMessagesListener.onConversationMessageReceived(null, new ChatRuntimeException(e));
+                            try {
+                                Message message = decodeMessageSnapShop(dataSnapshot);
+
+                                Log.d(TAG, "ConversationMessagesHandler.connect.onChildChanged.message : " + message);
+
+                                saveOrUpdateMessageInMemory(message);
+
+                                if (conversationMessagesListeners != null) {
+                                    for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                                        conversationMessagesListener.onConversationMessageChanged(message, null);
+                                    }
+                                }
+
+                            } catch (ChatFieldNotFoundException cfnfe) {
+                                Log.w(TAG, "Error decoding message on onChildChanged " + cfnfe.getMessage());
+                            } catch (Exception e) {
+                                if (conversationMessagesListeners != null) {
+                                    for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
+                                        conversationMessagesListener.onConversationMessageChanged(null, new ChatRuntimeException(e));
+                                    }
+                                }
                             }
                         }
-                    }
-                }
 
-                //for return recepit
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.v(TAG, "ConversationMessagesHandler.connect.onChildChanged");
-
-                    try {
-                        Message message = decodeMessageSnapShop(dataSnapshot);
-
-                        Log.d(TAG, "ConversationMessagesHandler.connect.onChildChanged.message : " + message);
-
-                        saveOrUpdateMessageInMemory(message);
-
-                        if (conversationMessagesListeners != null) {
-                            for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                                conversationMessagesListener.onConversationMessageChanged(message, null);
-                            }
-                        }
-
-                    } catch (ChatFieldNotFoundException cfnfe) {
-                        Log.w(TAG, "Error decoding message on onChildChanged " + cfnfe.getMessage());
-                    } catch (Exception e) {
-                        if (conversationMessagesListeners != null) {
-                            for (ConversationMessagesListener conversationMessagesListener : conversationMessagesListeners) {
-                                conversationMessagesListener.onConversationMessageChanged(null, new ChatRuntimeException(e));
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
 //                Log.d(TAG, "observeMessages.onChildRemoved");
-                }
+                        }
 
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
 //                Log.d(TAG, "observeMessages.onChildMoved");
-                }
+                        }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 //                Log.d(TAG, "observeMessages.onCancelled");
 
-                }
-            });
+                        }
+                    });
 
             Log.i(TAG, "connected for recipientId: " + recipient.getId());
 
