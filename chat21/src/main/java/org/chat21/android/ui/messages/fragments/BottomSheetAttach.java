@@ -17,6 +17,7 @@ import org.chat21.android.R;
 import org.chat21.android.core.users.models.IChatUser;
 import org.chat21.android.ui.ChatUI;
 import org.chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
+import org.chat21.android.ui.messages.listeners.OnRecordAudioClickListener;
 
 import static org.chat21.android.ui.messages.activities.MessageListActivity._INTENT_ACTION_GET_PICTURE;
 
@@ -36,6 +37,7 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
 
     private Button mAttachImagesView;
     private Button mAttachDocumentsView;
+    private Button mRecordAudioView;
 
     public static BottomSheetAttach newInstance(IChatUser recipient, String channelType) {
         BottomSheetAttach f = new BottomSheetAttach();
@@ -68,6 +70,7 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
     private void registerViews(View rootView) {
         mAttachImagesView = rootView.findViewById(R.id.btn_attach_images);
         mAttachDocumentsView = rootView.findViewById(R.id.btn_attach_documents);
+        mRecordAudioView = rootView.findViewById(R.id.btn_record_audio);
     }
 
     private void initViews() {
@@ -75,10 +78,15 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
         if (ChatUI.getInstance().getOnAttachDocumentsClickListener() == null) {
             mAttachDocumentsView.setVisibility(View.GONE);
         }
+
+        if (ChatUI.getInstance().getOnRecordAudioClickListener() == null) {
+            mRecordAudioView.setVisibility(View.GONE);
+        }
     }
 
     private void initListeners() {
         mAttachImagesView.setOnClickListener(this);
+        mRecordAudioView.setOnClickListener(this);
         mAttachDocumentsView.setOnClickListener(this);
     }
 
@@ -91,6 +99,8 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
             onAttachImagesActionListener();
         } else if (id == R.id.btn_attach_documents) {
             onAttachDocumentsActionListener();
+        } else if (id == R.id.btn_record_audio) {
+            onRecordAudioActionListener();
         }
     }
 
@@ -108,13 +118,27 @@ public class BottomSheetAttach extends BottomSheetDialogFragment implements
                 ChatUI.getInstance().getOnAttachDocumentsClickListener();
 
         if (onAttachDocumentsClickListener != null) {
-            onAttachDocumentsClickListener.onAttachDocumentsClicked(recipient, channelType,null);
+            onAttachDocumentsClickListener.onAttachDocumentsClicked(recipient, channelType, null);
         }
 
         // dismiss the bottomsheet
         getDialog().dismiss();
     }
 
+    private void onRecordAudioActionListener() {
+        Log.d(DEBUG_TAG, "BottomSheetAttach.onRecordAudioActionListener");
+
+        // call the click listener defined in Chat.Configuration
+        OnRecordAudioClickListener listener =
+                ChatUI.getInstance().getOnRecordAudioClickListener();
+
+        if (listener != null) {
+            listener.onRecordAudioClicked(recipient, channelType,  getActivity());
+        }
+
+        // dismiss the bottomsheet
+        getDialog().dismiss();
+    }
 
     private void showFilePickerDialog() {
         Log.d(DEBUG_TAG, "BottomSheetAttach.showFilePickerDialog");

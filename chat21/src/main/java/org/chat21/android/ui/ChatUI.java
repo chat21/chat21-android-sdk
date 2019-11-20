@@ -26,6 +26,7 @@ import org.chat21.android.ui.messages.activities.MessageListActivity;
 import org.chat21.android.ui.messages.listeners.OnAttachClickListener;
 import org.chat21.android.ui.messages.listeners.OnAttachDocumentsClickListener;
 import org.chat21.android.ui.messages.listeners.OnMessageClickListener;
+import org.chat21.android.ui.messages.listeners.OnRecordAudioClickListener;
 
 import java.io.Serializable;
 
@@ -55,6 +56,7 @@ public class ChatUI implements Serializable {
     private OnNewConversationClickListener onNewConversationClickListener;
     private OnMessageClickListener onMessageClickListener;
     private OnAttachDocumentsClickListener onAttachDocumentsClickListener;
+    private OnRecordAudioClickListener onRecordAudioClickListener;
     private OnAttachClickListener onAttachClickListener;
     private OnContactClickListener onContactClickListener;
     private OnCreateGroupClickListener onCreateGroupClickListener;
@@ -118,6 +120,16 @@ public class ChatUI implements Serializable {
     public void setOnAttachDocumentsClickListener(OnAttachDocumentsClickListener onAttachDocumentsClickListener) {
         Log.d(TAG, "setOnAttachDocumentsClickListener");
         this.onAttachDocumentsClickListener = onAttachDocumentsClickListener;
+    }
+
+    public OnRecordAudioClickListener getOnRecordAudioClickListener() {
+        Log.d(TAG, "getOnAttachDocumentsClickListener");
+        return onRecordAudioClickListener;
+    }
+
+    public void setOnRecordAudioClickListener(OnRecordAudioClickListener onRecordAudioClickListener) {
+        Log.d(TAG, "setOnAttachDocumentsClickListener");
+        this.onRecordAudioClickListener = onRecordAudioClickListener;
     }
 
     public OnAttachClickListener getOnAttachClickListener() {

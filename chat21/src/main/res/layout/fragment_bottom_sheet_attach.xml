@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/windowBackground"
-    android:paddingBottom="@dimen/chat_margin_normal"
+    android:orientation="vertical"
     android:paddingLeft="@dimen/chat_margin_normal"
+    android:paddingTop="@dimen/chat_margin_normal"
     android:paddingRight="@dimen/chat_margin_normal"
-    android:paddingTop="@dimen/chat_margin_normal">
+    android:paddingBottom="@dimen/chat_margin_normal">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="@dimen/chat_margin_normal"
                 android:layout_marginRight="@dimen/chat_margin_normal"
-                android:background="@color/grey_500"/>
+                android:background="@color/grey_500" />
 
             <Button
                 android:id="@+id/btn_attach_documents"
@@ -50,7 +50,24 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="@dimen/chat_margin_normal"
                 android:layout_marginRight="@dimen/chat_margin_normal"
-                android:background="@color/grey_500"/>
+                android:background="@color/grey_500" />
+
+            <Button
+                android:id="@+id/btn_record_audio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:text="@string/bottom_sheet_record_audio_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <!--line separator-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="@dimen/chat_margin_normal"
+                android:layout_marginRight="@dimen/chat_margin_normal"
+                android:background="@color/grey_500" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

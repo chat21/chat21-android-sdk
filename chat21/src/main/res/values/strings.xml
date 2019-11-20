@@ -81,6 +81,7 @@
     <!--bottom_sheet_attach-->
     <string name="bottom_sheet_attach_images_label">Images</string>
     <string name="bottom_sheet_attach_documents_label">Documents</string>
+    <string name="bottom_sheet_record_audio_label">Audio</string>
 
     <!--activity_public_profile-->
     <string name="activity_public_profile_presence_online">Online</string>
