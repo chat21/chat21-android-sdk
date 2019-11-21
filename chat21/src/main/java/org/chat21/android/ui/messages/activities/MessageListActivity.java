@@ -397,8 +397,7 @@ public class MessageListActivity extends AppCompatActivity
 
         // toolbar group members
         String groupMembers;
-        if (chatGroup != null && chatGroup.getMembersList() != null &&
-                chatGroup.getMembersList().size() > 0) {
+        if (chatGroup.getMembersList() != null && chatGroup.getMembersList().size() > 0) {
             groupMembers = chatGroup.printMembersListWithSeparator(", ");
         } else {
             // if there are no members show the logged user as "you"
