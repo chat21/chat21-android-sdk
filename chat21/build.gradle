@@ -10,7 +10,9 @@ android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_COMPILE_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
     defaultConfig {
+        //noinspection GroovyAccessibility
         minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+        //noinspection GroovyAccessibility
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
 
         versionCode 40
@@ -36,7 +38,7 @@ dependencies {
     // android framework
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.applandeo:material-calendar-view:1.7.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha01'
+    implementation 'com.google.android.material:material:1.2.0-alpha02'
 
     // firebase sdk
     implementation 'com.google.firebase:firebase-core:17.2.1'
@@ -46,7 +48,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:19.1.0'
     implementation 'com.google.firebase:firebase-crash:16.2.1'
     implementation 'com.google.firebase:firebase-messaging:20.0.1'
-    implementation 'com.google.firebase:firebase-auth:19.1.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
 
     implementation 'com.google.firebase:firebase-firestore:21.3.0'
 
