@@ -38,19 +38,19 @@ dependencies {
     // android framework
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.applandeo:material-calendar-view:1.7.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha04'
+    implementation 'com.google.android.material:material:1.2.0-alpha05'
 
     // firebase sdk
-    implementation 'com.google.firebase:firebase-core:17.2.2'
+    implementation 'com.google.firebase:firebase-core:17.3.0'
 
-    implementation 'com.google.firebase:firebase-database:19.2.0'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
 
-    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.google.firebase:firebase-crash:16.2.1'
-    implementation 'com.google.firebase:firebase-messaging:20.1.0'
-    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-messaging:20.1.4'
+    implementation 'com.google.firebase:firebase-auth:19.3.0'
 
-    implementation 'com.google.firebase:firebase-firestore:21.3.1'
+    implementation 'com.google.firebase:firebase-firestore:21.4.2'
 
 
 //    compile 'com.firebaseui:firebase-ui:2.3.0'
