@@ -93,6 +93,8 @@ public class MessageListActivity extends AppCompatActivity
         implements ConversationMessagesListener, PresenceListener, ChatGroupsListener {
     private static final String TAG = MessageListActivity.class.getName();
 
+    public static final String BUNDLE_PARAM_USE_GREEN_SEND_BUTTON = "useGreenSendButton";
+
     public static final int _INTENT_ACTION_GET_PICTURE = 853;
     public static final int _REQ_CODE_FILE_PERM = 442;
 
@@ -100,6 +102,7 @@ public class MessageListActivity extends AppCompatActivity
     private ConversationMessagesHandler conversationMessagesHandler;
     private boolean conversWithOnline = false;
     private long conversWithLastOnline = -1;
+
 
     private GroupsSyncronizer groupsSyncronizer = null;
 
@@ -120,6 +123,8 @@ public class MessageListActivity extends AppCompatActivity
     private ImageView attachButton;
     private ImageView sendButton;
     private LinearLayout mEmojiBar;
+
+    private boolean useGreenSendButton;
 
     /**
      * {@code recipient} is the real contact whom is talking with.
@@ -145,6 +150,7 @@ public class MessageListActivity extends AppCompatActivity
 
         // retrieve recipient
         recipient = (IChatUser) getIntent().getSerializableExtra(ChatUI.BUNDLE_RECIPIENT);
+        useGreenSendButton = getIntent().getBooleanExtra(BUNDLE_PARAM_USE_GREEN_SEND_BUTTON, false);
 
         // BEGIN contactsSynchronizer
         ContactsSynchronizer contactsSynchronizer = ChatManager.getInstance().getContactsSynchronizer();
@@ -511,8 +517,10 @@ public class MessageListActivity extends AppCompatActivity
                 .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
         attachButton.setColorFilter(ContextCompat
                 .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
-        sendButton.setColorFilter(ContextCompat
-                .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+        if (!useGreenSendButton) {
+            sendButton.setColorFilter(ContextCompat
+                    .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+        }
 
         emojiButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -594,6 +602,10 @@ public class MessageListActivity extends AppCompatActivity
             } else {
                 mEmojiBar.setVisibility(View.GONE);
             }
+        }
+
+        if (sendButton != null && useGreenSendButton) {
+            sendButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.send_message));
         }
     }
 
