@@ -109,7 +109,6 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
         setDate(previousMessage, message, position);
 
         setTimestamp(message);
-        mTimestamp.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
 
         setSenderDisplayName(message);
 
@@ -211,6 +210,7 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
 
     private void setTimestamp(Message message) {
         mTimestamp.setText(TimeUtils.formatTimestamp(message.getTimestamp(), "HH:mm"));
+        mTimestamp.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Regular.otf"));
     }
 
     private void setDate(Message previousMessage, Message message, int position) {
@@ -239,6 +239,8 @@ class RecipientViewHolder extends RecyclerView.ViewHolder {
         } else {
             mDate.setVisibility(View.VISIBLE);
         }
+
+        mDate.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "fonts/Montserrat-Bold.otf"));
     }
 
     private void setBubble() {

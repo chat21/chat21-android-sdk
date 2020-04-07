@@ -46,7 +46,7 @@
 
     <!--row_system-->
     <dimen name="chat_row_system_last_message_text_view_max_width">300dp</dimen>
-    <dimen name="chat_row_system_last_message_text_size">12.5dp</dimen>
+    <dimen name="chat_row_system_last_message_text_size">14sp</dimen>
     <dimen name="chat_row_system_last_message_emoji_size">@dimen/chat_recipient_last_message_emoji_size</dimen>
 
     <!--row_recipient-->
