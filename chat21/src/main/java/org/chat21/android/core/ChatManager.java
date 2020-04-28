@@ -5,7 +5,6 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,7 +18,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
-import org.chat21.android.R;
 import org.chat21.android.core.authentication.ChatAuthentication;
 import org.chat21.android.core.chat_groups.syncronizers.GroupsSyncronizer;
 import org.chat21.android.core.contacts.listeners.OnContactCreatedCallback;
@@ -464,9 +462,9 @@ public class ChatManager {
      */
     public static ChatManager getInstance() {
 //        Log.v(TAG, "getInstance");
-        if (mInstance == null) {
-            throw new RuntimeException("instance cannot be null. call start first.");
-        }
+//        if (mInstance == null) {
+//            throw new RuntimeException("instance cannot be null. call start first.");
+//        }
         return mInstance;
     }
 
