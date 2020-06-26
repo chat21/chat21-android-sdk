@@ -39,6 +39,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.signature.ObjectKey;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiImageView;
 import com.vanniktech.emoji.EmojiPopup;
@@ -76,7 +77,7 @@ import org.chat21.android.ui.users.activities.PublicProfileActivity;
 import org.chat21.android.utils.PathUtil;
 import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
-import org.chat21.android.utils.image.CropCircleTransformation;
+import org.chat21.android.utils.image.PositionedCropTransformation;
 
 import java.io.File;
 import java.util.HashMap;
@@ -423,10 +424,19 @@ public class MessageListActivity extends AppCompatActivity
     }
 
     private void setPicture(String pictureUrl, @DrawableRes int placeholder) {
+//        Glide.with(getApplicationContext())
+//                .load(StringUtils.isValid(pictureUrl) ? pictureUrl : "")
+//                .placeholder(placeholder)
+//                .transform(new CropCircleTransformation(getApplicationContext()))
+//                .into(mPictureView);
+
         Glide.with(getApplicationContext())
                 .load(StringUtils.isValid(pictureUrl) ? pictureUrl : "")
                 .placeholder(placeholder)
-                .transform(new CropCircleTransformation(getApplicationContext()))
+                .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                .transform(new PositionedCropTransformation(getApplicationContext(), 0, 0))
+                .circleCrop()
+                .dontAnimate()
                 .into(mPictureView);
     }
 
