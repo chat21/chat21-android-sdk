@@ -1,10 +1,16 @@
 package org.chat21.android.ui.messages.activities;
 
+import android.app.DownloadManager;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,9 +23,8 @@ import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.ui.ChatUI;
 import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
-import org.chat21.android.utils.views.TouchImageView;
 
-import java.util.Map;
+import java.io.File;
 
 /**
  * Created by stefanodp91 on 25/11/2016.
@@ -46,7 +51,6 @@ public class ImageDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // ### end toolbar
-
 
         registerViews();
 
@@ -87,6 +91,33 @@ public class ImageDetailsActivity extends AppCompatActivity {
 //        ThemeUtils.changeStatusBarColor(this, getResources().getColor(R.color.black));
 
 //        initListeners();
+
+        ImageView mIvDownload = findViewById(R.id.iv_download);
+        mIvDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String imgUrl = message.getImageSrc();
+                downloadImageNew(message.getId() ,imgUrl);
+            }
+        });
+    }
+
+    private void downloadImageNew(String filename, String downloadUrlOfImage){
+        try{
+            DownloadManager dm = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+            Uri downloadUri = Uri.parse(downloadUrlOfImage);
+            DownloadManager.Request request = new DownloadManager.Request(downloadUri);
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE)
+                    .setAllowedOverRoaming(false)
+                    .setTitle(filename)
+                    .setMimeType("image/jpeg")
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, File.separator + filename + ".jpg");
+            dm.enqueue(request);
+            Toast.makeText(this, "Image download started.", Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            Toast.makeText(this, "Image download failed.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
