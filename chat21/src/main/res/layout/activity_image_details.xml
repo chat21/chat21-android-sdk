@@ -5,14 +5,14 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/white">
 
     <!-- toolbar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#50000000"
+        android:background="#339999"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -20,7 +20,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#50000000" />
+            android:background="#339999" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <RelativeLayout
@@ -38,6 +38,7 @@
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@+id/iv_download"
             android:layout_centerInParent="true" />
 
         <ImageView
@@ -46,15 +47,15 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:padding="20dp"
-            android:src="@drawable/ic_search_white_24dp"/>
+            android:src="@drawable/download_icon"
+            android:padding="20dp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_gravity="bottom"
-            android:background="#50000000"
+            android:background="#339999"
             android:paddingLeft="@dimen/chat_padding_normal"
             android:paddingTop="@dimen/chat_padding_small"
             android:paddingRight="@dimen/chat_padding_normal"

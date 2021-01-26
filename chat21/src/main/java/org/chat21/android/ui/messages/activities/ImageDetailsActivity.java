@@ -1,7 +1,9 @@
 package org.chat21.android.ui.messages.activities;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,9 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 
@@ -35,6 +40,8 @@ public class ImageDetailsActivity extends AppCompatActivity {
     private static final String TAG = ImageDetailsActivity.class.getName();
 
     private Message message;
+
+    private static final int REQUEST_PHONESTORAGE = 10000;
 
 //    private FloatingActionButton mBtnShare;
 //    private FloatingActionButton mBtnDownload;
@@ -96,10 +103,32 @@ public class ImageDetailsActivity extends AppCompatActivity {
         mIvDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String imgUrl = message.getImageSrc();
-                downloadImageNew(message.getId() ,imgUrl);
+                loadPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PHONESTORAGE);
             }
         });
+    }
+
+    private void loadPermissions(String perm, int requestCode) {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), perm) != PackageManager.PERMISSION_GRANTED) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, perm)) {
+                ActivityCompat.requestPermissions(this, new String[]{perm}, requestCode);
+            }
+        } else {
+            String imgUrl = message.getImageSrc();
+            downloadImageNew(message.getId() ,imgUrl);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_PHONESTORAGE) {
+            if (grantResults.length > 0) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    String imgUrl = message.getImageSrc();
+                    downloadImageNew(message.getId() ,imgUrl);
+                }
+            }
+        }
     }
 
     private void downloadImageNew(String filename, String downloadUrlOfImage){
