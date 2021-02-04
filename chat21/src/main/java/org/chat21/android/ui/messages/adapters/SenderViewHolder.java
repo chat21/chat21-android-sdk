@@ -159,6 +159,13 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
                 return false;
             }
         }).into(mPreview);
+
+        mPreview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startImagePreviewActivity(message);
+            }
+        });
     }
 
     private void setFilePreview(final Message message) {
