@@ -21,13 +21,8 @@
     <string name="menu_activity_new_group_action_next">Avanti</string>
 
     <!--add_members_activity-->
-    <string name="add_members_activity_searchview_query_hint">Cerca il contatto</string>
-    <string name="add_members_activity_contact_already_added_label">Già aggiunto al gruppo</string>
     <string name="add_members_activity_contact_not_added_label">Contatto non presente nella lista</string>
     <string name="activity_add_member_to_chat_group_selected_contacts_title">Contatti selezionati</string>
-    <string name="add_members_activity_contacts_title">Lista di contatti</string>
-    <string name="menu_add_members_action_create">Crea</string>
-    <string name="menu_add_members_action_add_member">@string/activity_group_admin_panel_add_member_title</string>
     <string name="menu_add_members_action_next">Avanti</string>
 
     <!--activity contact list -->
@@ -85,7 +80,6 @@
 
     <!--activity_public_profile-->
     <string name="activity_public_profile_presence_online">Online</string>
-    <string name="activity_public_profile_presence_not_available">Offline</string>
 
     <!--activity_group_list-->
     <string name="activity_group_list_activity_title">I miei gruppi</string>

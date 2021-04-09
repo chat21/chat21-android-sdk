@@ -102,11 +102,11 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="org.chat21.android.connectivity.NetworkReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+        <!--        <receiver android:name="org.chat21.android.connectivity.NetworkReceiver">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+        <!--            </intent-filter>-->
+        <!--        </receiver>-->
 
         <receiver android:name="org.chat21.android.core.receivers.ShutdownReceiver">
             <intent-filter>

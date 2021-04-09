@@ -72,7 +72,7 @@ public class TimeUtils {
     }
 
     public static String formatTimestamp(Long timestamp, String pattern) {
-        DateFormat dateFormat = new SimpleDateFormat(pattern);
+        DateFormat dateFormat = new SimpleDateFormat(pattern, Locale.US);
         return dateFormat.format(timestamp);
     }
 

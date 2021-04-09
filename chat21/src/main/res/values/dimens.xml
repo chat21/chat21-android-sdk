@@ -6,8 +6,6 @@
     <dimen name="chat_margin_small">8dp</dimen>
     <dimen name="chat_margin_x_small">4dp</dimen>
     <dimen name="chat_margin_xx_small">2dp</dimen>
-    <dimen name="chat_margin_big">22dp</dimen>
-    <dimen name="chat_margin_x_big">32dp</dimen>
     <dimen name="chat_margin_xx_big">52dp</dimen>
 
     <!--padding-->
@@ -15,7 +13,6 @@
     <dimen name="chat_padding_small">8dp</dimen>
     <dimen name="chat_padding_x_small">4dp</dimen>
     <dimen name="chat_padding_xx_small">2dp</dimen>
-    <dimen name="chat_padding_big">22dp</dimen>
 
     <!--defaults-->
     <dimen name="chat_progress_bar_size">70dp</dimen>
@@ -63,10 +60,6 @@
     <dimen name="chat_row_group_recipient_members_text_size">@dimen/chat_recipient_last_message_text_size</dimen>
 
     <!--row_add_member-->
-    <dimen name="chat_row_add_member_recipient_picture_size">@dimen/chat_recipient_picture_size</dimen>
-    <dimen name="chat_row_add_member_recipient_fullname_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
-    <dimen name="chat_row_add_member_recipient_username_text_size">@dimen/chat_recipient_fullname_text_size</dimen>
-    <dimen name="chat_row_add_member_recipient_already_added_text_size">@dimen/chat_row_add_member_recipient_username_text_size</dimen>
 
     <!--row_selected_contact_list-->
     <dimen name="chat_row_selected_contact_list_view_size">86dp</dimen>

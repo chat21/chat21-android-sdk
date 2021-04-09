@@ -34,7 +34,6 @@
 
         <!--btn remove-->
         <ImageView
-            android:id="@+id/remove"
             android:layout_width="@dimen/chat_row_selected_contact_list_remove_view_size"
             android:layout_height="@dimen/chat_row_selected_contact_list_remove_view_size"
             app:srcCompat="@drawable/ic_remove_selected_contact_24dp" />

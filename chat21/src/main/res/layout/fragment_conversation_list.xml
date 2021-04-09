@@ -71,5 +71,5 @@
         android:clickable="true"
         app:backgroundTint="@color/colorAccent"
         app:srcCompat="@drawable/ic_chat_white_48dp"
-        tools:ignore="RtlHardcoded" />
+        tools:ignore="KeyboardInaccessibleWidget,RtlHardcoded" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

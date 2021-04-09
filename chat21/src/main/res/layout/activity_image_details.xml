@@ -62,7 +62,6 @@
             android:paddingBottom="@dimen/chat_padding_small">
 
             <LinearLayout
-                android:id="@+id/texts_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/buttons_container"

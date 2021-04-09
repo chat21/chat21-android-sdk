@@ -22,9 +22,6 @@
 
     <!--sender-->
     <color name="background_bubble_sender">#99E1FFC7</color>
-    <color name="background_bubble_text_sender">@color/black</color>
-    <color name="background_bubble_timestamp_sender">@color/blue_grey_800</color>
-    <color name="color_clickable_link_sender">@color/black</color>
 
     <!--recipient-->
     <color name="background_bubble_recipient">@color/white</color>

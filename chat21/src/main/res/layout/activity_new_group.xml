@@ -21,7 +21,6 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/nested_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -57,7 +56,6 @@
 
                     <!--add group box-->
                     <RelativeLayout
-                        android:id="@+id/group_icon_box"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -73,7 +71,6 @@
                             android:visibility="gone" />
 
                         <TextView
-                            android:id="@+id/group_icon_label"
                             style="@style/Base.TextAppearance.AppCompat.Small"
                             android:layout_width="@dimen/chat_activity_new_group_group_icon_label_width"
                             android:layout_height="@dimen/chat_activity_new_group_group_icon_label_height"
@@ -86,7 +83,6 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardview_group_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/cardview_light_background"
