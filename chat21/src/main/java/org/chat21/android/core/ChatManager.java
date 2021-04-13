@@ -633,6 +633,38 @@ public class ChatManager {
         }
     }
 
+    public void removeFCMToken() {
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        String appId = ChatManager.Configuration.appId;
+
+        if (firebaseUser != null && StringUtils.isValid(appId)) {
+
+            DatabaseReference root;
+            if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+                root = FirebaseDatabase.getInstance()
+                        .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
+            } else {
+                root = FirebaseDatabase.getInstance().getReference();
+            }
+
+            DatabaseReference firebaseUsersPath = root
+                    .child("apps/" + ChatManager.Configuration.appId +
+                            "/users/" + firebaseUser.getUid() + "/instances/" + token);
+
+            firebaseUsersPath.removeValue();
+
+            Log.i(DEBUG_LOGIN, "removeFCMToken: " +
+                    "saved with token: " + token +
+                    ", appId: " + appId + ", firebaseUsersPath: " + firebaseUsersPath);
+        } else {
+            Log.i(DEBUG_LOGIN, "removeFCMToken:" +
+                    "user is null. token == " + token + ", appId == " + appId);
+        }
+    }
+
     public void sendTextMessage(String recipientId, String recipientFullName, String text) {
         sendTextMessage(recipientId, recipientFullName, text,
                 null, null);
