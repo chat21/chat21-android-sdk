@@ -64,8 +64,9 @@ dependencies {
     implementation 'org.apache.httpcomponents:httpcore:4.4.13'
 
     // send message panel
-    implementation 'com.vanniktech:emoji-ios:0.5.1'
-//    compile 'com.vanniktech:emoji-google:0.5.1'
+//    implementation 'com.vanniktech:emoji-ios:0.5.1'
+    implementation 'com.vanniktech:emoji-ios:0.7.0'
+//    implementation 'com.vanniktech:emoji-google:0.7.0'
 
 //    // file picker
 //    // source: https://github.com/Angads25/android-filepicker
@@ -83,18 +84,18 @@ configurations.all {
         def requested = details.requested
         // android resolution
         // source : https://stackoverflow.com/questions/43280871/android-getting-manifest-merger-failed-error-after-update-to-new-version-of-grad
-        if (requested.group == 'com.android.support') {
-            if (!requested.name.startsWith("multidex")) {
-                details.useVersion "26.1.0"
-            }
-        }
+//        if (requested.group == 'com.android.support') {
+//            if (!requested.name.startsWith("multidex")) {
+//                details.useVersion "26.1.0"
+//            }
+//        }
 
         // firebase resolution
         // source : https://github.com/firebase/FirebaseUI-Android/issues/218
-        if (details.requested.group == 'com.google.firebase' ||
-                details.requested.group == 'com.google.android.gms') {
-            details.useVersion '11.8.0'
-        }
+//        if (details.requested.group == 'com.google.firebase' ||
+//                details.requested.group == 'com.google.android.gms') {
+//            details.useVersion '11.8.0'
+//        }
     }
 }
 

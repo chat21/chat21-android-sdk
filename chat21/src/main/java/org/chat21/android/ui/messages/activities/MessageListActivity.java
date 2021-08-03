@@ -1011,7 +1011,8 @@ public class MessageListActivity extends AppCompatActivity
                 .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
                     @Override
                     public void onEmojiPopupDismiss() {
-                        emojiButton.setImageResource(R.drawable.emoji_ios_category_people);
+                        // people emoji gone in the new version?
+                        emojiButton.setImageResource(R.drawable.emoji_ios_category_activities);
                     }
                 })
                 .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
