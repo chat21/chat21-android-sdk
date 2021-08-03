@@ -56,21 +56,21 @@
 
         <activity
             android:name="org.chat21.android.ui.chat_groups.activities.NewGroupActivity"
-            android:label="@string/string_create_group_activity_title"></activity>
+            android:label="@string/string_create_group_activity_title" />
 
         <activity
             android:name="org.chat21.android.ui.chat_groups.activities.AddMemberToChatGroupActivity"
-            android:label="@string/string_add_members_activity_title"></activity>
+            android:label="@string/string_add_members_activity_title" />
 
 
-        <activity android:name="org.chat21.android.ui.chat_groups.activities.GroupAdminPanelActivity"></activity>
+        <activity android:name="org.chat21.android.ui.chat_groups.activities.GroupAdminPanelActivity" />
 
         <!--display the user profile-->
         <activity android:name="org.chat21.android.ui.users.activities.PublicProfileActivity" />
 
         <activity
             android:name="org.chat21.android.ui.chat_groups.activities.ChatGroupsListActivity"
-            android:label="@string/activity_group_list_activity_title"></activity>
+            android:label="@string/activity_group_list_activity_title" />
 
 
         <!--https://firebase.google.com/docs/notifications/android/console-audience-->
