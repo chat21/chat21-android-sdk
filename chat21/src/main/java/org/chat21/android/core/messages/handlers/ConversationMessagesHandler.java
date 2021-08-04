@@ -2,7 +2,7 @@ package org.chat21.android.core.messages.handlers;
 
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -142,7 +142,7 @@ public class ConversationMessagesHandler {
                             String errorMessage = "sendMessage.onComplete Message not sent. " +
                                     databaseError.getMessage();
                             Log.e(TAG, errorMessage);
-                            FirebaseCrash.report(new Exception(errorMessage));
+                            FirebaseCrashlytics.getInstance().recordException(new Exception(errorMessage));
                             if (sendMessageListener != null) {
                                 sendMessageListener.onMessageSentComplete(null,
                                         new ChatRuntimeException(databaseError.toException()));

@@ -2,7 +2,7 @@ package org.chat21.android.core.conversations;
 
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -466,7 +466,7 @@ public class ArchivedConversationsHandler {
                     String errorMessage = "cannot mark the conversation as read: " +
                             databaseError.getMessage();
                     Log.e(TAG, errorMessage);
-                    FirebaseCrash.report(new Exception(errorMessage));
+                    FirebaseCrashlytics.getInstance().recordException(new Exception(errorMessage));
                 }
             });
         }
@@ -499,7 +499,7 @@ public class ArchivedConversationsHandler {
                     String errorMessage = "cannot toggle the conversation read: " +
                             databaseError.getMessage();
                     Log.e(TAG, errorMessage);
-                    FirebaseCrash.report(new Exception(errorMessage));
+                    FirebaseCrashlytics.getInstance().recordException(new Exception(errorMessage));
                 }
             });
         }

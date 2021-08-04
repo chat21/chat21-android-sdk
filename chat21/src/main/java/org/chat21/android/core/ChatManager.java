@@ -11,10 +11,12 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.installations.InstallationTokenResult;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
@@ -433,21 +435,31 @@ public class ChatManager {
             root = FirebaseDatabase.getInstance().getReference();
         }
 
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG_TOKEN, "ChatManager.deleteInstanceId: token ==  " + token);
+        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
+            try {
+                if (!task.isSuccessful()) {
+                    return;
+                }
 
-        // remove the instanceId for the logged user
-        DatabaseReference firebaseUsersPath = root
-                .child("apps/" + ChatManager.Configuration.appId + "/users/" +
-                        loggedUser.getId() + "/instances/" + token);
-        firebaseUsersPath.removeValue();
+                InstallationTokenResult r = task.getResult();
+                String token = r != null ? r.getToken() : null;
 
-        try {
-            FirebaseInstanceId.getInstance().deleteInstanceId();
-        } catch (IOException e) {
-            Log.e(DEBUG_LOGIN, "cannot delete instanceId. " + e.getMessage());
-            return;
-        }
+                if (token != null) {
+                    Log.d(TAG_TOKEN, "ChatManager.deleteInstanceId: token ==  " + token);
+
+                    // remove the instanceId for the logged user
+                    DatabaseReference firebaseUsersPath = root
+                            .child("apps/" + ChatManager.Configuration.appId + "/users/" +
+                                    loggedUser.getId() + "/instances/" + token);
+                    firebaseUsersPath.removeValue();
+
+                    FirebaseInstallations.getInstance().delete();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().recordException(e);
+            }
+        });
     }
 
     private void removeLoggedUser() {
@@ -596,73 +608,101 @@ public class ChatManager {
 //    }
 
     public void updateFCMToken() {
-        String token = FirebaseInstanceId.getInstance().getToken();
+        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
+            try {
+                if (!task.isSuccessful()) {
+                    return;
+                }
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                InstallationTokenResult r = task.getResult();
+                String token = r != null ? r.getToken() : null;
 
-        String appId = ChatManager.Configuration.appId;
+                if (token != null) {
+                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (firebaseUser != null && StringUtils.isValid(appId)) {
+                    String appId = ChatManager.Configuration.appId;
 
-            DatabaseReference root;
-            if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
-                root = FirebaseDatabase.getInstance()
-                        .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
-            } else {
-                root = FirebaseDatabase.getInstance().getReference();
+                    if (firebaseUser != null && StringUtils.isValid(appId)) {
+
+                        DatabaseReference root;
+                        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+                            root = FirebaseDatabase.getInstance()
+                                    .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
+                        } else {
+                            root = FirebaseDatabase.getInstance().getReference();
+                        }
+
+                        DatabaseReference firebaseUsersPath = root
+                                .child("apps/" + ChatManager.Configuration.appId +
+                                        "/users/" + firebaseUser.getUid() + "/instances/" + token);
+
+                        Map<String, Object> device = new HashMap<>();
+                        device.put("device_model", ChatUtils.getDeviceModel());
+                        device.put("platform", "Android");
+                        device.put("platform_version", ChatUtils.getSystemVersion());
+                        device.put("language", ChatUtils.getSystemLanguage(mContext.getResources()));
+
+                        firebaseUsersPath.setValue(device); // placeholder value
+
+                        Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh: " +
+                                "saved with token: " + token +
+                                ", appId: " + appId + ", firebaseUsersPath: " + firebaseUsersPath);
+                    } else {
+                        Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh:" +
+                                "user is null. token == " + token + ", appId == " + appId);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().recordException(e);
             }
-
-            DatabaseReference firebaseUsersPath = root
-                    .child("apps/" + ChatManager.Configuration.appId +
-                            "/users/" + firebaseUser.getUid() + "/instances/" + token);
-
-            Map<String, Object> device = new HashMap<>();
-            device.put("device_model", ChatUtils.getDeviceModel());
-            device.put("platform", "Android");
-            device.put("platform_version", ChatUtils.getSystemVersion());
-            device.put("language", ChatUtils.getSystemLanguage(mContext.getResources()));
-
-            firebaseUsersPath.setValue(device); // placeholder value
-
-            Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh: " +
-                    "saved with token: " + token +
-                    ", appId: " + appId + ", firebaseUsersPath: " + firebaseUsersPath);
-        } else {
-            Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh:" +
-                    "user is null. token == " + token + ", appId == " + appId);
-        }
+        });
     }
 
     public void removeFCMToken() {
-        String token = FirebaseInstanceId.getInstance().getToken();
+        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
+            try {
+                if (!task.isSuccessful()) {
+                    return;
+                }
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                InstallationTokenResult r = task.getResult();
+                String token = r != null ? r.getToken() : null;
 
-        String appId = ChatManager.Configuration.appId;
+                if (token != null) {
+                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (firebaseUser != null && StringUtils.isValid(appId)) {
+                    String appId = ChatManager.Configuration.appId;
 
-            DatabaseReference root;
-            if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
-                root = FirebaseDatabase.getInstance()
-                        .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
-            } else {
-                root = FirebaseDatabase.getInstance().getReference();
+                    if (firebaseUser != null && StringUtils.isValid(appId)) {
+
+                        DatabaseReference root;
+                        if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+                            root = FirebaseDatabase.getInstance()
+                                    .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
+                        } else {
+                            root = FirebaseDatabase.getInstance().getReference();
+                        }
+
+                        DatabaseReference firebaseUsersPath = root
+                                .child("apps/" + ChatManager.Configuration.appId +
+                                        "/users/" + firebaseUser.getUid() + "/instances/" + token);
+
+                        firebaseUsersPath.removeValue();
+
+                        Log.i(DEBUG_LOGIN, "removeFCMToken: " +
+                                "saved with token: " + token +
+                                ", appId: " + appId + ", firebaseUsersPath: " + firebaseUsersPath);
+                    } else {
+                        Log.i(DEBUG_LOGIN, "removeFCMToken:" +
+                                "user is null. token == " + token + ", appId == " + appId);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().recordException(e);
             }
-
-            DatabaseReference firebaseUsersPath = root
-                    .child("apps/" + ChatManager.Configuration.appId +
-                            "/users/" + firebaseUser.getUid() + "/instances/" + token);
-
-            firebaseUsersPath.removeValue();
-
-            Log.i(DEBUG_LOGIN, "removeFCMToken: " +
-                    "saved with token: " + token +
-                    ", appId: " + appId + ", firebaseUsersPath: " + firebaseUsersPath);
-        } else {
-            Log.i(DEBUG_LOGIN, "removeFCMToken:" +
-                    "user is null. token == " + token + ", appId == " + appId);
-        }
+        });
     }
 
     public void sendTextMessage(String recipientId, String recipientFullName, String text) {

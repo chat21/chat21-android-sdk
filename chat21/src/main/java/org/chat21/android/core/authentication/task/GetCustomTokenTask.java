@@ -3,7 +3,7 @@ package org.chat21.android.core.authentication.task;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -86,7 +86,7 @@ public class GetCustomTokenTask extends AsyncTask<Object, Void, String> {
                 String errorMessage = "doInBackground: " +
                         "error retrieving the token: response code: " + responseCode;
                 Log.e(TAG, errorMessage);
-                FirebaseCrash.report(new Exception(errorMessage));
+                FirebaseCrashlytics.getInstance().recordException(new Exception(errorMessage));
 
                 return null;
             }

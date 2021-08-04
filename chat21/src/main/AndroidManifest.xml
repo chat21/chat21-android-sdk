@@ -91,17 +91,6 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/blue_500" />
 
-        <!--A service that extends FirebaseInstanceIdService to handle the creation, rotation,
-        and updating of registration tokens.
-         This is required for sending to specific devices or for creating device groups.-->
-        <service
-            android:name="org.chat21.android.instanceid.service.SaveFirebaseInstanceIdService"
-            tools:ignore="ExportedService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-
         <!--        <receiver android:name="org.chat21.android.connectivity.NetworkReceiver">-->
         <!--            <intent-filter>-->
         <!--                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->

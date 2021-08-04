@@ -9,12 +9,19 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
@@ -22,9 +29,11 @@ import org.chat21.android.core.messages.models.Message;
 import org.chat21.android.core.users.models.ChatUser;
 import org.chat21.android.ui.ChatUI;
 import org.chat21.android.ui.messages.activities.MessageListActivity;
+import org.chat21.android.utils.ChatUtils;
 import org.chat21.android.utils.StringUtils;
 
 import static org.chat21.android.ui.ChatUI.BUNDLE_CHANNEL_TYPE;
+import static org.chat21.android.utils.DebugConstants.DEBUG_LOGIN;
 import static org.chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
 
 /**
@@ -32,6 +41,52 @@ import static org.chat21.android.utils.DebugConstants.DEBUG_NOTIFICATION;
  */
 
 public class ChatFirebaseMessagingService extends FirebaseMessagingService {
+    private static final String TAG_TOKEN = "TAG_TOKEN";
+
+    @Override
+    public void onNewToken(@NonNull String token) {
+        super.onNewToken(token);
+
+        Log.d(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh");
+
+        Log.d(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh:" +
+                " called with instanceId: " + token);
+        Log.i(TAG_TOKEN, "SaveFirebaseInstanceIdService: token == " + token);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        String appId = ChatManager.Configuration.appId;
+
+        if (firebaseUser != null && StringUtils.isValid(appId)) {
+
+            DatabaseReference root;
+            if (StringUtils.isValid(ChatManager.Configuration.firebaseUrl)) {
+                root = FirebaseDatabase.getInstance()
+                        .getReferenceFromUrl(ChatManager.Configuration.firebaseUrl);
+            } else {
+                root = FirebaseDatabase.getInstance().getReference();
+            }
+
+            DatabaseReference firebaseUsersPath = root
+                    .child("apps/" + ChatManager.Configuration.appId +
+                            "/users/" + firebaseUser.getUid() + "/instances/" + token);
+
+            Map<String, Object> device = new HashMap<>();
+            device.put("device_model", ChatUtils.getDeviceModel());
+            device.put("platform", "Android");
+            device.put("platform_version", ChatUtils.getSystemVersion());
+            device.put("language", ChatUtils.getSystemLanguage(getResources()));
+
+            firebaseUsersPath.setValue(device); // placeholder value
+
+            Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh: " +
+                    "saved with token: " + token +
+                    ", appId: " + appId + ", firebaseUsersPath: " + firebaseUsersPath);
+        } else {
+            Log.i(DEBUG_LOGIN, "SaveFirebaseInstanceIdService.onTokenRefresh:" +
+                    "user is null. token == " + token + ", appId == " + appId);
+        }
+    }
 
     // There are two types of messages data messages and notification messages. Data messages are handled
     // here in onMessageReceived whether the app is in the foreground or background. Data messages are the type
@@ -96,27 +151,27 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
 
             if (channelType.equals(Message.DIRECT_CHANNEL_TYPE)) {
 
-                if(StringUtils.isValid(currentOpenConversationId) && !currentOpenConversationId.equals(sender)) {
+                if (StringUtils.isValid(currentOpenConversationId) && !currentOpenConversationId.equals(sender)) {
                     sendDirectNotification(sender, senderFullName, text, channelType);
                 } else {
-                    if(!StringUtils.isValid(currentOpenConversationId)) {
+                    if (!StringUtils.isValid(currentOpenConversationId)) {
                         sendDirectNotification(sender, senderFullName, text, channelType);
                     }
                 }
             } else if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
-                if(StringUtils.isValid(currentOpenConversationId) && !currentOpenConversationId.equals(recipient)) {
+                if (StringUtils.isValid(currentOpenConversationId) && !currentOpenConversationId.equals(recipient)) {
                     sendGroupNotification(recipient, recipientFullName, senderFullName, text, channelType);
                 } else {
-                    if(!StringUtils.isValid(currentOpenConversationId)) {
+                    if (!StringUtils.isValid(currentOpenConversationId)) {
                         sendGroupNotification(recipient, recipientFullName, senderFullName, text, channelType);
                     }
                 }
             } else {
                 // default case
-                if(StringUtils.isValid(currentOpenConversationId) && !currentOpenConversationId.equals(sender)) {
+                if (StringUtils.isValid(currentOpenConversationId) && !currentOpenConversationId.equals(sender)) {
                     sendDirectNotification(sender, senderFullName, text, channelType);
                 } else {
-                    if(!StringUtils.isValid(currentOpenConversationId)) {
+                    if (!StringUtils.isValid(currentOpenConversationId)) {
                         sendDirectNotification(sender, senderFullName, text, channelType);
                     }
                 }
@@ -150,7 +205,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra(ChatUI.BUNDLE_RECIPIENT, new ChatUser(sender, senderFullName));
         intent.putExtra(BUNDLE_CHANNEL_TYPE, channel);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -199,7 +254,7 @@ public class ChatFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra(ChatUI.BUNDLE_RECIPIENT, new ChatUser(sender, senderFullName));
         intent.putExtra(BUNDLE_CHANNEL_TYPE, channel);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

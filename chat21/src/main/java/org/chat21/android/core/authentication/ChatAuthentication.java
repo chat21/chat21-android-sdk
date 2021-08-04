@@ -20,11 +20,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.installations.InstallationTokenResult;
 
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
@@ -275,10 +276,10 @@ public final class ChatAuthentication {
     }
 
 
-    private  IChatUser convertFirebaseUserToChatUser (FirebaseUser firebaseUser) {
-        if (firebaseUser!=null){
+    private IChatUser convertFirebaseUserToChatUser(FirebaseUser firebaseUser) {
+        if (firebaseUser != null) {
             return new ChatUser(firebaseUser.getUid(), firebaseUser.getDisplayName());
-        }else {
+        } else {
             return null;
         }
     }
@@ -426,22 +427,18 @@ public final class ChatAuthentication {
 
             @Override
             protected Void doInBackground(Void... params) {
-                try {
 
-                    // fix Issue #5
-                    String userId = ChatAuthentication.getInstance()
-                            .getFirebaseAuth()
-                            .getCurrentUser()
-                            .getUid();
+                // fix Issue #5
+                String userId = ChatAuthentication.getInstance()
+                        .getFirebaseAuth()
+                        .getCurrentUser()
+                        .getUid();
 
-                    // fix Issue #5
-                    deleteInstanceId(userId);  // fix Issue #23
+                // fix Issue #5
+                deleteInstanceId(userId);  // fix Issue #23
 
-                    FirebaseInstanceId.getInstance().deleteInstanceId();
-                } catch (IOException e) {
-                    Log.e(DEBUG_LOGIN, "cannot delete instanceId. " + e.getMessage());
-                    logoutException = e;
-                }
+                FirebaseInstallations.getInstance().delete();
+//                    FirebaseInstanceId.getInstance().deleteInstanceId();
                 return null;
             }
 
@@ -503,21 +500,38 @@ public final class ChatAuthentication {
             root = FirebaseDatabase.getInstance().getReference();
         }
 
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(DEBUG_LOGIN, "ChatAuthentication.deleteInstanceId: token ==  " + token);
+        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
+            try {
+                if (!task.isSuccessful()) {
+                    return;
+                }
 
-        // remove the instanceId for the logged user
-        DatabaseReference firebaseUsersPath = root
-                .child("apps/" + ChatManager.Configuration.appId + "/users/" +
-                        userId + "/instances/" + token);
-        firebaseUsersPath.removeValue();
+                InstallationTokenResult r = task.getResult();
+                String token = r != null ? r.getToken() : null;
 
-        try {
-            FirebaseInstanceId.getInstance().deleteInstanceId();
-        } catch (IOException e) {
-            Log.e(DEBUG_LOGIN, "cannot delete instanceId. " + e.getMessage());
-            return;
-        }
+                if (token != null) {
+                    Log.d(DEBUG_LOGIN, "ChatAuthentication.deleteInstanceId: token ==  " + token);
+
+                    // remove the instanceId for the logged user
+                    DatabaseReference firebaseUsersPath = root
+                            .child("apps/" + ChatManager.Configuration.appId + "/users/" +
+                                    userId + "/instances/" + token);
+                    firebaseUsersPath.removeValue();
+
+                    FirebaseInstallations.getInstance().delete();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().recordException(e);
+            }
+        });
+
+//        try {
+//            FirebaseInstanceId.getInstance().deleteInstanceId();
+//        } catch (IOException e) {
+//            Log.e(DEBUG_LOGIN, "cannot delete instanceId. " + e.getMessage());
+//            return;
+//        }
     }
 
     private void setCustomToken(String token) {
@@ -556,7 +570,7 @@ public final class ChatAuthentication {
                         String errorMessage = "updateUserEmail.onCompleteError: "
                                 + task.getException().getMessage();
                         Log.e(DEBUG_LOGIN, errorMessage);
-                        FirebaseCrash.report(new Exception(errorMessage));
+                        FirebaseCrashlytics.getInstance().recordException(new Exception(errorMessage));
                     }
                 }
             });
@@ -593,7 +607,7 @@ public final class ChatAuthentication {
                         String errorMessage = "updateUserProfile.onCompleteError: "
                                 + task.getException().getMessage();
                         Log.e(DEBUG_LOGIN, errorMessage);
-                        FirebaseCrash.report(new Exception(errorMessage));
+                        FirebaseCrashlytics.getInstance().recordException(new Exception(errorMessage));
                     }
                 }
             });
