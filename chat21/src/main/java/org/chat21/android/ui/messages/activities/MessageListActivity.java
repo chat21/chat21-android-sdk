@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.ClickableSpan;
@@ -74,12 +76,13 @@ import org.chat21.android.ui.messages.adapters.MessageListAdapter;
 import org.chat21.android.ui.messages.fragments.BottomSheetAttach;
 import org.chat21.android.ui.messages.listeners.OnMessageClickListener;
 import org.chat21.android.ui.users.activities.PublicProfileActivity;
-import org.chat21.android.utils.PathUtil;
+import org.chat21.android.utils.FileUtil;
 import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
 import org.chat21.android.utils.image.PositionedCropTransformation;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -663,7 +666,8 @@ public class MessageListActivity extends AppCompatActivity
             ActivityCompat.requestPermissions(this,
                     new String[]{
                             Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.ACCESS_MEDIA_LOCATION
                     },
                     _REQ_CODE_FILE_PERM);
         } else {
@@ -739,8 +743,7 @@ public class MessageListActivity extends AppCompatActivity
 
     @TargetApi(19)
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent
-            data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == _INTENT_ACTION_GET_PICTURE) {
             if (data != null && data.getData() != null && resultCode == RESULT_OK) {
@@ -748,10 +751,19 @@ public class MessageListActivity extends AppCompatActivity
                 Uri uri = data.getData();
 
                 // convert the stream to a file
-                String ff = PathUtil.getPath(getApplicationContext(), uri);
-                File fileToUpload = ff != null ? new File(ff) : null;
+//                String ff = PathUtil.getPath(getApplicationContext(), uri);
+//                File fileToUpload = ff != null ? new File(ff) : null;
 
-                //   File fileToUpload = new File(StorageHandler.getFilePathFromUri(this, uri));
+                File fileToUpload = null;
+
+                try {
+                    fileToUpload = FileUtil.from(this, uri);
+                    Log.d("file", "File: " + fileToUpload.getPath() + " file -" + fileToUpload + " : " + fileToUpload.exists());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //File fileToUpload = new File(StorageHandler.getFilePathFromUri(this, uri));
 
                 if (fileToUpload != null) {
                     showConfirmUploadDialog(fileToUpload);
@@ -900,9 +912,17 @@ public class MessageListActivity extends AppCompatActivity
 
                 progressDialog.dismiss(); // bugfix Issue #45
 
-                Toast.makeText(MessageListActivity.this,
-                        getString(R.string.activity_message_list_progress_dialog_upload_failed),
-                        Toast.LENGTH_SHORT).show();
+                Handler mainHandler = new Handler(Looper.getMainLooper());
+
+                Runnable myRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MessageListActivity.this,
+                                getString(R.string.activity_message_list_progress_dialog_upload_failed),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                };
+                mainHandler.post(myRunnable);
             }
         };
 
