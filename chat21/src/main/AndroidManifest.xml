@@ -13,6 +13,7 @@
         <!--display the contact list-->
         <activity
             android:name="org.chat21.android.ui.contacts.activites.ContactListActivity"
+            android:exported="false"
             android:label="@string/string_contact_list_activity_title">
 
             <meta-data
@@ -41,7 +42,9 @@
             android:label="@string/activity_archived_conversation_list_title" />
 
         <!--display the list of all messages into a specific conversation-->
-        <activity android:name="org.chat21.android.ui.messages.activities.MessageListActivity">
+        <activity
+            android:name="org.chat21.android.ui.messages.activities.MessageListActivity"
+            android:exported="false">
 
             <!-- http://stackoverflow.com/questions/39663601/open-a-specific-activity-from-firebase-notification
              from notification
@@ -74,7 +77,9 @@
 
 
         <!--https://firebase.google.com/docs/notifications/android/console-audience-->
-        <service android:name="org.chat21.android.notifications.ChatFirebaseMessagingService">
+        <service
+            android:name="org.chat21.android.notifications.ChatFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -97,7 +102,9 @@
         <!--            </intent-filter>-->
         <!--        </receiver>-->
 
-        <receiver android:name="org.chat21.android.core.receivers.ShutdownReceiver">
+        <receiver
+            android:name="org.chat21.android.core.receivers.ShutdownReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
                 <action android:name="android.intent.action.QUICKBOOT_POWEROFF" />
