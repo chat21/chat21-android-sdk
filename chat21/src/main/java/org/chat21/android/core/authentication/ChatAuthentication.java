@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.installations.InstallationTokenResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
@@ -500,31 +501,43 @@ public final class ChatAuthentication {
             root = FirebaseDatabase.getInstance().getReference();
         }
 
-        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
-            try {
-                if (!task.isSuccessful()) {
-                    return;
-                }
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                return;
+            }
 
-                InstallationTokenResult r = task.getResult();
-                String token = r != null ? r.getToken() : null;
+            String token = task.getResult();
 
-                if (token != null) {
-                    Log.d(DEBUG_LOGIN, "ChatAuthentication.deleteInstanceId: token ==  " + token);
+            if (token != null) {
+                Log.d(DEBUG_LOGIN, "ChatAuthentication.deleteInstanceId: token ==  " + token);
 
-                    // remove the instanceId for the logged user
-                    DatabaseReference firebaseUsersPath = root
-                            .child("apps/" + ChatManager.Configuration.appId + "/users/" +
-                                    userId + "/instances/" + token);
-                    firebaseUsersPath.removeValue();
+                // remove the instanceId for the logged user
+                DatabaseReference firebaseUsersPath = root
+                        .child("apps/" + ChatManager.Configuration.appId + "/users/" +
+                                userId + "/instances/" + token);
+                firebaseUsersPath.removeValue();
 
-                    FirebaseInstallations.getInstance().delete();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                FirebaseCrashlytics.getInstance().recordException(e);
+                FirebaseInstallations.getInstance().delete();
             }
         });
+
+//        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
+//            try {
+//                if (!task.isSuccessful()) {
+//                    return;
+//                }
+//
+//                InstallationTokenResult r = task.getResult();
+//                String token = r != null ? r.getToken() : null;
+//
+//                if (token != null) {
+//
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                FirebaseCrashlytics.getInstance().recordException(e);
+//            }
+//        });
 
 //        try {
 //            FirebaseInstanceId.getInstance().deleteInstanceId();

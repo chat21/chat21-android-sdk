@@ -9,6 +9,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -17,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.installations.InstallationTokenResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
@@ -435,31 +438,51 @@ public class ChatManager {
             root = FirebaseDatabase.getInstance().getReference();
         }
 
-        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
-            try {
-                if (!task.isSuccessful()) {
-                    return;
-                }
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                return;
+            }
 
-                InstallationTokenResult r = task.getResult();
-                String token = r != null ? r.getToken() : null;
+            String token = task.getResult();
 
-                if (token != null) {
-                    Log.d(TAG_TOKEN, "ChatManager.deleteInstanceId: token ==  " + token);
+            if (token != null) {
+                Log.d(TAG_TOKEN, "ChatManager.deleteInstanceId: token ==  " + token);
 
-                    // remove the instanceId for the logged user
-                    DatabaseReference firebaseUsersPath = root
-                            .child("apps/" + ChatManager.Configuration.appId + "/users/" +
-                                    loggedUser.getId() + "/instances/" + token);
-                    firebaseUsersPath.removeValue();
+                // remove the instanceId for the logged user
+                DatabaseReference firebaseUsersPath = root
+                        .child("apps/" + ChatManager.Configuration.appId + "/users/" +
+                                loggedUser.getId() + "/instances/" + token);
+                firebaseUsersPath.removeValue();
 
-                    FirebaseInstallations.getInstance().delete();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                FirebaseCrashlytics.getInstance().recordException(e);
+                FirebaseInstallations.getInstance().delete();
             }
         });
+
+//        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
+//            try {
+//                if (!task.isSuccessful()) {
+//                    return;
+//                }
+//
+//                InstallationTokenResult r = task.getResult();
+//                String token = r != null ? r.getToken() : null;
+//
+//                if (token != null) {
+//                    Log.d(TAG_TOKEN, "ChatManager.deleteInstanceId: token ==  " + token);
+//
+//                    // remove the instanceId for the logged user
+//                    DatabaseReference firebaseUsersPath = root
+//                            .child("apps/" + ChatManager.Configuration.appId + "/users/" +
+//                                    loggedUser.getId() + "/instances/" + token);
+//                    firebaseUsersPath.removeValue();
+//
+//                    FirebaseInstallations.getInstance().delete();
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                FirebaseCrashlytics.getInstance().recordException(e);
+//            }
+//        });
     }
 
     private void removeLoggedUser() {
@@ -608,14 +631,16 @@ public class ChatManager {
 //    }
 
     public void updateFCMToken() {
-        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
-            try {
+        Log.d(TAG, "updateFCMToken");
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
                 if (!task.isSuccessful()) {
                     return;
                 }
 
-                InstallationTokenResult r = task.getResult();
-                String token = r != null ? r.getToken() : null;
+                String token = task.getResult();
 
                 if (token != null) {
                     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -652,22 +677,39 @@ public class ChatManager {
                                 "user is null. token == " + token + ", appId == " + appId);
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                FirebaseCrashlytics.getInstance().recordException(e);
             }
         });
+
+//        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
+//            try {
+//                if (!task.isSuccessful()) {
+//                    return;
+//                }
+//
+//                InstallationTokenResult r = task.getResult();
+//                String token = r != null ? r.getToken() : null;
+//
+//                if (token != null) {
+//
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                FirebaseCrashlytics.getInstance().recordException(e);
+//            }
+//        });
     }
 
     public void removeFCMToken() {
-        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
-            try {
+        Log.d(TAG, "removeFCMToken");
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
                 if (!task.isSuccessful()) {
                     return;
                 }
 
-                InstallationTokenResult r = task.getResult();
-                String token = r != null ? r.getToken() : null;
+                String token = task.getResult();
 
                 if (token != null) {
                     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -698,11 +740,26 @@ public class ChatManager {
                                 "user is null. token == " + token + ", appId == " + appId);
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                FirebaseCrashlytics.getInstance().recordException(e);
             }
         });
+
+//        FirebaseInstallations.getInstance().getToken(false).addOnCompleteListener(task -> {
+//            try {
+//                if (!task.isSuccessful()) {
+//                    return;
+//                }
+//
+//                InstallationTokenResult r = task.getResult();
+//                String token = r != null ? r.getToken() : null;
+//
+//                if (token != null) {
+//
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                FirebaseCrashlytics.getInstance().recordException(e);
+//            }
+//        });
     }
 
     public void sendTextMessage(String recipientId, String recipientFullName, String text) {
