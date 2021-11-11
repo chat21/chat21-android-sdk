@@ -60,7 +60,7 @@ dependencies {
 
     // send message panel
 //    implementation 'com.vanniktech:emoji-ios:0.5.1'
-    implementation 'com.vanniktech:emoji-ios:0.7.0'
+    implementation 'com.vanniktech:emoji-ios:0.8.0'
 //    implementation 'com.vanniktech:emoji-google:0.7.0'
 
 //    // file picker
