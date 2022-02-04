@@ -21,12 +21,15 @@
     <color name="color_clickable_link_system">@color/black</color>
 
     <!--sender-->
-    <color name="background_bubble_sender">#99E1FFC7</color>
+    <color name="background_bubble_sender">#339999</color>
 
     <!--recipient-->
     <color name="background_bubble_recipient">@color/white</color>
     <color name="background_bubble_text_recipient">@color/black</color>
     <color name="background_bubble_timestamp_recipient">@color/blue_grey_800</color>
     <color name="color_clickable_link_recipient">@color/black</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="border_line_color">#eeeeee</color>
 
 </resources>

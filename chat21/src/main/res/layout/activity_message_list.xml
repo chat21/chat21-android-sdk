@@ -29,6 +29,14 @@
             <include layout="@layout/layout_toolbar_message_list" />
 
         </androidx.appcompat.widget.Toolbar>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/ll_root"
+            android:background="#666666"/>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView

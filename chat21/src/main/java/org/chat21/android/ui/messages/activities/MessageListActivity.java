@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -115,6 +116,7 @@ public class MessageListActivity extends AppCompatActivity
     private MessageListAdapter messageListAdapter;
     private Toolbar toolbar;
 
+    private ImageView mIvToolbarBackButton;
     private ImageView mPictureView;
     private TextView mTitleTextView;
     private TextView mSubTitleTextView;
@@ -355,6 +357,7 @@ public class MessageListActivity extends AppCompatActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mIvToolbarBackButton = (ImageView) findViewById(R.id.toolbar_back_button);
         mPictureView = (ImageView) findViewById(R.id.toolbar_picture);
         mTitleTextView = (TextView) findViewById(R.id.toolbar_title);
         mSubTitleTextView = (TextView) findViewById(R.id.toolbar_subtitle);
@@ -375,6 +378,37 @@ public class MessageListActivity extends AppCompatActivity
 
     public void setAllowsToolbarClick(boolean allowsToolbarClick) {
         this.allowsToolbarClick = allowsToolbarClick;
+    }
+
+    public void setToolbarBackgroundColor(int color) {
+        if (toolbar != null) {
+            toolbar.setBackgroundColor(color);
+        }
+    }
+
+    public void setToolbarTitleTextColor(int color) {
+        if (mTitleTextView != null) {
+            mTitleTextView.setTextColor(color);
+        }
+    }
+
+    public void setToolbarBackButtonImage(Drawable res) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setHomeButtonEnabled(false);
+        }
+
+        if (mIvToolbarBackButton != null) {
+            mIvToolbarBackButton.setVisibility(View.VISIBLE);
+            mIvToolbarBackButton.setImageDrawable(res);
+            mIvToolbarBackButton.setOnClickListener(v -> finish());
+        }
+    }
+
+    public void setActivityBackgroundColor(int color) {
+        if (rootView != null) {
+            rootView.setBackgroundColor(color);
+        }
     }
 
     private void initDirectToolbar(final IChatUser recipient) {
@@ -433,14 +467,16 @@ public class MessageListActivity extends AppCompatActivity
 //                .transform(new CropCircleTransformation(getApplicationContext()))
 //                .into(mPictureView);
 
-        Glide.with(getApplicationContext())
-                .load(StringUtils.isValid(pictureUrl) ? pictureUrl : "")
-                .placeholder(placeholder)
-                .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                .transform(new PositionedCropTransformation(getApplicationContext(), 0, 0))
-                .circleCrop()
-                .dontAnimate()
-                .into(mPictureView);
+        mPictureView.setVisibility(View.GONE);
+
+//        Glide.with(getApplicationContext())
+//                .load(pictureUrl)
+//                .placeholder(placeholder)
+//                .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+//                .transform(new PositionedCropTransformation(getApplicationContext(), 0, 0))
+//                .circleCrop()
+//                .dontAnimate()
+//                .into(mPictureView);
     }
 
     private void initRecyclerView() {

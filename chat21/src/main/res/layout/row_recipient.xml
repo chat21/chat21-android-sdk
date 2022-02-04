@@ -14,7 +14,7 @@
         android:layout_marginTop="@dimen/chat_margin_xx_small"
         android:layout_marginRight="0dp"
         android:layout_marginBottom="@dimen/chat_margin_xx_small"
-        android:background="@drawable/shape_row_chat_timestamp"
+        android:background="@color/transparent"
         android:gravity="center"
         android:paddingLeft="@dimen/chat_padding_small"
         android:paddingRight="@dimen/chat_padding_small"
