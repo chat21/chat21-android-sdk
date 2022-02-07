@@ -69,13 +69,13 @@
         <!--tools:ignore="ContentDescription" />-->
 
         <ImageButton
-            android:id="@+id/main_activity_emoji"
+            android:id="@+id/main_activity_camera"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/emoji_ios_category_smileysandpeople"
+            app:srcCompat="@drawable/ic_cam"
             tools:ignore="ContentDescription" />
 
 
@@ -101,13 +101,13 @@
             tools:ignore="ContentDescription" />
 
         <ImageButton
-            android:id="@+id/main_activity_attach"
+            android:id="@+id/main_activity_audio"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_attachment_24dp"
+            app:srcCompat="@drawable/ic_mic"
             tools:ignore="ContentDescription" />
     </LinearLayout>
 

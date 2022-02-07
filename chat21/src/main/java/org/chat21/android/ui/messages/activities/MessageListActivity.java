@@ -29,7 +29,6 @@ import android.widget.Toast;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.Px;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -42,17 +41,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.bumptech.glide.signature.ObjectKey;
 import com.vanniktech.emoji.EmojiEditText;
-import com.vanniktech.emoji.EmojiImageView;
 import com.vanniktech.emoji.EmojiPopup;
-import com.vanniktech.emoji.emoji.Emoji;
-import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
-import com.vanniktech.emoji.listeners.OnEmojiClickListener;
-import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
-import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
-import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
-import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
 import org.chat21.android.R;
 import org.chat21.android.core.ChatManager;
@@ -76,11 +66,11 @@ import org.chat21.android.ui.chat_groups.activities.GroupAdminPanelActivity;
 import org.chat21.android.ui.messages.adapters.MessageListAdapter;
 import org.chat21.android.ui.messages.fragments.BottomSheetAttach;
 import org.chat21.android.ui.messages.listeners.OnMessageClickListener;
+import org.chat21.android.ui.messages.listeners.OnRecordAudioClickListener;
 import org.chat21.android.ui.users.activities.PublicProfileActivity;
 import org.chat21.android.utils.FileUtil;
 import org.chat21.android.utils.StringUtils;
 import org.chat21.android.utils.TimeUtils;
-import org.chat21.android.utils.image.PositionedCropTransformation;
 
 import java.io.File;
 import java.io.IOException;
@@ -125,8 +115,8 @@ public class MessageListActivity extends AppCompatActivity
     private EmojiPopup emojiPopup;
     private EmojiEditText editText;
     private ViewGroup rootView;
-    private ImageView emojiButton;
-    private ImageView attachButton;
+    private ImageView camButton;
+    private ImageView audioButton;
     private ImageView sendButton;
     private LinearLayout mEmojiBar;
 
@@ -367,8 +357,8 @@ public class MessageListActivity extends AppCompatActivity
 
         editText = (EmojiEditText) findViewById(R.id.main_activity_chat_bottom_message_edittext);
         rootView = (ViewGroup) findViewById(R.id.main_activity_root_view);
-        emojiButton = (ImageView) findViewById(R.id.main_activity_emoji);
-        attachButton = (ImageView) findViewById(R.id.main_activity_attach);
+        camButton = (ImageView) findViewById(R.id.main_activity_camera);
+        audioButton = (ImageView) findViewById(R.id.main_activity_audio);
         sendButton = (ImageView) findViewById(R.id.main_activity_send);
         recyclerView = (RecyclerView) findViewById(R.id.main_activity_recycler_view);
         mEmojiBar = (LinearLayout) findViewById(R.id.main_activity_emoji_bar);
@@ -553,40 +543,49 @@ public class MessageListActivity extends AppCompatActivity
                         editText.getText().toString().matches("[\\n\\r]+")) {
                     // not valid input - hides the send button
                     sendButton.setVisibility(View.GONE);
-                    attachButton.setVisibility(View.VISIBLE);
+                    audioButton.setVisibility(View.VISIBLE);
                 } else {
                     // valid input - shows the send button
                     sendButton.setVisibility(View.VISIBLE);
-                    attachButton.setVisibility(View.GONE);
+                    audioButton.setVisibility(View.GONE);
                 }
             }
         });
 
-        emojiButton.setColorFilter(ContextCompat
-                .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
-        attachButton.setColorFilter(ContextCompat
-                .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+//        emojiButton.setColorFilter(ContextCompat
+//                .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+//        attachButton.setColorFilter(ContextCompat
+//                .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
         if (!useGreenSendButton) {
             sendButton.setColorFilter(ContextCompat
                     .getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
         }
 
-        emojiButton.setOnClickListener(new View.OnClickListener() {
+        camButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                emojiPopup.toggle();
+                // TODO:
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("image/*");
+
+                startActivityForResult(intent, _INTENT_ACTION_GET_PICTURE);
             }
         });
-        attachButton.setOnClickListener(new View.OnClickListener() {
+        audioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                Log.d(TAG, "MessageListActivity.onAttachClicked");
 
-                if (ChatUI.getInstance().getOnAttachClickListener() != null) {
-                    ChatUI.getInstance().getOnAttachClickListener().onAttachClicked(null);
+                // TODO:
+                // call the click listener defined in Chat.Configuration
+                OnRecordAudioClickListener listener =
+                        ChatUI.getInstance().getOnRecordAudioClickListener();
+
+                if (listener != null) {
+                    listener.onRecordAudioClicked(recipient, channelType, MessageListActivity.this);
                 }
-
-                showAttachBottomSheet();
             }
         });
 
@@ -643,7 +642,7 @@ public class MessageListActivity extends AppCompatActivity
                 editText.setText("");
             }
         });
-        setUpEmojiPopup();
+        //setUpEmojiPopup();
 
         if (channelType.equals(Message.GROUP_CHANNEL_TYPE)) {
             if (chatGroup != null && chatGroup.getMembersList().contains(ChatManager.getInstance().getLoggedUser())) {
@@ -654,7 +653,7 @@ public class MessageListActivity extends AppCompatActivity
         }
 
         if (sendButton != null && useGreenSendButton) {
-            sendButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.send_message));
+            sendButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_plane));
         }
     }
 
@@ -1031,54 +1030,54 @@ public class MessageListActivity extends AppCompatActivity
 //        return intent;
 //    }
 
-    private void setUpEmojiPopup() {
-        emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
-                .setOnEmojiBackspaceClickListener(new OnEmojiBackspaceClickListener() {
-                    @Override
-                    public void onEmojiBackspaceClick(final View v) {
-                        Log.d(TAG, "Clicked on Backspace");
-                    }
-                })
-                .setOnEmojiClickListener(new OnEmojiClickListener() {
-                    @Override
-                    public void onEmojiClick(@NonNull final EmojiImageView imageView, @NonNull final Emoji emoji) {
-                        Log.d(TAG, "Clicked on emoji");
-                    }
-                })
-                .setOnEmojiPopupShownListener(new OnEmojiPopupShownListener() {
-                    @Override
-                    public void onEmojiPopupShown() {
-                        emojiButton.setImageResource(R.drawable.ic_keyboard_24dp);
-                    }
-                })
-                .setOnSoftKeyboardOpenListener(new OnSoftKeyboardOpenListener() {
-                    @Override
-                    public void onKeyboardOpen(@Px final int keyBoardHeight) {
-                        Log.d(TAG, "Opened soft keyboard");
-                    }
-                })
+//    private void setUpEmojiPopup() {
+//        emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
+//                .setOnEmojiBackspaceClickListener(new OnEmojiBackspaceClickListener() {
+//                    @Override
+//                    public void onEmojiBackspaceClick(final View v) {
+//                        Log.d(TAG, "Clicked on Backspace");
+//                    }
+//                })
+//                .setOnEmojiClickListener(new OnEmojiClickListener() {
+//                    @Override
+//                    public void onEmojiClick(@NonNull final EmojiImageView imageView, @NonNull final Emoji emoji) {
+//                        Log.d(TAG, "Clicked on emoji");
+//                    }
+//                })
+//                .setOnEmojiPopupShownListener(new OnEmojiPopupShownListener() {
+//                    @Override
+//                    public void onEmojiPopupShown() {
+//                        emojiButton.setImageResource(R.drawable.ic_keyboard_24dp);
+//                    }
+//                })
+//                .setOnSoftKeyboardOpenListener(new OnSoftKeyboardOpenListener() {
+//                    @Override
+//                    public void onKeyboardOpen(@Px final int keyBoardHeight) {
+//                        Log.d(TAG, "Opened soft keyboard");
+//                    }
+//                })
+////                .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
+////                    @Override
+////                    public void onEmojiPopupDismiss() {
+////                        emojiButton.setImageResource(R.drawable.emoji_ios_category_people);
+////                    }
+////                })
+//
 //                .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
 //                    @Override
 //                    public void onEmojiPopupDismiss() {
-//                        emojiButton.setImageResource(R.drawable.emoji_ios_category_people);
+//                        // people emoji gone in the new version?
+//                        emojiButton.setImageResource(R.drawable.emoji_ios_category_activities);
 //                    }
 //                })
-
-                .setOnEmojiPopupDismissListener(new OnEmojiPopupDismissListener() {
-                    @Override
-                    public void onEmojiPopupDismiss() {
-                        // people emoji gone in the new version?
-                        emojiButton.setImageResource(R.drawable.emoji_ios_category_activities);
-                    }
-                })
-                .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
-                    @Override
-                    public void onKeyboardClose() {
-                        Log.d(TAG, "Closed soft keyboard");
-                    }
-                })
-                .build(editText);
-    }
+//                .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
+//                    @Override
+//                    public void onKeyboardClose() {
+//                        Log.d(TAG, "Closed soft keyboard");
+//                    }
+//                })
+//                .build(editText);
+//    }
 
     @Override
     public void isUserOnline(boolean isConnected) {
