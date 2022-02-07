@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -248,19 +249,13 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         boolean visible;
 
         if (status == Message.STATUS_SENDING) {
-            drawableStatus = itemView.getContext()
-                    .getResources()
-                    .getDrawable(R.drawable.ic_message_sending_16dp);
+            drawableStatus = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_pending_clock);
             visible = true;
         } else if (status == Message.STATUS_SENT) {
-            drawableStatus = itemView.getContext()
-                    .getResources()
-                    .getDrawable(R.drawable.ic_message_sent_16dp);
+            drawableStatus = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_single_check);
             visible = true;
         } else if (status == Message.STATUS_RETURN_RECEIPT) {
-            drawableStatus = itemView.getContext()
-                    .getResources()
-                    .getDrawable(R.drawable.ic_message_receipt_16dp);
+            drawableStatus = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_double_check);
             visible = true;
         } else {
             // status not valid or undefined
@@ -269,7 +264,7 @@ class SenderViewHolder extends RecyclerView.ViewHolder {
         }
 
         if (drawableStatus != null && visible) {
-            mMessageStatus.setBackground(drawableStatus);
+            mMessageStatus.setImageDrawable(drawableStatus);
         }
     }
 
